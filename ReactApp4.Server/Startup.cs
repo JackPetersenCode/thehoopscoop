@@ -19,6 +19,9 @@ namespace ReactApp4.Server
             services.AddScoped<PlayerFileHandler>();
             services.AddScoped<PlayerDataHandler>();
 
+            services.AddScoped<BoxScoreTraditionalDatabaseHandler>();
+            services.AddScoped<BoxScoreTraditionalFileHandler>();
+            services.AddScoped<BoxScoreTraditionalDataHandler>();
             // Other service registrations might already exist...
         }
     }

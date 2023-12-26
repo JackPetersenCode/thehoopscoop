@@ -1,5 +1,5 @@
 import { getJsonResponseStartup } from './GetJsonResponse';
-import { postLeagueGamesBySeason, postPlayersNBA } from './PostFunctions';
+import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason } from './PostFunctions';
 
 const loadLeagueGamesBySeason = async () => {
     const years = ['2015_2016', '2016_2017', '2017_2018', '2018_2019', '2019_2020', '2020_2021', '2021_2022', '2022_2023', '2023_2024'];
@@ -49,4 +49,72 @@ const loadPlayers = async () => {
     console.log('FINISHED!');
 }
 
-export { loadLeagueGamesBySeason, loadPlayers }
+function minutesToDecimal(minutesString: string) {
+    // Split the input string into minutes and seconds
+    const [minutes, seconds] = minutesString.split(':').map(Number);
+
+    // Calculate the decimal value
+    const decimalValue = minutes + seconds / 60;
+
+    // Return the decimal value rounded to 2 decimal places
+    return decimalValue.toFixed(2);
+}
+
+const loadBoxScoresTraditional = async () => {
+    const season = "2023_2024";
+    const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_traditional_${season}`)
+    //tablelength = tablelength[0].count
+    console.log(tablelength)
+    const data = await getJsonResponseStartup(`/api/BoxScoreTraditional/read/${season}`);
+    console.log(data)
+    for (let i = tablelength.count; i < data.length; i++) {
+        if (data[i].MIN === 'MIN') {
+            continue;
+        }
+        const mins = minutesToDecimal(data[i].MIN)
+        console.log(typeof mins)
+
+
+        console.log(data[i])
+        const boxScore = {
+            game_id: data[i].GAME_ID,
+            team_id: data[i].TEAM_ID,
+            team_abbreviation: data[i].TEAM_ABBREVIATION,
+            team_city: data[i].TEAM_CITY,
+            player_id: data[i].PLAYER_ID,
+            player_name: data[i].PLAYER_NAME,
+            nickname: data[i].NICKNAME,
+            start_position: data[i].START_POSITION,
+            comment: data[i].COMMENT,
+            min: mins,
+            fgm: data[i].FGM,
+            fga: data[i].FGA,
+            fg_pct: data[i].FG_PCT,
+            fg3m: data[i].FG3M,
+            fg3a: data[i].FG3A,
+            fg3_pct: data[i].FG3_PCT,
+            ftm: data[i].FTM,
+            fta: data[i].FTA,
+            ft_pct: data[i].FT_PCT,
+            oreb: data[i].OREB,
+            dreb: data[i].DREB,
+            reb: data[i].REB,
+            ast: data[i].AST,
+            stl: data[i].STL,
+            blk: data[i].BLK,
+            tov: data[i].TO,
+            pf: data[i].PF,
+            pts: data[i].PTS,
+            plus_minus: data[i].PLUS_MINUS
+        }
+        await postBoxScoresTraditionalBySeason(boxScore, season);
+    }
+    //let data = await getJsonResponseStartup(`/boxScoresTraditional/read/${season}`);
+
+    //for (let i = 0; i < data.length; i++) {
+    //    await postBoxScoresTraditionalBySeason(data[i], season);
+    //} 
+}
+
+
+export { loadLeagueGamesBySeason, loadPlayers, loadBoxScoresTraditional }

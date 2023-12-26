@@ -2,17 +2,21 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { Game } from '../interfaces/Game';
 import { Player } from '../interfaces/Player';
+import { BoxScoreTraditional } from '../interfaces/BoxScoreTraditional';
+import styled from "styled-components";
 
 
 
 
-
-
+const DataFlex = styled.div`
+    display: flex;
+`
 
 function Home() {
 
     const [games, setGames] = useState<Game[]>([]);
     const [players, setPlayers] = useState<Player[]>([]);
+    const [boxScoreTraditional, setBoxScoreTraditional] = useState<BoxScoreTraditional[]>([]);
 
     useEffect(() => {
         async function getData() {
@@ -25,6 +29,11 @@ function Home() {
             const playersData = await playersResponse.json();
             console.log(playersData)
             setPlayers(playersData);
+
+            const boxScoreTraditionalResponse = await fetch('api/BoxScoreTraditional/2015_2016');
+            const boxScoreTraditionalData = await boxScoreTraditionalResponse.json();
+            console.log(boxScoreTraditionalData)
+            setBoxScoreTraditional(boxScoreTraditionalData);
         }
 
         //populateWeatherData();
@@ -37,7 +46,7 @@ function Home() {
         <div>
             <h1>League Games</h1>
 
-            <div>
+            <DataFlex>
                 <div>
                     {players.map((player, index) => (
                         <div key={index}>
@@ -59,7 +68,16 @@ function Home() {
                         <p>No games available</p>
                     )}
                 </div>
-            </div>
+                <div>
+                    {boxScoreTraditional.map((boxScore, index) => (
+                        <div key={index}>
+                            {boxScore.player_name}
+                            <br></br>
+                            {boxScore.team_abbreviation}
+                        </div>
+                    ))}
+                </div>
+            </DataFlex>
 
         </div>
     );

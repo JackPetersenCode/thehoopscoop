@@ -20,6 +20,8 @@ namespace ReactApp4.Server.Data
 
         public DbSet<Baller> Ballers { get; set; }
         public DbSet<LeagueGame> LeagueGames { get; set; }
+        public DbSet<BoxScoreTraditional> BoxScoreTraditionals { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Define table names based on seasons dynamically
@@ -41,6 +43,9 @@ namespace ReactApp4.Server.Data
             {
                 modelBuilder.Entity<LeagueGame>()
                     .ToTable($"league_games_{season}", schema: "dbo")
+                    .HasKey(x => x.Id); // Define the primary key
+                modelBuilder.Entity<BoxScoreTraditional>()
+                    .ToTable($"box_score_traditional_{season}", schema: "dbo")
                     .HasKey(x => x.Id); // Define the primary key
             }
         }
