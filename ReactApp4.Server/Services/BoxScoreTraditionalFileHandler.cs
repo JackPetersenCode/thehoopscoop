@@ -30,7 +30,10 @@ namespace ReactApp4.Server.Services
                     var records = csv.GetRecords<dynamic>();
                     foreach (var record in records)
                     {
-                        data.Add(record);
+                        if (record.MIN != "MIN")
+                        {
+                            data.Add(record);
+                        }
                     }
                 }
 

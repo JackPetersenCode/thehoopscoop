@@ -18,6 +18,16 @@ namespace ReactApp4.Server.Services
         {
             return await _playerDatabaseHandler.GetAllPlayers();
         }
+
+        public async Task<ActionResult<IEnumerable<Player>>> GetAllActivePlayers()
+        {
+            return await _playerDatabaseHandler.GetAllActivePlayers();
+        }
+
+        public async Task<ActionResult<IEnumerable<Player>>> GetAllHistoricalPlayers()
+        {
+            return await _playerDatabaseHandler.GetAllHistoricalPlayers();
+        }
         public async Task<IActionResult> GetPlayersFromFile()
         {
             return await _playerFileHandler.GetPlayersFromFile();

@@ -24,6 +24,18 @@ namespace ReactApp4.Server.Controllers
             return await _playerDataHandler.GetAllPlayers();
         }
 
+        [HttpGet("active")]
+        public async Task<ActionResult<IEnumerable<Player>>> GetAllActivePlayers()
+        {
+            return await _playerDataHandler.GetAllActivePlayers();
+        }
+
+        [HttpGet("historical")]
+        public async Task<ActionResult<IEnumerable<Player>>> GetAllHistoricalPlayers()
+        {
+            return await _playerDataHandler.GetAllHistoricalPlayers();
+        }
+
         [HttpGet("read")]
         public async Task<IActionResult> GetPlayersFromFile()
         {

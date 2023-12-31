@@ -24,6 +24,32 @@ namespace ReactApp4.Server.Services
             return players;
         }
 
+        public async Task<ActionResult<IEnumerable<Player>>> GetAllActivePlayers()
+        {
+            var tableName = $"players";
+
+            var query = $"SELECT * FROM {tableName} WHERE is_active = TRUE";
+
+            var players = await _context.Players.FromSqlRaw(query).ToListAsync();
+
+            Console.WriteLine(players);
+
+            return players;
+        }
+
+        public async Task<ActionResult<IEnumerable<Player>>> GetAllHistoricalPlayers()
+        {
+            var tableName = $"players";
+
+            var query = $"SELECT * FROM {tableName} WHERE is_active = FALSE";
+
+            var players = await _context.Players.FromSqlRaw(query).ToListAsync();
+
+            Console.WriteLine(players);
+
+            return players;
+        }
+
         public async Task<IActionResult> CreatePlayer([FromBody] Player player)
         {
             // Implement logic to create a new league game in the database

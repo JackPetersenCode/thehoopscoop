@@ -55,27 +55,22 @@ function minutesToDecimal(minutesString: string) {
 
     // Calculate the decimal value
     const decimalValue = minutes + seconds / 60;
-
+    console.log(decimalValue)
     // Return the decimal value rounded to 2 decimal places
     return decimalValue.toFixed(2);
 }
 
 const loadBoxScoresTraditional = async () => {
-    const season = "2023_2024";
+    const season = "2022_2023";
     const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_traditional_${season}`)
     //tablelength = tablelength[0].count
-    console.log(tablelength)
     const data = await getJsonResponseStartup(`/api/BoxScoreTraditional/read/${season}`);
-    console.log(data)
     for (let i = tablelength.count; i < data.length; i++) {
         if (data[i].MIN === 'MIN') {
             continue;
         }
         const mins = minutesToDecimal(data[i].MIN)
-        console.log(typeof mins)
 
-
-        console.log(data[i])
         const boxScore = {
             game_id: data[i].GAME_ID,
             team_id: data[i].TEAM_ID,
@@ -86,27 +81,37 @@ const loadBoxScoresTraditional = async () => {
             nickname: data[i].NICKNAME,
             start_position: data[i].START_POSITION,
             comment: data[i].COMMENT,
-            min: mins,
-            fgm: data[i].FGM,
-            fga: data[i].FGA,
-            fg_pct: data[i].FG_PCT,
-            fg3m: data[i].FG3M,
-            fg3a: data[i].FG3A,
-            fg3_pct: data[i].FG3_PCT,
-            ftm: data[i].FTM,
-            fta: data[i].FTA,
-            ft_pct: data[i].FT_PCT,
-            oreb: data[i].OREB,
-            dreb: data[i].DREB,
-            reb: data[i].REB,
-            ast: data[i].AST,
-            stl: data[i].STL,
-            blk: data[i].BLK,
-            tov: data[i].TO,
-            pf: data[i].PF,
-            pts: data[i].PTS,
-            plus_minus: data[i].PLUS_MINUS
+            min: parseFloat(mins),
+            fgm: parseFloat(data[i].FGM),
+            fga: parseFloat(data[i].FGA),
+            fg_pct: parseFloat(data[i].FG_PCT),
+            fg3m: parseFloat(data[i].FG3M),
+            fg3a: parseFloat(data[i].FG3A),
+            fg3_pct: parseFloat(data[i].FG3_PCT),
+            ftm: parseFloat(data[i].FTM),
+            fta: parseFloat(data[i].FTA),
+            ft_pct: parseFloat(data[i].FT_PCT),
+            oreb: parseFloat(data[i].OREB),
+            dreb: parseFloat(data[i].DREB),
+            reb: parseFloat(data[i].REB),
+            ast: parseFloat(data[i].AST),
+            stl: parseFloat(data[i].STL),
+            blk: parseFloat(data[i].BLK),
+            tov: parseFloat(data[i].TO),
+            pf: parseFloat(data[i].PF),
+            pts: parseFloat(data[i].PTS),
+            plus_minus: parseFloat(data[i].PLUS_MINUS)
         }
+
+        for (const key in boxScore) {
+            if (Object.prototype.hasOwnProperty.call(boxScore, key)) {
+                if (boxScore[key as keyof typeof boxScore] === "") {
+                    boxScore[key as keyof typeof boxScore] = null;
+                }
+            }
+        }
+        console.log(boxScore)
+
         await postBoxScoresTraditionalBySeason(boxScore, season);
     }
     //let data = await getJsonResponseStartup(`/boxScoresTraditional/read/${season}`);

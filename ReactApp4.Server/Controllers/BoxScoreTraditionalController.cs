@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Npgsql;
 using NpgsqlTypes;
 using ReactApp4.Server.Services;
+using Newtonsoft.Json.Linq;
 
 namespace ReactApp4.Server.Controllers
 {
@@ -28,6 +29,8 @@ namespace ReactApp4.Server.Controllers
         [HttpGet("{season}")]
         public async Task<ActionResult<IEnumerable<BoxScoreTraditional>>> GetBoxScoreTraditionalBySeason(string season)
         {
+            //System.Diagnostics.Debug.WriteLine("ahahahah");
+
             return await _boxScoreTraditionalDataHandler.GetBoxScoreTraditionalBySeason(season);
         }
 
