@@ -21,6 +21,9 @@ builder.Services.AddScoped<BoxScoreTraditionalDatabaseHandler>();
 builder.Services.AddScoped<BoxScoreTraditionalFileHandler>();
 builder.Services.AddScoped<BoxScoreTraditionalDataHandler>();
 
+builder.Services.AddScoped<LeagueDashLineupsDataHandler>();
+builder.Services.AddScoped<LeagueDashLineupsFileHandler>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -1,13 +1,8 @@
-import React from 'react';
 import { useEffect, useState } from 'react';
-import { Game } from '../interfaces/Game';
 import { Player } from '../interfaces/Player';
-import { BoxScoreTraditional } from '../interfaces/BoxScoreTraditional';
 import styled from "styled-components";
 import SeasonsDropDown from '../components/SeasonsDropDown';
 import SearchBar from '../components/SearchBar';
-
-
 
 
 const DataFlex = styled.div`

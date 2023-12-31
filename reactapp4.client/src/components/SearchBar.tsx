@@ -1,41 +1,53 @@
-import React, { useState, useEffect, useRef } from 'react';
-import TextField from "@mui/material/TextField";
+import React, { useRef } from 'react';
+import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
-import "../App.css";
 import styled from 'styled-components';
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
+import { Player } from '../interfaces/Player';
 import SearchList from './SearchList';
 
 const ContainerDiv = styled.div`
     position: relative;
-`
+`;
 
-const TextDiv = styled.div`
-`
+const TextDiv = styled.div``;
+
 const DropdownStyle = styled.div`
     position: absolute;
-`
+`;
 
-const SearchBar = ({ activePlayers, inputText, setInputText, selectedPlayer, setSelectedPlayer }) => {
+interface SearchBarProps {
+    activePlayers: Player[];
+    inputText: string;
+    setInputText: React.Dispatch<React.SetStateAction<string>>;
+    selectedPlayer: string;
+    setSelectedPlayer: React.Dispatch<React.SetStateAction<string>>;
+}
 
-    const refTwo = useRef(null);
+const SearchBar: React.FC<SearchBarProps> = ({
+    activePlayers,
+    inputText,
+    setInputText,
+    selectedPlayer,
+    setSelectedPlayer,
+}) => {
+    const refTwo = useRef<HTMLDivElement>(null);
 
-    const inputHandler = (e: { target: { value: string; }; }) => {
-        //convert input text to lower case
+    const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const lowerCase = e.target.value.toLowerCase();
         setInputText(lowerCase);
     };
 
-    const handleEnter = (e: { key: string; }) => {
+    const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            console.log(inputText)
-            //navigate(`/${inputText}`)
+            console.log(inputText);
+            // navigate(`/${inputText}`);
         }
-    }
+    };
 
     return (
-        <ContainerDiv ref={refTwo} >
+        <ContainerDiv ref={refTwo}>
             <TextDiv>
                 <TextField
                     fullWidth
@@ -47,21 +59,35 @@ const SearchBar = ({ activePlayers, inputText, setInputText, selectedPlayer, set
                     style={{ backgroundColor: 'white', borderRadius: '5px' }}
                     value={inputText}
                     InputProps={{
-                        endAdornment: <InputAdornment position="start"><Link to={`/${inputText}`}><div className='search-icon'><SearchIcon /></div></Link></InputAdornment>,
+                        endAdornment: (
+                            <InputAdornment position="start">
+                                <Link to={`/${inputText}`}>
+                                    <div className="search-icon">
+                                        <SearchIcon />
+                                    </div>
+                                </Link>
+                            </InputAdornment>
+                        ),
                     }}
                     onKeyDown={handleEnter}
                 />
             </TextDiv>
-            {
-                <DropdownStyle>
-                    {activePlayers.length > 0 && inputText.length > 0 ?
-                        <SearchList refTwo={refTwo} inputText={inputText} setInputText={setInputText} data={activePlayers} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} />
-                        :
-                        ''}
-                </DropdownStyle>
-            }
+            <DropdownStyle>
+                {activePlayers.length > 0 && inputText.length > 0 ? (
+                    <SearchList
+                        refTwo={refTwo}
+                        inputText={inputText}
+                        setInputText={setInputText}
+                        data={activePlayers}
+                        selectedPlayer={selectedPlayer}
+                        setSelectedPlayer={setSelectedPlayer}
+                    />
+                ) : (
+                    ''
+                )}
+            </DropdownStyle>
         </ContainerDiv>
     );
-}
+};
 
 export default SearchBar;

@@ -1,5 +1,5 @@
 import { getJsonResponseStartup } from './GetJsonResponse';
-import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason } from './PostFunctions';
+import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups } from './PostFunctions';
 
 const loadLeagueGamesBySeason = async () => {
     const years = ['2015_2016', '2016_2017', '2017_2018', '2018_2019', '2019_2020', '2020_2021', '2021_2022', '2022_2023', '2023_2024'];
@@ -121,5 +121,20 @@ const loadBoxScoresTraditional = async () => {
     //} 
 }
 
+const loadUpLeagueDashLineupsFunction = async (season: string, boxType: string, numPlayers: string) => {
+    const results = await getJsonResponseStartup(`/api/LeagueDashLineups/read/${season}/${boxType}/${numPlayers}`);
+    console.log(results);
+    console.log(results.resultSets[0].rowSet.length)
+    console.log(results.resultSets[0].rowSet)
 
-export { loadLeagueGamesBySeason, loadPlayers, loadBoxScoresTraditional }
+    for (let i = 0; i < results.resultSets[0].rowSet.length; i++) {
+        console.log(results.resultSets[0].rowSet[i])
+        console.log(typeof results.resultSets[0].rowSet[i])
+
+        const postedResults = await postLeagueDashLineups(results.resultSets[0].rowSet[i], season, boxType, numPlayers);
+        console.log(postedResults);
+    }
+}
+
+
+export { loadLeagueGamesBySeason, loadPlayers, loadBoxScoresTraditional, loadUpLeagueDashLineupsFunction }
