@@ -24,6 +24,7 @@ namespace ReactApp4.Server.Services
                 Console.WriteLine(filePath);
                 if (!System.IO.File.Exists(filePath))
                 {
+                    Console.WriteLine("couldnt find the file");
                     return new NotFoundResult(); // Handle case where file doesn't exist
                 }
 

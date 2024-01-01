@@ -92,7 +92,7 @@ namespace ReactApp4.Server.Services
                     NpgsqlParameter wlParam = new NpgsqlParameter("@wl", NpgsqlDbType.Text);
                     wlParam.Value = wlString;
 
-                    string min_string = leagueGame[8]?.ToString();
+                    string? min_string = leagueGame[8]?.ToString();
                     decimal? min = !string.IsNullOrEmpty(min_string) ? JsonConvert.DeserializeObject<decimal>(min_string) : (decimal?)null;
                     string fgm_string = leagueGame[9]?.ToString();
                     decimal? fgm = !string.IsNullOrEmpty(fgm_string) ? JsonConvert.DeserializeObject<decimal>(fgm_string) : (decimal?)null;

@@ -24,6 +24,7 @@ namespace ReactApp4.Server
             services.AddScoped<BoxScoreTraditionalDataHandler>();
             // Other service registrations might already exist...
             services.AddScoped<LeagueDashLineupsDataHandler>();
+            services.AddScoped<LeagueDashLineupsDatabaseHandler>();
             services.AddScoped<LeagueDashLineupsFileHandler>();
         }
     }
