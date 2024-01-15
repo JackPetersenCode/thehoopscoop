@@ -121,15 +121,13 @@ const loadBoxScoresTraditional = async () => {
     //} 
 }
 
-const loadUpLeagueDashLineupsFunction = async (season: string, boxType: string, numPlayers: string) => {
+const loadLeagueDashLineupsFunction = async (season: string, boxType: string, numPlayers: string) => {
     const results = await getJsonResponseStartup(`/api/LeagueDashLineups/read/${season}/${boxType}/${numPlayers}`);
-    console.log(results);
     console.log(results.resultSets[0].rowSet.length)
     console.log(results.resultSets[0].rowSet)
 
     for (let i = 0; i < results.resultSets[0].rowSet.length; i++) {
         console.log(results.resultSets[0].rowSet[i])
-        console.log(typeof results.resultSets[0].rowSet[i])
 
         const postedResults = await postLeagueDashLineups(results.resultSets[0].rowSet[i], season, boxType, numPlayers);
         console.log(postedResults);
@@ -137,4 +135,4 @@ const loadUpLeagueDashLineupsFunction = async (season: string, boxType: string, 
 }
 
 
-export { loadLeagueGamesBySeason, loadPlayers, loadBoxScoresTraditional, loadUpLeagueDashLineupsFunction }
+export { loadLeagueGamesBySeason, loadPlayers, loadBoxScoresTraditional, loadLeagueDashLineupsFunction }

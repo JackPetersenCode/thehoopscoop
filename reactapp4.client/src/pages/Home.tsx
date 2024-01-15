@@ -3,7 +3,8 @@ import { Player } from '../interfaces/Player';
 import styled from "styled-components";
 import SeasonsDropDown from '../components/SeasonsDropDown';
 import SearchBar from '../components/SearchBar';
-
+import LineupPlayerSelect from '../components/LineupPlayerSelect';
+import StatsTable from '../components/StatsTable';
 
 const DataFlex = styled.div`
     display: flex;
@@ -11,10 +12,28 @@ const DataFlex = styled.div`
 
 function Home() {
 
-    const [selectedSeason, setSelectedSeason] = useState('2023_2024');
+    const [selectedSeason, setSelectedSeason] = useState('2023_24');
     const [activePlayers, setActivePlayers] = useState<Player[]>([]);
     const [inputText, setInputText] = useState('');
     const [selectedPlayer, setSelectedPlayer] = useState('');
+    const [selectedLineupPlayer, setSelectedLineupPlayer] = useState('Lineups');
+    const [selectedBoxType, setSelectedBoxType] = useState('Advanced');
+    const [numPlayers, setNumPlayers] = useState('5');
+
+    const lineupPlayerOptions = [
+        'Lineups',
+        'Players'
+    ];
+
+    const statOptions = [
+        'Traditional',
+        'Advanced',
+        'FourFactors',
+        'Misc',
+        'Scoring',
+        'Opponents'
+    ]
+
 
     useEffect(() => {
         async function getData() {
@@ -40,6 +59,12 @@ function Home() {
             <DataFlex>
 
                 <div>
+                    <LineupPlayerSelect options={lineupPlayerOptions} selectedOption={selectedLineupPlayer} setSelectedOption={setSelectedLineupPlayer} />
+                </div>
+                <div>
+                    <LineupPlayerSelect options={statOptions} selectedOption={selectedBoxType} setSelectedOption={setSelectedBoxType} />
+                </div>
+                <div>
                     <SeasonsDropDown
                         selectedSeason={selectedSeason}
                         setSelectedSeason={setSelectedSeason}
@@ -61,6 +86,7 @@ function Home() {
                 </div>
 
             </DataFlex>
+            <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} />
 
         </div>
     );

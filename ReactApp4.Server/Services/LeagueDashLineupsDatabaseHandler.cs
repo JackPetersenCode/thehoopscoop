@@ -14,6 +14,33 @@ namespace ReactApp4.Server.Services
     {
         private readonly AppDbContext _context = context;
 
+        public async Task<IActionResult> GetLeagueDashLineups(string season, string boxType, string numPlayers)
+        {
+            try
+            {
+                var tableName = $"league_dash_lineups_{boxType}_{numPlayers}man_{season}";
+
+                var query = $"SELECT * FROM {tableName}";
+
+                if (boxType == "Advanced")
+                {
+                    var leagueDashLineups = await _context.LeagueDashLineupAdvanceds.FromSqlRaw(query).ToListAsync();
+                    return Ok(leagueDashLineups); // Wrap the result in OkObjectResult
+                } else if (boxType == "Base")
+                {
+                    var leagueDashLineups = await _context.LeagueDashLineupBases.FromSqlRaw(query).ToListAsync();
+                    return Ok(leagueDashLineups); // Wrap the result in OkObjectResult
+                }
+                {
+                    return Ok("Not setup yet");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions appropriately, log, and return an error response
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
         public async Task<IActionResult> CreateLeagueDashLineup([FromBody] object[] leagueDashLineup, string season, string boxType, string numPlayers)
         {
             // Implement logic to create a new league game in the database
@@ -274,7 +301,7 @@ namespace ReactApp4.Server.Services
                             break;
                         
                         case "Advanced":
-                            sql = $"INSERT INTO league_dash_lineups_Advanced_{numPlayers}man_{season} (group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, e_off_rating, off_rating, e_def_rating, def_rating, e_net_rating, net_rating, ast_pct, ast_to, ast_ratio, oreb_pct, dreb_pct, reb_pct, tm_tov_pct, efg_pct, ts_pct, e_pace, pace, pace_per40, poss, pie, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, off_rating_rank, def_rating_rank, net_rating_rank, ast_pct_rank, ast_to_rank, ast_ratio_rank, oreb_pct_rank, dreb_pct_rank, reb_pct_rank, tm_tov_pct_rank, efg_pct_rank, ts_pct_rank, pace_rank, pie_rank) VALUES (@group_set, @group_id, @group_name, @team_id, @team_abbreviation, @gp, @w, @l, @w_pct, @min, @e_off_rating, @off_rating, @e_def_rating, @def_rating, @e_net_rating, @net_rating, @ast_pct, @ast_to, @ast_ratio, @oreb_pct, @dreb_pct, @reb_pct, @tm_tov_pct, @efg_pct, @ts_pct, @e_pace, @pace, @pace_per40, @poss, @pie, @gp_rank, @w_rank, @l_rank, @w_pct_rank, @min_rank, @off_rating_rank, @def_rating_rank, @net_rating_rank, @ast_pct_rank, @ast_to_rank, @ast_ratio_rank, @oreb_pct_rank, @dreb_pct_rank, @reb_pct_rank, @tm_tov_pct_rank, @efg_pct_rank, @ts_pct_rank, @pace_rank, @pie_rank);";
+                            sql = $"INSERT INTO league_dash_lineups_advanced_{numPlayers}man_{season} (group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, e_off_rating, off_rating, e_def_rating, def_rating, e_net_rating, net_rating, ast_pct, ast_to, ast_ratio, oreb_pct, dreb_pct, reb_pct, tm_tov_pct, efg_pct, ts_pct, e_pace, pace, pace_per40, poss, pie, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, off_rating_rank, def_rating_rank, net_rating_rank, ast_pct_rank, ast_to_rank, ast_ratio_rank, oreb_pct_rank, dreb_pct_rank, reb_pct_rank, tm_tov_pct_rank, efg_pct_rank, ts_pct_rank, pace_rank, pie_rank) VALUES (@group_set, @group_id, @group_name, @team_id, @team_abbreviation, @gp, @w, @l, @w_pct, @min, @e_off_rating, @off_rating, @e_def_rating, @def_rating, @e_net_rating, @net_rating, @ast_pct, @ast_to, @ast_ratio, @oreb_pct, @dreb_pct, @reb_pct, @tm_tov_pct, @efg_pct, @ts_pct, @e_pace, @pace, @pace_per40, @poss, @pie, @gp_rank, @w_rank, @l_rank, @w_pct_rank, @min_rank, @off_rating_rank, @def_rating_rank, @net_rating_rank, @ast_pct_rank, @ast_to_rank, @ast_ratio_rank, @oreb_pct_rank, @dreb_pct_rank, @reb_pct_rank, @tm_tov_pct_rank, @efg_pct_rank, @ts_pct_rank, @pace_rank, @pie_rank);";
 
                             Console.WriteLine(leagueDashLineup.Length);
                             Console.WriteLine(leagueDashLineup);
@@ -453,8 +480,8 @@ namespace ReactApp4.Server.Services
                             }
                             break;
 
-                        case "Four Factors":
-                            sql = $"INSERT INTO league_dash_lineups_FourFactors_{numPlayers}man_{season} (group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, efg_pct, fta_rate, tm_tov_pct, oreb_pct, opp_efg_pct, opp_fta_rate, opp_tov_pct, opp_oreb_pct, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, efg_pct_rank, fta_rate_rank, tm_tov_pct_rank, oreb_pct_rank, opp_efg_pct_rank, opp_fta_rate_rank, opp_tov_pct_rank, opp_oreb_pct_rank) VALUES (@group_set, @group_id, @group_name, @team_id, @team_abbreviation, @gp, @w, @l, @w_pct, @min, @efg_pct, @fta_rate, @tm_tov_pct, @oreb_pct, @opp_efg_pct, @opp_fta_rate, @opp_tov_pct, @opp_oreb_pct, @gp_rank, @w_rank, @l_rank, @w_pct_rank, @min_rank, @efg_pct_rank, @fta_rate_rank, @tm_tov_pct_rank, @oreb_pct_rank, @opp_efg_pct_rank, @opp_fta_rate_rank, @opp_tov_pct_rank, @opp_oreb_pct_rank);";
+                        case "FourFactors":
+                            sql = $"INSERT INTO league_dash_lineups_fourfactors_{numPlayers}man_{season} (group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, efg_pct, fta_rate, tm_tov_pct, oreb_pct, opp_efg_pct, opp_fta_rate, opp_tov_pct, opp_oreb_pct, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, efg_pct_rank, fta_rate_rank, tm_tov_pct_rank, oreb_pct_rank, opp_efg_pct_rank, opp_fta_rate_rank, opp_tov_pct_rank, opp_oreb_pct_rank) VALUES (@group_set, @group_id, @group_name, @team_id, @team_abbreviation, @gp, @w, @l, @w_pct, @min, @efg_pct, @fta_rate, @tm_tov_pct, @oreb_pct, @opp_efg_pct, @opp_fta_rate, @opp_tov_pct, @opp_oreb_pct, @gp_rank, @w_rank, @l_rank, @w_pct_rank, @min_rank, @efg_pct_rank, @fta_rate_rank, @tm_tov_pct_rank, @oreb_pct_rank, @opp_efg_pct_rank, @opp_fta_rate_rank, @opp_tov_pct_rank, @opp_oreb_pct_rank);";
 
                             string? efg_pct_string_ff = leagueDashLineup[10]?.ToString();
                             decimal? efg_pct_ff = !string.IsNullOrEmpty(efg_pct_string_ff) ? JsonConvert.DeserializeObject<decimal>(efg_pct_string_ff) : (decimal?)null;
@@ -773,6 +800,16 @@ namespace ReactApp4.Server.Services
 
                             using (var cmd = new NpgsqlCommand(sql, connection))
                             {
+                                cmd.Parameters.Add(groupSetParam);
+                                cmd.Parameters.Add(groupIdParam);
+                                cmd.Parameters.Add(groupNameParam);
+                                cmd.Parameters.Add(teamIdParam);
+                                cmd.Parameters.Add(teamAbbreviationParam);
+                                cmd.Parameters.AddWithValue("@gp", gp ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@w", w ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@l", l ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@w_pct", w_pct ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@min", min ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@pct_fga_2pt", pct_fga_2pt ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@pct_fga_3pt", pct_fga_3pt ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@pct_pts_2pt", pct_pts_2pt ?? (object)DBNull.Value);
@@ -807,6 +844,7 @@ namespace ReactApp4.Server.Services
                                 cmd.Parameters.AddWithValue("@pct_ast_3pm_rank", pct_ast_3pm_rank ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@pct_uast_3pm_rank", pct_uast_3pm_rank ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@pct_ast_fgm_rank", pct_ast_fgm_rank ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@pct_uast_fgm_rank", pct_ast_fgm_rank ?? (object)DBNull.Value);
 
                                 await cmd.ExecuteNonQueryAsync();
                             }
@@ -958,6 +996,16 @@ namespace ReactApp4.Server.Services
 
                             using (var cmd = new NpgsqlCommand(sql, connection))
                             {
+                                cmd.Parameters.Add(groupSetParam);
+                                cmd.Parameters.Add(groupIdParam);
+                                cmd.Parameters.Add(groupNameParam);
+                                cmd.Parameters.Add(teamIdParam);
+                                cmd.Parameters.Add(teamAbbreviationParam);
+                                cmd.Parameters.AddWithValue("@gp", gp ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@w", w ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@l", l ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@w_pct", w_pct ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@min", min ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@opp_fgm", opp_fgm ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@opp_fga", opp_fga ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@opp_fg_pct", opp_fg_pct ?? (object)DBNull.Value);
@@ -1016,7 +1064,7 @@ namespace ReactApp4.Server.Services
 
                 }
 
-                return Ok("League game created successfully");
+                return StatusCode(201, leagueDashLineup);
             }
             catch (Exception ex)
             {

@@ -2,7 +2,14 @@ import axios from "axios";
 import '../App.css';
 import React, { useEffect, useState } from "react";
 
-const SeasonsDropDown = ({ selectedSeason, setSelectedSeason, predictions }) => {
+
+interface SeasonsDropDownProps {
+    selectedSeason: string;
+    setSelectedSeason: React.Dispatch<React.SetStateAction<string>>;
+    predictions: boolean;
+}
+
+const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSelectedSeason, predictions }) => {
 
     let seasonsData;
     if (predictions) {

@@ -51,5 +51,8 @@ namespace ReactApp4.Server.Data
         }
         public DbSet<TableLength> TableLengths { get; set; }
         public DbSet<Player> Players { get; set; }
+        public DbSet<LeagueDashLineupAdvanced> LeagueDashLineupAdvanceds { get; set; }
+        public DbSet<LeagueDashLineupBase> LeagueDashLineupBases { get; set; }
+
     }
 }

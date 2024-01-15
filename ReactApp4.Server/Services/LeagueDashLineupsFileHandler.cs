@@ -17,9 +17,6 @@ namespace ReactApp4.Server.Services
         {
             try
             {
-                Console.WriteLine(season);
-                Console.WriteLine(boxType);
-                Console.WriteLine(numPlayers);
                 string filePath = $"../juicystats/league_dash_lineups_{boxType}_{numPlayers}man_{season}.json"; // Adjust the path as needed
                 Console.WriteLine(filePath);
                 if (!System.IO.File.Exists(filePath))

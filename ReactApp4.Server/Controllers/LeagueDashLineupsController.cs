@@ -29,6 +29,12 @@ namespace ReactApp4.Server.Controllers
             return await _leagueDashLineupsDataHandler.GetLeagueDashLineupsFromFile(season, boxType, numPlayers);
         }
 
+        [HttpGet("{season}/{boxType}/{numPlayers}")]
+        public async Task<IActionResult> GetLeagueDashLineups(string season, string boxType, string numPlayers)
+        {
+            return await _leagueDashLineupsDataHandler.GetLeagueDashLineups(season, boxType, numPlayers);
+        }
+
         [HttpPost("{season}/{boxType}/{numPlayers}")]
         public async Task<IActionResult> CreateLeagueDashLineup([FromBody] object[] leagueDashLineup, string season, string boxType, string numPlayers)
         {
