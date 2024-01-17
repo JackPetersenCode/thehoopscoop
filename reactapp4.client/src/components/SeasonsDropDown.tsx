@@ -14,26 +14,26 @@ const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSe
     let seasonsData;
     if (predictions) {
         seasonsData = [
-            { season: '2016-2017' },
-            { season: '2017-2018' },
-            { season: '2018-2019' },
-            { season: '2019-2020' },
-            { season: '2020-2021' },
-            { season: '2021-2022' },
-            { season: '2022-2023' },
-            { season: '2023-2024' }
+            { season: '2016_17' },
+            { season: '2017_18' },
+            { season: '2018_19' },
+            { season: '2019_20' },
+            { season: '2020_21' },
+            { season: '2021_22' },
+            { season: '2022_23' },
+            { season: '2023_24' }
         ]
     } else {
         seasonsData = [
-            { season: '2015-2016' },
-            { season: '2016-2017' },
-            { season: '2017-2018' },
-            { season: '2018-2019' },
-            { season: '2019-2020' },
-            { season: '2020-2021' },
-            { season: '2021-2022' },
-            { season: '2022-2023' },
-            { season: '2023-2024' }
+            { season: '2015_16' },
+            { season: '2016_17' },
+            { season: '2017_18' },
+            { season: '2018_19' },
+            { season: '2019_20' },
+            { season: '2020_21' },
+            { season: '2021_22' },
+            { season: '2022_23' },
+            { season: '2023_24' }
         ]
     }
     function handleSeasonChange(event: { preventDefault: () => void; target: { value: string; }; }) {

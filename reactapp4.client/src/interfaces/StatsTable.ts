@@ -29,7 +29,7 @@ type LeagueDashLineupAdvanced = {
     net_rating?: number;
     ast_pct?: number;
     ast_to?: number;
-    ast_ration?: number;
+    ast_ratio?: number;
     oreb_pct?: number;
     dreb_pct?: number;
     reb_pct?: number;

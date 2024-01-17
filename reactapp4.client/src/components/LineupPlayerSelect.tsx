@@ -57,7 +57,7 @@ const LineupPlayerSelect: React.FC<LineupPlayerSelectProps> = ({ options, select
         if (option === "0") {
             return;
         }
-        setSelectedOption(option);
+        setSelectedOption(option === 'Traditional' ? 'Base' : option);
         setIsOpen(!isOpen);
         console.log(selectedOption)
     }

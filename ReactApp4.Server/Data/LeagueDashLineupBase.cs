@@ -8,22 +8,22 @@ namespace ReactApp4.Server.Data
         public int Id { get; set; }
 
         [Column("group_set")]
-        public string? GROUP_SET { get; set; }
+        public string? Group_set { get; set; }
 
         [Column("group_id")]
-        public string? GROUP_ID { get; set; }
+        public string? Group_id { get; set; }
 
         [Column("group_name")]
-        public string? GROUP_NAME { get; set; }
+        public string? Group_name { get; set; }
 
         [Column("team_id")]
-        public string? TEAM_ID { get; set; }
+        public string? Team_id { get; set; }
 
         [Column("team_abbreviation")]
-        public string? TEAM_ABBREVIATION { get; set; }
+        public string? Team_abbreviation { get; set; }
 
         [Column("gp")]
-        public int? GP { get; set; }
+        public int? Gp { get; set; }
 
         [Column("w")]
         public int? W { get; set; }
@@ -32,150 +32,150 @@ namespace ReactApp4.Server.Data
         public int? L { get; set; }
 
         [Column("w_pct")]
-        public decimal? W_PCT { get; set; }
+        public decimal? W_pct { get; set; }
 
         [Column("min")]
-        public decimal? MIN { get; set; }
+        public decimal? Min { get; set; }
 
         [Column("fgm")]
-        public decimal? FGM { get; set; }
+        public decimal? Fgm { get; set; }
 
         [Column("fga")]
-        public decimal? FGA { get; set; }
+        public decimal? Fga { get; set; }
 
         [Column("fg_pct")]
-        public decimal? FG_PCT { get; set; }
+        public decimal? Fg_pct { get; set; }
 
         [Column("fg3m")]
-        public decimal? FG3M { get; set; }
+        public decimal? Fg3m { get; set; }
 
         [Column("fg3a")]
-        public decimal? FG3A { get; set; }
+        public decimal? Fg3a { get; set; }
 
         [Column("fg3_pct")]
-        public decimal? FG3_PCT { get; set; }
+        public decimal? Fg3_pct { get; set; }
 
         [Column("ftm")]
-        public decimal? FTM { get; set; }
+        public decimal? Ftm { get; set; }
 
         [Column("fta")]
-        public decimal? FTA { get; set; }
+        public decimal? Fta { get; set; }
 
         [Column("ft_pct")]
-        public decimal? FT_PCT { get; set; }
+        public decimal? Ft_pct { get; set; }
 
         [Column("oreb")]
-        public decimal? OREB { get; set; }
+        public decimal? Oreb { get; set; }
 
         [Column("dreb")]
-        public decimal? DREB { get; set; }
+        public decimal? Dreb { get; set; }
 
         [Column("reb")]
-        public decimal? REB { get; set; }
+        public decimal? Reb { get; set; }
 
         [Column("ast")]
-        public decimal? AST { get; set; }
+        public decimal? Ast { get; set; }
 
         [Column("tov")]
-        public decimal? TOV { get; set; }
+        public decimal? Tov { get; set; }
 
         [Column("stl")]
-        public decimal? STL { get; set; }
+        public decimal? Stl { get; set; }
 
         [Column("blk")]
-        public decimal? BLK { get; set; }
+        public decimal? Blk { get; set; }
 
         [Column("blka")]
-        public decimal? BLKA { get; set; }
+        public decimal? Blka { get; set; }
 
         [Column("pf")]
-        public decimal? PF { get; set; }
+        public decimal? Pf { get; set; }
 
         [Column("pfd")]
-        public decimal? PFD { get; set; }
+        public decimal? Pfd { get; set; }
 
         [Column("pts")]
-        public decimal? PTS { get; set; }
+        public decimal? Pts { get; set; }
 
         [Column("plus_minus")]
-        public decimal? PLUS_MINUS { get; set; }
+        public decimal? Plus_minus { get; set; }
 
         [Column("gp_rank")]
-        public int? GP_RANK { get; set; }
+        public int? Gp_rank { get; set; }
 
         [Column("w_rank")]
-        public int? W_RANK { get; set; }
+        public int? W_rank { get; set; }
 
         [Column("l_rank")]
-        public int? L_RANK { get; set; }
+        public int? L_rank { get; set; }
 
         [Column("w_pct_rank")]
-        public int? W_PCT_RANK { get; set; }
+        public int? W_pct_rank { get; set; }
 
         [Column("min_rank")]
-        public int? MIN_RANK { get; set; }
+        public int? Min_rank { get; set; }
 
         [Column("fgm_rank")]
-        public int? FGM_RANK { get; set; }
+        public int? Fgm_rank { get; set; }
 
         [Column("fga_rank")]
-        public int? FGA_RANK { get; set; }
+        public int? Fga_rank { get; set; }
 
         [Column("fg_pct_rank")]
-        public int? FG_PCT_RANK { get; set; }
+        public int? Fg_pct_rank { get; set; }
 
         [Column("fg3m_rank")]
-        public int? FG3M_RANK { get; set; }
+        public int? Fg3m_rank { get; set; }
 
         [Column("fg3a_rank")]
-        public int? FG3A_RANK { get; set; }
+        public int? Fg3a_rank { get; set; }
 
         [Column("fg3_pct_rank")]
-        public int? FG3_PCT_RANK { get; set; }
+        public int? Fg3_pct_rank { get; set; }
 
         [Column("ftm_rank")]
-        public int? FTM_RANK { get; set; }
+        public int? Ftm_rank { get; set; }
 
         [Column("fta_rank")]
-        public int? FTA_RANK { get; set; }
+        public int? Fta_rank { get; set; }
 
         [Column("ft_pct_rank")]
-        public int? FT_PCT_RANK { get; set; }
+        public int? Ft_pct_rank { get; set; }
 
         [Column("oreb_rank")]
-        public int? OREB_RANK { get; set; }
+        public int? Oreb_rank { get; set; }
 
         [Column("dreb_rank")]
-        public int? DREB_RANK { get; set; }
+        public int? Dreb_rank { get; set; }
 
         [Column("reb_rank")]
-        public int? REB_RANK { get; set; }
+        public int? Reb_rank { get; set; }
 
         [Column("ast_rank")]
-        public int? AST_RANK { get; set; }
+        public int? Ast_rank { get; set; }
 
         [Column("tov_rank")]
-        public int? TOV_RANK { get; set; }
+        public int? Tov_rank { get; set; }
 
         [Column("stl_rank")]
-        public int? STL_RANK { get; set; }
+        public int? Stl_rank { get; set; }
 
         [Column("blk_rank")]
-        public int? BLK_RANK { get; set; }
+        public int? Blk_rank { get; set; }
 
         [Column("blka_rank")]
-        public int? BLKA_RANK { get; set; }
+        public int? Blka_rank { get; set; }
 
         [Column("pf_rank")]
-        public int? PF_RANK { get; set; }
+        public int? Pf_rank { get; set; }
 
         [Column("pfd_rank")]
-        public int? PFD_RANK { get; set; }
+        public int? Pfd_rank { get; set; }
 
         [Column("pts_rank")]
-        public int? PTS_RANK { get; set; }
+        public int? Pts_rank { get; set; }
 
         [Column("plus_minus_rank")]
-        public int? PLUS_MINUS_RANK { get; set; }
+        public int? Plus_minus_rank { get; set; }
     }
 }

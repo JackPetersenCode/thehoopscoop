@@ -5,22 +5,22 @@ namespace ReactApp4.Server.Data
     public class LeagueDashLineupFourFactors
     {
         [Column("group_set")]
-        public string? GROUP_SET { get; set; }
+        public string? Group_set { get; set; }
 
         [Column("group_id")]
-        public string? GROUP_ID { get; set; }
+        public string? Group_id { get; set; }
 
         [Column("group_name")]
-        public string? GROUP_NAME { get; set; }
+        public string? Group_name { get; set; }
 
         [Column("team_id")]
-        public string? TEAM_ID { get; set; }
+        public string? Team_id { get; set; }
 
         [Column("team_abbreviation")]
-        public string? TEAM_ABBREVIATION { get; set; }
+        public string? Team_abbreviation { get; set; }
 
         [Column("gp")]
-        public int? GP { get; set; }
+        public int? Gp { get; set; }
 
         [Column("w")]
         public int? W { get; set; }
@@ -29,72 +29,72 @@ namespace ReactApp4.Server.Data
         public int? L { get; set; }
 
         [Column("w_pct")]
-        public decimal? W_PCT { get; set; }
+        public decimal? W_pct { get; set; }
 
         [Column("min")]
-        public decimal? MIN { get; set; }
+        public decimal? Min { get; set; }
 
         [Column("efg_pct")]
-        public decimal? EFG_PCT { get; set; }
+        public decimal? Efg_pct { get; set; }
 
         [Column("fta_rate")]
-        public decimal? FTA_RATE { get; set; }
+        public decimal? Fta_rate { get; set; }
 
         [Column("tm_tov_pct")]
-        public decimal? TM_TOV_PCT { get; set; }
+        public decimal? Tm_tov_pct { get; set; }
 
         [Column("oreb_pct")]
-        public decimal? OREB_PCT { get; set; }
+        public decimal? Oreb_pct { get; set; }
 
         [Column("opp_efg_pct")]
-        public decimal? OPP_EFG_PCT { get; set; }
+        public decimal? Opp_efg_pct { get; set; }
 
         [Column("opp_fta_rate")]
-        public decimal? OPP_FTA_RATE { get; set; }
+        public decimal? Opp_fta_rate { get; set; }
 
         [Column("opp_tov_pct")]
-        public decimal? OPP_TOV_PCT { get; set; }
+        public decimal? Opp_tov_pct { get; set; }
 
         [Column("opp_oreb_pct")]
-        public decimal? OPP_OREB_PCT { get; set; }
+        public decimal? Opp_oreb_pct { get; set; }
 
         [Column("gp_rank")]
-        public int? GP_RANK { get; set; }
+        public int? Gp_rank { get; set; }
 
         [Column("w_rank")]
-        public int? W_RANK { get; set; }
+        public int? W_rank { get; set; }
 
         [Column("l_rank")]
-        public int? L_RANK { get; set; }
+        public int? L_rank { get; set; }
 
         [Column("w_pct_rank")]
-        public int? W_PCT_RANK { get; set; }
+        public int? W_pct_rank { get; set; }
 
         [Column("min_rank")]
-        public int? MIN_RANK { get; set; }
+        public int? Min_rank { get; set; }
 
         [Column("efg_pct_rank")]
-        public int? EFG_PCT_RANK { get; set; }
+        public int? Efg_pct_rank { get; set; }
 
         [Column("fta_rate_rank")]
-        public int? FTA_RATE_RANK { get; set; }
+        public int? Fta_rate_rank { get; set; }
 
         [Column("tm_tov_pct_rank")]
-        public int? TM_TOV_PCT_RANK { get; set; }
+        public int? Tm_tov_pct_rank { get; set; }
 
         [Column("oreb_pct_rank")]
-        public int? OREB_PCT_RANK { get; set; }
+        public int? Oreb_pct_rank { get; set; }
 
         [Column("opp_efg_pct_rank")]
-        public int? OPP_EFG_PCT_RANK { get; set; }
+        public int? Opp_efg_pct_rank { get; set; }
 
         [Column("opp_fta_rate_rank")]
-        public int? OPP_FTA_RATE_RANK { get; set; }
+        public int? Opp_fta_rate_rank { get; set; }
 
         [Column("opp_tov_pct_rank")]
-        public int? OPP_TOV_PCT_RANK { get; set; }
+        public int? Opp_tov_pct_rank { get; set; }
 
         [Column("opp_oreb_pct_rank")]
-        public int? OPP_OREB_PCT_RANK { get; set; }
+        public int? Opp_oreb_pct_rank { get; set; }
     }
 }

@@ -62,7 +62,7 @@ namespace ReactApp4.Server.Data
         public decimal? Ast_to { get; set; }
 
         [Column("ast_ratio")]
-        public decimal? Ast_ration { get; set; }
+        public decimal? Ast_ratio { get; set; }
 
         [Column("oreb_pct")]
         public decimal? Oreb_pct { get; set; }
