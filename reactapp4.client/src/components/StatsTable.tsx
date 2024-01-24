@@ -7,24 +7,36 @@ import axios from 'axios';
 import StatsTableHeaders from "./StatsTableHeaders";
 import StatsTableBody from "./StatsTableBody";
 import { Column, LeagueDashLineupAdvanced, Stats } from "../interfaces/StatsTable";
-import { advancedLineupColumns, advancedPlayerColumns, basePlayerColumns, baseLineupColumns } from "../interfaces/Columns";
+import { advancedLineupColumns, advancedPlayerColumns, basePlayerColumns, baseLineupColumns, fourFactorsLineupColumns, miscLineupColumns, scoringLineupColumns, opponentLineupColumns } from "../interfaces/Columns";
+import styled from 'styled-components';
 
 interface StatsTableProps {
     selectedSeason: string;
     selectedLineupPlayer: string;
     selectedBoxType: string;
     numPlayers: string;
+    perMode: string;
 }
 
+const StyledTable = styled.table`
+    max-height: 500px;
+`
+
+const TableContainer = styled.div`
+    max-width: 800px;
+    max-height: 600px;
+    overflow: auto;
+`
 
 
 
+const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode }) => {
 
-const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers }) => {
-
+    const [sortField, setSortField] = useState("min");
+    const [order, setOrder] = useState("desc");
     const [tableData, setTableData] = useState<Stats[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
-
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
 
@@ -42,13 +54,20 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
                 if (selectedBoxType === 'Advanced') {
                     setColumns(advancedLineupColumns);
                 } else if (selectedBoxType === 'Base') {
+                    console.log('BASE');
                     setColumns(baseLineupColumns);
-                } else {
-                    setColumns(advancedLineupColumns);
+                } else if (selectedBoxType === 'FourFactors') {
+                    setColumns(fourFactorsLineupColumns);
+                } else if (selectedBoxType === 'Misc') {
+                    setColumns(miscLineupColumns);
+                } else if (selectedBoxType === 'Scoring') {
+                    setColumns(scoringLineupColumns);
+                } else if (selectedBoxType === 'Opponent') {
+                    setColumns(opponentLineupColumns);
                 }
                 try {
                     console.log(selectedBoxType);
-                    const data = await axios.get(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}`);
+                    const data = await axios.get(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${page}/${perMode}`);
                     console.log(data.data);
                     setTableData(data.data);
                 } catch (error) {
@@ -80,7 +99,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
         if (selectedSeason) {
             getStats()
         }
-    }, [numPlayers, selectedLineupPlayer, selectedSeason, selectedBoxType]);
+    }, [numPlayers, selectedLineupPlayer, selectedSeason, selectedBoxType, sortField, order, page]);
 
     /*
     const columns = [
@@ -115,18 +134,30 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
         }
     };
 
+    const handleNextPage = () => {
+        setPage(page + 1);
+    };
 
+    const handlePrevPage = () => {
+        if (page > 1) {
+            setPage(page - 1);
+        }
+    };
 
     return (
-        <div>
-            <table className='ultimateTable'>
+        <TableContainer>
+            <StyledTable>
                 <caption>
                     Click on a stat header to sort all players by stat
                 </caption>
-                <StatsTableHeaders columns={columns} handleSorting={handleSorting} smallHeaders={false} />
+                <StatsTableHeaders columns={columns} handleSorting={handleSorting} smallHeaders={false} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} />
                 <StatsTableBody columns={columns} tableData={tableData} />
-            </table>
-        </div>
+            </StyledTable>
+            <div>
+                <button onClick={handlePrevPage} disabled={page === 1}>Previous</button>
+                <button onClick={handleNextPage}>Next</button>
+            </div>
+        </TableContainer>
     );
 };
 

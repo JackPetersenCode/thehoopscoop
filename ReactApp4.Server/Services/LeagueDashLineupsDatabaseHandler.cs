@@ -7,6 +7,10 @@ using Newtonsoft.Json;
 using Npgsql;
 using NpgsqlTypes;
 using ReactApp4.Server.Data;
+using static System.Net.WebRequestMethods;
+using System.Runtime.Intrinsics.X86;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace ReactApp4.Server.Services
 {
@@ -14,24 +18,116 @@ namespace ReactApp4.Server.Services
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<IActionResult> GetLeagueDashLineups(string season, string boxType, string numPlayers)
+        public async Task<IActionResult> GetLeagueDashLineups(string season, string boxType, string numPlayers, string order, string sortField, int page, string perMode)
         {
             try
             {
-                var tableName = $"league_dash_lineups_{boxType}_{numPlayers}man_{season}";
+                var tableName = $"league_dash_lineups_{boxType.ToLower()}_{numPlayers}man_{season}";
 
-                var query = $"SELECT * FROM {tableName}";
+                var query = $"SELECT * FROM {tableName} ORDER BY {sortField} {order}";
+
+                int pageSize = 100;
 
                 if (boxType == "Advanced")
                 {
-                    var leagueDashLineups = await _context.LeagueDashLineupAdvanceds.FromSqlRaw(query).ToListAsync();
+                    var leagueDashLineups = await _context.LeagueDashLineupAdvanceds.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups); // Wrap the result in OkObjectResult
                 } else if (boxType == "Base")
                 {
-                    var leagueDashLineups = await _context.LeagueDashLineupBases.FromSqlRaw(query).ToListAsync();
-                    return Ok(leagueDashLineups); // Wrap the result in OkObjectResult
-                }
+                    if (perMode == "Totals")
+                    {
+                        query = $"SELECT * FROM {tableName} ORDER BY {sortField} {order}";
+                    }
+                    else if (perMode == "PerGame")
+                    {
+                        query = $"SELECT id, group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min / gp AS min, " +
+                                $"fgm / gp AS fgm, fga / gp AS fga, fg_pct, fg3m / gp AS fg3m, fg3a / gp AS fg3a, fg3_pct, " +
+                                $"ftm / gp AS ftm, fta / gp AS fta, ft_pct, oreb / gp AS oreb, dreb / gp AS dreb, reb / gp AS reb, " +
+                                $"ast / gp AS ast, tov / gp AS tov, stl / gp AS stl, blk / gp AS blk, blka / gp AS blka, pf / gp AS pf, pfd / gp AS pfd, " +
+                                $"pts / gp AS pts, plus_minus / gp AS plus_minus, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, fgm_rank, fga_rank, fg_pct_rank, " +
+                                $"fg3m_rank, fg3a_rank, fg3_pct_rank, ftm_rank, fta_rank, ft_pct_rank, oreb_rank, dreb_rank, reb_rank, ast_rank, tov_rank, " +
+                                $"stl_rank, blk_rank, blka_rank, pf_rank, pfd_rank, pts_rank, plus_minus_rank " +
+                                $"FROM {tableName} ORDER BY {sortField} {order}";
+                        Console.WriteLine(query);
+
+                    }
+                    else if (perMode == "PerMinute")
+                    {
+                        query = $"SELECT id, group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, " +
+                                $"fgm / min AS fgm, fga / min AS fga, fg_pct, fg3m / min AS fg3m, fg3a / min AS fg3a, fg3_pct, " +
+                                $"ftm / min AS ftm, fta / min AS fta, ft_pct, oreb / min AS oreb, dreb / min AS dreb, reb / min AS reb, " +
+                                $"ast / min AS ast, tov / min AS tov, stl / min AS stl, blk / min AS blk, blka / min AS blka, pf / min AS pf, pfd / min AS pfd, " +
+                                $"pts / min AS pts, plus_minus / min AS plus_minus, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, fgm_rank, fga_rank, fg_pct_rank, " +
+                                $"fg3m_rank, fg3a_rank, fg3_pct_rank, ftm_rank, fta_rank, ft_pct_rank, oreb_rank, dreb_rank, reb_rank, ast_rank, tov_rank, " +
+                                $"stl_rank, blk_rank, blka_rank, pf_rank, pfd_rank, pts_rank, plus_minus_rank " +
+                                $"FROM {tableName} ORDER BY {sortField} {order}";
+                        Console.WriteLine(query);
+
+                    } else if (perMode == "PerPossession")
+                    {
+                        var joinedTable = $"league_dash_lineups_advanced_{numPlayers}man_{season}";
+
+                        query = $"SELECT {tableName}.id, {tableName}.group_set, {tableName}.group_id, {tableName}.group_name, {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.gp, {tableName}.w, {tableName}.l, {tableName}.w_pct, {tableName}.min, " +
+                                $"fgm / {joinedTable}.poss AS fgm, fga / {joinedTable}.poss AS fga, fg_pct, fg3m / {joinedTable}.poss AS fg3m, fg3a / {joinedTable}.poss AS fg3a, fg3_pct, " +
+                                $"ftm / {joinedTable}.poss AS ftm, fta / {joinedTable}.poss AS fta, ft_pct, oreb / {joinedTable}.poss AS oreb, dreb / {joinedTable}.poss AS dreb, reb / {joinedTable}.poss AS reb, " +
+                                $"ast / {joinedTable}.poss AS ast, tov / {joinedTable}.poss AS tov, stl / {joinedTable}.poss AS stl, blk / {joinedTable}.poss AS blk, blka / {joinedTable}.poss AS blka, pf / {joinedTable}.poss AS pf, pfd / {joinedTable}.poss AS pfd, " +
+                                $"pts / {joinedTable}.poss AS pts, plus_minus / {joinedTable}.poss AS plus_minus, {tableName}.gp_rank, {tableName}.w_rank, {tableName}.l_rank, {tableName}.w_pct_rank, {tableName}.min_rank, fgm_rank, fga_rank, fg_pct_rank, " +
+                                $"fg3m_rank, fg3a_rank, fg3_pct_rank, ftm_rank, fta_rank, ft_pct_rank, oreb_rank, dreb_rank, reb_rank, ast_rank, tov_rank, " +
+                                $"stl_rank, blk_rank, blka_rank, pf_rank, pfd_rank, pts_rank, plus_minus_rank " +
+                                $"FROM {tableName} " +
+                                $"INNER JOIN {joinedTable} " +
+                                $"ON {tableName}.group_id = {joinedTable}.group_id " +
+                                $"ORDER BY {sortField} {order}";
+                    }
+                    var leagueDashLineups = await _context.LeagueDashLineupBases.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    Console.WriteLine(leagueDashLineups.Count);
+                    return Ok(leagueDashLineups);
+            
+                } else if (boxType == "FourFactors")
                 {
+                    var leagueDashLineups = await _context.LeagueDashLineupFourFactors.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    Console.WriteLine(leagueDashLineups.Count);
+                    return Ok(leagueDashLineups);
+                } else if (boxType == "Misc")
+                {
+                    var joinedTable = $"league_dash_lineups_advanced_{numPlayers}man_{season}";
+
+                    if (perMode == "Totals")
+                    {
+                        query = $"SELECT * FROM {tableName} ORDER BY {sortField} {order}";
+                    }
+                    else if (perMode == "PerPossession")
+                    {
+                        query = $"SELECT {tableName}.id, {tableName}.group_set, {tableName}.group_id, {tableName}.group_name, " +
+                                $"{tableName}.team_id, {tableName}.team_abbreviation, {tableName}.gp, {tableName}.w, {tableName}.l, " +
+                                $"{tableName}.w_pct, {tableName}.min / {joinedTable}.poss AS min, {tableName}.pts_off_tov / {joinedTable}.poss AS pts_off_tov, " +
+                                $"{tableName}.pts_2nd_chance / {joinedTable}.poss AS pts_2nd_chance, {tableName}.pts_fb / {joinedTable}.poss AS pts_fb, " +
+                                $"{tableName}.pts_paint / {joinedTable}.poss AS pts_paint, {tableName}.opp_pts_2nd_chance / {joinedTable}.poss AS opp_pts_2nd_chance, " +
+                                $"{tableName}.opp_pts_fb / {joinedTable}.poss AS opp_pts_fb, {tableName}.opp_pts_paint / {joinedTable}.poss AS opp_pts_paint, " +
+                                $"{tableName}.gp_rank, {tableName}.w_rank, {tableName}.l_rank, {tableName}.w_pct_rank, {tableName}.min_rank, " +
+                                $"pts_off_tov_rank, pts_2nd_chance_rank, pts_fb_rank, pts_paint_rank, opp_pts_off_tov_rank, opp_pts_2nd_chance_rank, opp_pts_fb_rank, opp_pts_paint_rank " +
+                                $"FROM {tableName} " +
+                                $"INNER JOIN {joinedTable} " +
+                                $"ON {tableName}.group_id = {joinedTable}.group_id " +
+                                $"ORDER BY {sortField} {order}";
+                    }
+                    Console.WriteLine(boxType);
+                    var leagueDashLineups = await _context.LeagueDashLineupMiscs.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    Console.WriteLine(leagueDashLineups.Count);
+                    return Ok(leagueDashLineups);
+                } else if (boxType == "Scoring")
+                {
+                    var leagueDashLineups = await _context.LeagueDashLineupScorings.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    Console.WriteLine(leagueDashLineups.Count);
+                    return Ok(leagueDashLineups);
+                } else if (boxType == "Opponent")
+                {
+                    var leagueDashLineups = await _context.LeagueDashLineupOpponents.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    Console.WriteLine(leagueDashLineups.Count);
+                    return Ok(leagueDashLineups);
+                }
+            {
                     return Ok("Not setup yet");
                 }
             }

@@ -6,16 +6,21 @@ interface StatsTableHeadersProps {
     columns: Column[] | string[];
     handleSorting: SortingFunction;
     smallHeaders: boolean;
+    sortField: string;
+    setSortField: React.Dispatch<React.SetStateAction<string>>;
+    order: string;
+    setOrder: React.Dispatch<React.SetStateAction<string>>;
 }
+
+
 
 const isColumnArray = (input: Column[] | string[]): input is Column[] => {
     return typeof input[0] !== 'string';
 };
 
 
-const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, handleSorting, smallHeaders }) => {
-    const [sortField, setSortField] = useState("");
-    const [order, setOrder] = useState("asc");
+const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, handleSorting, smallHeaders, sortField, setSortField, order, setOrder }) => {
+
     if (!isColumnArray(columns)) {
         return (
             <thead>
@@ -36,7 +41,7 @@ const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, handleSo
                 accessor === sortField && order === "asc" ? "desc" : "asc";
             setSortField(accessor);
             setOrder(sortOrder);
-            handleSorting(accessor, sortOrder);
+            //handleSorting(accessor, sortOrder);
         };
         if (smallHeaders) {
             return (

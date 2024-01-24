@@ -4,23 +4,26 @@ namespace ReactApp4.Server.Data
 {
     public class LeagueDashLineupOpponent
     {
+        [Column("id")]
+        public int Id { get; set; }
+
         [Column("group_set")]
-        public string? GROUP_SET { get; set; }
+        public string? Group_set { get; set; }
 
         [Column("group_id")]
-        public string? GROUP_ID { get; set; }
+        public string? Group_id { get; set; }
 
         [Column("group_name")]
-        public string? GROUP_NAME { get; set; }
+        public string? Group_name { get; set; }
 
         [Column("team_id")]
-        public string? TEAM_ID { get; set; }
+        public string? Team_id { get; set; }
 
         [Column("team_abbreviation")]
-        public string? TEAM_ABBREVIATION { get; set; }
+        public string? Team_abbreviation { get; set; }
 
         [Column("gp")]
-        public int? GP { get; set; }
+        public int? Gp { get; set; }
 
         [Column("w")]
         public int? W { get; set; }
@@ -29,150 +32,150 @@ namespace ReactApp4.Server.Data
         public int? L { get; set; }
 
         [Column("w_pct")]
-        public decimal? W_PCT { get; set; }
+        public decimal? W_pct { get; set; }
 
         [Column("min")]
-        public decimal? MIN { get; set; }
+        public decimal? Min { get; set; }
 
         [Column("opp_fgm")]
-        public decimal? OPP_FGM { get; set; }
+        public decimal? Opp_fgm { get; set; }
 
         [Column("opp_fga")]
-        public decimal? OPP_FGA { get; set; }
+        public decimal? Opp_fga { get; set; }
 
         [Column("opp_fg_pct")]
-        public decimal? OPP_FG_PCT { get; set; }
+        public decimal? Opp_fg_pct { get; set; }
 
         [Column("opp_fg3m")]
-        public decimal? OPP_FG3M { get; set; }
+        public decimal? Opp_fg3m { get; set; }
 
         [Column("opp_fg3a")]
-        public decimal? OPP_FG3A { get; set; }
+        public decimal? Opp_fg3a { get; set; }
 
         [Column("opp_fg3_pct")]
-        public decimal? OPP_FG3_PCT { get; set; }
+        public decimal? Opp_fg3_pct { get; set; }
 
         [Column("opp_ftm")]
-        public decimal? OPP_FTM { get; set; }
+        public decimal? Opp_ftm { get; set; }
 
         [Column("opp_fta")]
-        public decimal? OPP_FTA { get; set; }
+        public decimal? Opp_fta { get; set; }
 
         [Column("opp_ft_pct")]
-        public decimal? OPP_FT_PCT { get; set; }
+        public decimal? Opp_ft_pct { get; set; }
 
         [Column("opp_oreb")]
-        public decimal? OPP_OREB { get; set; }
+        public decimal? Opp_oreb { get; set; }
 
         [Column("opp_dreb")]
-        public decimal? OPP_DREB { get; set; }
+        public decimal? Opp_dreb { get; set; }
 
         [Column("opp_reb")]
-        public decimal? OPP_REB { get; set; }
+        public decimal? Opp_reb { get; set; }
 
         [Column("opp_ast")]
-        public decimal? OPP_AST { get; set; }
+        public decimal? Opp_ast { get; set; }
 
         [Column("opp_tov")]
-        public decimal? OPP_TOV { get; set; }
+        public decimal? Opp_tov { get; set; }
 
         [Column("opp_stl")]
-        public decimal? OPP_STL { get; set; }
+        public decimal? Opp_stl { get; set; }
 
         [Column("opp_blk")]
-        public decimal? OPP_BLK { get; set; }
+        public decimal? Opp_blk { get; set; }
 
         [Column("opp_blka")]
-        public decimal? OPP_BLKA { get; set; }
+        public decimal? Opp_blka { get; set; }
 
         [Column("opp_pf")]
-        public decimal? OPP_PF { get; set; }
+        public decimal? Opp_pf { get; set; }
 
         [Column("opp_pfd")]
-        public decimal? OPP_PFD { get; set; }
+        public decimal? Opp_pfd { get; set; }
 
         [Column("opp_pts")]
-        public decimal? OPP_PTS { get; set; }
+        public decimal? Opp_pts { get; set; }
 
         [Column("plus_minus")]
-        public decimal? PLUS_MINUS { get; set; }
+        public decimal? Plus_minus { get; set; }
 
         [Column("gp_rank")]
-        public int? GP_RANK { get; set; }
+        public int? Gp_rank { get; set; }
 
         [Column("w_rank")]
-        public int? W_RANK { get; set; }
+        public int? W_rank { get; set; }
 
         [Column("l_rank")]
-        public int? L_RANK { get; set; }
+        public int? L_rank { get; set; }
 
         [Column("w_pct_rank")]
-        public int? W_PCT_RANK { get; set; }
+        public int? W_pct_rank { get; set; }
 
         [Column("min_rank")]
-        public int? MIN_RANK { get; set; }
+        public int? Min_rank { get; set; }
 
         [Column("opp_fgm_rank")]
-        public int? OPP_FGM_RANK { get; set; }
+        public int? Opp_fgm_rank { get; set; }
 
         [Column("opp_fga_rank")]
-        public int? OPP_FGA_RANK { get; set; }
+        public int? Opp_fga_rank { get; set; }
 
         [Column("opp_fg_pct_rank")]
-        public int? OPP_FG_PCT_RANK { get; set; }
+        public int? Opp_fg_pct_rank { get; set; }
 
         [Column("opp_fg3m_rank")]
-        public int? OPP_FG3M_RANK { get; set; }
+        public int? Opp_fg3m_rank { get; set; }
 
         [Column("opp_fg3a_rank")]
-        public int? OPP_FG3A_RANK { get; set; }
+        public int? Opp_fg3a_rank { get; set; }
 
         [Column("opp_fg3_pct_rank")]
-        public int? OPP_FG3_PCT_RANK { get; set; }
+        public int? Opp_fg3_pct_rank { get; set; }
 
         [Column("opp_ftm_rank")]
-        public int? OPP_FTM_RANK { get; set; }
+        public int? Opp_ftm_rank { get; set; }
 
         [Column("opp_fta_rank")]
-        public int? OPP_FTA_RANK { get; set; }
+        public int? Opp_fta_rank { get; set; }
 
         [Column("opp_ft_pct_rank")]
-        public int? OPP_FT_PCT_RANK { get; set; }
+        public int? Opp_ft_pct_rank { get; set; }
 
         [Column("opp_oreb_rank")]
-        public int? OPP_OREB_RANK { get; set; }
+        public int? Opp_oreb_rank { get; set; }
 
         [Column("opp_dreb_rank")]
-        public int? OPP_DREB_RANK { get; set; }
+        public int? Opp_dreb_rank { get; set; }
 
         [Column("opp_reb_rank")]
-        public int? OPP_REB_RANK { get; set; }
+        public int? Opp_reb_rank { get; set; }
 
         [Column("opp_ast_rank")]
-        public int? OPP_AST_RANK { get; set; }
+        public int? Opp_ast_rank { get; set; }
 
         [Column("opp_tov_rank")]
-        public int? OPP_TOV_RANK { get; set; }
+        public int? Opp_tov_rank { get; set; }
 
         [Column("opp_stl_rank")]
-        public int? OPP_STL_RANK { get; set; }
+        public int? Opp_stl_rank { get; set; }
 
         [Column("opp_blk_rank")]
-        public int? OPP_BLK_RANK { get; set; }
+        public int? Opp_blk_rank { get; set; }
 
         [Column("opp_blka_rank")]
-        public int? OPP_BLKA_RANK { get; set; }
+        public int? Opp_blka_rank { get; set; }
 
         [Column("opp_pf_rank")]
-        public int? OPP_PF_RANK { get; set; }
+        public int? Opp_pf_rank { get; set; }
 
-        [Column("opp_pfd1")]
-        public int? OPP_PFD1 { get; set; }
+        [Column("opp_pfd1_rank")]
+        public int? Opp_pfd1_rank { get; set; }
 
         [Column("opp_pts_rank")]
-        public int? OPP_PTS_RANK { get; set; }
+        public int? Opp_pts_rank { get; set; }
 
         [Column("plus_minus_rank")]
-        public int? PLUS_MINUS_RANK { get; set; }
+        public int? Plus_minus_rank { get; set; }
     }
 }

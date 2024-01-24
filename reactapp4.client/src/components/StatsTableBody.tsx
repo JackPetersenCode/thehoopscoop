@@ -18,6 +18,7 @@ function isNumber(value: string | number): value is number {
 //<td>
 //    <button onClick={() => (deletePlayer(index))}>x</button>
 //</td>
+
 const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData }) => {
     console.log(tableData);
 

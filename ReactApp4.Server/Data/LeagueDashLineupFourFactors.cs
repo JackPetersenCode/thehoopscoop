@@ -4,6 +4,9 @@ namespace ReactApp4.Server.Data
 {
     public class LeagueDashLineupFourFactors
     {
+        [Column("id")]
+        public int Id { get; set; }
+
         [Column("group_set")]
         public string? Group_set { get; set; }
 

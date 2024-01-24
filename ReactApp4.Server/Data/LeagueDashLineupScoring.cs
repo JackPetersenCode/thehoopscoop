@@ -4,23 +4,26 @@ namespace ReactApp4.Server.Data
 {
     public class LeagueDashLineupScoring
     {
+        [Column("id")]
+        public int Id { get; set; }
+
         [Column("group_set")]
-        public string? GROUP_SET { get; set; }
+        public string? Group_set { get; set; }
 
         [Column("group_id")]
-        public string? GROUP_ID { get; set; }
+        public string? Group_id { get; set; }
 
         [Column("group_name")]
-        public string? GROUP_NAME { get; set; }
+        public string? Group_name { get; set; }
 
         [Column("team_id")]
-        public string? TEAM_ID { get; set; }
+        public string? Team_id { get; set; }
 
         [Column("team_abbreviation")]
-        public string? TEAM_ABBREVIATION { get; set; }
+        public string? Team_abbreviation { get; set; }
 
         [Column("gp")]
-        public int? GP { get; set; }
+        public int? Gp { get; set; }
 
         [Column("w")]
         public int? W { get; set; }
@@ -29,114 +32,114 @@ namespace ReactApp4.Server.Data
         public int? L { get; set; }
 
         [Column("w_pct")]
-        public decimal? W_PCT { get; set; }
+        public decimal? W_pct { get; set; }
 
         [Column("min")]
-        public decimal? MIN { get; set; }
+        public decimal? Min { get; set; }
 
         [Column("pct_fga_2pt")]
-        public decimal? PCT_FGA_2PT { get; set; }
+        public decimal? Pct_fga_2pt { get; set; }
 
         [Column("pct_fga_3pt")]
-        public decimal? PCT_FGA_3PT { get; set; }
+        public decimal? Pct_fga_3pt { get; set; }
 
         [Column("pct_pts_2pt")]
-        public decimal? PCT_PTS_2PT { get; set; }
+        public decimal? Pct_pts_2pt { get; set; }
 
         [Column("pct_pts_2pt_mr")]
-        public decimal? PCT_PTS_2PT_MR { get; set; }
+        public decimal? Pct_pts_2pt_mr { get; set; }
 
         [Column("pct_pts_3pt")]
-        public decimal? PCT_PTS_3PT { get; set; }
+        public decimal? Pct_pts_3pt { get; set; }
 
         [Column("pct_pts_fb")]
-        public decimal? PCT_PTS_FB { get; set; }
+        public decimal? Pct_pts_fb { get; set; }
 
         [Column("pct_pts_ft")]
-        public decimal? PCT_PTS_FT { get; set; }
+        public decimal? Pct_pts_ft { get; set; }
 
         [Column("pct_pts_off_tov")]
-        public decimal? PCT_PTS_OFF_TOV { get; set; }
+        public decimal? Pct_pts_off_tov { get; set; }
 
         [Column("pct_pts_paint")]
-        public decimal? PCT_PTS_PAINT { get; set; }
+        public decimal? Pct_pts_paint { get; set; }
 
         [Column("pct_ast_2pm")]
-        public decimal? PCT_AST_2PM { get; set; }
+        public decimal? Pct_ast_2pm { get; set; }
 
         [Column("pct_uast_2pm")]
-        public decimal? PCT_UAST_2PM { get; set; }
+        public decimal? Pct_uast_2pm { get; set; }
 
         [Column("pct_ast_3pm")]
-        public decimal? PCT_AST_3PM { get; set; }
+        public decimal? Pct_ast_3pm { get; set; }
 
         [Column("pct_uast_3pm")]
-        public decimal? PCT_UAST_3PM { get; set; }
+        public decimal? Pct_uast_3pm { get; set; }
 
         [Column("pct_ast_fgm")]
-        public decimal? PCT_AST_FGM { get; set; }
+        public decimal? Pct_ast_fgm { get; set; }
 
         [Column("pct_uast_fgm")]
-        public decimal? PCT_UAST_FGM { get; set; }
+        public decimal? Pct_uast_fgm { get; set; }
 
         [Column("gp_rank")]
-        public int? GP_RANK { get; set; }
+        public int? Gp_rank { get; set; }
 
         [Column("w_rank")]
-        public int? W_RANK { get; set; }
+        public int? W_rank { get; set; }
 
         [Column("l_rank")]
-        public int? L_RANK { get; set; }
+        public int? L_rank { get; set; }
 
         [Column("w_pct_rank")]
-        public int? W_PCT_RANK { get; set; }
+        public int? W_pct_rank { get; set; }
 
         [Column("min_rank")]
-        public int? MIN_RANK { get; set; }
+        public int? Min_rank { get; set; }
 
         [Column("pct_fga_2pt_rank")]
-        public int? PCT_FGA_2PT_RANK { get; set; }
+        public int? Pct_fga_2pt_rank { get; set; }
 
         [Column("pct_fga_3pt_rank")]
-        public int? PCT_FGA_3PT_RANK { get; set; }
+        public int? Pct_fga_3pt_rank { get; set; }
 
         [Column("pct_pts_2pt_rank")]
-        public int? PCT_PTS_2PT_RANK { get; set; }
+        public int? Pct_pts_2pt_rank { get; set; }
 
         [Column("pct_pts_2pt_mr_rank")]
-        public int? PCT_PTS_2PT_MR_RANK { get; set; }
+        public int? Pct_pts_2pt_mr_rank { get; set; }
 
         [Column("pct_pts_3pt_rank")]
-        public int? PCT_PTS_3PT_RANK { get; set; }
+        public int? Pct_pts_3pt_rank { get; set; }
 
         [Column("pct_pts_fb_rank")]
-        public int? PCT_PTS_FB_RANK { get; set; }
+        public int? Pct_pts_fb_rank { get; set; }
 
         [Column("pct_pts_ft_rank")]
-        public int? PCT_PTS_FT_RANK { get; set; }
+        public int? Pct_pts_ft_rank { get; set; }
 
         [Column("pct_pts_off_tov_rank")]
-        public int? PCT_PTS_OFF_TOV_RANK { get; set; }
+        public int? Pct_pts_off_tov_rank { get; set; }
 
         [Column("pct_pts_paint_rank")]
-        public int? PCT_PTS_PAINT_RANK { get; set; }
+        public int? Pct_pts_paint_rank { get; set; }
 
         [Column("pct_ast_2pm_rank")]
-        public int? PCT_AST_2PM_RANK { get; set; }
+        public int? Pct_ast_2pm_rank { get; set; }
 
         [Column("pct_uast_2pm_rank")]
-        public int? PCT_UAST_2PM_RANK { get; set; }
+        public int? Pct_uast_2pm_rank { get; set; }
 
         [Column("pct_ast_3pm_rank")]
-        public int? PCT_AST_3PM_RANK { get; set; }
+        public int? Pct_ast_3pm_rank { get; set; }
 
         [Column("pct_uast_3pm_rank")]
-        public int? PCT_UAST_3PM_RANK { get; set; }
+        public int? Pct_uast_3pm_rank { get; set; }
 
         [Column("pct_ast_fgm_rank")]
-        public int? PCT_AST_FGM_RANK { get; set; }
+        public int? Pct_ast_fgm_rank { get; set; }
 
         [Column("pct_uast_fgm_rank")]
-        public int? PCT_UAST_FGM_RANK { get; set; }
+        public int? Pct_uast_fgm_rank { get; set; }
     }
 }

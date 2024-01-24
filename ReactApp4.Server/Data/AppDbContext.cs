@@ -53,6 +53,10 @@ namespace ReactApp4.Server.Data
         public DbSet<Player> Players { get; set; }
         public DbSet<LeagueDashLineupAdvanced> LeagueDashLineupAdvanceds { get; set; }
         public DbSet<LeagueDashLineupBase> LeagueDashLineupBases { get; set; }
+        public DbSet<LeagueDashLineupFourFactors> LeagueDashLineupFourFactors { get; set; }
+        public DbSet<LeagueDashLineupMisc> LeagueDashLineupMiscs { get; set; }
+        public DbSet<LeagueDashLineupScoring> LeagueDashLineupScorings { get; set; }
+        public DbSet<LeagueDashLineupOpponent> LeagueDashLineupOpponents { get; set; }
 
     }
 }

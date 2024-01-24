@@ -4,23 +4,26 @@ namespace ReactApp4.Server.Data
 {
     public class LeagueDashLineupMisc
     {
+        [Column("id")]
+        public int Id { get; set; }
+
         [Column("group_set")]
-        public string? GROUP_SET { get; set; }
+        public string? Group_set { get; set; }
 
         [Column("group_id")]
-        public string? GROUP_ID { get; set; }
+        public string? Group_id { get; set; }
 
         [Column("group_name")]
-        public string? GROUP_NAME { get; set; }
+        public string? Group_name { get; set; }
 
         [Column("team_id")]
-        public string? TEAM_ID { get; set; }
+        public string? Team_id { get; set; }
 
         [Column("team_abbreviation")]
-        public string? TEAM_ABBREVIATION { get; set; }
+        public string? Team_abbreviation { get; set; }
 
         [Column("gp")]
-        public int? GP { get; set; }
+        public int? Gp { get; set; }
 
         [Column("w")]
         public int? W { get; set; }
@@ -29,72 +32,72 @@ namespace ReactApp4.Server.Data
         public int? L { get; set; }
 
         [Column("w_pct")]
-        public decimal? W_PCT { get; set; }
+        public decimal? W_pct { get; set; }
 
         [Column("min")]
-        public decimal? MIN { get; set; }
+        public decimal? Min { get; set; }
 
         [Column("pts_off_tov")]
-        public decimal? PTS_OFF_TOV { get; set; }
+        public decimal? Pts_off_tov { get; set; }
 
         [Column("pts_2nd_chance")]
-        public decimal? PTS_2ND_CHANCE { get; set; }
+        public decimal? Pts_2nd_chance { get; set; }
 
         [Column("pts_fb")]
-        public decimal? PTS_FB { get; set; }
+        public decimal? Pts_fb { get; set; }
 
         [Column("pts_paint")]
-        public decimal? PTS_PAINT { get; set; }
+        public decimal? Pts_paint { get; set; }
 
         [Column("opp_pts_off_tov")]
-        public decimal? OPP_PTS_OFF_TOV { get; set; }
+        public decimal? Opp_pts_off_tov { get; set; }
 
         [Column("opp_pts_2nd_chance")]
-        public decimal? OPP_PTS_2ND_CHANCE { get; set; }
+        public decimal? Opp_pts_2nd_chance { get; set; }
 
         [Column("opp_pts_fb")]
-        public decimal? OPP_PTS_FB { get; set; }
+        public decimal? Opp_pts_fb { get; set; }
 
         [Column("opp_pts_paint")]
-        public decimal? OPP_PTS_PAINT { get; set; }
+        public decimal? Opp_pts_paint { get; set; }
 
         [Column("gp_rank")]
-        public int? GP_RANK { get; set; }
+        public int? Gp_rank { get; set; }
 
         [Column("w_rank")]
-        public int? W_RANK { get; set; }
+        public int? W_rank { get; set; }
 
         [Column("l_rank")]
-        public int? L_RANK { get; set; }
+        public int? L_rank { get; set; }
 
         [Column("w_pct_rank")]
-        public int? W_PCT_RANK { get; set; }
+        public int? W_pct_rank { get; set; }
 
         [Column("min_rank")]
-        public int? MIN_RANK { get; set; }
+        public int? Min_rank { get; set; }
 
         [Column("pts_off_tov_rank")]
-        public int? PTS_OFF_TOV_RANK { get; set; }
+        public int? Pts_off_tov_rank { get; set; }
 
         [Column("pts_2nd_chance_rank")]
-        public int? PTS_2ND_CHANCE_RANK { get; set; }
+        public int? Pts_2nd_chance_rank { get; set; }
 
         [Column("pts_fb_rank")]
-        public int? PTS_FB_RANK { get; set; }
+        public int? Pts_fb_rank { get; set; }
 
         [Column("pts_paint_rank")]
-        public int? PTS_PAINT_RANK { get; set; }
+        public int? Pts_paint_rank { get; set; }
 
         [Column("opp_pts_off_tov_rank")]
-        public int? OPP_PTS_OFF_TOV_RANK { get; set; }
+        public int? Opp_pts_off_tov_rank { get; set; }
 
         [Column("opp_pts_2nd_chance_rank")]
-        public int? OPP_PTS_2ND_CHANCE_RANK { get; set; }
+        public int? Opp_pts_2nd_chance_rank { get; set; }
 
         [Column("opp_pts_fb_rank")]
-        public int? OPP_PTS_FB_RANK { get; set; }
+        public int? Opp_pts_fb_rank { get; set; }
 
         [Column("opp_pts_paint_rank")]
-        public int? OPP_PTS_PAINT_RANK { get; set; }
+        public int? Opp_pts_paint_rank { get; set; }
     }
 }

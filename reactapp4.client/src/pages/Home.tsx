@@ -19,6 +19,7 @@ function Home() {
     const [selectedLineupPlayer, setSelectedLineupPlayer] = useState('Lineups');
     const [selectedBoxType, setSelectedBoxType] = useState('Advanced');
     const [numPlayers, setNumPlayers] = useState('5');
+    const [perMode, setPerMode] = useState('Totals');
 
     const lineupPlayerOptions = [
         'Lineups',
@@ -31,8 +32,8 @@ function Home() {
         'FourFactors',
         'Misc',
         'Scoring',
-        'Opponents'
-    ]
+        'Opponent'
+    ];
 
 
     useEffect(() => {
@@ -64,29 +65,18 @@ function Home() {
                 <div>
                     <LineupPlayerSelect options={statOptions} selectedOption={selectedBoxType} setSelectedOption={setSelectedBoxType} />
                 </div>
-                <div>
-                    <SeasonsDropDown
-                        selectedSeason={selectedSeason}
-                        setSelectedSeason={setSelectedSeason}
-                        predictions={false}
-                    />
-                </div>
-                
-                <div>
-                    <select>
-                        {activePlayers.map((player, index) => (
-                            <option key={index}>
-                                {player.full_name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
                 <div className="search-container">
                     <SearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} />
                 </div>
 
             </DataFlex>
-            <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} />
+            <SeasonsDropDown
+                selectedSeason={selectedSeason}
+                setSelectedSeason={setSelectedSeason}
+                predictions={false}
+            />
+            <PerModeDropDown perMode={perMode} setPerMode={setPerMode} />
+            <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} />
 
         </div>
     );

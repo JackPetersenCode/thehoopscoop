@@ -1,13 +1,38 @@
 import axios from "axios";
 import '../App.css';
 import React, { useEffect, useState } from "react";
-
-
+import styled from 'styled-components';
+import '../style.css';
 interface SeasonsDropDownProps {
     selectedSeason: string;
     setSelectedSeason: React.Dispatch<React.SetStateAction<string>>;
     predictions: boolean;
 }
+
+const SeasonFlex = styled.div`
+    display: flex;
+    flex-direction: column;
+`
+
+const DropTitle = styled.div`
+    color: rgb(153, 153, 153);
+    font-size: x-small;
+    font-weight: 600;
+    text-align: left;
+`
+
+const SeasonSelect = styled.select`
+    padding: 5px;
+    border: solid transparent;
+    border-right: 12px solid transparent;
+    background-color: rgb(238, 238, 238);
+    border-radius: 5px;
+    width: 100%;
+`
+
+const SeasonOption = styled.option`
+    padding: 10px;
+`
 
 const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSelectedSeason, predictions }) => {
 
@@ -46,13 +71,13 @@ const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSe
     }
 
     return (
-        <div>
-            <div>
+        <div className="drop-flex">
+            <div className="drop-title">
                 SEASON
             </div>
             <div>
-                <select value={selectedSeason} onChange={handleSeasonChange}>
-                    <option value="0">Select Season</option>
+                <select className="drop-flex-select" value={selectedSeason} onChange={handleSeasonChange}>
+                    <option className="drop-flex-option" value="0">Select Season</option>
 
                     {seasonsData.map((option, index) => (
                         <option key={index} value={Object.values(option)}>{Object.values(option)}</option>

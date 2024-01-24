@@ -1,0 +1,24 @@
+.drop-flex {
+    display: flex;
+    flex-direction: column;
+}
+
+.drop-title {
+    color: rgb(153, 153, 153);
+    font-size: x-small;
+    font-weight: 600;
+    text-align: left;
+}
+
+.drop-flex-select {
+    padding: 5px;
+    border: solid transparent;
+    border-right: 12px solid transparent;
+    background-color: rgb(238, 238, 238);
+    border-radius: 5px;
+    width: 100%;
+}
+
+.drop-flex-option {
+    padding: 10px;
+}
