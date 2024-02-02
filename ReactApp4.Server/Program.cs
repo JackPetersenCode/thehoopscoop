@@ -21,6 +21,22 @@ builder.Services.AddScoped<BoxScoreTraditionalDatabaseHandler>();
 builder.Services.AddScoped<BoxScoreTraditionalFileHandler>();
 builder.Services.AddScoped<BoxScoreTraditionalDataHandler>();
 
+builder.Services.AddScoped<BoxScoreAdvancedDatabaseHandler>();
+builder.Services.AddScoped<BoxScoreAdvancedFileHandler>();
+builder.Services.AddScoped<BoxScoreAdvancedDataHandler>();
+
+builder.Services.AddScoped<BoxScoreFourFactorsDatabaseHandler>();
+builder.Services.AddScoped<BoxScoreFourFactorsFileHandler>();
+builder.Services.AddScoped<BoxScoreFourFactorsDataHandler>();
+
+builder.Services.AddScoped<BoxScoreMiscDatabaseHandler>();
+builder.Services.AddScoped<BoxScoreMiscFileHandler>();
+builder.Services.AddScoped<BoxScoreMiscDataHandler>();
+
+builder.Services.AddScoped<BoxScoreScoringDatabaseHandler>();
+builder.Services.AddScoped<BoxScoreScoringFileHandler>();
+builder.Services.AddScoped<BoxScoreScoringDataHandler>();
+
 builder.Services.AddScoped<LeagueDashLineupsDataHandler>();
 builder.Services.AddScoped<LeagueDashLineupsDatabaseHandler>();
 builder.Services.AddScoped<LeagueDashLineupsFileHandler>();

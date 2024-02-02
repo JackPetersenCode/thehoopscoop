@@ -7,8 +7,9 @@ import axios from 'axios';
 import StatsTableHeaders from "./StatsTableHeaders";
 import StatsTableBody from "./StatsTableBody";
 import { Column, LeagueDashLineupAdvanced, Stats } from "../interfaces/StatsTable";
-import { advancedLineupColumns, advancedPlayerColumns, basePlayerColumns, baseLineupColumns, fourFactorsLineupColumns, miscLineupColumns, scoringLineupColumns, opponentLineupColumns } from "../interfaces/Columns";
+import { advancedLineupColumns, advancedPlayerColumns, basePlayerColumns, fourFactorsPlayerColumns, miscPlayerColumns,scoringPlayerColumns, baseLineupColumns, fourFactorsLineupColumns, miscLineupColumns, scoringLineupColumns, opponentLineupColumns } from "../interfaces/Columns";
 import styled from 'styled-components';
+import { NBATeam } from "../interfaces/Teams";
 
 interface StatsTableProps {
     selectedSeason: string;
@@ -16,6 +17,7 @@ interface StatsTableProps {
     selectedBoxType: string;
     numPlayers: string;
     perMode: string;
+    selectedTeam: NBATeam;
 }
 
 const StyledTable = styled.table`
@@ -30,7 +32,7 @@ const TableContainer = styled.div`
 
 
 
-const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode }) => {
+const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode, selectedTeam }) => {
 
     const [sortField, setSortField] = useState("min");
     const [order, setOrder] = useState("desc");
@@ -67,19 +69,35 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
                 }
                 try {
                     console.log(selectedBoxType);
-                    const data = await axios.get(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${page}/${perMode}`);
+                    console.log(perMode);
+                    const data = await axios.get(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
                     console.log(data.data);
+                    console.log(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
                     setTableData(data.data);
                 } catch (error) {
                     console.log(error);
                 }
             }
             else if (selectedLineupPlayer === 'Player') {
+                if (selectedBoxType === 'Advanced') {
+                    setColumns(advancedPlayerColumns);
+                } else if (selectedBoxType === 'Base') {
+                    console.log('BASE');
+                    setColumns(basePlayerColumns);
+                } else if (selectedBoxType === 'FourFactors') {
+                    setColumns(fourFactorsPlayerColumns);
+                } else if (selectedBoxType === 'Misc') {
+                    setColumns(miscPlayerColumns);
+                } else if (selectedBoxType === 'Scoring') {
+                    setColumns(scoringPlayerColumns);
+                }
                 try {
-                    const data = await axios.get(`/api/Player/${selectedSeason}/${selectedBoxType}`);
-                    console.log(data.data)
-
-                    setTableData(data.data)
+                    console.log(selectedBoxType);
+                    console.log(perMode);
+                    const data = await axios.get(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
+                    console.log(data.data);
+                    console.log(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
+                    setTableData(data.data);
                 } catch (error) {
                     console.log(error);
                 }
@@ -99,7 +117,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
         if (selectedSeason) {
             getStats()
         }
-    }, [numPlayers, selectedLineupPlayer, selectedSeason, selectedBoxType, sortField, order, page]);
+    }, [numPlayers, selectedLineupPlayer, selectedSeason, selectedBoxType, sortField, order, page, perMode, selectedTeam]);
 
     /*
     const columns = [

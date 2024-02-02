@@ -1,0 +1,37 @@
+﻿using System.Collections.Generic;
+using System.IO;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using CsvHelper;
+using System.Formats.Asn1;
+using CsvHelper.Configuration;
+
+
+
+
+namespace ReactApp4.Server.Services
+{
+    public class BoxScoresFileHandler
+    {
+        public async Task<IActionResult> GetBoxScoresFromFile(string season, string boxType, string numPlayers)
+        {
+            try
+            {
+                string filePath = $"../juicystats/box_score_{boxType}_{season}.csv"; // Adjust the path as needed
+                Console.WriteLine(filePath);
+                if (!System.IO.File.Exists(filePath))
+                {
+                    Console.WriteLine("couldnt find the file");
+                    return new NotFoundResult(); // Handle case where file doesn't exist
+                }
+
+                string jsonContent = await System.IO.File.ReadAllTextAsync(filePath);
+                return new OkObjectResult(jsonContent);
+            }
+            catch (Exception)
+            {
+                return new StatusCodeResult(500);
+            }
+        }
+    }
+}

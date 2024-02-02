@@ -25,9 +25,9 @@ namespace ReactApp4.Server.Services
             return await _leagueDashLineupsFileHandler.GetLeagueDashLineupsFromFile(season, boxType, numPlayers);
         }
 
-        public async Task<IActionResult> GetLeagueDashLineups(string season, string boxType, string numPlayers, string order, string sortField, int page, string perMode)
+        public async Task<IActionResult> GetLeagueDashLineups(string season, string boxType, string numPlayers, string order, string sortField, int page, string perMode, string selectedTeam)
         {
-            return await _leagueDashLineupsDatabaseHandler.GetLeagueDashLineups(season, boxType, numPlayers, order, sortField, page, perMode);
+            return await _leagueDashLineupsDatabaseHandler.GetLeagueDashLineups(season, boxType, numPlayers, order, sortField, page, perMode, selectedTeam);
         }
         public async Task<IActionResult> CreateLeagueDashLineup([FromBody] object[] leagueDashLineup, string season, string boxType, string numPlayers)
         {

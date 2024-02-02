@@ -14,27 +14,38 @@ using System.Xml.Linq;
 
 namespace ReactApp4.Server.Services
 {
-    public class LeagueDashLineupsDatabaseHandler(AppDbContext context) : ControllerBase
+    public class BoxScoresDatabaseHandler(AppDbContext context) : ControllerBase
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<IActionResult> GetLeagueDashLineups(string season, string boxType, string numPlayers, string order, string sortField, int page, string perMode, string selectedTeam)
+        public async Task<IActionResult> GetBoxScores(string season, string boxType, string order, string sortField, int page, string perMode, string selectedTeam)
         {
             try
             {
                 Console.WriteLine(selectedTeam);
-                var tableName = $"league_dash_lineups_{boxType.ToLower()}_{numPlayers}man_{season}";
+                var tableName = $"box_score_{boxType.ToLower()}_{season}";
 
                 var query = $"SELECT * FROM {tableName} WHERE team_id LIKE '%{selectedTeam}%' ORDER BY {sortField} {order}";
+
+                var gamesPlayedquery = $"WITH GamesPlayed AS( " +
+                    $"SELECT COUNT(DISTINCT game_id) AS gp " +
+                    $"FROM {tableName} " +
+                    $"WHERE min > 0 " +
+                    $"GROUP BY player_id " +
+                $") ";
 
                 int pageSize = 100;
 
                 if (boxType == "Advanced")
                 {
-                    var leagueDashLineups = await _context.LeagueDashLineupAdvanceds.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-                    Console.WriteLine(leagueDashLineups.Count);
-                    return Ok(leagueDashLineups); // Wrap the result in OkObjectResult
-                } else if (boxType == "Base")
+                    query =
+
+
+                    var boxScores = await _context.BoxScoreAdvanceds.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    Console.WriteLine(boxScores.Count);
+                    return Ok(boxScores); // Wrap the result in OkObjectResult
+                }
+                else if (boxType == "Base")
                 {
                     if (perMode == "Totals")
                     {
@@ -42,18 +53,59 @@ namespace ReactApp4.Server.Services
                     }
                     else if (perMode == "PerGame")
                     {
+                        //select sum(min) / (select count(distinct(game_id))
+                        //from "box_score_traditional_2022_23"
+                        //where player_id = '2544'
+                        //and min > 0) as minpergame
+                        //from "box_score_traditional_2022_23"
+                        //where player_id = '2544'
+                        //and min > 0
+
+                        //*************************THIS WORKS FOR STATS PER GAME********************************************************
+                        //WITH GamesPlayed AS(
+                        //    SELECT
+                        //        player_id,
+                        //        COUNT(DISTINCT game_id) AS gp
+                        //    FROM
+                        //        "box_score_traditional_2022_23"
+                        //    WHERE
+                        //        min > 0
+                        //    GROUP BY
+                        //        player_id
+                        //)
+                        //
+                        //SELECT
+                        //    player_id,
+                        //    SUM(min) / (SELECT gp FROM GamesPlayed WHERE player_id = bt.player_id) AS minpergame,
+                        //    SUM(fga) / (SELECT gp FROM GamesPlayed WHERE player_id = bt.player_id) AS fgapergame,
+                        //    SUM(pts) / (SELECT gp FROM GamesPlayed WHERE player_id = bt.player_id) AS ptspergame
+                        //FROM
+                        //    "box_score_traditional_2022_23" bt
+                        //WHERE
+                        //    min > 0
+                        //GROUP BY
+                        //    player_id;
+                        //****************************************************************************************************************
+
+                        query = gamesPlayedquery + $"SELECT " +
+                            $"id, player_id, player_name, " +
+                            $"SUM(min) / (SELECT gp FROM GamesPlayed WHERE player_id = boxScoreTable.player_id) AS min, " +
+                            $"SUM(fga) / (SELECT gp FROM GamesPlayed WHERE player_id = boxScoreTable.player_id) AS fga, " +
+                            $"SUM(pts) / (SELECT gp FROM GamesPlayed WHERE player_id = boxScoreTable.player_id) AS pts " +
+                        $"FROM " +
+                            $"{tableName} boxScoreTable " +
+                        $"WHERE " +
+                            $"min > 0 " +
+                        $"GROUP BY player_id, player_name";
+
+
                         Console.WriteLine("HERE");
-                        query = $"SELECT id, group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min / gp AS min, " +
-                                $"fgm / gp AS fgm, fga / gp AS fga, fg_pct, fg3m / gp AS fg3m, fg3a / gp AS fg3a, fg3_pct, " +
-                                $"ftm / gp AS ftm, fta / gp AS fta, ft_pct, oreb / gp AS oreb, dreb / gp AS dreb, reb / gp AS reb, " +
-                                $"ast / gp AS ast, tov / gp AS tov, stl / gp AS stl, blk / gp AS blk, blka / gp AS blka, pf / gp AS pf, pfd / gp AS pfd, " +
-                                $"pts / gp AS pts, plus_minus / gp AS plus_minus, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, fgm_rank, fga_rank, fg_pct_rank, " +
-                                $"fg3m_rank, fg3a_rank, fg3_pct_rank, ftm_rank, fta_rank, ft_pct_rank, oreb_rank, dreb_rank, reb_rank, ast_rank, tov_rank, " +
-                                $"stl_rank, blk_rank, blka_rank, pf_rank, pfd_rank, pts_rank, plus_minus_rank " +
-                                $"FROM {tableName} " +
-                                $"WHERE team_id LIKE '%{selectedTeam}%' " +
-                                $"ORDER BY {sortField} {order} ";
-                                
+                        //query = $"SELECT id, team_id, team_abbreviation, team_city, player_id, player_name, nickname, " +
+                        //        $"SUM(min) / gp AS min, fgm / gp AS fgm, fga / gp AS fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, reb, ast, stl, blk, tov, pf, pts, plus_minus " +
+                        //        $"FROM {tableName} " +
+                        //        $"WHERE team_id LIKE '%{selectedTeam}%' " +
+                        //        $"ORDER BY {sortField} {order} ";
+
                         Console.WriteLine(query);
 
                     }
@@ -71,7 +123,8 @@ namespace ReactApp4.Server.Services
                                 $"ORDER BY {sortField} {order}";
                         Console.WriteLine(query);
 
-                    } else if (perMode == "PerPossession")
+                    }
+                    else if (perMode == "PerPossession")
                     {
                         var joinedTable = $"league_dash_lineups_advanced_{numPlayers}man_{season}";
 
@@ -91,13 +144,15 @@ namespace ReactApp4.Server.Services
                     var leagueDashLineups = await _context.LeagueDashLineupBases.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
                     Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
-            
-                } else if (boxType == "FourFactors")
+
+                }
+                else if (boxType == "FourFactors")
                 {
                     var leagueDashLineups = await _context.LeagueDashLineupFourFactors.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
                     Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
-                } else if (boxType == "Misc")
+                }
+                else if (boxType == "Misc")
                 {
                     var joinedTable = $"league_dash_lineups_advanced_{numPlayers}man_{season}";
 
@@ -153,12 +208,14 @@ namespace ReactApp4.Server.Services
                     var leagueDashLineups = await _context.LeagueDashLineupMiscs.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
                     Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
-                } else if (boxType == "Scoring")
+                }
+                else if (boxType == "Scoring")
                 {
                     var leagueDashLineups = await _context.LeagueDashLineupScorings.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
                     Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
-                } else if (boxType == "Opponent")
+                }
+                else if (boxType == "Opponent")
                 {
                     var joinedTable = $"league_dash_lineups_advanced_{numPlayers}man_{season}";
 
@@ -238,7 +295,7 @@ namespace ReactApp4.Server.Services
                     Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
                 }
-            {
+                {
                     return Ok("Not setup yet");
                 }
             }
@@ -506,7 +563,7 @@ namespace ReactApp4.Server.Services
                             }
 
                             break;
-                        
+
                         case "Advanced":
                             sql = $"INSERT INTO league_dash_lineups_advanced_{numPlayers}man_{season} (group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, e_off_rating, off_rating, e_def_rating, def_rating, e_net_rating, net_rating, ast_pct, ast_to, ast_ratio, oreb_pct, dreb_pct, reb_pct, tm_tov_pct, efg_pct, ts_pct, e_pace, pace, pace_per40, poss, pie, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, off_rating_rank, def_rating_rank, net_rating_rank, ast_pct_rank, ast_to_rank, ast_ratio_rank, oreb_pct_rank, dreb_pct_rank, reb_pct_rank, tm_tov_pct_rank, efg_pct_rank, ts_pct_rank, pace_rank, pie_rank) VALUES (@group_set, @group_id, @group_name, @team_id, @team_abbreviation, @gp, @w, @l, @w_pct, @min, @e_off_rating, @off_rating, @e_def_rating, @def_rating, @e_net_rating, @net_rating, @ast_pct, @ast_to, @ast_ratio, @oreb_pct, @dreb_pct, @reb_pct, @tm_tov_pct, @efg_pct, @ts_pct, @e_pace, @pace, @pace_per40, @poss, @pie, @gp_rank, @w_rank, @l_rank, @w_pct_rank, @min_rank, @off_rating_rank, @def_rating_rank, @net_rating_rank, @ast_pct_rank, @ast_to_rank, @ast_ratio_rank, @oreb_pct_rank, @dreb_pct_rank, @reb_pct_rank, @tm_tov_pct_rank, @efg_pct_rank, @ts_pct_rank, @pace_rank, @pie_rank);";
 
@@ -790,7 +847,7 @@ namespace ReactApp4.Server.Services
                                 await cmd.ExecuteNonQueryAsync();
                             }
 
-                        break;
+                            break;
                         case "Misc":
                             sql = $"INSERT INTO league_dash_lineups_Misc_{numPlayers}man_{season} (group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, pts_off_tov, pts_2nd_chance, pts_fb, pts_paint, opp_pts_off_tov, opp_pts_2nd_chance, opp_pts_fb, opp_pts_paint, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, pts_off_tov_rank, pts_2nd_chance_rank, pts_fb_rank, pts_paint_rank, opp_pts_off_tov_rank, opp_pts_2nd_chance_rank, opp_pts_fb_rank, opp_pts_paint_rank) VALUES (@group_set, @group_id, @group_name, @team_id, @team_abbreviation, @gp, @w, @l, @w_pct, @min, @pts_off_tov, @pts_2nd_chance, @pts_fb, @pts_paint, @opp_pts_off_tov, @opp_pts_2nd_chance, @opp_pts_fb, @opp_pts_paint, @gp_rank, @w_rank, @l_rank, @w_pct_rank, @min_rank, @pts_off_tov_rank, @pts_2nd_chance_rank, @pts_fb_rank, @pts_paint_rank, @opp_pts_off_tov_rank, @opp_pts_2nd_chance_rank, @opp_pts_fb_rank, @opp_pts_paint_rank);";
 
@@ -895,7 +952,7 @@ namespace ReactApp4.Server.Services
                                 await cmd.ExecuteNonQueryAsync();
                             }
 
-                        break;
+                            break;
                         case "Scoring":
                             sql = $"INSERT INTO league_dash_lineups_Scoring_{numPlayers}man_{season} (group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, pct_fga_2pt, pct_fga_3pt, pct_pts_2pt, pct_pts_2pt_mr, pct_pts_3pt, pct_pts_fb, pct_pts_ft, pct_pts_off_tov, pct_pts_paint, pct_ast_2pm, pct_uast_2pm, pct_ast_3pm, pct_uast_3pm, pct_ast_fgm, pct_uast_fgm, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, pct_fga_2pt_rank, pct_fga_3pt_rank, pct_pts_2pt_rank, pct_pts_2pt_mr_rank, pct_pts_3pt_rank, pct_pts_fb_rank, pct_pts_ft_rank, pct_pts_off_tov_rank, pct_pts_paint_rank, pct_ast_2pm_rank, pct_uast_2pm_rank, pct_ast_3pm_rank, pct_uast_3pm_rank, pct_ast_fgm_rank, pct_uast_fgm_rank) VALUES (@group_set, @group_id, @group_name, @team_id, @team_abbreviation, @gp, @w, @l, @w_pct, @min, @pct_fga_2pt, @pct_fga_3pt, @pct_pts_2pt, @pct_pts_2pt_mr, @pct_pts_3pt, @pct_pts_fb, @pct_pts_ft, @pct_pts_off_tov, @pct_pts_paint, @pct_ast_2pm, @pct_uast_2pm, @pct_ast_3pm, @pct_uast_3pm, @pct_ast_fgm, @pct_uast_fgm, @gp_rank, @w_rank, @l_rank, @w_pct_rank, @min_rank, @pct_fga_2pt_rank, @pct_fga_3pt_rank, @pct_pts_2pt_rank, @pct_pts_2pt_mr_rank, @pct_pts_3pt_rank, @pct_pts_fb_rank, @pct_pts_ft_rank, @pct_pts_off_tov_rank, @pct_pts_paint_rank, @pct_ast_2pm_rank, @pct_uast_2pm_rank, @pct_ast_3pm_rank, @pct_uast_3pm_rank, @pct_ast_fgm_rank, @pct_uast_fgm_rank);";
 
@@ -1056,7 +1113,7 @@ namespace ReactApp4.Server.Services
                                 await cmd.ExecuteNonQueryAsync();
                             }
 
-                        break;
+                            break;
                         case "Opponent":
                             sql = $"INSERT INTO league_dash_lineups_Opponent_{numPlayers}man_{season} (group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, opp_fgm, opp_fga, opp_fg_pct, opp_fg3m, opp_fg3a, opp_fg3_pct, opp_ftm, opp_fta, opp_ft_pct, opp_oreb, opp_dreb, opp_reb, opp_ast, opp_tov, opp_stl, opp_blk, opp_blka, opp_pf, opp_pfd1, opp_pts, plus_minus, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, opp_fgm_rank, opp_fga_rank, opp_fg_pct_rank, opp_fg3m_rank, opp_fg3a_rank, opp_fg3_pct_rank, opp_ftm_rank, opp_fta_rank, opp_ft_pct_rank, opp_oreb_rank, opp_dreb_rank, opp_reb_rank, opp_ast_rank, opp_tov_rank, opp_stl_rank, opp_blk_rank, opp_blka_rank, opp_pf_rank, opp_pfd1_rank, opp_pts_rank, plus_minus_rank) VALUES (@group_set, @group_id, @group_name, @team_id, @team_abbreviation, @gp, @w, @l, @w_pct, @min, @opp_fgm, @opp_fga, @opp_fg_pct, @opp_fg3m, @opp_fg3a, @opp_fg3_pct, @opp_ftm, @opp_fta, @opp_ft_pct, @opp_oreb, @opp_dreb, @opp_reb, @opp_ast, @opp_tov, @opp_stl, @opp_blk, @opp_blka, @opp_pf, @opp_pfd1, @opp_pts, @plus_minus, @gp_rank, @w_rank, @l_rank, @w_pct_rank, @min_rank, @opp_fgm_rank, @opp_fga_rank, @opp_fg_pct_rank, @opp_fg3m_rank, @opp_fg3a_rank, @opp_fg3_pct_rank, @opp_ftm_rank, @opp_fta_rank, @opp_ft_pct_rank, @opp_oreb_rank, @opp_dreb_rank, @opp_reb_rank, @opp_ast_rank, @opp_tov_rank, @opp_stl_rank, @opp_blk_rank, @opp_blka_rank, @opp_pf_rank, @opp_pfd1_rank, @opp_pts_rank, @plus_minus_rank)";
 
@@ -1260,10 +1317,10 @@ namespace ReactApp4.Server.Services
                                 cmd.Parameters.AddWithValue("@opp_pfd1_rank", opp_pfd1_rank ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@opp_pts_rank", opp_pts_rank ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@plus_minus_rank", plus_minus_rank_opp ?? (object)DBNull.Value);
-                            // ... (continuing for other columns)
+                                // ... (continuing for other columns)
                                 await cmd.ExecuteNonQueryAsync();
                             }
-                        break;
+                            break;
                         default:
                             // Handle an unexpected boxType value here
                             throw new ArgumentException("Invalid boxType");

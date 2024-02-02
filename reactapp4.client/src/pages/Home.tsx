@@ -5,6 +5,8 @@ import SeasonsDropDown from '../components/SeasonsDropDown';
 import SearchBar from '../components/SearchBar';
 import LineupPlayerSelect from '../components/LineupPlayerSelect';
 import StatsTable from '../components/StatsTable';
+import DropDown from '../components/DropDown';
+import { NBATeam } from '../interfaces/Teams';
 
 const DataFlex = styled.div`
     display: flex;
@@ -20,6 +22,7 @@ function Home() {
     const [selectedBoxType, setSelectedBoxType] = useState('Advanced');
     const [numPlayers, setNumPlayers] = useState('5');
     const [perMode, setPerMode] = useState('Totals');
+    const [selectedTeam, setSelectedTeam] = useState({team_id: '1', team_name: 'All Teams'});
 
     const lineupPlayerOptions = [
         'Lineups',
@@ -33,6 +36,54 @@ function Home() {
         'Misc',
         'Scoring',
         'Opponent'
+    ];
+
+    const perModeOptions = [
+        'PerGame',
+        'PerPossession',
+        'PerMinute',
+        'Totals'
+    ];
+
+    const numPlayersOptions = [
+        '2',
+        '3',
+        '4',
+        '5'
+    ]
+
+    const nbaTeams: NBATeam[] = [
+        { team_id: "1", team_name: "All Teams" },
+        { team_id: "1610612744", team_name: "Golden State Warriors" },
+        { team_id: "1610612757", team_name: "Portland Trail Blazers" },
+        { team_id: "1610612751", team_name: "Brooklyn Nets" },
+        { team_id: "1610612748", team_name: "Miami Heat" },
+        { team_id: "1610612747", team_name: "Los Angeles Lakers" },
+        { team_id: "1610612761", team_name: "Toronto Raptors" },
+        { team_id: "1610612738", team_name: "Boston Celtics" },
+        { team_id: "1610612752", team_name: "New York Knicks" },
+        { team_id: "1610612762", team_name: "Utah Jazz" },
+        { team_id: "1610612756", team_name: "Phoenix Suns" },
+        { team_id: "1610612753", team_name: "Orlando Magic" },
+        { team_id: "1610612749", team_name: "Milwaukee Bucks" },
+        { team_id: "1610612741", team_name: "Chicago Bulls" },
+        { team_id: "1610612745", team_name: "Houston Rockets" },
+        { team_id: "1610612737", team_name: "Atlanta Hawks" },
+        { team_id: "1610612754", team_name: "Indiana Pacers" },
+        { team_id: "1610612759", team_name: "San Antonio Spurs" },
+        { team_id: "1610612765", team_name: "Detroit Pistons" },
+        { team_id: "1610612763", team_name: "Memphis Grizzlies" },
+        { team_id: "1610612739", team_name: "Cleveland Cavaliers" },
+        { team_id: "1610612758", team_name: "Sacramento Kings" },
+        { team_id: "1610612743", team_name: "Denver Nuggets" },
+        { team_id: "1610612742", team_name: "Dallas Mavericks" },
+        { team_id: "1610612766", team_name: "Charlotte Hornets" },
+        { team_id: "1610612750", team_name: "Minnesota Timberwolves" },
+        { team_id: "1610612740", team_name: "New Orleans Pelicans" },
+        { team_id: "1610612764", team_name: "Washington Wizards" },
+        { team_id: "1610612755", team_name: "Philadelphia 76ers" },
+        { team_id: "1610612746", team_name: "Los Angeles Clippers" },
+        { team_id: "1610612760", team_name: "Oklahoma City Thunder" },
     ];
 
 
@@ -70,13 +121,47 @@ function Home() {
                 </div>
 
             </DataFlex>
-            <SeasonsDropDown
-                selectedSeason={selectedSeason}
-                setSelectedSeason={setSelectedSeason}
-                predictions={false}
-            />
-            <PerModeDropDown perMode={perMode} setPerMode={setPerMode} />
-            <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} />
+            <DataFlex>
+                <SeasonsDropDown
+                    selectedSeason={selectedSeason}
+                    setSelectedSeason={setSelectedSeason}
+                    predictions={false}
+                />
+                {selectedBoxType === "Base" || selectedBoxType === "Misc" || selectedBoxType === "Opponent" ?
+                    <DropDown
+                        options={perModeOptions}
+                        perMode={perMode}
+                        setPerMode={setPerMode}
+                        numPlayers={numPlayers}
+                        setNumPlayers={setNumPlayers}
+                        selectedTeam={selectedTeam}
+                        setSelectedTeam={setSelectedTeam}
+                        dropDownType="PerMode"
+                    />
+                    :
+                ""}
+                <DropDown
+                    options={numPlayersOptions}
+                    perMode={perMode}
+                    setPerMode={setPerMode}
+                    numPlayers={numPlayers}
+                    setNumPlayers={setNumPlayers}
+                    selectedTeam={selectedTeam}
+                    setSelectedTeam={setSelectedTeam}
+                    dropDownType="NumPlayers"
+                />
+                <DropDown
+                    options={nbaTeams}
+                    perMode={perMode}
+                    setPerMode={setPerMode}
+                    numPlayers={numPlayers}
+                    setNumPlayers={setNumPlayers}
+                    selectedTeam={selectedTeam}
+                    setSelectedTeam={setSelectedTeam}
+                    dropDownType="Team"
+                />
+            </DataFlex>
+            <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} />
 
         </div>
     );

@@ -67,7 +67,7 @@ const LineupPlayerSelect: React.FC<LineupPlayerSelectProps> = ({ options, select
             <StyledButton type="button" value={selectedOption} onClick={toggleSelect}>
                 <ButtonContainer>
                     <ButtonTextDiv>
-                        {selectedOption}
+                        {selectedOption === 'Base' ? 'Traditional' : selectedOption}
                     </ButtonTextDiv>
                     {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 </ButtonContainer>

@@ -1,0 +1,56 @@
+﻿ORtg = 100 * (PProd / TotPoss)
+
+qAST = ((MP / (Team_MP / 5)) * (1.14 * ((Team_AST - AST) / Team_FGM))) + ((((Team_AST / Team_MP) * MP * 5 - AST) / ((Team_FGM / Team_MP) * MP * 5 - FGM)) * (1 - (MP / (Team_MP / 5))))
+
+PProd_FG_Part = 2 * (fgm + 0.5 * fg3m) * (1 - 0.5 * ((pts - ftm) / (2 * fga)) * qAST)
+
+PProd_AST_Part = 2 * ((Team_FGM - FGM + 0.5 * (Team_3PM - 3PM)) / (Team_FGM - FGM)) * 0.5 * (((Team_PTS - Team_FTM) - (PTS - FTM)) / (2 * (Team_FGA - FGA))) * AST
+
+PProd_ORB_Part = ORB * Team_ORB_Weight * Team_Play% * (Team_PTS / (Team_FGM + (1 - (1 - (Team_FTM / Team_FTA))2) * 0.4 * Team_FTA))
+
+PProd = (PProd_FG_Part + PProd_AST_Part + FTM) * (1 - (Team_ORB / Team_Scoring_Poss) * Team_ORB_Weight * Team_Play%) + PProd_ORB_Part
+
+
+
+2 * (fgm + 0.5 * fg3m) * (1 - 0.5 * ((pts - ftm) / (2 * fga)) * qAST)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TotPoss = ScPoss + FGxPoss + FTxPoss + TOV
+
+ScPoss = (FG_Part + AST_Part + FT_Part) * (1 - (Team_ORB / Team_Scoring_Poss) * Team_ORB_Weight * Team_Play%) + ORB_Part
+
+FGxPoss = (FGA - FGM) * (1 - 1.07 * Team_ORB%)
+
+FTxPoss = ((1 - (FTM / FTA))2) * 0.4 * FTA
+
+FG_Part = FGM * (1 - 0.5 * ((PTS - FTM) / (2 * FGA)) * qAST)
+
+qAST = ((MP / (Team_MP / 5)) * (1.14 * ((Team_AST - AST) / Team_FGM))) + ((((Team_AST / Team_MP) * MP * 5 - AST) / ((Team_FGM / Team_MP) * MP * 5 - FGM)) * (1 - (MP / (Team_MP / 5))))
+
+AST_Part = 0.5 * (((Team_PTS - Team_FTM) - (PTS - FTM)) / (2 * (Team_FGA - FGA))) * AST
+
+FT_Part = (1-(1-(FTM/FTA))2) * 0.4 * FTA
+
+Team_Scoring_Poss = Team_FGM + (1 - (1 - (Team_FTM / Team_FTA))2) * Team_FTA * 0.4
+
+Team_ORB_Weight = ((1 - Team_ORB%) * Team_Play%) / ((1 - Team_ORB%) * Team_Play% + Team_ORB% * (1 - Team_Play%))
+
+Team_ORB% = Team_ORB / (Team_ORB + (Opponent_TRB - Opponent_ORB))
+
+Team_Play% = Team_Scoring_Poss / (Team_FGA + Team_FTA * 0.4 + Team_TOV)
+
+ORB_Part = ORB * Team_ORB_Weight * Team_Play%
