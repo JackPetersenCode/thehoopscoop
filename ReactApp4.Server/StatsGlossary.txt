@@ -1,6 +1,113 @@
 ﻿ORtg = 100 * (PProd / TotPoss)
 
-qAST = ((MP / (Team_MP / 5)) * (1.14 * ((Team_AST - AST) / Team_FGM))) + ((((Team_AST / Team_MP) * MP * 5 - AST) / ((Team_FGM / Team_MP) * MP * 5 - FGM)) * (1 - (MP / (Team_MP / 5))))
+Team_MP AS (
+    SELECT SUM(min)
+    FROM "box_score_traditional_2015_16"
+    WHERE team_id = '1610612739'
+),
+
+qAST AS (
+    SELECT
+        qAST = ((MP / (Team_MP / 5)) * (1.14 * ((Team_AST - AST) / Team_FGM))) + ((((Team_AST / Team_MP) * MP * 5 - AST) / ((Team_FGM / Team_MP) * MP * 5 - FGM)) * (1 - (MP / (Team_MP / 5))))
+    FROM
+        your_table
+),
+
+PProd_FG_Part AS (
+    SELECT
+        2 * (fgm + 0.5 * fg3m) * (1 - 0.5 * ((pts - ftm) / (2 * fga)) * qAST.qAST) AS PProd_FG_Part
+    FROM
+        box_score_traditional_2015_16
+    JOIN
+        qAST ON relevant_join_conditions
+),
+
+PProd_AST_Part AS (
+    SELECT
+        2 * ((Team_FGM - FGM + 0.5 * (Team_3PM - 3PM)) / (Team_FGM - FGM)) * 0.5 * (((Team_PTS - Team_FTM) - (PTS - FTM)) / (2 * (Team_FGA - FGA))) * AST AS PProd_AST_Part
+    FROM
+        your_table
+),
+
+PProd_ORB_Part AS (
+    SELECT
+        ORB * Team_ORB_Weight * Team_Play% * (Team_PTS / (Team_FGM + POWER(1 - POWER(1 - (Team_FTM / Team_FTA), 2), 0.4) * Team_FTA)) AS PProd_ORB_Part
+    FROM
+        your_table
+),
+
+PProd AS (
+    SELECT
+        (PProd_FG_Part.PProd_FG_Part + PProd_AST_Part.PProd_AST_Part + FTM) * (1 - (Team_ORB / Team_Scoring_Poss) * Team_ORB_Weight * Team_Play%) + PProd_ORB_Part.PProd_ORB_Part AS PProd
+    FROM
+        your_table
+    JOIN
+        PProd_FG_Part ON relevant_join_conditions
+    JOIN
+        PProd_AST_Part ON relevant_join_conditions
+    JOIN
+        PProd_ORB_Part ON relevant_join_conditions
+)
+
+SELECT
+    PProd.PProd
+FROM
+    PProd;
+
+
+
+
+*********************************************************************************************************************************************************
+qAST = ((SUM(min) / (Team_MP / 5)) * (1.14 * ((Team_AST - AST) / Team_FGM))) + ((((Team_AST / Team_MP) * MP * 5 - AST) / ((Team_FGM / Team_MP) * MP * 5 - FGM)) * (1 - (MP / (Team_MP / 5))))
+
+SELECT
+  b.player_id,
+  b.team_id,
+  ((MP.MP / (Team_MP.Team_MP / 5)) * (1.14 * ((Team_AST.Team_AST - AST.AST) / Team_FGM.Team_FGM))) + ((((Team_AST.Team_AST / Team_MP.Team_MP) * MP.MP * 5 - AST.AST) / ((Team_FGM.Team_FGM / Team_MP.Team_MP) * MP.MP * 5 - FGM.FGM)) * (1 - (MP.MP / (Team_MP.Team_MP / 5)))) AS qAST
+
+FROM
+  "box_score_traditional_2015_16" b
+JOIN (
+  SELECT player_id, SUM(min) as MP
+ 	FROM "box_score_traditional_2015_16"
+	GROUP BY player_id
+) MP ON b.player_id = MP.player_id
+
+JOIN (
+  SELECT team_id, SUM(min) as Team_MP
+  FROM "box_score_traditional_2015_16"
+  GROUP BY team_id 
+) Team_MP ON b.team_id = Team_MP.team_id
+
+JOIN (
+  SELECT player_id, SUM(ast) as AST
+  FROM "box_score_traditional_2015_16"
+  GROUP BY player_id
+) AST ON b.player_id = AST.player_id
+
+JOIN (
+  SELECT team_id, SUM(ast) as Team_AST
+  FROM "box_score_traditional_2015_16"
+  GROUP BY team_id
+) Team_AST ON b.team_id = Team_AST.team_id
+
+JOIN (
+  SELECT player_id, SUM(fgm) as FGM
+  FROM "box_score_traditional_2015_16"
+  GROUP BY player_id
+) FGM ON b.player_id = FGM.player_id
+
+JOIN (
+  SELECT team_id, SUM(fgm) as Team_FGM
+  FROM "box_score_traditional_2015_16"
+  GROUP BY team_id
+) Team_FGM ON b.team_id = Team_FGM.team_id
+
+
+GROUP BY
+    b.player_id, b.team_id, MP.MP, Team_MP.Team_MP, AST.AST, Team_AST.Team_AST, FGM.FGM, Team_FGM.Team_FGM;
+*******************************************************************************************************************************************************8
+
 
 PProd_FG_Part = 2 * (fgm + 0.5 * fg3m) * (1 - 0.5 * ((pts - ftm) / (2 * fga)) * qAST)
 
@@ -9,10 +116,6 @@ PProd_AST_Part = 2 * ((Team_FGM - FGM + 0.5 * (Team_3PM - 3PM)) / (Team_FGM - FG
 PProd_ORB_Part = ORB * Team_ORB_Weight * Team_Play% * (Team_PTS / (Team_FGM + (1 - (1 - (Team_FTM / Team_FTA))2) * 0.4 * Team_FTA))
 
 PProd = (PProd_FG_Part + PProd_AST_Part + FTM) * (1 - (Team_ORB / Team_Scoring_Poss) * Team_ORB_Weight * Team_Play%) + PProd_ORB_Part
-
-
-
-2 * (fgm + 0.5 * fg3m) * (1 - 0.5 * ((pts - ftm) / (2 * fga)) * qAST)
 
 
 
@@ -54,3 +157,33 @@ Team_ORB% = Team_ORB / (Team_ORB + (Opponent_TRB - Opponent_ORB))
 Team_Play% = Team_Scoring_Poss / (Team_FGA + Team_FTA * 0.4 + Team_TOV)
 
 ORB_Part = ORB * Team_ORB_Weight * Team_Play%
+
+
+
+
+SELECT  ((MP / (Team_MP / 5)) * (1.14 * ((Team_AST - AST) / Team_FGM))) + ((((Team_AST / Team_MP) * MP * 5 - AST) / ((Team_FGM / Team_MP) * MP * 5 - FGM)) * (1 - (MP / (Team_MP / 5))))
+  
+PProd_FG_Part AS (
+    SELECT
+        CASE
+            WHEN fga IS NULL OR fga = 0 THEN 0
+            ELSE 2 * (fgm + 0.5 * fg3m) * (1 - 0.5 * ((pts - ftm) / (2 * fga)) * qAST.qAST) AS PProd_FG_Part
+
+        END AS PProd_FG_Part 
+  	FROM
+        "box_score_traditional_2015_16"
+),
+PProd AS (
+    SELECT
+        PProd_FG_Part.PProd_FG_Part AS PProd
+    FROM
+        PProd_FG_Part
+)
+
+SELECT
+    PProd.PProd
+FROM
+    PProd;
+ 
+
+

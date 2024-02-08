@@ -36,9 +36,9 @@ namespace ReactApp4.Server.Controllers
         }
 
         [HttpPost("{season}/{boxType}/{numPlayers}")]
-        public async Task<IActionResult> CreateLeagueDashLineup([FromBody] object[] leagueDashLineup, string season, string boxType, string numPlayers)
+        public async Task<IActionResult> CreateBoxScore([FromBody] object[] boxScore, string season, string boxType, string numPlayers)
         {
-            return await _boxScoresDataHandler.CreateBoxScore(leagueDashLineup, season, boxType, numPlayers);
+            return await _boxScoresDataHandler.CreateBoxScore(boxScore, season, boxType, numPlayers);
         }
 
     }
