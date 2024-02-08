@@ -15,7 +15,7 @@
 ),
 
 TeamStats AS (
-	SELECT team_id,
+  SELECT team_id,
   SUM(fgm) AS fgm,
   SUM(fga) AS fga,
   SUM(fg3a) AS fg3a,
@@ -79,12 +79,11 @@ Team_ORB_Weight AS (
 ),
 
 qAST AS (
- 	SELECT
-	b.player_id,
+  SELECT
+  b.player_id,
   b.team_id,
   ((PlayerStats.min / (TeamStats.min / 5)) * (1.14 * ((TeamStats.ast - PlayerStats.ast) / TeamStats.fgm))) + ((((TeamStats.ast / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.ast) / ((TeamStats.fgm / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.fgm)) * (1 - (PlayerStats.min / (TeamStats.min / 5)))) AS qAST
-	FROM
-  	"box_score_traditional_2015_16" b
+  FROM "box_score_traditional_2015_16" b
   JOIN PlayerStats
   ON b.player_id = PlayerStats.player_id AND b.team_id = PlayerStats.team_id
   JOIN TeamStats

@@ -3,9 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactApp4.Server", "ReactApp4.Server\ReactApp4.Server.csproj", "{34045770-3258-406F-ACD2-BE35140B3FF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReactApp4.Server", "ReactApp4.Server\ReactApp4.Server.csproj", "{34045770-3258-406F-ACD2-BE35140B3FF3}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "reactapp4.client", "reactapp4.client\reactapp4.client.esproj", "{1236EEE6-1AA8-4280-91E7-6DB183095D3E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2D084A05-F458-423C-B390-24536C6D7A50}"
+	ProjectSection(SolutionItems) = preProject
+		PProd.sql = PProd.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
