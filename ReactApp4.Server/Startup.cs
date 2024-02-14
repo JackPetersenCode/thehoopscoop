@@ -39,6 +39,10 @@ namespace ReactApp4.Server
             services.AddScoped<BoxScoreScoringFileHandler>();
             services.AddScoped<BoxScoreScoringDataHandler>();
 
+            services.AddScoped<BoxScoresDatabaseHandler>();
+            services.AddScoped<BoxScoresFileHandler>();
+            services.AddScoped<BoxScoresDataHandler>();
+
             // Other service registrations might already exist...
             services.AddScoped<LeagueDashLineupsDataHandler>();
             services.AddScoped<LeagueDashLineupsDatabaseHandler>();

@@ -29,16 +29,10 @@ namespace ReactApp4.Server.Controllers
             return await _boxScoresDataHandler.GetBoxScoresFromFile(season, boxType, numPlayers);
         }
 
-        [HttpGet("{season?}/{boxType?}/{numPlayers?}/{order?}/{sortField?}/{page?}/{perMode?}/{selectedTeam?}")]
-        public async Task<IActionResult> GetBoxScores(string season = "2023_24", string boxType = "Traditional", string numPlayers = "5", string order = "desc", string sortField = "id", int page = 1, string perMode = "Totals", string selectedTeam = "1")
+        [HttpGet("{season?}/{boxType?}/{order?}/{sortField?}/{page?}/{perMode?}/{selectedTeam?}")]
+        public async Task<IActionResult> GetBoxScores(string season = "2023_24", string boxType = "Traditional", string order = "desc", string sortField = "id", int page = 1, string perMode = "Totals", string selectedTeam = "1")
         {
-            return await _boxScoresDataHandler.GetBoxScores(season, boxType, numPlayers, order, sortField, page, perMode, selectedTeam);
-        }
-
-        [HttpPost("{season}/{boxType}/{numPlayers}")]
-        public async Task<IActionResult> CreateBoxScore([FromBody] object[] boxScore, string season, string boxType, string numPlayers)
-        {
-            return await _boxScoresDataHandler.CreateBoxScore(boxScore, season, boxType, numPlayers);
+            return await _boxScoresDataHandler.GetBoxScores(season, boxType, order, sortField, page, perMode, selectedTeam);
         }
 
     }

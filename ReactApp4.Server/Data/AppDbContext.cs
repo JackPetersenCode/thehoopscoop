@@ -25,23 +25,24 @@ namespace ReactApp4.Server.Data
         public DbSet<BoxScoreFourFactors> BoxScoreFourFactorss { get; set; }
         public DbSet<BoxScoreMisc> BoxScoreMiscs { get; set; }
         public DbSet<BoxScoreScoring> BoxScoreScorings { get; set; }
+        public DbSet<BoxScoreAdvancedPlayer> BoxScoreAdvancedPlayer { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Define table names based on seasons dynamically
             var seasons = new List<string>
-        {
-            "2015_16",
-            "2016_17",
-            "2017_18",
-            "2018_19",
-            "2019_20",
-            "2020_21",
-            "2021_22",
-            "2022_23",
-            "2023_24"
+            {
+                "2015_16",
+                "2016_17",
+                "2017_18",
+                "2018_19",
+                "2019_20",
+                "2020_21",
+                "2021_22",
+                "2022_23",
+                "2023_24"
             // Add other season identifiers...
-        };
+            };
 
             foreach (var season in seasons)
             {
@@ -64,7 +65,8 @@ namespace ReactApp4.Server.Data
                     .ToTable($"box_score_scoring_{season}", schema: "dbo")
                     .HasKey(x => x.Id); // Define the primary key
             }
-        }
+            modelBuilder.Entity<BoxScoreAdvancedPlayer>().HasNoKey();
+    }
         public DbSet<TableLength> TableLengths { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<LeagueDashLineupAdvanced> LeagueDashLineupAdvanceds { get; set; }

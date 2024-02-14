@@ -1,4 +1,5 @@
-import { BoxScoreTraditional, BoxScoreAdvanced } from "../interfaces/BoxScoreTraditional";
+import { BoxScoreTraditional } from "../interfaces/BoxScoreTraditional";
+import { BoxScoreAdvanced } from "../interfaces/BoxScoreAdvanced";
 import { Player } from "../interfaces/Player";
 
 const postLeagueGamesBySeason = async (obj: [], season: string) => {

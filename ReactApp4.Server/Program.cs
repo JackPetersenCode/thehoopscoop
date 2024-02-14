@@ -37,6 +37,10 @@ builder.Services.AddScoped<BoxScoreScoringDatabaseHandler>();
 builder.Services.AddScoped<BoxScoreScoringFileHandler>();
 builder.Services.AddScoped<BoxScoreScoringDataHandler>();
 
+builder.Services.AddScoped<BoxScoresDatabaseHandler>();
+builder.Services.AddScoped<BoxScoresFileHandler>();
+builder.Services.AddScoped<BoxScoresDataHandler>();
+
 builder.Services.AddScoped<LeagueDashLineupsDataHandler>();
 builder.Services.AddScoped<LeagueDashLineupsDatabaseHandler>();
 builder.Services.AddScoped<LeagueDashLineupsFileHandler>();

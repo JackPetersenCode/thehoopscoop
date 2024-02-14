@@ -78,7 +78,8 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
                     console.log(error);
                 }
             }
-            else if (selectedLineupPlayer === 'Player') {
+            else if (selectedLineupPlayer === 'Players') {
+                console.log("PLAYERSSSSS")
                 if (selectedBoxType === 'Advanced') {
                     setColumns(advancedPlayerColumns);
                 } else if (selectedBoxType === 'Base') {
@@ -94,15 +95,16 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
                 try {
                     console.log(selectedBoxType);
                     console.log(perMode);
-                    const data = await axios.get(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
+                    const data = await axios.get(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
                     console.log(data.data);
-                    console.log(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
+                    console.log(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
                     setTableData(data.data);
                 } catch (error) {
                     console.log(error);
                 }
             } else {
                 try {
+                    console.log(selectedLineupPlayer);
                     console.log(selectedSeason);
                     console.log(selectedBoxType);
                     console.log(numPlayers);

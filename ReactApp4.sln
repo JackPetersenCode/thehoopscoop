@@ -9,7 +9,10 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "reactapp4.client", "reactap
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2D084A05-F458-423C-B390-24536C6D7A50}"
 	ProjectSection(SolutionItems) = preProject
-		PProd.sql = PProd.sql
+		AdvancedStats.txt = AdvancedStats.txt
+		DefensiveRating.txt = DefensiveRating.txt
+		OffensiveRating.txt = OffensiveRating.txt
+		PProd.txt = PProd.txt
 	EndProjectSection
 EndProject
 Global
