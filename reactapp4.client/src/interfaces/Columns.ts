@@ -85,7 +85,7 @@ const advancedPlayerColumns = [
     { label: "OREB PCT", accessor: "oreb_pct" },
     { label: "DEF REB PCT", accessor: "dreb_pct" },
     { label: "REB PCT", accessor: "reb_pct" },
-    { label: "TM TOV PCT", accessor: "tm_tov_pct" },
+    { label: "TOV PCT", accessor: "tov_pct" },
     { label: "EFG PCT", accessor: "efg_pct" },
     { label: "TS PCT", accessor: "ts_pct" },
     { label: "USG PCT", accessor: "usg_pct" },

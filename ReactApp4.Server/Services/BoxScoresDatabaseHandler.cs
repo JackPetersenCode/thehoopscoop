@@ -201,7 +201,7 @@ namespace ReactApp4.Server.Services
                 else if (boxType == "Advanced")
                 {
                     var offRatingQuery = $@"
-                        WITH PlayerStats AS(
+                        WITH PlayerStats AS (
                         SELECT player_id,
                           team_id,
                           team_abbreviation,
@@ -213,6 +213,8 @@ namespace ReactApp4.Server.Services
                           SUM(fta) AS fta,
                           SUM(fga) AS fga,
                           SUM(oreb) AS orb,
+                          SUM(dreb) AS drb,
+                          SUM(reb) AS reb,
                           SUM(min) AS min,
                           SUM(tov) AS tov
                           FROM box_score_traditional_{season}
@@ -229,6 +231,8 @@ namespace ReactApp4.Server.Services
                           SUM(fta) AS fta,
                           SUM(tov) AS tov,
                           SUM(oreb) AS orb,
+                          SUM(dreb) AS drb,
+                          SUM(reb) AS reb,
                           SUM(pts) AS pts,
                           SUM(min) AS min,
                           SUM(ast) AS ast
@@ -483,8 +487,11 @@ namespace ReactApp4.Server.Services
                             SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.fgm ELSE 0 END) AS Opponent_FGM,
                             SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.fta ELSE 0 END) AS Opponent_FTA,
                             SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.ftm ELSE 0 END) AS Opponent_FTM,
-                        		SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.oreb ELSE 0 END) AS Opponent_ORB,
-                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.tov ELSE 0 END) AS Opponent_TOV
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.oreb ELSE 0 END) AS Opponent_ORB,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.tov ELSE 0 END) AS Opponent_TOV,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.dreb ELSE 0 END) AS Opponent_DRB,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.reb ELSE 0 END) AS Opponent_TRB
+
                         FROM 
                             (
                                 SELECT DISTINCT team_abbreviation,
@@ -561,8 +568,8 @@ namespace ReactApp4.Server.Services
                           FROM TeamStatsD
                         ),
                         Stop_PCT AS (
-                        	SELECT
-                        	PlayerStatsD.player_id,
+                          SELECT
+                          PlayerStatsD.player_id,
                           PlayerStatsD.team_id,
                           (Stops.Stops * OpponentStats.Opponent_MIN) / (Team_Possessions.Team_Possessions * PlayerStatsD.min) AS Stop_PCT
                           FROM PlayerStatsD
@@ -599,6 +606,18 @@ namespace ReactApp4.Server.Services
                         )";
 
                     var advancedStats = $@"
+                        Player_Possessions AS (
+                            SELECT
+                            PlayerStats.player_id,
+                            PlayerStats.team_id,
+                            (PlayerStats.min / TeamStats.min) * Team_Possessions.Team_Possessions AS Player_Possessions
+                            FROM PlayerStats
+                            JOIN TeamStats
+                            ON PlayerStats.team_id = TeamStats.team_id
+                            JOIN Team_Possessions
+                            ON PlayerStats.team_id = Team_Possessions.team_id
+                        ),
+                        
                         Advanced_Stats AS (
                           SELECT
                           PlayerStats.player_id, PlayerStats.team_id,
@@ -606,16 +625,52 @@ namespace ReactApp4.Server.Services
                           CASE 
                             WHEN PlayerStats.tov IS NULL OR PlayerStats.tov = 0 THEN 0
                             ELSE ROUND(PlayerStats.ast / PlayerStats.tov, 2)
-                          END AS Ast_Tov
+                          END AS Ast_Tov,
+                          CASE
+                            WHEN (PlayerStats.fga + (0.44 * PlayerStats.fta) + PlayerStats.ast + PlayerStats.tov) IS NULL OR (PlayerStats.fga + (0.44 * PlayerStats.fta) + PlayerStats.ast + PlayerStats.tov) = 0 THEN 0
+                            ELSE ROUND((PlayerStats.ast / (PlayerStats.fga + (0.44 * PlayerStats.fta) + PlayerStats.ast + PlayerStats.tov)) * 100, 2)
+                          END AS Ast_Ratio,
+                          CASE
+                          	WHEN (PlayerStats.min * (TeamStats.orb + OpponentStats.Opponent_DRB)) IS NULL OR (PlayerStats.min * (TeamStats.orb + OpponentStats.Opponent_DRB)) = 0 THEN 0
+                          	ELSE ROUND(100 * (PlayerStats.orb * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.orb + OpponentStats.Opponent_DRB)), 2)
+                          END AS Oreb_Pct,
+                          CASE
+                          	WHEN (PlayerStats.min * (TeamStats.drb + OpponentStats.Opponent_ORB)) IS NULL OR (PlayerStats.min * (TeamStats.drb + OpponentStats.Opponent_ORB)) = 0 THEN 0
+                          	ELSE ROUND(100 * (PlayerStats.drb * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.drb + OpponentStats.Opponent_ORB)), 2)
+                          END AS Dreb_Pct,
+                          CASE
+                            WHEN (PlayerStats.min * (TeamStats.reb + OpponentStats.Opponent_TRB)) IS NULL OR (PlayerStats.min * (TeamStats.reb + OpponentStats.Opponent_TRB)) = 0 THEN 0
+                            ELSE ROUND(100 * (PlayerStats.reb * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.reb + OpponentStats.Opponent_TRB)), 2)
+                          END AS Reb_Pct,
+                          CASE
+                            WHEN (PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov) IS NULL OR (PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov) = 0 THEN 0
+                            ELSE ROUND(100 * PlayerStats.tov / (PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov), 2)
+                          END AS Tov_Pct,
+                          CASE
+                            WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN 0 
+                            ELSE ROUND(100 * (PlayerStats.fgm + 0.5 * PlayerStats.fg3m) / PlayerStats.fga, 2)
+                          END AS Efg_Pct,
+                          CASE
+                            WHEN (2 * (PlayerStats.fga + 0.44 * PlayerStats.fta)) IS NULL OR (2 * (PlayerStats.fga + 0.44 * PlayerStats.fta)) = 0 THEN 0
+                            ELSE ROUND(100 * PlayerStats.pts / (2 * (PlayerStats.fga + 0.44 * PlayerStats.fta)), 2)
+                          END AS Ts_Pct,
+                          CASE
+                            WHEN (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)) IS NULL OR (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)) = 0 THEN 0
+                            ELSE ROUND(100 * ((PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov) * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)), 2)
+                          END AS Usg_Pct
+
                           FROM PlayerStats
                           JOIN TeamStats
                           ON PlayerStats.team_id = TeamStats.team_id
+                          JOIN OpponentStats
+                          ON PlayerStats.team_id = OpponentStats.team_id
+
                         )
                     ";
 
                     if (perMode == "Totals")
                     {
-                        query = offRatingQuery + ", " + advancedStats + ", " + defRatingQuery +
+                        query = offRatingQuery + ", " + defRatingQuery + ", " + advancedStats +
                         $@"
                         SELECT
                             box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation, box_score_advanced_{season}.team_city,
@@ -625,7 +680,16 @@ namespace ReactApp4.Server.Services
                             ROUND(Defensive_Rating.Defensive_Rating, 2) AS def_rating,
                             ROUND(Offensive_Rating.Offensive_Rating - Defensive_Rating.Defensive_Rating, 2) AS net_rating,
                             Advanced_Stats.Ast_Pct, 
-                            Advanced_Stats.Ast_Tov
+                            Advanced_Stats.Ast_Tov,
+                            Advanced_Stats.Ast_Ratio,
+                            Advanced_Stats.Oreb_Pct,
+                            Advanced_Stats.Dreb_Pct,
+                            Advanced_Stats.Reb_Pct,
+                            Advanced_Stats.Tov_Pct,
+                            Advanced_Stats.Efg_Pct,
+                            Advanced_Stats.Ts_Pct,
+                            Advanced_Stats.Usg_Pct
+                         
                             FROM box_score_advanced_{season}
                             JOIN Offensive_Rating
                             ON box_score_advanced_{season}.player_id = Offensive_Rating.player_id AND box_score_advanced_{season}.team_id = Offensive_Rating.team_id
@@ -634,7 +698,9 @@ namespace ReactApp4.Server.Services
 						    JOIN Advanced_Stats
                             ON box_score_advanced_{season}.player_id = Advanced_Stats.player_id AND box_score_advanced_{season}.team_id = Advanced_Stats.team_id
                             GROUP BY box_score_advanced_{season}.player_id, box_score_advanced_{season}.player_name, box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation, box_score_advanced_{season}.team_city,
-                            Offensive_Rating.Offensive_Rating, Defensive_Rating.Defensive_Rating, Advanced_Stats.Ast_Pct, Advanced_Stats.Ast_Tov
+                            Offensive_Rating.Offensive_Rating, Defensive_Rating.Defensive_Rating, Advanced_Stats.Ast_Pct, Advanced_Stats.Ast_Tov, Advanced_Stats.Ast_Ratio,
+                            Advanced_Stats.Oreb_Pct, Advanced_Stats.Dreb_Pct, Advanced_Stats.Reb_Pct, Advanced_Stats.Tov_Pct, Advanced_Stats.Efg_Pct, Advanced_Stats.Ts_Pct,
+                            Advanced_Stats.Usg_Pct
                         ";
                     }
 

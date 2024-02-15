@@ -39,6 +39,31 @@ namespace ReactApp4.Server.Data
 
         [Column("ast_tov")]
         public decimal? Ast_tov { get; set; }
+
+        [Column("ast_ratio")]
+        public decimal? Ast_ratio { get; set; }
+
+        [Column("oreb_pct")]
+        public decimal? Oreb_pct { get; set; }
+
+        [Column("dreb_pct")]
+        public decimal? Dreb_pct { get; set; }
+
+        [Column("reb_pct")]
+        public decimal? Reb_pct { get; set; }
+
+        [Column("tov_pct")]
+        public decimal? Tov_pct { get; set; }
+
+        [Column("efg_pct")]
+        public decimal? Efg_pct {  get; set; }
+
+        [Column("ts_pct")]
+        public decimal? Ts_pct { get; set; }
+
+        [Column("usg_pct")]
+        public decimal? Usg_pct { get; set; }
+
     }
 
 }
