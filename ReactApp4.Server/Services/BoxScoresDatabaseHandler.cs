@@ -78,7 +78,7 @@ namespace ReactApp4.Server.Services
                             $"GROUP BY player_id, player_name, team_id, team_abbreviation, team_city " +
                             $"ORDER BY {sortField} {order}";
                     }
-                    else if (perMode == "PerGame")
+                    else if (perMode == "Per Game")
                     {
 
                         query = gamesPlayedQuery +
@@ -122,7 +122,7 @@ namespace ReactApp4.Server.Services
                         Console.WriteLine(query);
 
                     }
-                    else if (perMode == "PerMinute")
+                    else if (perMode == "Per Minute")
                     {
                         query = gamesPlayedQuery +
                         $@"
@@ -162,7 +162,7 @@ namespace ReactApp4.Server.Services
                         Console.WriteLine(query);
 
                     }
-                    else if (perMode == "PerPossession")
+                    else if (perMode == "Per 100 Poss")
                     {
                         var joinedTable = $"box_score_advanced_{season}";
 
@@ -726,7 +726,22 @@ namespace ReactApp4.Server.Services
                 }
                 else if (boxType == "FourFactors")
                 {
-                    var leagueDashLineups = await _context.LeagueDashLineupFourFactors.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    query = $@"
+                        SELECT
+                        PlayerStats.player_id, PlayerStats.team_abbreviation,
+                        PlayerStats.min,
+                        AdvancedStats.Efg_Pct,
+                        CASE
+                            WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN 0
+                            ELSE ROUND(100 * (PlayerStats.fta / PlayerStats.fga), 2)
+                        END AS Fta_Rate,
+                        AdvancedStats.Tov_Pct,
+                        Pl
+                                                
+
+";
+
+                    var leagueDashLineups = await _context.BoxScoreFourFactorsPlayers.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
                     Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
                 }

@@ -53,12 +53,12 @@ const DropDown: React.FC<DropDownProps> = ({ options, perMode, setPerMode, numPl
             if (event.target.value === "0") {
                 return;
             }
-            if (dropDownType === "PerMode") {
+            if (dropDownType === "Per Mode") {
                 console.log(event.target.value);
                 setPerMode(event.target.value);
                 console.log(dropDownType);
             }
-            if (dropDownType === "NumPlayers") {
+            if (dropDownType === "# of Players") {
                 console.log(event.target.value);
                 setNumPlayers(event.target.value);
             }

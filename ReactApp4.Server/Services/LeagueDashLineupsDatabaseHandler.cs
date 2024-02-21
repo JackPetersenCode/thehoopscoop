@@ -40,7 +40,7 @@ namespace ReactApp4.Server.Services
                     {
                         query = $"SELECT * FROM {tableName} WHERE team_id LIKE '%{selectedTeam}%' ORDER BY {sortField} {order}";
                     }
-                    else if (perMode == "PerGame")
+                    else if (perMode == "Per Game")
                     {
                         Console.WriteLine("HERE");
                         query = $"SELECT id, group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min / gp AS min, " +
@@ -57,7 +57,7 @@ namespace ReactApp4.Server.Services
                         Console.WriteLine(query);
 
                     }
-                    else if (perMode == "PerMinute")
+                    else if (perMode == "Per Minute")
                     {
                         query = $"SELECT id, group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, " +
                                 $"fgm / min AS fgm, fga / min AS fga, fg_pct, fg3m / min AS fg3m, fg3a / min AS fg3a, fg3_pct, " +
@@ -71,7 +71,7 @@ namespace ReactApp4.Server.Services
                                 $"ORDER BY {sortField} {order}";
                         Console.WriteLine(query);
 
-                    } else if (perMode == "PerPossession")
+                    } else if (perMode == "Per 100 Poss")
                     {
                         var joinedTable = $"league_dash_lineups_advanced_{numPlayers}man_{season}";
 
@@ -105,7 +105,7 @@ namespace ReactApp4.Server.Services
                     {
                         query = $"SELECT * FROM {tableName} WHERE team_id LIKE '%{selectedTeam}%' ORDER BY {sortField} {order}";
                     }
-                    else if (perMode == "PerPossession")
+                    else if (perMode == "Per 100 Poss")
                     {
                         query = $"SELECT {tableName}.id, {tableName}.group_set, {tableName}.group_id, {tableName}.group_name, " +
                                 $"{tableName}.team_id, {tableName}.team_abbreviation, {tableName}.gp, {tableName}.w, {tableName}.l, " +
@@ -121,7 +121,7 @@ namespace ReactApp4.Server.Services
                                 $"WHERE {tableName}.team_id LIKE '%{selectedTeam}%' " +
                                 $"ORDER BY {sortField} {order}";
                     }
-                    else if (perMode == "PerMinute")
+                    else if (perMode == "Per Minute")
                     {
                         query = $"SELECT id, group_set, group_id, group_name, " +
                                 $"team_id, team_abbreviation, gp, w, l, " +
@@ -135,7 +135,7 @@ namespace ReactApp4.Server.Services
                                 $"WHERE team_id LIKE '%{selectedTeam}%' " +
                                 $"ORDER BY {sortField} {order}";
                     }
-                    else if (perMode == "PerGame")
+                    else if (perMode == "Per Game")
                     {
                         query = $"SELECT id, group_set, group_id, group_name, " +
                                 $"team_id, team_abbreviation, gp, w, l, " +
@@ -166,7 +166,7 @@ namespace ReactApp4.Server.Services
                     {
                         query = $"SELECT * FROM {tableName} WHERE team_id LIKE '%{selectedTeam}%' ORDER BY {sortField} {order}";
                     }
-                    else if (perMode == "PerPossession")
+                    else if (perMode == "Per 100 Poss")
                     {
                         query = $"SELECT {tableName}.id, {tableName}.group_set, {tableName}.group_id, {tableName}.group_name, " +
                                 $"{tableName}.team_id, {tableName}.team_abbreviation, {tableName}.gp, {tableName}.w, {tableName}.l, " +
@@ -190,7 +190,7 @@ namespace ReactApp4.Server.Services
                                 $"WHERE {tableName}.team_id LIKE '%{selectedTeam}%' " +
                                 $"ORDER BY {sortField} {order}";
                     }
-                    else if (perMode == "PerMinute")
+                    else if (perMode == "Per Minute")
                     {
                         query = $"SELECT id, group_set, group_id, group_name, " +
                                 $"team_id, team_abbreviation, gp, w, l, " +
@@ -212,7 +212,7 @@ namespace ReactApp4.Server.Services
                                 $"WHERE team_id LIKE '%{selectedTeam}%' " +
                                 $"ORDER BY {sortField} {order}";
                     }
-                    else if (perMode == "PerGame")
+                    else if (perMode == "Per Game")
                     {
                         query = $"SELECT id, group_set, group_id, group_name, " +
                                 $"team_id, team_abbreviation, gp, w, l, " +

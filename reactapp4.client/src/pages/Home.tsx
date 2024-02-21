@@ -40,9 +40,9 @@ function Home() {
     ];
 
     const perModeOptions = [
-        'PerGame',
-        'PerPossession',
-        'PerMinute',
+        'Per Game',
+        'Per 100 Poss',
+        'Per Minute',
         'Totals'
     ];
 
@@ -137,7 +137,7 @@ function Home() {
                         setNumPlayers={setNumPlayers}
                         selectedTeam={selectedTeam}
                         setSelectedTeam={setSelectedTeam}
-                        dropDownType="PerMode"
+                        dropDownType="Per Mode"
                     />
                     :
                 ""}
@@ -150,7 +150,7 @@ function Home() {
                         setNumPlayers={setNumPlayers}
                         selectedTeam={selectedTeam}
                         setSelectedTeam={setSelectedTeam}
-                        dropDownType="NumPlayers"
+                        dropDownType="# of Players"
                     />
                     :
                 ""}

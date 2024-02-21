@@ -36,31 +36,29 @@ const SeasonOption = styled.option`
 
 const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSelectedSeason, predictions }) => {
 
-    let seasonsData;
-    if (predictions) {
-        seasonsData = [
-            { season: '2016_17' },
-            { season: '2017_18' },
-            { season: '2018_19' },
-            { season: '2019_20' },
-            { season: '2020_21' },
-            { season: '2021_22' },
-            { season: '2022_23' },
-            { season: '2023_24' }
-        ]
-    } else {
-        seasonsData = [
-            { season: '2015_16' },
-            { season: '2016_17' },
-            { season: '2017_18' },
-            { season: '2018_19' },
-            { season: '2019_20' },
-            { season: '2020_21' },
-            { season: '2021_22' },
-            { season: '2022_23' },
-            { season: '2023_24' }
-        ]
-    }
+   
+    const predictionSeasonsData = [
+        { season: '2016_17' },
+        { season: '2017_18' },
+        { season: '2018_19' },
+        { season: '2019_20' },
+        { season: '2020_21' },
+        { season: '2021_22' },
+        { season: '2022_23' },
+        { season: '2023_24' }
+    ];
+    
+    const seasonsData = [
+        { season: '2015_16', display: '2015-16' },
+        { season: '2016_17', display: '2016-17' },
+        { season: '2017_18', display: '2017-18' },
+        { season: '2018_19', display: '2018-19' },
+        { season: '2019_20', display: '2019-20' },
+        { season: '2020_21', display: '2020-21' },
+        { season: '2021_22', display: '2021-22' },
+        { season: '2022_23', display: '2022-23' },
+        { season: '2023_24', display: '2023-24' }
+    ];
     function handleSeasonChange(event: { preventDefault: () => void; target: { value: string; }; }) {
         event.preventDefault();
         if (event.target.value === "0") {
@@ -80,7 +78,7 @@ const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSe
                     <option className="drop-flex-option" value="0">Select Season</option>
 
                     {seasonsData.map((option, index) => (
-                        <option key={index} value={Object.values(option)}>{Object.values(option)}</option>
+                        <option key={index} value={option.season}>{option.display}</option>
                     ))}
 
                 </select>
