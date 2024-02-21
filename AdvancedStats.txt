@@ -1,0 +1,489 @@
+WITH PlayerStats AS (	
+                        SELECT player_id,
+                          team_id,
+                          team_abbreviation,
+                          SUM(ast) AS ast,
+                          SUM(fgm) AS fgm,
+                          SUM(fg3m) AS fg3m,
+                          SUM(pts) AS pts,
+                          SUM(ftm) AS ftm,
+                          SUM(fta) AS fta,
+                          SUM(fga) AS fga,
+                          SUM(oreb) AS orb,
+                          SUM(dreb) AS drb,
+                          SUM(reb) AS reb,
+                          SUM(min) AS min,
+                          SUM(tov) AS tov
+                          FROM "box_score_traditional_2015_16"
+    											WHERE "box_score_traditional_2015_16".team_id LIKE '%1610612740%' 
+                          GROUP BY player_id, team_id, team_abbreviation
+                        ),
+                        
+                        TeamStats AS(
+                          SELECT team_id,
+                          SUM(fgm) AS fgm,
+                          SUM(fga) AS fga,
+                          SUM(fg3a) AS fg3a,
+                          SUM(fg3m) AS fg3m,
+                          SUM(ftm) AS ftm,
+                          SUM(fta) AS fta,
+                          SUM(tov) AS tov,
+                          SUM(oreb) AS orb,
+                          SUM(dreb) AS drb,
+                          SUM(reb) AS reb,
+                          SUM(pts) AS pts,
+                          SUM(min) AS min,
+                          SUM(ast) AS ast
+  FROM "box_score_traditional_2015_16"
+  WHERE "box_score_traditional_2015_16".team_id LIKE '%1610612740%' 
+                        
+  GROUP BY team_id
+),  
+Opponent_RB AS (
+SELECT 
+    t.team_abbreviation,
+    t.team_id,
+    SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.reb ELSE 0 END) AS Opponent_TRB,
+    SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.oreb ELSE 0 END) AS Opponent_ORB
+FROM 
+    (
+        SELECT DISTINCT team_abbreviation,
+      	team_id
+        FROM "league_games_2015_16"
+    ) AS t
+JOIN 
+    "league_games_2015_16" lg 
+    ON (lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%')
+GROUP BY 
+    t.team_abbreviation, t.team_id
+),
+Team_Scoring_Poss AS (
+  SELECT
+  TeamStats.team_id,
+	TeamStats.fgm + (1 - (1 - (TeamStats.ftm / TeamStats.fta))^2) * TeamStats.fta * 0.4 AS Team_Scoring_Poss
+	FROM TeamStats
+),
+Team_Play_PCT AS (
+  SELECT Team_Scoring_Poss.team_id,
+  Team_Scoring_Poss.Team_Scoring_Poss / (TeamStats.fga + TeamStats.fta * 0.4 + TeamStats.tov) AS Team_Play_PCT
+	FROM Team_Scoring_Poss
+  JOIN TeamStats
+  ON Team_Scoring_Poss.team_id = TeamStats.team_id
+),
+Team_ORB_PCT AS (
+  SELECT TeamStats.team_id,
+  TeamStats.orb / (TeamStats.orb + (Opponent_RB.Opponent_TRB - Opponent_RB.Opponent_ORB)) AS Team_ORB_PCT
+  FROM TeamStats
+  JOIN Opponent_RB
+  ON TeamStats.team_id = Opponent_RB.team_id
+),
+Team_ORB_Weight AS (
+  SELECT Team_ORB_PCT.team_id,
+  ((1 - Team_ORB_PCT.Team_ORB_PCT) * Team_Play_PCT.Team_Play_PCT) / ((1 - Team_ORB_PCT.Team_ORB_PCT) * Team_Play_PCT.Team_Play_PCT + Team_ORB_PCT.Team_ORB_PCT * (1 - Team_Play_PCT.Team_Play_PCT)) AS Team_ORB_Weight
+	FROM Team_ORB_PCT
+  JOIN Team_Play_PCT
+  ON Team_ORB_PCT.team_id = Team_Play_PCT.team_id
+),
+qAST AS (
+ 	SELECT
+	b.player_id,
+  b.team_id,
+  ((PlayerStats.min / (TeamStats.min / 5)) * (1.14 * ((TeamStats.ast - PlayerStats.ast) / TeamStats.fgm))) + ((((TeamStats.ast / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.ast) / ((TeamStats.fgm / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.fgm)) * (1 - (PlayerStats.min / (TeamStats.min / 5)))) AS qAST
+	FROM
+  	"box_score_traditional_2015_16" b
+  JOIN PlayerStats
+  ON b.player_id = PlayerStats.player_id AND b.team_id = PlayerStats.team_id
+  JOIN TeamStats
+  ON b.team_id = TeamStats.team_id
+  GROUP BY
+  b.player_id, b.team_id, PlayerStats.min, TeamStats.min, PlayerStats.ast, TeamStats.ast, PlayerStats.fgm, TeamStats.fgm
+),
+PProd_ORB_Part AS (
+  SELECT
+  PlayerStats.player_id,
+  PlayerStats.team_id,
+  PlayerStats.orb * Team_ORB_Weight.Team_ORB_Weight * Team_Play_PCT.Team_Play_PCT * (TeamStats.pts / (TeamStats.fgm + (1 - (1 - (TeamStats.ftm / TeamStats.fta))^2) * 0.4 * TeamStats.fta)) AS PProd_ORB_Part
+	FROM PlayerStats
+  JOIN Team_ORB_Weight
+  ON PlayerStats.team_id = Team_ORB_Weight.team_id
+  JOIN Team_Play_PCT
+  ON PlayerStats.team_id = Team_Play_PCT.team_id
+  JOIN TeamStats
+  ON PlayerStats.team_id = TeamStats.team_id
+  GROUP BY PlayerStats.player_id, PlayerStats.team_id, PlayerStats.orb, Team_ORB_Weight.Team_ORB_Weight, Team_Play_PCT.Team_Play_PCT, TeamStats.pts, TeamStats.fgm, TeamStats.ftm, TeamStats.fta
+),
+PProd_FG_Part AS (
+  -- Calculate PProd_FG_Part using the calculated player-level stats
+  SELECT
+  	PlayerStats.player_id,
+  	PlayerStats.team_id,
+    CASE
+    	WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN 2 * (PlayerStats.fgm + 0.5 * PlayerStats.fg3m) * (1 - 0.5 * (0) * qAST.qAST)
+    	ELSE 2 * (PlayerStats.fgm + 0.5 * PlayerStats.fg3m) * (1 - 0.5 * ((PlayerStats.pts - PlayerStats.ftm) / (2 * PlayerStats.fga)) * qAST.qAST) 
+  	END AS PProd_FG_Part 
+  FROM
+    qAST
+  JOIN PlayerStats ON qAST.player_id = PlayerStats.player_id AND qAST.team_id = PlayerStats.team_id
+ 	GROUP BY PlayerStats.player_id, PlayerStats.team_id, PlayerStats.fga, PlayerStats.fgm, PlayerStats.fg3m, PlayerStats.pts, PlayerStats.ftm, qAST.qAST
+),
+PProd_AST_Part AS (
+  SELECT PlayerStats.player_id,
+  PlayerStats.team_id,
+  2 * ((TeamStats.fgm - PlayerStats.fgm + 0.5 * (TeamStats.fg3m - PlayerStats.fg3m)) / (TeamStats.fgm - PlayerStats.fgm)) * 0.5 * (((TeamStats.pts - TeamStats.ftm) - (PlayerStats.pts - PlayerStats.ftm)) / (2 * (TeamStats.fga - PlayerStats.fga))) * PlayerStats.ast AS PProd_AST_Part
+	FROM PlayerStats
+  JOIN TeamStats
+  ON PlayerStats.team_id = TeamStats.team_id
+  GROUP BY PlayerStats.player_id, PlayerStats.team_id, TeamStats.fgm, PlayerStats.fgm, TeamStats.fg3m, PlayerStats.fg3m, TeamStats.pts, TeamStats.ftm, PlayerStats.pts, PlayerStats.ftm, TeamStats.fga, PlayerStats.fga, PlayerStats.ast
+),
+Parts AS (
+	SELECT PProd_FG_Part.player_id, PProd_FG_Part.team_id, PProd_FG_Part.PProd_FG_Part AS FG_Part,
+				PProd_AST_Part.PProd_AST_Part AS AST_Part,
+        PProd_ORB_Part.PProd_ORB_Part AS ORB_Part
+	From PProd_FG_Part
+	join PProd_AST_Part
+	on PProd_FG_Part.player_id = PProd_AST_Part.player_id AND PProd_FG_Part.team_id = PProd_AST_Part.team_id
+	join PProd_ORB_Part
+	on PProd_FG_Part.player_id = PProd_ORB_Part.player_id AND PProd_FG_Part.team_id = PProd_ORB_Part.team_id
+),
+PProd AS (
+	SELECT Parts.player_id, Parts.team_id, (Parts.FG_Part + Parts.AST_Part + PlayerStats.FTM) * (1 - (TeamStats.orb / Team_Scoring_Poss.Team_Scoring_Poss) * Team_ORB_Weight.Team_ORB_Weight * Team_Play_PCT.Team_Play_PCT) + Parts.ORB_Part AS PProd
+	FROM Parts 
+	JOIN PlayerStats
+	ON Parts.player_id = PlayerStats.player_id
+	AND Parts.team_id = PlayerStats.team_id
+	JOIN TeamStats
+	ON Parts.team_id = TeamStats.team_id
+	JOIN Team_Scoring_Poss
+	ON Parts.team_id = Team_Scoring_Poss.team_id
+	JOIN Team_ORB_Weight
+	ON Parts.team_id = Team_ORB_Weight.team_id
+	JOIN Team_Play_PCT
+	ON Parts.team_id = Team_Play_PCT.team_id
+	GROUP BY Parts.player_id, Parts.team_id, Parts.FG_Part, Parts.AST_Part, PlayerStats.FTM, TeamStats.orb, Team_Scoring_Poss.Team_Scoring_Poss, Team_ORB_Weight.Team_ORB_Weight, Team_Play_PCT.Team_Play_PCT, Parts.ORB_Part
+), 
+Poss_Parts AS (
+  SELECT PlayerStats.player_id, PlayerStats.team_id,
+  CASE
+    	WHEN PlayerStats.fta IS NULL OR PlayerStats.fta = 0 THEN 0
+			ELSE (1 - (1 - (PlayerStats.ftm / PlayerStats.fta)) ^2) * 0.4 * PlayerStats.fta
+  END AS Poss_FT_Part,
+  CASE
+      WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN PlayerStats.fgm * (1 - 0.5 * (0) * qAST.qAST)
+  		ELSE PlayerStats.fgm * (1 - 0.5 * ((PlayerStats.pts - PlayerStats.ftm) / (2 * PlayerStats.fga)) * qAST.qAST)
+	END AS Poss_FG_Part,
+  0.5 * (((TeamStats.pts - TeamStats.ftm) - (PlayerStats.pts - PlayerStats.ftm)) / (2 * (TeamStats.fga - PlayerStats.fga))) * PlayerStats.ast AS Poss_AST_Part,
+  PlayerStats.orb * Team_ORB_Weight.Team_ORB_Weight * Team_Play_PCT.Team_Play_PCT AS Poss_ORB_Part
+  FROM PlayerStats
+  JOIN qAST
+  ON PlayerStats.player_id = qAST.player_id AND PlayerStats.team_id = qAST.team_id
+  JOIN TeamStats
+  ON PlayerStats.team_id = TeamStats.team_id
+  JOIN Team_ORB_Weight
+  ON PlayerStats.team_id = Team_ORB_Weight.team_id
+  JOIN Team_Play_PCT
+  ON PlayerStats.team_id = Team_Play_PCT.team_id
+  GROUP BY PlayerStats.player_id, PlayerStats.team_id, PlayerStats.fta, PlayerStats.ftm, PlayerStats.fga, PlayerStats.fgm, PlayerStats.pts, qAST.qAST, TeamStats.pts, TeamStats.ftm, TeamStats.fga, PlayerStats.ast, PlayerStats.orb, Team_ORB_Weight.Team_ORB_Weight, Team_Play_PCT.Team_Play_PCT
+),
+Scoring_Poss AS (
+  SELECT Poss_Parts.player_id, Poss_Parts.team_id,
+  (Poss_Parts.Poss_FG_Part + Poss_Parts.Poss_AST_Part + Poss_Parts.Poss_FT_Part) * (1 - (TeamStats.orb / Team_Scoring_Poss.Team_Scoring_Poss) * Team_ORB_Weight.Team_ORB_Weight * Team_Play_PCT.Team_Play_PCT) + Poss_Parts.Poss_ORB_Part AS Scoring_Poss
+	FROM Poss_Parts
+  JOIN TeamStats
+  ON Poss_Parts.team_id = TeamStats.team_id
+  JOIN Team_Scoring_Poss
+  ON Poss_Parts.team_id = Team_Scoring_Poss.team_id
+  JOIN Team_ORB_Weight
+  ON Poss_Parts.team_id = Team_ORB_Weight.team_id
+  JOIN Team_Play_PCT
+  ON Poss_Parts.team_id = Team_Play_PCT.team_id
+  GROUP BY Poss_Parts.player_id, Poss_Parts.team_id, Poss_Parts.Poss_FG_Part, Poss_Parts.Poss_AST_Part, Poss_Parts.Poss_FT_Part, TeamStats.ORB, Team_Scoring_Poss.Team_Scoring_Poss, Team_ORB_Weight.Team_ORB_Weight, Team_Play_PCT.Team_Play_PCT, Poss_Parts.Poss_ORB_Part
+),
+xPoss AS (
+	SELECT PlayerStats.player_id, PlayerStats.team_id,
+	(PlayerStats.fga - PlayerStats.fgm) * (1 - 1.07 * Team_ORB_PCT.Team_ORB_PCT) AS FGxPoss,
+    CASE
+    	WHEN PlayerStats.fta IS NULL OR PlayerStats.fta = 0 THEN 0
+			ELSE ((1 - (PlayerStats.ftm / PlayerStats.fta))^2) * 0.4 * PlayerStats.fta
+    END AS FTxPoss
+  FROM PlayerStats
+  JOIN Team_ORB_PCT
+  ON PlayerStats.team_id = Team_ORB_PCT.team_id
+),
+Total_Poss AS (
+	SELECT Scoring_Poss.player_id, Scoring_Poss.team_id,
+	(Scoring_Poss.Scoring_Poss + xPoss.FGxPoss + xPoss.FTxPoss + PlayerStats.tov) AS Total_Poss
+	FROM Scoring_Poss
+  JOIN xPoss
+  ON Scoring_Poss.player_id = xPoss.player_id AND Scoring_Poss.team_id = xPoss.team_id
+  JOIN PlayerStats
+  ON Scoring_Poss.player_id = PlayerStats.player_id AND Scoring_Poss.team_id = PlayerStats.team_id
+),
+Offensive_Rating AS (
+SELECT PProd.player_id, PProd.team_id,
+  CASE
+  	WHEN Total_Poss.Total_Poss IS NULL OR Total_Poss.Total_Poss = 0 THEN 0
+		ELSE 100 * (PProd.PProd / Total_Poss.Total_Poss)
+  END AS Offensive_Rating
+  FROM PProd
+  JOIN Total_Poss
+  ON PProd.player_id = Total_Poss.player_id AND PProd.team_id = Total_Poss.team_id
+),
+Ast_Pct AS (
+	SELECT
+  PlayerStats.player_id, PlayerStats.team_id,
+  ROUND(100 * PlayerStats.ast / (((PlayerStats.min / (TeamStats.min / 5)) * TeamStats.fgm) - PlayerStats.fgm), 2) AS Ast_Pct
+  FROM PlayerStats
+  JOIN TeamStats
+  ON PlayerStats.team_id = TeamStats.team_id
+),
+TeamStatsD AS (
+  SELECT team_id,
+  team_abbreviation,
+  SUM(dreb) AS drb,
+  SUM(blk) AS blk, 
+  SUM(min) AS min,
+  SUM(stl) AS stl,
+  SUM(pf) AS pf,
+  SUM(fga) AS fga,
+  SUM(tov) AS tov,
+  SUM(oreb) AS orb,
+  SUM(fta) AS fta
+  FROM "box_score_traditional_2015_16"
+  WHERE "box_score_traditional_2015_16".team_id LIKE '%1610612740%' 
+	GROUP BY team_id, team_abbreviation
+),
+
+PlayerStatsD AS (
+  SELECT player_id,
+  team_id,
+  SUM(stl) AS stl,
+  SUM(blk) AS blk,
+  SUM(dreb) AS drb,
+  SUM(min) AS min,
+  SUM(pf) AS pf
+  FROM "box_score_traditional_2015_16"
+  WHERE "box_score_traditional_2015_16".team_id LIKE '%1610612740%' 
+  GROUP BY player_id, team_id
+),
+OpponentStats AS (
+SELECT 
+    t.team_abbreviation,
+                            t.team_id,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.pts ELSE 0 END) AS Opponent_PTS,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.min ELSE 0 END) AS Opponent_MIN,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.fga ELSE 0 END) AS Opponent_FGA,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.fgm ELSE 0 END) AS Opponent_FGM,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.fta ELSE 0 END) AS Opponent_FTA,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.ftm ELSE 0 END) AS Opponent_FTM,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.oreb ELSE 0 END) AS Opponent_ORB,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.tov ELSE 0 END) AS Opponent_TOV,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.dreb ELSE 0 END) AS Opponent_DRB,
+                            SUM(CASE WHEN lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%' THEN lg.reb ELSE 0 END) AS Opponent_TRB
+
+FROM 
+    (
+        SELECT DISTINCT team_abbreviation,
+      	team_id
+        FROM "league_games_2015_16"
+    ) AS t
+JOIN 
+    "league_games_2015_16" lg 
+    ON (lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%')
+GROUP BY 
+    t.team_abbreviation, t.team_id
+),
+DFG_PCT AS (
+  SELECT team_id,
+  OpponentStats.Opponent_FGM / OpponentStats.Opponent_FGA AS DFG_PCT
+  FROM OpponentStats
+  GROUP BY team_id, OpponentStats.Opponent_FGM, OpponentStats.Opponent_FGA
+),
+DOR_PCT AS (
+  SELECT TeamStatsD.team_id,
+  OpponentStats.Opponent_ORB / (OpponentStats.Opponent_ORB + TeamStatsD.drb) AS DOR_PCT
+	FROM TeamStatsD
+  JOIN OpponentStats
+  ON TeamStatsD.team_id = OpponentStats.team_id
+  GROUP By TeamStatsD.team_id, OpponentStats.Opponent_ORB, TeamStatsD.DRB
+),
+FMwt AS (
+  SELECT DFG_PCT.team_id,
+  (DFG_PCT.DFG_PCT * (1 - DOR_PCT.DOR_PCT)) / (DFG_PCT.DFG_PCT * (1 - DOR_PCT.DOR_PCT) + (1 - DFG_PCT.DFG_PCT) * DOR_PCT.DOR_PCT) AS FMwt
+  FROM DFG_PCT
+  JOIN DOR_PCT
+  ON DFG_PCT.team_id = DOR_PCT.team_id
+  GROUP BY DFG_PCT.team_id, DFG_PCT.DFG_PCT, DOR_PCT.DOR_PCT
+),
+Stops1 AS (
+  SELECT PlayerStatsD.player_id,
+  PlayerStatsD.team_id,
+  PlayerStatsD.stl + PlayerStatsD.blk * FMwt.FMwt * (1 - 1.07 * DOR_PCT.DOR_PCT) + PlayerStatsD.drb * (1 - FMwt.FMwt) AS Stops1
+  FROM PlayerStatsD
+  JOIN FMwt 
+  ON PlayerStatsD.team_id = FMwt.team_id
+  JOIN DOR_PCT
+  ON PlayerStatsD.team_id = DOR_PCT.team_id
+	GROUP BY PlayerStatsD.player_id, PlayerStatsD.team_id, PlayerStatsD.stl, PlayerStatsD.blk, PlayerStatsD.drb, DOR_PCT.DOR_PCT, FMwt.FMwt
+),
+Stops2 AS (
+	SELECT
+	PlayerStatsD.player_id,
+  PlayerStatsD.team_id,
+  (((OpponentStats.Opponent_FGA - OpponentStats.Opponent_FGM - TeamStatsD.blk) / TeamStatsD.min) * FMwt.FMwt * (1 - 1.07 * DOR_PCT.DOR_PCT) + ((OpponentStats.Opponent_TOV - TeamStatsD.stl) / TeamStatsD.min)) * PlayerStatsD.min + (PlayerStatsD.pf / TeamStatsD.pf) * 0.4 * OpponentStats.Opponent_FTA * (1 - (OpponentStats.Opponent_FTM / OpponentStats.Opponent_FTA))^2 AS Stops2 
+	FROM PlayerStatsD
+  JOIN OpponentStats
+  ON PlayerStatsD.team_id = OpponentStats.team_id
+  JOIN TeamStatsD
+  ON PlayerStatsD.team_id = TeamStatsD.team_id
+	JOIN FMwt
+  ON PlayerStatsD.team_id = FMwt.team_id
+  JOIN DOR_PCT
+  ON PlayerStatsD.team_id = DOR_PCT.team_id
+),
+Stops AS (
+  SELECT
+  Stops1.player_id,
+  Stops1.team_id,
+  Stops1.Stops1 + Stops2.Stops2 AS Stops
+  FROM Stops1
+  JOIN Stops2
+  ON Stops1.player_id = Stops2.player_id AND Stops1.team_id = Stops2.team_id
+),
+Team_Possessions AS (
+  SELECT
+  TeamStatsD.team_id,
+  TeamStatsD.fga - TeamStatsD.orb + TeamStatsD.tov + 0.4 * TeamStatsD.fta AS Team_Possessions
+  FROM TeamStatsD
+),
+Stop_PCT AS (
+	SELECT
+	PlayerStatsD.player_id,
+  PlayerStatsD.team_id,
+  (Stops.Stops * OpponentStats.Opponent_MIN) / (Team_Possessions.Team_Possessions * PlayerStatsD.min) AS Stop_PCT
+  FROM PlayerStatsD
+  JOIN Stops
+  ON PlayerStatsD.player_id = Stops.player_id AND PlayerStatsD.team_id = Stops.team_id
+  JOIN OpponentStats
+  ON PlayerStatsD.team_id = OpponentStats.team_id
+  JOIN Team_Possessions
+  ON PlayerStatsD.team_id = Team_Possessions.team_id
+),
+Team_Defensive_Rating AS (
+	SELECT
+  Team_Possessions.team_id,
+  100 * (OpponentStats.Opponent_PTS / Team_Possessions.Team_Possessions) AS Team_Defensive_Rating
+  FROM Team_Possessions
+ 	JOIN OpponentStats
+  ON Team_Possessions.team_id = OpponentStats.team_id
+),
+D_Pts_Per_ScPoss AS (
+	SELECT 
+  OpponentStats.team_id,
+  OpponentStats.Opponent_PTS / (OpponentStats.Opponent_FGM + (1 - (1 - (OpponentStats.Opponent_FTM / OpponentStats.Opponent_FTA))^2) * OpponentStats.Opponent_FTA * 0.4) AS D_Pts_Per_ScPoss
+  FROM OpponentStats
+),
+Defensive_Rating AS (
+	SELECT Stop_PCT.player_id,
+  Stop_PCT.team_id,
+	Team_Defensive_Rating.Team_Defensive_Rating + 0.2 * (100 * D_Pts_Per_ScPoss.D_Pts_Per_ScPoss * (1 - Stop_PCT.Stop_PCT) - Team_Defensive_Rating.Team_Defensive_Rating) AS Defensive_Rating
+  FROM Stop_PCT
+  JOIN Team_Defensive_Rating
+  ON Stop_PCT.team_id = Team_Defensive_Rating.team_id
+  JOIN D_Pts_Per_ScPoss
+  ON Stop_PCT.team_id = D_Pts_Per_ScPoss.team_id
+),
+                        Player_Possessions AS (
+                            SELECT
+                            PlayerStats.player_id,
+                            PlayerStats.team_id,
+                            (PlayerStats.min / TeamStats.min) * Team_Possessions.Team_Possessions AS Player_Possessions
+                            FROM PlayerStats
+                            JOIN TeamStats
+                            ON PlayerStats.team_id = TeamStats.team_id
+                            JOIN Team_Possessions
+                            ON PlayerStats.team_id = Team_Possessions.team_id
+                        ),
+												Advanced_Stats AS (
+                          SELECT
+                          PlayerStats.player_id, PlayerStats.team_id,
+                          ROUND(100 * PlayerStats.ast / (((PlayerStats.min / (TeamStats.min / 5)) * TeamStats.fgm) - PlayerStats.fgm), 2) AS Ast_Pct,
+                          CASE 
+                            WHEN PlayerStats.tov IS NULL OR PlayerStats.tov = 0 THEN 0
+                            ELSE ROUND(PlayerStats.ast / PlayerStats.tov, 2)
+                          END AS Ast_Tov,
+                          CASE
+                            WHEN (PlayerStats.fga + (0.44 * PlayerStats.fta) + PlayerStats.ast + PlayerStats.tov) IS NULL OR (PlayerStats.fga + (0.44 * PlayerStats.fta) + PlayerStats.ast + PlayerStats.tov) = 0 THEN 0
+                            ELSE ROUND((PlayerStats.ast / (PlayerStats.fga + (0.44 * PlayerStats.fta) + PlayerStats.ast + PlayerStats.tov)) * 100, 2)
+                          END AS Ast_Ratio,
+                          CASE
+                          	WHEN (PlayerStats.min * (TeamStats.orb + OpponentStats.Opponent_DRB)) IS NULL OR (PlayerStats.min * (TeamStats.orb + OpponentStats.Opponent_DRB)) = 0 THEN 0
+                          	ELSE ROUND(100 * (PlayerStats.orb * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.orb + OpponentStats.Opponent_DRB)), 2)
+                          END AS Oreb_Pct,
+                          CASE
+                          	WHEN (PlayerStats.min * (TeamStats.drb + OpponentStats.Opponent_ORB)) IS NULL OR (PlayerStats.min * (TeamStats.drb + OpponentStats.Opponent_ORB)) = 0 THEN 0
+                          	ELSE ROUND(100 * (PlayerStats.drb * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.drb + OpponentStats.Opponent_ORB)), 2)
+                          END AS Dreb_Pct,
+                          CASE
+                            WHEN (PlayerStats.min * (TeamStats.reb + OpponentStats.Opponent_TRB)) IS NULL OR (PlayerStats.min * (TeamStats.reb + OpponentStats.Opponent_TRB)) = 0 THEN 0
+                            ELSE ROUND(100 * (PlayerStats.reb * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.reb + OpponentStats.Opponent_TRB)), 2)
+                          END AS Reb_Pct,
+                          CASE
+                            WHEN (PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov) IS NULL OR (PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov) = 0 THEN 0
+                            ELSE ROUND(100 * PlayerStats.tov / (PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov), 2)
+                          END AS Tov_Pct,
+                          CASE
+                            WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN 0 
+                            ELSE ROUND(100 * (PlayerStats.fgm + 0.5 * PlayerStats.fg3m) / PlayerStats.fga, 2)
+                          END AS Efg_Pct,
+                          CASE
+                            WHEN (2 * (PlayerStats.fga + 0.44 * PlayerStats.fta)) IS NULL OR (2 * (PlayerStats.fga + 0.44 * PlayerStats.fta)) = 0 THEN 0
+                            ELSE ROUND(100 * PlayerStats.pts / (2 * (PlayerStats.fga + 0.44 * PlayerStats.fta)), 2)
+                          END AS Ts_Pct,
+                          CASE
+                            WHEN (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)) IS NULL OR (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)) = 0 THEN 0
+                            ELSE ROUND(100 * ((PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov) * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)), 2)
+                          END AS Usg_Pct,
+                          CASE
+                            WHEN PlayerStats.min IS NULL OR PlayerStats.min = 0 THEN 0
+                            ELSE Player_Possessions.Player_Possessions / PlayerStats.min
+                          END AS Pace
+                          FROM PlayerStats
+                          JOIN TeamStats
+                          ON PlayerStats.team_id = TeamStats.team_id
+                          JOIN OpponentStats
+                          ON PlayerStats.team_id = OpponentStats.team_id
+                          JOIN Player_Possessions
+                          ON PlayerStats.player_id = Player_Possessions.player_id AND PlayerStats.team_id = Player_Possessions.team_id
+                          )
+                          SELECT
+                            box_score_advanced_2015_16.team_id, box_score_advanced_2015_16.team_abbreviation, box_score_advanced_2015_16.team_city,
+                            box_score_advanced_2015_16.player_id, box_score_advanced_2015_16.player_name,
+                            SUM(box_score_advanced_2015_16.min) AS min,
+                            ROUND(Offensive_Rating.Offensive_Rating, 2) AS off_rating,
+                            ROUND(Defensive_Rating.Defensive_Rating, 2) AS def_rating,
+                            ROUND(Offensive_Rating.Offensive_Rating - Defensive_Rating.Defensive_Rating, 2) AS net_rating,
+                            Advanced_Stats.Ast_Pct, 
+                            Advanced_Stats.Ast_Tov,
+                            Advanced_Stats.Ast_Ratio, 
+                            Advanced_Stats.Oreb_Pct,
+                            Advanced_Stats.Dreb_Pct,
+                            Advanced_Stats.Reb_Pct,
+                            Advanced_Stats.Tov_Pct,
+                            Advanced_Stats.Efg_Pct,
+                            Advanced_Stats.Ts_Pct,
+                            Advanced_Stats.Usg_Pct,
+                            AVG(pie) * 100 as pie,
+                            SUM(poss) as poss
+                            FROM box_score_advanced_2015_16
+                            JOIN Offensive_Rating
+                            ON box_score_advanced_2015_16.player_id = Offensive_Rating.player_id AND box_score_advanced_2015_16.team_id = Offensive_Rating.team_id
+                            JOIN Defensive_Rating
+                            ON box_score_advanced_2015_16.player_id = Defensive_Rating.player_id AND box_score_advanced_2015_16.team_id = Defensive_Rating.team_id
+						    						JOIN Advanced_Stats
+                            ON box_score_advanced_2015_16.player_id = Advanced_Stats.player_id AND box_score_advanced_2015_16.team_id = Advanced_Stats.team_id
+                            GROUP BY box_score_advanced_2015_16.player_id, box_score_advanced_2015_16.player_name, box_score_advanced_2015_16.team_id, box_score_advanced_2015_16.team_abbreviation, box_score_advanced_2015_16.team_city,
+                            Offensive_Rating.Offensive_Rating, Defensive_Rating.Defensive_Rating, Advanced_Stats.Ast_Pct, Advanced_Stats.Ast_Tov, Advanced_Stats.Ast_Ratio,
+                            Advanced_Stats.Oreb_Pct, Advanced_Stats.Dreb_Pct, Advanced_Stats.Reb_Pct, Advanced_Stats.Tov_Pct, Advanced_Stats.Efg_Pct, Advanced_Stats.Ts_Pct,
+                            Advanced_Stats.Usg_Pct
+                            HAVING SUM(box_score_advanced_2015_16.min) > 0
+                            order by min desc
