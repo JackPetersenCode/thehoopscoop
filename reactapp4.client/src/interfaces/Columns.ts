@@ -1,49 +1,35 @@
 const scoringPlayerColumns = [
-    { label: "GAME_ID", accessor: "game_id" },
-    { label: "TEAM_ID", accessor: "team_id" },
-    { label: "TEAM_ABBREVIATION", accessor: "team_abbreviation" },
-    { label: "TEAM_CITY", accessor: "team_city" },
-    { label: "PLAYER_ID", accessor: "player_id" },
-    { label: "PLAYER_NAME", accessor: "player_name" },
-    { label: "NICKNAME", accessor: "nickname" },
-    { label: "START_POSITION", accessor: "start_position" },
-    { label: "COMMENT", accessor: "comment" },
+    { label: "NAME", accessor: "player_name" },
+    { label: "TEAM", accessor: "team_abbreviation" },
     { label: "MIN", accessor: "min" },
-    { label: "PCT_FGA_2PT", accessor: "pct_fga_2pt" },
-    { label: "PCT_FGA_3PT", accessor: "pct_fga_3pt" },
-    { label: "PCT_PTS_2PT", accessor: "pct_pts_2pt" },
-    { label: "PCT_PTS_2PT_MR", accessor: "pct_pts_2pt_mr" },
-    { label: "PCT_PTS_3PT", accessor: "pct_pts_3pt" },
-    { label: "PCT_PTS_FB", accessor: "pct_pts_fb" },
-    { label: "PCT_PTS_FT", accessor: "pct_pts_ft" },
-    { label: "PCT_PTS_OFF_TOV", accessor: "pct_pts_off_tov" },
-    { label: "PCT_PTS_PAINT", accessor: "pct_pts_paint" },
-    { label: "PCT_AST_2PM", accessor: "pct_ast_2pm" },
-    { label: "PCT_UAST_2PM", accessor: "pct_uast_2pm" },
-    { label: "PCT_AST_3PM", accessor: "pct_ast_3pm" },
-    { label: "PCT_UAST_3PM", accessor: "pct_uast_3pm" },
-    { label: "PCT_AST_FGM", accessor: "pct_ast_fgm" }
+    { label: "PCT FGA 2PT", accessor: "pct_fga_2pt" },
+    { label: "PCT FGA 3PT", accessor: "pct_fga_3pt" },
+    { label: "PCT PTS 2PT", accessor: "pct_pts_2pt" },
+    { label: "PCT PTS 2PT_MR", accessor: "pct_pts_2pt_mr" },
+    { label: "PCT PTS 3PT", accessor: "pct_pts_3pt" },
+    { label: "PCT PTS FB", accessor: "pct_pts_fb" },
+    { label: "PCT PTS FT", accessor: "pct_pts_ft" },
+    { label: "PCT PTS OFF_TOV", accessor: "pct_pts_off_tov" },
+    { label: "PCT PTS PAINT", accessor: "pct_pts_paint" },
+    { label: "PCT AST 2PM", accessor: "pct_ast_2pm" },
+    { label: "PCT UAST 2PM", accessor: "pct_uast_2pm" },
+    { label: "PCT AST 3PM", accessor: "pct_ast_3pm" },
+    { label: "PCT UAST 3PM", accessor: "pct_uast_3pm" },
+    { label: "PCT AST FGM", accessor: "pct_ast_fgm" }
 ];
 
 const miscPlayerColumns = [
-    { label: "GAME_ID", accessor: "game_id" },
-    { label: "TEAM_ID", accessor: "team_id" },
-    { label: "TEAM_ABBREVIATION", accessor: "team_abbreviation" },
-    { label: "TEAM_CITY", accessor: "team_city" },
-    { label: "PLAYER_ID", accessor: "player_id" },
-    { label: "PLAYER_NAME", accessor: "player_name" },
-    { label: "NICKNAME", accessor: "nickname" },
-    { label: "START_POSITION", accessor: "start_position" },
-    { label: "COMMENT", accessor: "comment" },
+    { label: "NAME", accessor: "player_name" },
+    { label: "TEAM", accessor: "team_abbreviation" },
     { label: "MIN", accessor: "min" },
-    { label: "PTS_OFF_TOV", accessor: "pts_off_tov" },
-    { label: "PTS_2ND_CHANCE", accessor: "pts_2nd_chance" },
-    { label: "PTS_FB", accessor: "pts_fb" },
-    { label: "PTS_PAINT", accessor: "pts_paint" },
-    { label: "OPP_PTS_OFF_TOV", accessor: "opp_pts_off_tov" },
-    { label: "OPP_PTS_2ND_CHANCE", accessor: "opp_pts_2nd_chance" },
-    { label: "OPP_PTS_FB", accessor: "opp_pts_fb" },
-    { label: "OPP_PTS_PAINT", accessor: "opp_pts_paint" },
+    { label: "PTS OFF TOV", accessor: "pts_off_tov" },
+    { label: "PTS 2ND CHANCE", accessor: "pts_2nd_chance" },
+    { label: "PTS FB", accessor: "pts_fb" },
+    { label: "PTS PAINT", accessor: "pts_paint" },
+    { label: "OPP PTS OFF TOV", accessor: "opp_pts_off_tov" },
+    { label: "OPP PTS 2ND CHANCE", accessor: "opp_pts_2nd_chance" },
+    { label: "OPP PTS FB", accessor: "opp_pts_fb" },
+    { label: "OPP PTS PAINT", accessor: "opp_pts_paint" },
     { label: "BLK", accessor: "blk" },
     { label: "BLKA", accessor: "blka" },
     { label: "PF", accessor: "pf" },
@@ -51,24 +37,17 @@ const miscPlayerColumns = [
 ];
 
 const fourFactorsPlayerColumns = [
-    { label: "GAME_ID", accessor: "game_id" },
-    { label: "TEAM_ID", accessor: "team_id" },
-    { label: "TEAM_ABBREVIATION", accessor: "team_abbreviation" },
-    { label: "TEAM_CITY", accessor: "team_city" },
-    { label: "PLAYER_ID", accessor: "player_id" },
-    { label: "PLAYER_NAME", accessor: "player_name" },
-    { label: "NICKNAME", accessor: "nickname" },
-    { label: "START_POSITION", accessor: "start_position" },
-    { label: "COMMENT", accessor: "comment" },
+    { label: "NAME", accessor: "player_name" },
+    { label: "TEAM", accessor: "team_abbreviation" },
     { label: "MIN", accessor: "min" },
-    { label: "EFG_PCT", accessor: "efg_pct" },
-    { label: "FTA_RATE", accessor: "fta_rate" },
-    { label: "TM_TOV_PCT", accessor: "tm_tov_pct" },
-    { label: "OREB_PCT", accessor: "oreb_pct" },
-    { label: "OPP_EFG_PCT", accessor: "opp_efg_pct" },
-    { label: "OPP_FTA_RATE", accessor: "opp_fta_rate" },
-    { label: "OPP_TOV_PCT", accessor: "opp_tov_pct" },
-    { label: "OPP_OREB_PCT", accessor: "opp_oreb_pct" }
+    { label: "EFG PCT", accessor: "efg_pct" },
+    { label: "FTA RATE", accessor: "fta_rate" },
+    { label: "TM TOV PCT", accessor: "tm_tov_pct" },
+    { label: "OREB PCT", accessor: "oreb_pct" },
+    { label: "OPP EFG PCT", accessor: "opp_efg_pct" },
+    { label: "OPP FTA RATE", accessor: "opp_fta_rate" },
+    { label: "OPP TOV PCT", accessor: "opp_tov_pct" },
+    { label: "OPP OREB PCT", accessor: "opp_oreb_pct" }
 ];
 
 
@@ -89,21 +68,13 @@ const advancedPlayerColumns = [
     { label: "EFG PCT", accessor: "efg_pct" },
     { label: "TS PCT", accessor: "ts_pct" },
     { label: "USG PCT", accessor: "usg_pct" },
-    { label: "PACE", accessor: "pace" },
     { label: "POSS", accessor: "poss" },
     { label: "PIE", accessor: "pie" }
 ]
 
 const basePlayerColumns = [
-    { label: "GAME ID", accessor: "game_id" },
-    { label: "TEAM ID", accessor: "team_id" },
-    { label: "TEAM ABBREVIATION", accessor: "team_abbreviation" },
-    { label: "TEAM CITY", accessor: "team_city" },
-    { label: "PLAYER ID", accessor: "player_id" },
-    { label: "PLAYER NAME", accessor: "player_name" },
-    { label: "NICKNAME", accessor: "nickname" },
-    { label: "START POSITION", accessor: "start_position" },
-    { label: "COMMENT", accessor: "comment" },
+    { label: "NAME", accessor: "player_name" },
+    { label: "TEAM", accessor: "team_abbreviation" },
     { label: "MIN", accessor: "min" },
     { label: "FGM", accessor: "fgm" },
     { label: "FGA", accessor: "fga" },
@@ -117,7 +88,7 @@ const basePlayerColumns = [
     { label: "OREB", accessor: "oreb" },
     { label: "DREB", accessor: "dreb" },
     { label: "REB", accessor: "reb" },
-    { label: "AST", accessor: "Ast" },
+    { label: "AST", accessor: "ast" },
     { label: "STL", accessor: "stl" },
     { label: "BLK", accessor: "blk" },
     { label: "TOV", accessor: "tov" },
@@ -127,11 +98,8 @@ const basePlayerColumns = [
 ];
 
 const advancedLineupColumns = [
-    { label: "GROUP SET", accessor: "group_set" },
-    { label: "GROUP ID", accessor: "group_id" },
     { label: "GROUP NAME", accessor: "group_name" },
-    { label: "TEAM ID", accessor: "team_id" },
-    { label: "TEAM ABBREVIATION", accessor: "team_abbreviation" },
+    { label: "TEAM", accessor: "team_abbreviation" },
     { label: "GP", accessor: "gp" },
     { label: "W", accessor: "w" },
     { label: "L", accessor: "l" },
@@ -179,11 +147,8 @@ const advancedLineupColumns = [
 ]
 
 const baseLineupColumns = [
-    { label: "GROUP SET", accessor: "group_set" },
-    { label: "GROUP ID", accessor: "group_id" },
     { label: "GROUP NAME", accessor: "group_name" },
-    { label: "TEAM ID", accessor: "team_id" },
-    { label: "TEAM ABBREVIATION", accessor: "team_abbreviation" },
+    { label: "TEAM", accessor: "team_abbreviation" },
     { label: "GP", accessor: "gp" },
     { label: "W", accessor: "w" },
     { label: "L", accessor: "l" },
@@ -239,11 +204,8 @@ const baseLineupColumns = [
 ];
 
 const fourFactorsLineupColumns = [
-    { label: "GROUP SET", accessor: "group_set" },
-    { label: "GROUP ID", accessor: "group_id" },
     { label: "GROUP NAME", accessor: "group_name" },
-    { label: "TEAM ID", accessor: "team_id" },
-    { label: "TEAM ABBREVIATION", accessor: "team_abbreviation" },
+    { label: "TEAM", accessor: "team_abbreviation" },
     { label: "GP", accessor: "gp" },
     { label: "W", accessor: "w" },
     { label: "L", accessor: "l" },
@@ -273,11 +235,8 @@ const fourFactorsLineupColumns = [
 ];
 
 const miscLineupColumns = [
-    { label: "GROUP SET", accessor: "group_set" },
-    { label: "GROUP ID", accessor: "group_id" },
     { label: "GROUP NAME", accessor: "group_name" },
-    { label: "TEAM ID", accessor: "team_id" },
-    { label: "TEAM ABBREVIATION", accessor: "team_abbreviation" },
+    { label: "TEAM", accessor: "team_abbreviation" },
     { label: "GP", accessor: "gp" },
     { label: "W", accessor: "w" },
     { label: "L", accessor: "l" },
@@ -307,11 +266,8 @@ const miscLineupColumns = [
 ];
 
 const scoringLineupColumns = [
-    { label: "GROUP SET", accessor: "group_set" },
-    { label: "GROUP ID", accessor: "group_id" },
     { label: "GROUP NAME", accessor: "group_name" },
-    { label: "TEAM ID", accessor: "team_id" },
-    { label: "TEAM ABBREVIATION", accessor: "team_abbreviation" },
+    { label: "TEAM", accessor: "team_abbreviation" },
     { label: "GP", accessor: "gp" },
     { label: "W", accessor: "w" },
     { label: "L", accessor: "l" },
@@ -355,11 +311,8 @@ const scoringLineupColumns = [
 ];
 
 const opponentLineupColumns = [
-    { label: "GROUP SET", accessor: "group_set" },
-    { label: "GROUP ID", accessor: "group_id" },
     { label: "GROUP NAME", accessor: "group_name" },
-    { label: "TEAM ID", accessor: "team_id" },
-    { label: "TEAM ABBREVIATION", accessor: "team_abbreviation" },
+    { label: "TEAM", accessor: "team_abbreviation" },
     { label: "GP", accessor: "gp" },
     { label: "W", accessor: "w" },
     { label: "L", accessor: "l" },

@@ -64,6 +64,11 @@ namespace ReactApp4.Server.Data
         [Column("usg_pct")]
         public decimal? Usg_pct { get; set; }
 
+        [Column("pie")]
+        public decimal? Pie { get; set; }
+
+        [Column("poss")]
+        public decimal? Poss { get; set; }
     }
 
 }

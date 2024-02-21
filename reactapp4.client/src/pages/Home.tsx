@@ -23,6 +23,7 @@ function Home() {
     const [numPlayers, setNumPlayers] = useState('5');
     const [perMode, setPerMode] = useState('Totals');
     const [selectedTeam, setSelectedTeam] = useState({team_id: '1', team_name: 'All Teams'});
+    const [sortField, setSortField] = useState("min");
 
     const lineupPlayerOptions = [
         'Lineups',
@@ -111,10 +112,10 @@ function Home() {
             <DataFlex>
 
                 <div>
-                    <LineupPlayerSelect options={lineupPlayerOptions} selectedOption={selectedLineupPlayer} setSelectedOption={setSelectedLineupPlayer} />
+                    <LineupPlayerSelect options={lineupPlayerOptions} selectedOption={selectedLineupPlayer} setSelectedOption={setSelectedLineupPlayer} setSortField={setSortField} />
                 </div>
                 <div>
-                    <LineupPlayerSelect options={statOptions} selectedOption={selectedBoxType} setSelectedOption={setSelectedBoxType} />
+                    <LineupPlayerSelect options={statOptions} selectedOption={selectedBoxType} setSelectedOption={setSelectedBoxType} setSortField={setSortField} />
                 </div>
                 <div className="search-container">
                     <SearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} />
@@ -140,16 +141,19 @@ function Home() {
                     />
                     :
                 ""}
-                <DropDown
-                    options={numPlayersOptions}
-                    perMode={perMode}
-                    setPerMode={setPerMode}
-                    numPlayers={numPlayers}
-                    setNumPlayers={setNumPlayers}
-                    selectedTeam={selectedTeam}
-                    setSelectedTeam={setSelectedTeam}
-                    dropDownType="NumPlayers"
-                />
+                {selectedLineupPlayer === "Lineups" ?
+                    <DropDown
+                        options={numPlayersOptions}
+                        perMode={perMode}
+                        setPerMode={setPerMode}
+                        numPlayers={numPlayers}
+                        setNumPlayers={setNumPlayers}
+                        selectedTeam={selectedTeam}
+                        setSelectedTeam={setSelectedTeam}
+                        dropDownType="NumPlayers"
+                    />
+                    :
+                ""}
                 <DropDown
                     options={nbaTeams}
                     perMode={perMode}
@@ -161,7 +165,7 @@ function Home() {
                     dropDownType="Team"
                 />
             </DataFlex>
-            <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} />
+            <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} />
 
         </div>
     );

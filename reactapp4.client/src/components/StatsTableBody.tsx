@@ -33,7 +33,9 @@ const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData }) =
             </tbody>
         );
     } else {
+        console.log('is table data array')
         if (isColumnArray(columns)) {
+            console.log(columns)
             return (
                 <tbody>
                     {tableData.map((data, index) => {
@@ -41,14 +43,16 @@ const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData }) =
                             <tr key={index}>
                                 {columns.map(({ accessor }) => {
                                     let tData;
+                                   
                                     if (typeof data === 'object' && accessor in data) {
                                         tData = data[accessor] !== null && data[accessor] !== undefined
                                             ? data[accessor].toString()
-                                            : "——";
+                                            : "--";
                                     } else {
                                         tData = "No data";
                                     }
                                     if (isNumber(data[accessor])) {
+                                        
                                         tData = (data[accessor] as number).toFixed(2);
                                     }
 

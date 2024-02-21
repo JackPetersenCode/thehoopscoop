@@ -18,6 +18,9 @@ interface StatsTableProps {
     numPlayers: string;
     perMode: string;
     selectedTeam: NBATeam;
+    sortField: string;
+    setSortField: React.Dispatch<React.SetStateAction<string>>;
+
 }
 
 const StyledTable = styled.table`
@@ -32,9 +35,8 @@ const TableContainer = styled.div`
 
 
 
-const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode, selectedTeam }) => {
+const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode, selectedTeam, sortField, setSortField }) => {
 
-    const [sortField, setSortField] = useState("min");
     const [order, setOrder] = useState("desc");
     const [tableData, setTableData] = useState<Stats[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
@@ -53,20 +55,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
             //}
 
             if (selectedLineupPlayer === 'Lineups') {
-                if (selectedBoxType === 'Advanced') {
-                    setColumns(advancedLineupColumns);
-                } else if (selectedBoxType === 'Base') {
-                    console.log('BASE');
-                    setColumns(baseLineupColumns);
-                } else if (selectedBoxType === 'FourFactors') {
-                    setColumns(fourFactorsLineupColumns);
-                } else if (selectedBoxType === 'Misc') {
-                    setColumns(miscLineupColumns);
-                } else if (selectedBoxType === 'Scoring') {
-                    setColumns(scoringLineupColumns);
-                } else if (selectedBoxType === 'Opponent') {
-                    setColumns(opponentLineupColumns);
-                }
+
                 try {
                     console.log(selectedBoxType);
                     console.log(perMode);
@@ -74,24 +63,26 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
                     console.log(data.data);
                     console.log(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
                     setTableData(data.data);
+                    if (selectedBoxType === 'Advanced') {
+                        setColumns(advancedLineupColumns);
+                    } else if (selectedBoxType === 'Base') {
+                        console.log('BASE');
+                        setColumns(baseLineupColumns);
+                    } else if (selectedBoxType === 'FourFactors') {
+                        setColumns(fourFactorsLineupColumns);
+                    } else if (selectedBoxType === 'Misc') {
+                        setColumns(miscLineupColumns);
+                    } else if (selectedBoxType === 'Scoring') {
+                        setColumns(scoringLineupColumns);
+                    } else if (selectedBoxType === 'Opponent') {
+                        setColumns(opponentLineupColumns);
+                    }
                 } catch (error) {
                     console.log(error);
                 }
             }
             else if (selectedLineupPlayer === 'Players') {
-                console.log("PLAYERSSSSS")
-                if (selectedBoxType === 'Advanced') {
-                    setColumns(advancedPlayerColumns);
-                } else if (selectedBoxType === 'Base') {
-                    console.log('BASE');
-                    setColumns(basePlayerColumns);
-                } else if (selectedBoxType === 'FourFactors') {
-                    setColumns(fourFactorsPlayerColumns);
-                } else if (selectedBoxType === 'Misc') {
-                    setColumns(miscPlayerColumns);
-                } else if (selectedBoxType === 'Scoring') {
-                    setColumns(scoringPlayerColumns);
-                }
+
                 try {
                     console.log(selectedBoxType);
                     console.log(perMode);
@@ -99,18 +90,19 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
                     console.log(data.data);
                     console.log(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
                     setTableData(data.data);
-                } catch (error) {
-                    console.log(error);
-                }
-            } else {
-                try {
-                    console.log(selectedLineupPlayer);
-                    console.log(selectedSeason);
-                    console.log(selectedBoxType);
-                    console.log(numPlayers);
-                    const data = await axios.get(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}`);
-                    console.log(data.data);
-                    setTableData(data.data);
+                    console.log("PLAYERSSSSS")
+                    if (selectedBoxType === 'Advanced') {
+                        setColumns(advancedPlayerColumns);
+                    } else if (selectedBoxType === 'Base') {
+                        console.log('BASE');
+                        setColumns(basePlayerColumns);
+                    } else if (selectedBoxType === 'FourFactors') {
+                        setColumns(fourFactorsPlayerColumns);
+                    } else if (selectedBoxType === 'Misc') {
+                        setColumns(miscPlayerColumns);
+                    } else if (selectedBoxType === 'Scoring') {
+                        setColumns(scoringPlayerColumns);
+                    }
                 } catch (error) {
                     console.log(error);
                 }
@@ -132,6 +124,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
     const handleSorting = (sortField: string, sortOrder: 'asc' | 'desc') => {
         if (sortField) {
             const sorted = [...tableData].sort((a, b) => {
+                console.log(sorted)
                 if (a[sortField] === null) return 1;
                 if (b[sortField] === null) return -1;
                 if (a[sortField] === null && b[sortField] === null) return 0;
@@ -170,7 +163,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
                 <caption>
                     Click on a stat header to sort all players by stat
                 </caption>
-                <StatsTableHeaders columns={columns} handleSorting={handleSorting} smallHeaders={false} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} />
+                <StatsTableHeaders columns={columns} handleSorting={handleSorting} smallHeaders={false} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} setPage={setPage} />
                 <StatsTableBody columns={columns} tableData={tableData} />
             </StyledTable>
             <div>

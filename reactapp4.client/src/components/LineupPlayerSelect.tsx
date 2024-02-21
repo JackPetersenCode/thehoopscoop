@@ -43,9 +43,11 @@ interface LineupPlayerSelectProps {
     options: string[];
     selectedOption: string;
     setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
+    setSortField: React.Dispatch<React.SetStateAction<string>>;
+
 }
 
-const LineupPlayerSelect: React.FC<LineupPlayerSelectProps> = ({ options, selectedOption, setSelectedOption }) => {
+const LineupPlayerSelect: React.FC<LineupPlayerSelectProps> = ({ options, selectedOption, setSelectedOption, setSortField }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleSelect = () => {
@@ -57,6 +59,7 @@ const LineupPlayerSelect: React.FC<LineupPlayerSelectProps> = ({ options, select
         if (option === "0") {
             return;
         }
+        setSortField("min");
         setSelectedOption(option === 'Traditional' ? 'Base' : option);
         setIsOpen(!isOpen);
         console.log(selectedOption)

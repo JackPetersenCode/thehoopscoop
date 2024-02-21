@@ -25,7 +25,9 @@ namespace ReactApp4.Server.Data
         public DbSet<BoxScoreFourFactors> BoxScoreFourFactorss { get; set; }
         public DbSet<BoxScoreMisc> BoxScoreMiscs { get; set; }
         public DbSet<BoxScoreScoring> BoxScoreScorings { get; set; }
-        public DbSet<BoxScoreAdvancedPlayer> BoxScoreAdvancedPlayer { get; set; }
+        public DbSet<BoxScoreAdvancedPlayer> BoxScoreAdvancedPlayers { get; set; }
+        public DbSet<BoxScoreTraditionalPlayer> BoxScoreTraditionalPlayers { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -66,6 +68,7 @@ namespace ReactApp4.Server.Data
                     .HasKey(x => x.Id); // Define the primary key
             }
             modelBuilder.Entity<BoxScoreAdvancedPlayer>().HasNoKey();
+            modelBuilder.Entity<BoxScoreTraditionalPlayer>().HasNoKey();
     }
         public DbSet<TableLength> TableLengths { get; set; }
         public DbSet<Player> Players { get; set; }
