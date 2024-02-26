@@ -15,7 +15,9 @@ const scoringPlayerColumns = [
     { label: "PCT UAST 2PM", accessor: "pct_uast_2pm" },
     { label: "PCT AST 3PM", accessor: "pct_ast_3pm" },
     { label: "PCT UAST 3PM", accessor: "pct_uast_3pm" },
-    { label: "PCT AST FGM", accessor: "pct_ast_fgm" }
+    { label: "PCT AST FGM", accessor: "pct_ast_fgm" },
+    { label: "PCT UAST FGM", accessor: "pct_uast_fgm" }
+
 ];
 
 const miscPlayerColumns = [
@@ -42,12 +44,8 @@ const fourFactorsPlayerColumns = [
     { label: "MIN", accessor: "min" },
     { label: "EFG PCT", accessor: "efg_pct" },
     { label: "FTA RATE", accessor: "fta_rate" },
-    { label: "TM TOV PCT", accessor: "tm_tov_pct" },
-    { label: "OREB PCT", accessor: "oreb_pct" },
-    { label: "OPP EFG PCT", accessor: "opp_efg_pct" },
-    { label: "OPP FTA RATE", accessor: "opp_fta_rate" },
-    { label: "OPP TOV PCT", accessor: "opp_tov_pct" },
-    { label: "OPP OREB PCT", accessor: "opp_oreb_pct" }
+    { label: "TOV PCT", accessor: "tov_pct" },
+    { label: "OREB PCT", accessor: "oreb_pct" }
 ];
 
 

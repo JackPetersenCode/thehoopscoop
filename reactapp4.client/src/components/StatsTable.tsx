@@ -20,7 +20,8 @@ interface StatsTableProps {
     selectedTeam: NBATeam;
     sortField: string;
     setSortField: React.Dispatch<React.SetStateAction<string>>;
-
+    inputText: string;
+    setInputText: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const StyledTable = styled.table`
@@ -35,7 +36,7 @@ const TableContainer = styled.div`
 
 
 
-const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode, selectedTeam, sortField, setSortField }) => {
+const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode, selectedTeam, sortField, setSortField, inputText, setInputText }) => {
 
     const [order, setOrder] = useState("desc");
     const [tableData, setTableData] = useState<Stats[]>([]);
@@ -158,6 +159,17 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
         }
     };
 
+    const filteredData = tableData.filter((element) => {
+        //if no input the return the original
+        //return the item which contains the user input
+        console.log(element);
+        if (!element.player_name) {
+            return element.group_name.toString().toLowerCase().includes(inputText);
+        } else {
+            return element.player_name.toString().toLowerCase().includes(inputText);
+        }
+    })
+
     return (
         <TableContainer>
             <StyledTable>
@@ -165,7 +177,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
                     Click on a stat header to sort all players by stat
                 </caption>
                 <StatsTableHeaders columns={columns} handleSorting={handleSorting} smallHeaders={false} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} setPage={setPage} />
-                <StatsTableBody columns={columns} tableData={tableData} />
+                <StatsTableBody columns={columns} tableData={filteredData} />
             </StyledTable>
             <div>
                 <button onClick={handlePrevPage} disabled={page === 1}>Previous</button>

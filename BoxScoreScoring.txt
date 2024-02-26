@@ -1,0 +1,4 @@
+PlayerStats.fg3a / PlayerStats.fga AS pct_fga_3pt,
+((PlayerStats.fgm - PlayerStats.fg3m) * 2) / PlayerStats.pts AS pct_pts_2pt,
+(PlayerStats.fg3m * 3) / PlayerStats.pts AS pct_pts_3pt,
+SUM(bs.pct_pts_2pt_mr * bt.pts) / PlayerStats.pts AS pct_pts_2pt_mr

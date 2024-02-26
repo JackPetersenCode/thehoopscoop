@@ -1,5 +1,5 @@
 import React from 'react';
-import { loadBoxScoresTraditional, loadLeagueGamesBySeason, loadPlayers, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced } from '../helpers/Loaders';
+import { loadBoxScoresTraditional, loadLeagueGamesBySeason, loadPlayers, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring } from '../helpers/Loaders';
 
 function Admin() {
 
@@ -24,6 +24,9 @@ function Admin() {
             <button onClick={loadPlayers}>Players</button>
             <button onClick={loadBoxScoresTraditional}>Box Score Traditional</button>
             <button onClick={loadBoxScoresAdvanced}>Box Score Advanced</button>
+            <button onClick={loadBoxScoresFourFactors}>Box Score Four Factors</button>
+            <button onClick={loadBoxScoresMisc}>Box Score Misc</button>
+            <button onClick={loadBoxScoresScoring}>Box Score Scoring</button>
 
             <button onClick={loadLineupsLoop}>League Dash Lineups</button>
         </div>

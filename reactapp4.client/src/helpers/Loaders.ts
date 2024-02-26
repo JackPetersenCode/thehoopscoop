@@ -1,5 +1,5 @@
 import { getJsonResponseStartup } from './GetJsonResponse';
-import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason } from './PostFunctions';
+import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason } from './PostFunctions';
 
 const loadLeagueGamesBySeason = async () => {
     const years = ['2015_2016', '2016_2017', '2017_2018', '2018_2019', '2019_2020', '2020_2021', '2021_2022', '2022_2023', '2023_2024'];
@@ -175,6 +175,51 @@ const loadBoxScoresAdvanced = async () => {
 
         await postBoxScoresAdvancedBySeason(boxScore, season);
     }
+}
+
+const loadBoxScoresFourFactors = async () => {
+    const season = "2016_17";
+    const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_fourfactors_${season}`)
+    //tablelength = tablelength[0].count
+    const data = await getJsonResponseStartup(`/api/BoxScoreFourFactors/read/${season}`);
+    for (let i = tablelength.count; i < data.length; i++) {
+        if (data[i].MIN === 'MIN') {
+            continue;
+        }
+        const mins = minutesToDecimal(data[i].MIN)
+
+        const boxScore = {
+            game_id: data[i].GAME_ID,
+            team_id: data[i].TEAM_ID,
+            team_abbreviation: data[i].TEAM_ABBREVIATION,
+            team_city: data[i].TEAM_CITY,
+            player_id: data[i].PLAYER_ID,
+            player_name: data[i].PLAYER_NAME,
+            nickname: data[i].NICKNAME,
+            start_position: data[i].START_POSITION,
+            comment: data[i].COMMENT,
+            min: parseFloat(mins),
+            efg_pct: parseFloat(data[i].EFG_PCT),
+            fta_rate: parseFloat(data[i].FTA_RATE),
+            tm_tov_pct: parseFloat(data[i].TM_TOV_PCT),
+            oreb_pct: parseFloat(data[i].OREB_PCT),
+            opp_efg_pct: parseFloat(data[i].OPP_EFG_PCT),
+            opp_fta_rate: parseFloat(data[i].OPP_FTA_RATE),
+            opp_tov_pct: parseFloat(data[i].OPP_TOV_PCT),
+            opp_oreb_pct: parseFloat(data[i].OPP_OREB_PCT)
+        }
+
+        for (const key in boxScore) {
+            if (Object.prototype.hasOwnProperty.call(boxScore, key)) {
+                if (boxScore[key as keyof typeof boxScore] === "") {
+                    boxScore[key as keyof typeof boxScore] = null;
+                }
+            }
+        }
+        console.log(boxScore)
+
+        await postBoxScoresFourFactorsBySeason(boxScore, season);
+    }
     //let data = await getJsonResponseStartup(`/boxScoresTraditional/read/${season}`);
 
     //for (let i = 0; i < data.length; i++) {
@@ -182,6 +227,107 @@ const loadBoxScoresAdvanced = async () => {
     //} 
 }
 
+const loadBoxScoresMisc = async () => {
+    const season = "2015_16";
+    const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_misc_${season}`)
+    //tablelength = tablelength[0].count
+    const data = await getJsonResponseStartup(`/api/BoxScoreMisc/read/${season}`);
+    for (let i = tablelength.count; i < data.length; i++) {
+        if (data[i].MIN === 'MIN') {
+            continue;
+        }
+        const mins = minutesToDecimal(data[i].MIN)
+
+        const boxScore = {
+            game_id: data[i].GAME_ID,
+            team_id: data[i].TEAM_ID,
+            team_abbreviation: data[i].TEAM_ABBREVIATION,
+            team_city: data[i].TEAM_CITY,
+            player_id: data[i].PLAYER_ID,
+            player_name: data[i].PLAYER_NAME,
+            nickname: data[i].NICKNAME,
+            start_position: data[i].START_POSITION,
+            comment: data[i].COMMENT,
+            min: parseFloat(mins),
+            pts_off_tov: parseFloat(data[i].PTS_OFF_TOV),
+            pts_2nd_chance: parseFloat(data[i].PTS_2ND_CHANCE),
+            pts_fb: parseFloat(data[i].PTS_FB),
+            pts_paint: parseFloat(data[i].PTS_PAINT),
+            opp_pts_off_tov: parseFloat(data[i].OPP_PTS_OFF_TOV),
+            opp_pts_2nd_chance: parseFloat(data[i].OPP_PTS_2ND_CHANCE),
+            opp_pts_fb: parseFloat(data[i].OPP_PTS_FB),
+            opp_pts_paint: parseFloat(data[i].OPP_PTS_PAINT),
+            blk: parseFloat(data[i].BLK),
+            blka: parseFloat(data[i].BLKA),
+            pf: parseFloat(data[i].PF),
+            pfd: parseFloat(data[i].PFD)
+        }
+
+        for (const key in boxScore) {
+            if (Object.prototype.hasOwnProperty.call(boxScore, key)) {
+                if (boxScore[key as keyof typeof boxScore] === "") {
+                    boxScore[key as keyof typeof boxScore] = null;
+                }
+            }
+        }
+        console.log(boxScore)
+
+        await postBoxScoresMiscBySeason(boxScore, season);
+    }
+}
+
+const loadBoxScoresScoring = async () => {
+    const season = "2015_16";
+    const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_scoring_${season}`)
+    //tablelength = tablelength[0].count
+    const data = await getJsonResponseStartup(`/api/BoxScoreScoring/read/${season}`);
+    for (let i = tablelength.count; i < data.length; i++) {
+        if (data[i].MIN === 'MIN') {
+            continue;
+        }
+        const mins = minutesToDecimal(data[i].MIN)
+
+        const boxScore = {
+            game_id: data[i].GAME_ID,
+            team_id: data[i].TEAM_ID,
+            team_abbreviation: data[i].TEAM_ABBREVIATION,
+            team_city: data[i].TEAM_CITY,
+            player_id: data[i].PLAYER_ID,
+            player_name: data[i].PLAYER_NAME,
+            nickname: data[i].NICKNAME,
+            start_position: data[i].START_POSITION,
+            comment: data[i].COMMENT,
+            min: parseFloat(mins),
+            pct_fga_2pt: parseFloat(data[i].PCT_FGA_2PT),
+            pct_fga_3pt: parseFloat(data[i].PCT_FGA_3PT),
+            pct_pts_2pt: parseFloat(data[i].PCT_PTS_2PT),
+            pct_pts_2pt_mr: parseFloat(data[i].PCT_PTS_2PT_MR),
+            pct_pts_3pt: parseFloat(data[i].PCT_PTS_3PT),
+            pct_pts_fb: parseFloat(data[i].PCT_PTS_FB),
+            pct_pts_ft: parseFloat(data[i].PCT_PTS_FT),
+            pct_pts_off_tov: parseFloat(data[i].PCT_PTS_OFF_TOV),
+            pct_pts_paint: parseFloat(data[i].PCT_PTS_PAINT),
+            pct_ast_2pm: parseFloat(data[i].PCT_AST_2PM),
+            pct_uast_2pm: parseFloat(data[i].PCT_UAST_2PM),
+            pct_ast_3pm: parseFloat(data[i].PCT_AST_3PM),
+            pct_uast_3pm: parseFloat(data[i].PCT_UAST_3PM),
+            pct_ast_fgm: parseFloat(data[i].PCT_AST_FGM),
+            pct_uast_fgm: parseFloat(data[i].PCT_UAST_FGM)
+
+        }
+
+        for (const key in boxScore) {
+            if (Object.prototype.hasOwnProperty.call(boxScore, key)) {
+                if (boxScore[key as keyof typeof boxScore] === "") {
+                    boxScore[key as keyof typeof boxScore] = null;
+                }
+            }
+        }
+        console.log(boxScore)
+
+        await postBoxScoresScoringBySeason(boxScore, season);
+    }
+}
 
 const loadLeagueDashLineupsFunction = async (season: string, boxType: string, numPlayers: string) => {
     const results = await getJsonResponseStartup(`/api/LeagueDashLineups/read/${season}/${boxType}/${numPlayers}`);
@@ -197,4 +343,4 @@ const loadLeagueDashLineupsFunction = async (season: string, boxType: string, nu
 }
 
 
-export { loadLeagueGamesBySeason, loadPlayers, loadBoxScoresTraditional, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced }
+export { loadLeagueGamesBySeason, loadPlayers, loadBoxScoresTraditional, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring }

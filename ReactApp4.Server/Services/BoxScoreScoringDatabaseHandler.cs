@@ -48,7 +48,7 @@ namespace ReactApp4.Server.Services
                 {
                     await connection.OpenAsync();
 
-                    var sql = $"INSERT INTO box_score_scoring_{season} (game_id, team_id, team_abbreviation, team_city, player_id, player_name, nickname, start_position, comment, min, pct_fga_2pt, pct_fga_3pt, pct_pts_2pt, pct_pts_2pt_mr, pct_pts_3pt, pct_pts_fb, pct_pts_ft, pct_pts_off_tov, pct_pts_paint, pct_ast_2pm, pct_uast_2pm, pct_ast_3pm, pct_uast_3pm, pct_ast_fgm ) VALUES (@game_id, @team_id, @team_abbreviation, @team_city, @player_id, @player_name, @nickname, @start_position, @comment, @min, @pct_fga_2pt, @pct_fga_3pt, @pct_pts_2pt, @pct_pts_2pt_mr, @pct_pts_3pt, @pct_pts_fb, @pct_pts_ft, @pct_pts_off_tov, @pct_pts_paint, @pct_ast_2pm, @pct_uast_2pm, @pct_ast_3pm, @pct_uast_3pm, @pct_ast_fgm);";
+                    var sql = $"INSERT INTO box_score_scoring_{season} (game_id, team_id, team_abbreviation, team_city, player_id, player_name, nickname, start_position, comment, min, pct_fga_2pt, pct_fga_3pt, pct_pts_2pt, pct_pts_2pt_mr, pct_pts_3pt, pct_pts_fb, pct_pts_ft, pct_pts_off_tov, pct_pts_paint, pct_ast_2pm, pct_uast_2pm, pct_ast_3pm, pct_uast_3pm, pct_ast_fgm, pct_uast_fgm ) VALUES (@game_id, @team_id, @team_abbreviation, @team_city, @player_id, @player_name, @nickname, @start_position, @comment, @min, @pct_fga_2pt, @pct_fga_3pt, @pct_pts_2pt, @pct_pts_2pt_mr, @pct_pts_3pt, @pct_pts_fb, @pct_pts_ft, @pct_pts_off_tov, @pct_pts_paint, @pct_ast_2pm, @pct_uast_2pm, @pct_ast_3pm, @pct_uast_3pm, @pct_ast_fgm, @pct_uast_fgm);";
 
                     //var fgaValue = string.IsNullOrEmpty(boxScoreScoring.Fga) ? null : boxScoreScoring.Fga;
                     //boxScoreScoring.CheckAndReplace();
@@ -81,6 +81,7 @@ namespace ReactApp4.Server.Services
                         cmd.Parameters.AddWithValue("@pct_ast_3pm", boxScoreScoring.Pct_ast_3pm ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@pct_uast_3pm", boxScoreScoring.Pct_uast_3pm ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@pct_ast_fgm", boxScoreScoring.Pct_ast_fgm ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@pct_uast_fgm", boxScoreScoring.Pct_uast_fgm ?? (object)DBNull.Value);
 
 
                         await cmd.ExecuteNonQueryAsync();

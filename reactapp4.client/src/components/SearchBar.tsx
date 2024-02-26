@@ -61,11 +61,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="start">
-                                <Link to={`/${inputText}`}>
+                                
                                     <div className="search-icon">
                                         <SearchIcon />
                                     </div>
-                                </Link>
+                                
                             </InputAdornment>
                         ),
                     }}

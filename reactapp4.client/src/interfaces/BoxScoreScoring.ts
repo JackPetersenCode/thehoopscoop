@@ -23,6 +23,8 @@ interface BoxScoreScoring {
     pct_ast_3pm: number;
     pct_uast_3pm: number;
     pct_ast_fgm: number;
+    pct_uast_fgm: number;
+
 }
 
 export type { BoxScoreScoring };

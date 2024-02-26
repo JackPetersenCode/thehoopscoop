@@ -2,37 +2,19 @@
 
 namespace ReactApp4.Server.Data
 {
-    public class BoxScoreScoring
+    public class BoxScoreScoringPlayer
     {
-        [Column("id")]
-        public int Id { get; set; }
-
-        [Column("game_id")]
-        public string? Game_id { get; set; }
-
         [Column("team_id")]
         public string? Team_id { get; set; }
 
         [Column("team_abbreviation")]
         public string? Team_abbreviation { get; set; }
 
-        [Column("team_city")]
-        public string? Team_city { get; set; }
-
         [Column("player_id")]
         public string? Player_id { get; set; }
 
         [Column("player_name")]
         public string? Player_name { get; set; }
-
-        [Column("nickname")]
-        public string? Nickname { get; set; }
-
-        [Column("start_position")]
-        public string? Start_position { get; set; }
-
-        [Column("comment")]
-        public string? Comment { get; set; }
 
         [Column("min")]
         public decimal? Min { get; set; }
@@ -78,7 +60,7 @@ namespace ReactApp4.Server.Data
 
         [Column("pct_ast_fgm")]
         public decimal? Pct_ast_fgm { get; set; }
-        
+
         [Column("pct_uast_fgm")]
         public decimal? Pct_uast_fgm { get; set; }
     }

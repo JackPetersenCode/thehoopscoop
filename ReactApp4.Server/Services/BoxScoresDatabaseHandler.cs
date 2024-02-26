@@ -38,182 +38,10 @@ namespace ReactApp4.Server.Services
                     $"GROUP BY player_id " +
                 $") ";
 
-                int pageSize = 100;
-
-                Console.WriteLine("BoxType: ==> ");
-                Console.WriteLine(boxType);
-                if (boxType == "Traditional")
-                {
-                    if (perMode == "Totals")
-                    {
-                        query =
-                            $"SELECT " +
-                                $"team_id, team_abbreviation, team_city, " +
-                                $"player_id, player_name, " +
-                                $"SUM(min) AS min, " +
-                                $"SUM(fgm) AS fgm, " +
-                                $"SUM(fga) AS fga, " +
-                                $"SUM(fgm) / NULLIF(SUM(fga), 0) AS fg_pct, " +
-                                $"SUM(fg3m) AS fg3m, " +
-                                $"SUM(fg3a) AS fg3a, " +
-                                $"SUM(fg3m) / NULLIF(SUM(fg3a), 0) AS fg3_pct, " +
-                                $"SUM(ftm) AS ftm, " +
-                                $"SUM(fta) AS fta, " +
-                                $"SUM(ftm) / NULLIF(SUM(fta), 0) AS ft_pct, " +
-                                $"SUM(oreb) AS oreb, " +
-                                $"SUM(dreb) AS dreb, " +
-                                $"SUM(reb) AS reb, " +
-                                $"SUM(ast) AS ast, " +
-                                $"SUM(stl) AS stl, " +
-                                $"SUM(blk) AS blk, " +
-                                $"SUM(tov) AS tov, " +
-                                $"SUM(pf) AS pf, " +
-                                $"SUM(pts) AS pts, " +
-                                $"SUM(plus_minus) AS plus_minus " +
-                            $"FROM " +
-                                $"{tableName} boxScoreTable " +
-                            $"WHERE " +
-                                $"min > 0 " +
-                            $"AND team_id LIKE '%{selectedTeam}%' " +
-                            $"GROUP BY player_id, player_name, team_id, team_abbreviation, team_city " +
-                            $"ORDER BY {sortField} {order}";
-                    }
-                    else if (perMode == "Per Game")
-                    {
-
-                        query = gamesPlayedQuery +
-                        $@"
-                        SELECT
-                            team_id, team_abbreviation, team_city,
-                            {tableName}.player_id, player_name, 
-                            SUM(min) / GamesPlayed.gp AS min,
-                            SUM(fgm) / GamesPlayed.gp AS fgm,
-                            SUM(fga) / GamesPlayed.gp AS fga,
-                            SUM(fgm) / NULLIF(SUM(fga), 0) AS fg_pct,
-                            SUM(fg3m) / GamesPlayed.gp AS fg3m,
-                            SUM(fg3a) / GamesPlayed.gp AS fg3a,
-                            SUM(fg3m) / NULLIF(SUM(fg3a), 0) AS fg3_pct,
-                            SUM(ftm) / GamesPlayed.gp AS ftm,
-                            SUM(fta) / GamesPlayed.gp AS fta,
-                            SUM(ftm) / NULLIF(SUM(fta), 0) AS ft_pct,
-                            SUM(oreb) / GamesPlayed.gp AS oreb,
-                            SUM(dreb) / GamesPlayed.gp AS dreb,
-                            SUM(reb) / GamesPlayed.gp AS reb,
-                            SUM(ast) / GamesPlayed.gp AS ast,
-                            SUM(stl) / GamesPlayed.gp AS stl,
-                            SUM(blk) / GamesPlayed.gp AS blk,
-                            SUM(tov) / GamesPlayed.gp AS tov,
-                            SUM(pf) / GamesPlayed.gp AS pf,
-                            SUM(pts) / GamesPlayed.gp AS pts,
-                            SUM(plus_minus) / GamesPlayed.gp AS plus_minus
-                        FROM
-                            {tableName}
-                        JOIN GamesPlayed
-                            ON {tableName}.player_id = GamesPlayed.player_id
-                        WHERE
-                            min > 0
-                        AND 
-                            team_id LIKE '%{selectedTeam}%' 
-                        GROUP BY  
-                            {tableName}.player_id, player_name, team_id, team_abbreviation, team_city, GamesPlayed.gp
-                        ORDER BY {sortField} {order}";
-
-                        Console.WriteLine("HERE");
-                        Console.WriteLine(query);
-
-                    }
-                    else if (perMode == "Per Minute")
-                    {
-                        query = gamesPlayedQuery +
-                        $@"
-                        SELECT
-                            team_id, team_abbreviation, team_city,
-                            {tableName}.player_id, player_name, 
-                            SUM(min) / GamesPlayed.gp AS min,
-                            SUM(fgm) / SUM(min) AS fgm,
-                            SUM(fga) / SUM(min) AS fga,
-                            SUM(fgm) / NULLIF(SUM(fga), 0) AS fg_pct,
-                            SUM(fg3m) / SUM(min) AS fg3m,
-                            SUM(fg3a) / SUM(min) AS fg3a,
-                            SUM(fg3m) / NULLIF(SUM(fg3a), 0) AS fg3_pct,
-                            SUM(ftm) / SUM(min) AS ftm,
-                            SUM(fta) / SUM(min) AS fta,
-                            SUM(ftm) / NULLIF(SUM(fta), 0) AS ft_pct,
-                            SUM(oreb) / SUM(min) AS oreb,
-                            SUM(dreb) / SUM(min) AS dreb,
-                            SUM(reb) / SUM(min) AS reb,
-                            SUM(ast) / SUM(min) AS ast,
-                            SUM(stl) / SUM(min) AS stl,
-                            SUM(blk) / SUM(min) AS blk,
-                            SUM(tov) / SUM(min) AS tov,
-                            SUM(pf) / SUM(min) AS pf,
-                            SUM(pts) / SUM(min) AS pts,
-                            SUM(plus_minus) / SUM(min) AS plus_minus
-                        FROM
-                            {tableName}
-                        JOIN GamesPlayed
-                            ON {tableName}.player_id = GamesPlayed.player_id
-                        WHERE
-                            min > 0
-                        AND
-                            {tableName}.team_id LIKE '%{selectedTeam}%'
-                        GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, team_abbreviation, team_city, GamesPlayed.gp
-                        ORDER BY {sortField} {order}";
-                        Console.WriteLine(query);
-
-                    }
-                    else if (perMode == "Per 100 Poss")
-                    {
-                        var joinedTable = $"box_score_advanced_{season}";
-
-                        query = gamesPlayedQuery +
-                        $@"
-                        SELECT
-                            {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city,
-                            {tableName}.player_id, {tableName}.player_name, 
-                            100 * SUM({tableName}.min) / NULLIF(SUM({joinedTable}.poss), 0) AS min,
-                            100 * SUM(fgm) / NULLIF(SUM({joinedTable}.poss), 0) AS fgm,
-                            100 * SUM(fga) / NULLIF(SUM({joinedTable}.poss), 0) AS fga,
-                            SUM(fgm) / NULLIF(SUM(fga), 0) AS fg_pct,
-                            100 * SUM(fg3m) / NULLIF(SUM({joinedTable}.poss), 0) AS fg3m,
-                            100 * SUM(fg3a) / NULLIF(SUM({joinedTable}.poss), 0) AS fg3a,
-                            SUM(fg3m) / NULLIF(SUM(fg3a), 0) AS fg3_pct,
-                            100 * SUM(ftm) / NULLIF(SUM({joinedTable}.poss), 0) AS ftm,
-                            100 * SUM(fta) / NULLIF(SUM({joinedTable}.poss), 0) AS fta,
-                            SUM(ftm) / NULLIF(SUM(fta), 0) AS ft_pct,
-                            100 * SUM(oreb) / NULLIF(SUM({joinedTable}.poss), 0) AS oreb,
-                            100 * SUM(dreb) / NULLIF(SUM({joinedTable}.poss), 0) AS dreb,
-                            100 * SUM(reb) / NULLIF(SUM({joinedTable}.poss), 0) AS reb,
-                            100 * SUM(ast) / NULLIF(SUM({joinedTable}.poss), 0) AS ast,
-                            100 * SUM(stl) / NULLIF(SUM({joinedTable}.poss), 0) AS stl,
-                            100 * SUM(blk) / NULLIF(SUM({joinedTable}.poss), 0) AS blk,
-                            100 * SUM(tov) / NULLIF(SUM({joinedTable}.poss), 0) AS tov,
-                            100 * SUM(pf) / NULLIF(SUM({joinedTable}.poss), 0) AS pf,
-                            100 * SUM(pts) / NULLIF(SUM({joinedTable}.poss), 0) AS pts,
-                            100 * SUM(plus_minus) / NULLIF(SUM({joinedTable}.poss), 0) AS plus_minus
-                        FROM
-                            {tableName}
-                        JOIN {joinedTable}
-                            ON {tableName}.player_id = {joinedTable}.player_id
-                            AND {tableName}.team_id = {joinedTable}.team_id
-                            AND {tableName}.game_id = {joinedTable}.game_id
-                        WHERE
-                            {tableName}.min > 0
-                        AND
-                            {tableName}.team_id LIKE '%{selectedTeam}%'
-                        GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city 
-                        ORDER BY {sortField} {order}";
-                    }
-                    var boxScores = await _context.BoxScoreTraditionalPlayers.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-                    Console.WriteLine(boxScores.Count);
-                    return Ok(boxScores);
-
-                }
-                else if (boxType == "Advanced")
-                {
-                    var offRatingQuery = $@"
+                var offRatingQuery = $@"
                         WITH PlayerStats AS (
                         SELECT player_id,
+                          player_name,
                           team_id,
                           team_abbreviation,
                           SUM(ast) AS ast,
@@ -230,7 +58,7 @@ namespace ReactApp4.Server.Services
                           SUM(tov) AS tov
                           FROM box_score_traditional_{season}
                           WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' 
-                          GROUP BY player_id, team_id, team_abbreviation
+                          GROUP BY player_id, player_name, team_id, team_abbreviation
                         ),
                         
                         TeamStats AS(
@@ -462,7 +290,7 @@ namespace ReactApp4.Server.Services
                           ON PProd.player_id = Total_Poss.player_id AND PProd.team_id = Total_Poss.team_id
                         )";
 
-                    var defRatingQuery = $@"
+                var defRatingQuery = $@"
                         TeamStatsD AS (
                           SELECT team_id,
                           team_abbreviation,
@@ -482,6 +310,7 @@ namespace ReactApp4.Server.Services
                         
                         PlayerStatsD AS (
                           SELECT player_id,
+                          player_name,
                           team_id,
                           SUM(stl) AS stl,
                           SUM(blk) AS blk,
@@ -490,7 +319,7 @@ namespace ReactApp4.Server.Services
                           SUM(pf) AS pf
                           FROM box_score_traditional_{season}
                           WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' 
-                          GROUP BY player_id, team_id
+                          GROUP BY player_id, player_name, team_id
                         ),
                         OpponentStats AS (
                         SELECT 
@@ -620,7 +449,7 @@ namespace ReactApp4.Server.Services
                           ON Stop_PCT.team_id = D_Pts_Per_ScPoss.team_id
                         )";
 
-                    var advancedStats = $@"
+                var advancedStats = $@"
                         Player_Possessions AS (
                             SELECT
                             PlayerStats.player_id,
@@ -683,6 +512,181 @@ namespace ReactApp4.Server.Services
                         )
                     ";
 
+
+                int pageSize = 100;
+
+                Console.WriteLine("BoxType: ==> ");
+                Console.WriteLine(boxType);
+                if (boxType == "Traditional")
+                {
+                    if (perMode == "Totals")
+                    {
+                        query =
+                            $"SELECT " +
+                                $"team_id, team_abbreviation, team_city, " +
+                                $"player_id, player_name, " +
+                                $"SUM(min) AS min, " +
+                                $"SUM(fgm) AS fgm, " +
+                                $"SUM(fga) AS fga, " +
+                                $"SUM(fgm) / NULLIF(SUM(fga), 0) AS fg_pct, " +
+                                $"SUM(fg3m) AS fg3m, " +
+                                $"SUM(fg3a) AS fg3a, " +
+                                $"SUM(fg3m) / NULLIF(SUM(fg3a), 0) AS fg3_pct, " +
+                                $"SUM(ftm) AS ftm, " +
+                                $"SUM(fta) AS fta, " +
+                                $"SUM(ftm) / NULLIF(SUM(fta), 0) AS ft_pct, " +
+                                $"SUM(oreb) AS oreb, " +
+                                $"SUM(dreb) AS dreb, " +
+                                $"SUM(reb) AS reb, " +
+                                $"SUM(ast) AS ast, " +
+                                $"SUM(stl) AS stl, " +
+                                $"SUM(blk) AS blk, " +
+                                $"SUM(tov) AS tov, " +
+                                $"SUM(pf) AS pf, " +
+                                $"SUM(pts) AS pts, " +
+                                $"SUM(plus_minus) AS plus_minus " +
+                            $"FROM " +
+                                $"{tableName} boxScoreTable " +
+                            $"WHERE " +
+                                $"min > 0 " +
+                            $"AND team_id LIKE '%{selectedTeam}%' " +
+                            $"GROUP BY player_id, player_name, team_id, team_abbreviation, team_city " +
+                            $"ORDER BY {sortField} {order}";
+                    }
+                    else if (perMode == "Per Game")
+                    {
+
+                        query = gamesPlayedQuery +
+                        $@"
+                        SELECT
+                            team_id, team_abbreviation, team_city,
+                            {tableName}.player_id, player_name, 
+                            SUM(min) / GamesPlayed.gp AS min,
+                            SUM(fgm) / GamesPlayed.gp AS fgm,
+                            SUM(fga) / GamesPlayed.gp AS fga,
+                            SUM(fgm) / NULLIF(SUM(fga), 0) AS fg_pct,
+                            SUM(fg3m) / GamesPlayed.gp AS fg3m,
+                            SUM(fg3a) / GamesPlayed.gp AS fg3a,
+                            SUM(fg3m) / NULLIF(SUM(fg3a), 0) AS fg3_pct,
+                            SUM(ftm) / GamesPlayed.gp AS ftm,
+                            SUM(fta) / GamesPlayed.gp AS fta,
+                            SUM(ftm) / NULLIF(SUM(fta), 0) AS ft_pct,
+                            SUM(oreb) / GamesPlayed.gp AS oreb,
+                            SUM(dreb) / GamesPlayed.gp AS dreb,
+                            SUM(reb) / GamesPlayed.gp AS reb,
+                            SUM(ast) / GamesPlayed.gp AS ast,
+                            SUM(stl) / GamesPlayed.gp AS stl,
+                            SUM(blk) / GamesPlayed.gp AS blk,
+                            SUM(tov) / GamesPlayed.gp AS tov,
+                            SUM(pf) / GamesPlayed.gp AS pf,
+                            SUM(pts) / GamesPlayed.gp AS pts,
+                            SUM(plus_minus) / GamesPlayed.gp AS plus_minus
+                        FROM
+                            {tableName}
+                        JOIN GamesPlayed
+                            ON {tableName}.player_id = GamesPlayed.player_id
+                        WHERE
+                            min > 0
+                        AND 
+                            team_id LIKE '%{selectedTeam}%' 
+                        GROUP BY  
+                            {tableName}.player_id, player_name, team_id, team_abbreviation, team_city, GamesPlayed.gp
+                        ORDER BY {sortField} {order}";
+
+                        Console.WriteLine("HERE");
+                        Console.WriteLine(query);
+
+                    }
+                    else if (perMode == "Per Minute")
+                    {
+                        query = gamesPlayedQuery +
+                        $@"
+                        SELECT
+                            team_id, team_abbreviation, team_city,
+                            {tableName}.player_id, player_name, 
+                            SUM(min) / GamesPlayed.gp AS min,
+                            SUM(fgm) / SUM(min) AS fgm,
+                            SUM(fga) / SUM(min) AS fga,
+                            SUM(fgm) / NULLIF(SUM(fga), 0) AS fg_pct,
+                            SUM(fg3m) / SUM(min) AS fg3m,
+                            SUM(fg3a) / SUM(min) AS fg3a,
+                            SUM(fg3m) / NULLIF(SUM(fg3a), 0) AS fg3_pct,
+                            SUM(ftm) / SUM(min) AS ftm,
+                            SUM(fta) / SUM(min) AS fta,
+                            SUM(ftm) / NULLIF(SUM(fta), 0) AS ft_pct,
+                            SUM(oreb) / SUM(min) AS oreb,
+                            SUM(dreb) / SUM(min) AS dreb,
+                            SUM(reb) / SUM(min) AS reb,
+                            SUM(ast) / SUM(min) AS ast,
+                            SUM(stl) / SUM(min) AS stl,
+                            SUM(blk) / SUM(min) AS blk,
+                            SUM(tov) / SUM(min) AS tov,
+                            SUM(pf) / SUM(min) AS pf,
+                            SUM(pts) / SUM(min) AS pts,
+                            SUM(plus_minus) / SUM(min) AS plus_minus
+                        FROM
+                            {tableName}
+                        JOIN GamesPlayed
+                            ON {tableName}.player_id = GamesPlayed.player_id
+                        WHERE
+                            min > 0
+                        AND
+                            {tableName}.team_id LIKE '%{selectedTeam}%'
+                        GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, team_abbreviation, team_city, GamesPlayed.gp
+                        ORDER BY {sortField} {order}";
+                        Console.WriteLine(query);
+
+                    }
+                    else if (perMode == "Per 100 Poss")
+                    {
+                        var joinedTable = $"box_score_advanced_{season}";
+
+                        query = gamesPlayedQuery +
+                        $@"
+                        SELECT
+                            {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city,
+                            {tableName}.player_id, {tableName}.player_name, 
+                            100 * SUM({tableName}.min) / NULLIF(SUM({joinedTable}.poss), 0) AS min,
+                            100 * SUM(fgm) / NULLIF(SUM({joinedTable}.poss), 0) AS fgm,
+                            100 * SUM(fga) / NULLIF(SUM({joinedTable}.poss), 0) AS fga,
+                            SUM(fgm) / NULLIF(SUM(fga), 0) AS fg_pct,
+                            100 * SUM(fg3m) / NULLIF(SUM({joinedTable}.poss), 0) AS fg3m,
+                            100 * SUM(fg3a) / NULLIF(SUM({joinedTable}.poss), 0) AS fg3a,
+                            SUM(fg3m) / NULLIF(SUM(fg3a), 0) AS fg3_pct,
+                            100 * SUM(ftm) / NULLIF(SUM({joinedTable}.poss), 0) AS ftm,
+                            100 * SUM(fta) / NULLIF(SUM({joinedTable}.poss), 0) AS fta,
+                            SUM(ftm) / NULLIF(SUM(fta), 0) AS ft_pct,
+                            100 * SUM(oreb) / NULLIF(SUM({joinedTable}.poss), 0) AS oreb,
+                            100 * SUM(dreb) / NULLIF(SUM({joinedTable}.poss), 0) AS dreb,
+                            100 * SUM(reb) / NULLIF(SUM({joinedTable}.poss), 0) AS reb,
+                            100 * SUM(ast) / NULLIF(SUM({joinedTable}.poss), 0) AS ast,
+                            100 * SUM(stl) / NULLIF(SUM({joinedTable}.poss), 0) AS stl,
+                            100 * SUM(blk) / NULLIF(SUM({joinedTable}.poss), 0) AS blk,
+                            100 * SUM(tov) / NULLIF(SUM({joinedTable}.poss), 0) AS tov,
+                            100 * SUM(pf) / NULLIF(SUM({joinedTable}.poss), 0) AS pf,
+                            100 * SUM(pts) / NULLIF(SUM({joinedTable}.poss), 0) AS pts,
+                            100 * SUM(plus_minus) / NULLIF(SUM({joinedTable}.poss), 0) AS plus_minus
+                        FROM
+                            {tableName}
+                        JOIN {joinedTable}
+                            ON {tableName}.player_id = {joinedTable}.player_id
+                            AND {tableName}.team_id = {joinedTable}.team_id
+                            AND {tableName}.game_id = {joinedTable}.game_id
+                        WHERE
+                            {tableName}.min > 0
+                        AND
+                            {tableName}.team_id LIKE '%{selectedTeam}%'
+                        GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city 
+                        ORDER BY {sortField} {order}";
+                    }
+                    var boxScores = await _context.BoxScoreTraditionalPlayers.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    Console.WriteLine(boxScores.Count);
+                    return Ok(boxScores);
+
+                }
+                else if (boxType == "Advanced")
+                {
+
                     query = offRatingQuery + ", " + defRatingQuery + ", " + advancedStats +
                     $@"
                     SELECT
@@ -726,88 +730,254 @@ namespace ReactApp4.Server.Services
                 }
                 else if (boxType == "FourFactors")
                 {
-                    query = $@"
-                        SELECT
-                        PlayerStats.player_id, PlayerStats.team_abbreviation,
+                    query = offRatingQuery + ", " + defRatingQuery + ", " + advancedStats +
+                        $@"SELECT
+                        PlayerStats.player_id, 
+                        PlayerStats.team_id,
+                        PlayerStats.team_abbreviation,
+                        PlayerStats.player_name,
                         PlayerStats.min,
-                        AdvancedStats.Efg_Pct,
+                        Advanced_Stats.Efg_Pct,
                         CASE
                             WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN 0
                             ELSE ROUND(100 * (PlayerStats.fta / PlayerStats.fga), 2)
-                        END AS Fta_Rate,
-                        AdvancedStats.Tov_Pct,
-                        Pl
-                                                
+                        END AS Fta_Rate,                        
+                        Advanced_Stats.Tov_Pct,
+                        Advanced_Stats.Oreb_Pct
+                        FROM PlayerStats
+                        JOIN Advanced_Stats
+                        ON PlayerStats.player_id = Advanced_Stats.player_id AND PlayerStats.team_id = Advanced_Stats.team_id
+                        WHERE PlayerStats.min > 0
+                        ORDER BY {sortField} {order}
+                        ";
 
-";
-
-                    var leagueDashLineups = await _context.BoxScoreFourFactorsPlayers.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-                    Console.WriteLine(leagueDashLineups.Count);
-                    return Ok(leagueDashLineups);
+                    var boxScores = await _context.BoxScoreFourFactorsPlayers.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    Console.WriteLine(boxScores.Count);
+                    return Ok(boxScores);
                 }
-                //else if (boxType == "Misc")
-                //{
-                //    var joinedTable = $"league_dash_lineups_advanced_{numPlayers}man_{season}";
-                //
-                //    if (perMode == "Totals")
-                //    {
-                //        query = $"SELECT * FROM {tableName} WHERE team_id LIKE '%{selectedTeam}%' ORDER BY {sortField} {order}";
-                //    }
-                //    else if (perMode == "PerPossession")
-                //    {
-                //        query = $"SELECT {tableName}.id, {tableName}.group_set, {tableName}.group_id, {tableName}.group_name, " +
-                //                $"{tableName}.team_id, {tableName}.team_abbreviation, {tableName}.gp, {tableName}.w, {tableName}.l, " +
-                //                $"{tableName}.w_pct, {tableName}.min / {joinedTable}.poss AS min, {tableName}.pts_off_tov / {joinedTable}.poss AS pts_off_tov, " +
-                //                $"{tableName}.pts_2nd_chance / {joinedTable}.poss AS pts_2nd_chance, {tableName}.pts_fb / {joinedTable}.poss AS pts_fb, " +
-                //                $"{tableName}.pts_paint / {joinedTable}.poss AS pts_paint, {tableName}.opp_pts_off_tov / {joinedTable}.poss AS opp_pts_off_tov, {tableName}.opp_pts_2nd_chance / {joinedTable}.poss AS opp_pts_2nd_chance, " +
-                //                $"{tableName}.opp_pts_fb / {joinedTable}.poss AS opp_pts_fb, {tableName}.opp_pts_paint / {joinedTable}.poss AS opp_pts_paint, " +
-                //                $"{tableName}.gp_rank, {tableName}.w_rank, {tableName}.l_rank, {tableName}.w_pct_rank, {tableName}.min_rank, " +
-                //                $"pts_off_tov_rank, pts_2nd_chance_rank, pts_fb_rank, pts_paint_rank, opp_pts_off_tov_rank, opp_pts_2nd_chance_rank, opp_pts_fb_rank, opp_pts_paint_rank " +
-                //                $"FROM {tableName} " +
-                //                $"INNER JOIN {joinedTable} " +
-                //                $"ON {tableName}.group_id = {joinedTable}.group_id " +
-                //                $"WHERE {tableName}.team_id LIKE '%{selectedTeam}%' " +
-                //                $"ORDER BY {sortField} {order}";
-                //    }
-                //    else if (perMode == "PerMinute")
-                //    {
-                //        query = $"SELECT id, group_set, group_id, group_name, " +
-                //                $"team_id, team_abbreviation, gp, w, l, " +
-                //                $"w_pct, min, pts_off_tov / min AS pts_off_tov, " +
-                //                $"pts_2nd_chance / min AS pts_2nd_chance, pts_fb / min AS pts_fb, " +
-                //                $"pts_paint / min AS pts_paint, opp_pts_off_tov / min AS opp_pts_off_tov, opp_pts_2nd_chance / min AS opp_pts_2nd_chance, " +
-                //                $"opp_pts_fb / min AS opp_pts_fb, opp_pts_paint / min AS opp_pts_paint, " +
-                //                $"gp_rank, w_rank, l_rank, w_pct_rank, min_rank, " +
-                //                $"pts_off_tov_rank, pts_2nd_chance_rank, pts_fb_rank, pts_paint_rank, opp_pts_off_tov_rank, opp_pts_2nd_chance_rank, opp_pts_fb_rank, opp_pts_paint_rank " +
-                //                $"FROM {tableName} " +
-                //                $"WHERE team_id LIKE '%{selectedTeam}%' " +
-                //                $"ORDER BY {sortField} {order}";
-                //    }
-                //    else if (perMode == "PerGame")
-                //    {
-                //        query = $"SELECT id, group_set, group_id, group_name, " +
-                //                $"team_id, team_abbreviation, gp, w, l, " +
-                //                $"w_pct, min / gp AS min, pts_off_tov / gp AS pts_off_tov, " +
-                //                $"pts_2nd_chance / gp AS pts_2nd_chance, pts_fb / gp AS pts_fb, " +
-                //                $"pts_paint / gp AS pts_paint, opp_pts_off_tov / gp AS opp_pts_off_tov, opp_pts_2nd_chance / gp AS opp_pts_2nd_chance, " +
-                //                $"opp_pts_fb / gp AS opp_pts_fb, opp_pts_paint / gp AS opp_pts_paint, " +
-                //                $"gp_rank, w_rank, l_rank, w_pct_rank, min_rank, " +
-                //                $"pts_off_tov_rank, pts_2nd_chance_rank, pts_fb_rank, pts_paint_rank, opp_pts_off_tov_rank, opp_pts_2nd_chance_rank, opp_pts_fb_rank, opp_pts_paint_rank " +
-                //                $"FROM {tableName} " +
-                //                $"WHERE team_id LIKE '%{selectedTeam}%' " +
-                //                $"ORDER BY {sortField} {order}";
-                //    }
-                //    Console.WriteLine(boxType);
-                //    var leagueDashLineups = await _context.LeagueDashLineupMiscs.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-                //    Console.WriteLine(leagueDashLineups.Count);
-                //    return Ok(leagueDashLineups);
-                //}
-                //else if (boxType == "Scoring")
-                //{
-                //    var leagueDashLineups = await _context.LeagueDashLineupScorings.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-                //    Console.WriteLine(leagueDashLineups.Count);
-                //    return Ok(leagueDashLineups);
-                //}
+                else if (boxType == "Misc")
+                {
+                    var joinedTable = $"box_score_advanced_{season}";
+
+                    if (perMode == "Totals")
+                    {
+                        query = $@"SELECT
+                                {tableName}.player_id, {tableName}.player_name,
+                                {tableName}.team_id,
+                                {tableName}.team_abbreviation,
+                                SUM({tableName}.min) AS min,
+                                SUM({tableName}.pts_off_tov) AS pts_off_tov,
+                                SUM({tableName}.pts_2nd_chance) AS pts_2nd_chance,
+                                SUM({tableName}.pts_fb) AS pts_fb,
+                                SUM({tableName}.pts_paint) AS pts_paint,
+                                SUM({tableName}.opp_pts_off_tov) AS opp_pts_off_tov,
+                                SUM({tableName}.opp_pts_2nd_chance) AS opp_pts_2nd_chance,
+                                SUM({tableName}.opp_pts_fb) AS opp_pts_fb,
+                                SUM({tableName}.opp_pts_paint) AS opp_pts_paint,
+                                SUM({tableName}.blk) AS blk,
+                                SUM({tableName}.blka) AS blka,
+                                SUM({tableName}.pf) AS pf,
+                                SUM({tableName}.pfd) AS pfd
+                                FROM {tableName}
+                                WHERE team_id LIKE '%{selectedTeam}%'
+                                GROUP BY player_id, player_name, team_id, team_abbreviation
+                                HAVING SUM({tableName}.min) > 0
+                                ORDER BY {sortField} {order}";
+                    }
+                    else if (perMode == "Per 100 Poss")
+                    {
+                        query = $@"SELECT
+                                {tableName}.player_id, {tableName}.player_name,
+                                {tableName}.team_id,
+                                {tableName}.team_abbreviation,
+                                100 * SUM({tableName}.min) / NULLIF(SUM(poss), 0) AS min,
+                                100 * SUM({tableName}.pts_off_tov) / NULLIF(SUM(poss), 0) AS pts_off_tov,
+                                100 * SUM({tableName}.pts_2nd_chance) / NULLIF(SUM(poss), 0) AS pts_2nd_chance,
+                                100 * SUM({tableName}.pts_fb) / NULLIF(SUM(poss), 0) AS pts_fb,
+                                100 * SUM({tableName}.pts_paint) / NULLIF(SUM(poss), 0) AS pts_paint,
+                                100 * SUM({tableName}.opp_pts_off_tov) / NULLIF(SUM(poss), 0) AS opp_pts_off_tov,
+                                100 * SUM({tableName}.opp_pts_2nd_chance) / NULLIF(SUM(poss), 0) AS opp_pts_2nd_chance,
+                                100 * SUM({tableName}.opp_pts_fb) / NULLIF(SUM(poss), 0) AS opp_pts_fb,
+                                100 * SUM({tableName}.opp_pts_paint) / NULLIF(SUM(poss), 0) AS opp_pts_paint,
+                                100 * SUM({tableName}.blk) / NULLIF(SUM(poss), 0) AS blk,
+                                100 * SUM({tableName}.blka) / NULLIF(SUM(poss), 0) AS blka,
+                                100 * SUM({tableName}.pf) / NULLIF(SUM(poss), 0) AS pf,
+                                100 * SUM({tableName}.pfd) / NULLIF(SUM(poss), 0) AS pfd
+                                FROM {tableName}
+                                JOIN {joinedTable}
+                                ON {tableName}.player_id = {joinedTable}.player_id
+                                AND {tableName}.team_id = {joinedTable}.team_id
+                                AND {tableName}.game_id = {joinedTable}.game_id
+                                WHERE {tableName}.team_id LIKE '%{selectedTeam}%'
+                                GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation
+                                HAVING SUM({tableName}.min) > 0
+                                ORDER BY {sortField} {order}";
+                    }
+                    else if (perMode == "Per Minute")
+                    {
+                        query = $@"SELECT
+                                {tableName}.player_id, {tableName}.player_name,
+                                {tableName}.team_id,
+                                {tableName}.team_abbreviation,
+                                SUM(min) AS min,
+                                SUM({tableName}.pts_off_tov) / NULLIF(SUM(min), 0) AS pts_off_tov,
+                                SUM({tableName}.pts_2nd_chance) / NULLIF(SUM(min), 0) AS pts_2nd_chance,
+                                SUM({tableName}.pts_fb) / NULLIF(SUM(min), 0) AS pts_fb,
+                                SUM({tableName}.pts_paint) / NULLIF(SUM(min), 0) AS pts_paint,
+                                SUM({tableName}.opp_pts_off_tov) / NULLIF(SUM(min), 0) AS opp_pts_off_tov,
+                                SUM({tableName}.opp_pts_2nd_chance) / NULLIF(SUM(min), 0) AS opp_pts_2nd_chance,
+                                SUM({tableName}.opp_pts_fb) / NULLIF(SUM(min), 0) AS opp_pts_fb,
+                                SUM({tableName}.opp_pts_paint) / NULLIF(SUM(min), 0) AS opp_pts_paint,
+                                SUM({tableName}.blk) / NULLIF(SUM(min), 0) AS blk,
+                                SUM({tableName}.blka) / NULLIF(SUM(min), 0) AS blka,
+                                SUM({tableName}.pf) / NULLIF(SUM(min), 0) AS pf,
+                                SUM({tableName}.pfd) / NULLIF(SUM(min), 0) AS pfd
+                                FROM {tableName}
+                                WHERE {tableName}.team_id LIKE '%{selectedTeam}%'
+                                GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation
+                                HAVING SUM({tableName}.min) > 0
+                                ORDER BY {sortField} {order}";
+                    }
+                    else if (perMode == "Per Game")
+                    {
+                        query = gamesPlayedQuery + $@"SELECT
+                                {tableName}.player_id, {tableName}.player_name,
+                                {tableName}.team_id,
+                                {tableName}.team_abbreviation,
+                                SUM({tableName}.min) / GamesPlayed.gp AS min,
+                                SUM({tableName}.pts_off_tov) / GamesPlayed.gp AS pts_off_tov,
+                                SUM({tableName}.pts_2nd_chance) / GamesPlayed.gp AS pts_2nd_chance,
+                                SUM({tableName}.pts_fb) / GamesPlayed.gp AS pts_fb,
+                                SUM({tableName}.pts_paint) / GamesPlayed.gp AS pts_paint,
+                                SUM({tableName}.opp_pts_off_tov) / GamesPlayed.gp AS opp_pts_off_tov,
+                                SUM({tableName}.opp_pts_2nd_chance) / GamesPlayed.gp AS opp_pts_2nd_chance,
+                                SUM({tableName}.opp_pts_fb) / GamesPlayed.gp AS opp_pts_fb,
+                                SUM({tableName}.opp_pts_paint) / GamesPlayed.gp AS opp_pts_paint,
+                                SUM({tableName}.blk) / GamesPlayed.gp AS blk,
+                                SUM({tableName}.blka) / GamesPlayed.gp AS blka,
+                                SUM({tableName}.pf) / GamesPlayed.gp AS pf,
+                                SUM({tableName}.pfd) / GamesPlayed.gp AS pfd
+                                FROM {tableName}
+                                JOIN GamesPlayed
+                                ON {tableName}.player_id = GamesPlayed.player_id
+                                WHERE {tableName}.team_id LIKE '%{selectedTeam}%'
+                                GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, GamesPlayed.gp
+                                HAVING SUM({tableName}.min) > 0
+                                ORDER BY {sortField} {order}";
+                    }
+                    Console.WriteLine(boxType);
+                    var boxScores = await _context.BoxScoreMiscPlayers.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    Console.WriteLine(boxScores.Count);
+                    return Ok(boxScores);
+                }
+                else if (boxType == "Scoring")
+                {
+                    Console.WriteLine("Scoring!");
+                    query = $@"
+                        WITH PlayerStats AS(
+                        SELECT player_id,
+                          player_name,
+                          team_id,
+                          team_abbreviation,
+                          SUM(ast) AS ast,
+                          SUM(fgm) AS fgm,
+                          SUM(fg3m) AS fg3m,
+                          SUM(fg3a) AS fg3a,
+                          SUM(pts) AS pts,
+                          SUM(ftm) AS ftm,
+                          SUM(fta) AS fta,
+                          SUM(fga) AS fga,
+                          SUM(oreb) AS orb,
+                          SUM(dreb) AS drb,
+                          SUM(reb) AS reb,
+                          SUM(min) AS min,
+                          SUM(tov) AS tov
+                   
+                          FROM box_score_traditional_{season}
+                          WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%'
+                          GROUP BY player_id, player_name, team_id, team_abbreviation
+                        )
+                    
+                        SELECT box_score_scoring_{season}.player_name, box_score_scoring_{season}.player_id,
+                        box_score_scoring_{season}.team_id, box_score_scoring_{season}.team_abbreviation,
+                        PlayerStats.min,
+                        CASE
+                          WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN 0
+                          ELSE 100 * (PlayerStats.fga - PlayerStats.fg3a) / PlayerStats.fga
+                        END AS pct_fga_2pt,
+                        CASE
+                          WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN 0
+                          ELSE 100 * PlayerStats.fg3a / PlayerStats.fga
+                        END AS pct_fga_3pt,
+                        CASE
+                          WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
+                          ELSE 100 * ((PlayerStats.fgm - PlayerStats.fg3m) * 2) / PlayerStats.pts
+                        END AS pct_pts_2pt,
+                        CASE
+                          WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
+                          ELSE 100 * (PlayerStats.fg3m * 3) / PlayerStats.pts
+                        END AS pct_pts_3pt,
+                        CASE
+                          WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
+                          ELSE 100 * SUM(box_score_scoring_{season}.pct_pts_2pt_mr * box_score_traditional_{season}.pts) / PlayerStats.pts
+                        END AS pct_pts_2pt_mr,
+                        CASE
+                          WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
+                          ELSE 100 * SUM(box_score_scoring_{season}.pct_pts_fb * box_score_traditional_{season}.pts) / PlayerStats.pts
+                        END AS pct_pts_fb,
+                        CASE
+                          WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
+                          ELSE 100 * PlayerStats.ftm / PlayerStats.pts
+                        END AS pct_pts_ft,
+                        CASE
+                          WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
+                          ELSE 100 * SUM(box_score_scoring_{season}.pct_pts_off_tov * box_score_traditional_{season}.pts) / PlayerStats.pts
+                        END AS pct_pts_off_tov,
+                        CASE
+                          WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
+                          ELSE 100 * SUM(box_score_scoring_{season}.pct_pts_paint * box_score_traditional_{season}.pts) / PlayerStats.pts
+                        END AS pct_pts_paint,
+                        CASE
+                          WHEN SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m) IS NULL OR SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m) = 0 THEN 0
+                          ELSE 100 * SUM(box_score_scoring_{season}.pct_ast_2pm * (box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m)) / SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m)
+                        END AS pct_ast_2pm,
+                        CASE
+                          WHEN SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m) IS NULL OR SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m) = 0 THEN 0
+                          ELSE 100 * SUM(box_score_scoring_{season}.pct_uast_2pm * (box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m)) / SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m)
+                        END AS pct_uast_2pm,
+                        CASE
+                          WHEN SUM(box_score_traditional_{season}.fg3m) IS NULL OR SUM(box_score_traditional_{season}.fg3m) = 0 THEN 0
+                          ELSE 100 * SUM(box_score_scoring_{season}.pct_ast_3pm * box_score_traditional_{season}.fg3m) / SUM(box_score_traditional_{season}.fg3m)
+                        END AS pct_ast_3pm,
+                        CASE
+                          WHEN SUM(box_score_traditional_{season}.fg3m) IS NULL OR SUM(box_score_traditional_{season}.fg3m) = 0 THEN 0
+                          ELSE 100 * SUM(box_score_scoring_{season}.pct_uast_3pm * box_score_traditional_{season}.fg3m) / SUM(box_score_traditional_{season}.fg3m)
+                        END AS pct_uast_3pm,
+                        CASE
+                          WHEN SUM(box_score_traditional_{season}.fgm) IS NULL OR SUM(box_score_traditional_{season}.fgm) = 0 THEN 0
+                          ELSE 100 * SUM(box_score_scoring_{season}.pct_ast_fgm * box_score_traditional_{season}.fgm) / SUM(box_score_traditional_{season}.fgm)
+                        END AS pct_ast_fgm,
+                        CASE
+                          WHEN SUM(box_score_traditional_{season}.fgm) IS NULL OR SUM(box_score_traditional_{season}.fgm) = 0 THEN 0
+                          ELSE 100 * SUM(box_score_scoring_{season}.pct_uast_fgm * box_score_traditional_{season}.fgm) / SUM(box_score_traditional_{season}.fgm)
+                        END AS pct_uast_fgm
+                        FROM box_score_scoring_{season}
+                        JOIN PlayerStats
+                        ON box_score_scoring_{season}.player_id = PlayerStats.player_id
+                        AND box_score_scoring_{season}.team_id = PlayerStats.team_id
+                        JOIN box_score_traditional_{season}
+                        ON box_score_scoring_{season}.player_id = box_score_traditional_{season}.player_id
+                        AND box_score_scoring_{season}.team_id = box_score_traditional_{season}.team_id
+                        AND box_score_scoring_{season}.game_id = box_score_traditional_{season}.game_id
+                        GROUP BY box_score_scoring_{season}.player_name, box_score_scoring_{season}.player_id, box_score_scoring_{season}.team_id, box_score_scoring_{season}.team_abbreviation, PlayerStats.min, PlayerStats.fga,
+                        PlayerStats.fg3a, PlayerStats.pts, PlayerStats.fgm, PlayerStats.fg3m, PlayerStats.ftm
+                        HAVING SUM({tableName}.min) > 0
+                        ORDER BY {sortField} {order}
+                    ";
+                    var boxScores = await _context.BoxScoreScoringPlayers.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    Console.WriteLine(boxScores.Count);
+                    return Ok(boxScores);
+                }
                 //else if (boxType == "Opponent")
                 //{
                 //    var joinedTable = $"league_dash_lineups_advanced_{numPlayers}man_{season}";
