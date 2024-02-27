@@ -60,9 +60,9 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
                 try {
                     console.log(selectedBoxType);
                     console.log(perMode);
-                    const data = await axios.get(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
+                    const data = await axios.get(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}`);
                     console.log(data.data);
-                    console.log(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
+                    console.log(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}`);
                     setTableData(data.data);
                     if (selectedBoxType === 'Advanced') {
                         setColumns(advancedLineupColumns);
@@ -88,9 +88,9 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
                     console.log(selectedBoxType);
                     console.log(perMode);
 
-                    const data = await axios.get(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
+                    const data = await axios.get(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}`);
                     console.log(data.data);
-                    console.log(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${page}/${perMode}/${selectedTeam.team_id}`);
+                    console.log(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}`);
                     setTableData(data.data);
                     console.log("PLAYERSSSSS")
                     if (selectedBoxType === 'Advanced') {
@@ -113,7 +113,7 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
         if (selectedSeason) {
             getStats()
         }
-    }, [numPlayers, selectedLineupPlayer, selectedSeason, selectedBoxType, sortField, order, page, perMode, selectedTeam]);
+    }, [numPlayers, selectedLineupPlayer, selectedSeason, selectedBoxType, sortField, order, perMode, selectedTeam]);
 
     /*
     const columns = [
@@ -162,7 +162,6 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
     const filteredData = tableData.filter((element) => {
         //if no input the return the original
         //return the item which contains the user input
-        console.log(element);
         if (!element.player_name) {
             return element.group_name.toString().toLowerCase().includes(inputText);
         } else {

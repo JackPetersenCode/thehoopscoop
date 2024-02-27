@@ -35,7 +35,6 @@ const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData }) =
     } else {
         console.log('is table data array')
         if (isColumnArray(columns)) {
-            console.log(columns)
 
             return (
                 <tbody>

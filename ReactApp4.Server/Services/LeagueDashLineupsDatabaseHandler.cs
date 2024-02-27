@@ -18,7 +18,7 @@ namespace ReactApp4.Server.Services
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<IActionResult> GetLeagueDashLineups(string season, string boxType, string numPlayers, string order, string sortField, int page, string perMode, string selectedTeam)
+        public async Task<IActionResult> GetLeagueDashLineups(string season, string boxType, string numPlayers, string order, string sortField, string perMode, string selectedTeam)
         {
             try
             {
@@ -27,11 +27,11 @@ namespace ReactApp4.Server.Services
 
                 var query = $"SELECT * FROM {tableName} WHERE team_id LIKE '%{selectedTeam}%' ORDER BY {sortField} {order}";
 
-                int pageSize = 100;
+                //int pageSize = 100;
 
                 if (boxType == "Advanced")
                 {
-                    var leagueDashLineups = await _context.LeagueDashLineupAdvanceds.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    var leagueDashLineups = await _context.LeagueDashLineupAdvanceds.FromSqlRaw(query).ToListAsync();
                     Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups); // Wrap the result in OkObjectResult
                 } else if (boxType == "Base")
@@ -88,13 +88,13 @@ namespace ReactApp4.Server.Services
                                 $"WHERE {tableName}.team_id LIKE '%{selectedTeam}%' " +
                                 $"ORDER BY {sortField} {order}";
                     }
-                    var leagueDashLineups = await _context.LeagueDashLineupBases.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    var leagueDashLineups = await _context.LeagueDashLineupBases.FromSqlRaw(query).ToListAsync();
                     Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
             
                 } else if (boxType == "FourFactors")
                 {
-                    var leagueDashLineups = await _context.LeagueDashLineupFourFactors.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    var leagueDashLineups = await _context.LeagueDashLineupFourFactors.FromSqlRaw(query).ToListAsync();
                     Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
                 } else if (boxType == "Misc")
@@ -150,12 +150,12 @@ namespace ReactApp4.Server.Services
                                 $"ORDER BY {sortField} {order}";
                     }
                     Console.WriteLine(boxType);
-                    var leagueDashLineups = await _context.LeagueDashLineupMiscs.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    var leagueDashLineups = await _context.LeagueDashLineupMiscs.FromSqlRaw(query).ToListAsync();
                     Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
                 } else if (boxType == "Scoring")
                 {
-                    var leagueDashLineups = await _context.LeagueDashLineupScorings.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    var leagueDashLineups = await _context.LeagueDashLineupScorings.FromSqlRaw(query).ToListAsync();
                     Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
                 } else if (boxType == "Opponent")
@@ -234,7 +234,7 @@ namespace ReactApp4.Server.Services
                                 $"WHERE team_id LIKE '%{selectedTeam}%' " +
                                 $"ORDER BY {sortField} {order}";
                     }
-                    var leagueDashLineups = await _context.LeagueDashLineupOpponents.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    var leagueDashLineups = await _context.LeagueDashLineupOpponents.FromSqlRaw(query).ToListAsync();
                     Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
                 }

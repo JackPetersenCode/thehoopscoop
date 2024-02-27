@@ -29,10 +29,10 @@ namespace ReactApp4.Server.Controllers
             return await _leagueDashLineupsDataHandler.GetLeagueDashLineupsFromFile(season, boxType, numPlayers);
         }
 
-        [HttpGet("{season?}/{boxType?}/{numPlayers?}/{order?}/{sortField?}/{page?}/{perMode?}/{selectedTeam?}")]
-        public async Task<IActionResult> GetLeagueDashLineups(string season = "2023_24", string boxType = "Traditional", string numPlayers = "5", string order = "desc", string sortField = "id", int page = 1, string perMode = "Totals", string selectedTeam = "1")
+        [HttpGet("{season?}/{boxType?}/{numPlayers?}/{order?}/{sortField?}/{perMode?}/{selectedTeam?}")]
+        public async Task<IActionResult> GetLeagueDashLineups(string season = "2023_24", string boxType = "Traditional", string numPlayers = "5", string order = "desc", string sortField = "id", string perMode = "Totals", string selectedTeam = "1")
         {
-            return await _leagueDashLineupsDataHandler.GetLeagueDashLineups(season, boxType, numPlayers, order, sortField, page, perMode, selectedTeam);
+            return await _leagueDashLineupsDataHandler.GetLeagueDashLineups(season, boxType, numPlayers, order, sortField, perMode, selectedTeam);
         }
 
         [HttpPost("{season}/{boxType}/{numPlayers}")]

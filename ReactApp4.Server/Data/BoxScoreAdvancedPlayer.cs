@@ -19,9 +19,6 @@ namespace ReactApp4.Server.Data
         [Column("team_abbreviation")]
         public string? Team_abbreviation { get; set; }
 
-        [Column("team_city")]
-        public string? Team_city { get; set; }
-
         [Column("min")]
         public decimal? Min { get; set; }
 

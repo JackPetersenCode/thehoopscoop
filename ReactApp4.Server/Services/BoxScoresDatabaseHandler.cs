@@ -18,7 +18,7 @@ namespace ReactApp4.Server.Services
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<IActionResult> GetBoxScores(string season, string boxType, string order, string sortField, int page, string perMode, string selectedTeam)
+        public async Task<IActionResult> GetBoxScores(string season, string boxType, string order, string sortField, string perMode, string selectedTeam)
         {
             try
             {
@@ -55,7 +55,10 @@ namespace ReactApp4.Server.Services
                           SUM(dreb) AS drb,
                           SUM(reb) AS reb,
                           SUM(min) AS min,
-                          SUM(tov) AS tov
+                          SUM(tov) AS tov,
+                          SUM(stl) AS stl,
+                          SUM(blk) AS blk,
+                          SUM(pf) AS pf
                           FROM box_score_traditional_{season}
                           WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' 
                           GROUP BY player_id, player_name, team_id, team_abbreviation
@@ -63,6 +66,7 @@ namespace ReactApp4.Server.Services
                         
                         TeamStats AS(
                           SELECT team_id,
+                          team_abbreviation,
                           SUM(fgm) AS fgm,
                           SUM(fga) AS fga,
                           SUM(fg3a) AS fg3a,
@@ -75,10 +79,13 @@ namespace ReactApp4.Server.Services
                           SUM(reb) AS reb,
                           SUM(pts) AS pts,
                           SUM(min) AS min,
-                          SUM(ast) AS ast
+                          SUM(ast) AS ast,
+                          SUM(blk) AS blk, 
+                          SUM(stl) AS stl,
+                          SUM(pf) AS pf
                           FROM box_score_traditional_{season}
                           WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' 
-                          GROUP BY team_id
+                          GROUP BY team_id, team_abbreviation
                         ),  
                         Opponent_RB AS(
                             SELECT
@@ -291,36 +298,6 @@ namespace ReactApp4.Server.Services
                         )";
 
                 var defRatingQuery = $@"
-                        TeamStatsD AS (
-                          SELECT team_id,
-                          team_abbreviation,
-                          SUM(dreb) AS drb,
-                          SUM(blk) AS blk, 
-                          SUM(min) AS min,
-                          SUM(stl) AS stl,
-                          SUM(pf) AS pf,
-                          SUM(fga) AS fga,
-                          SUM(tov) AS tov,
-                          SUM(oreb) AS orb,
-                          SUM(fta) AS fta
-                          FROM box_score_traditional_{season}
-                          WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' 
-                          GROUP BY team_id, team_abbreviation
-                        ),
-                        
-                        PlayerStatsD AS (
-                          SELECT player_id,
-                          player_name,
-                          team_id,
-                          SUM(stl) AS stl,
-                          SUM(blk) AS blk,
-                          SUM(dreb) AS drb,
-                          SUM(min) AS min,
-                          SUM(pf) AS pf
-                          FROM box_score_traditional_{season}
-                          WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' 
-                          GROUP BY player_id, player_name, team_id
-                        ),
                         OpponentStats AS (
                         SELECT 
                             t.team_abbreviation,
@@ -355,12 +332,12 @@ namespace ReactApp4.Server.Services
                           GROUP BY team_id, OpponentStats.Opponent_FGM, OpponentStats.Opponent_FGA
                         ),
                         DOR_PCT AS (
-                          SELECT TeamStatsD.team_id,
-                          OpponentStats.Opponent_ORB / (OpponentStats.Opponent_ORB + TeamStatsD.drb) AS DOR_PCT
-                        	FROM TeamStatsD
+                          SELECT TeamStats.team_id,
+                          OpponentStats.Opponent_ORB / (OpponentStats.Opponent_ORB + TeamStats.drb) AS DOR_PCT
+                        	FROM TeamStats
                           JOIN OpponentStats
-                          ON TeamStatsD.team_id = OpponentStats.team_id
-                          GROUP By TeamStatsD.team_id, OpponentStats.Opponent_ORB, TeamStatsD.DRB
+                          ON TeamStats.team_id = OpponentStats.team_id
+                          GROUP By TeamStats.team_id, OpponentStats.Opponent_ORB, TeamStats.DRB
                         ),
                         FMwt AS (
                           SELECT DFG_PCT.team_id,
@@ -371,30 +348,30 @@ namespace ReactApp4.Server.Services
                           GROUP BY DFG_PCT.team_id, DFG_PCT.DFG_PCT, DOR_PCT.DOR_PCT
                         ),
                         Stops1 AS (
-                          SELECT PlayerStatsD.player_id,
-                          PlayerStatsD.team_id,
-                          PlayerStatsD.stl + PlayerStatsD.blk * FMwt.FMwt * (1 - 1.07 * DOR_PCT.DOR_PCT) + PlayerStatsD.drb * (1 - FMwt.FMwt) AS Stops1
-                          FROM PlayerStatsD
+                          SELECT PlayerStats.player_id,
+                          PlayerStats.team_id,
+                          PlayerStats.stl + PlayerStats.blk * FMwt.FMwt * (1 - 1.07 * DOR_PCT.DOR_PCT) + PlayerStats.drb * (1 - FMwt.FMwt) AS Stops1
+                          FROM PlayerStats
                           JOIN FMwt 
-                          ON PlayerStatsD.team_id = FMwt.team_id
+                          ON PlayerStats.team_id = FMwt.team_id
                           JOIN DOR_PCT
-                          ON PlayerStatsD.team_id = DOR_PCT.team_id
-                        	GROUP BY PlayerStatsD.player_id, PlayerStatsD.team_id, PlayerStatsD.stl, PlayerStatsD.blk, PlayerStatsD.drb, DOR_PCT.DOR_PCT, FMwt.FMwt
+                          ON PlayerStats.team_id = DOR_PCT.team_id
+                        	GROUP BY PlayerStats.player_id, PlayerStats.team_id, PlayerStats.stl, PlayerStats.blk, PlayerStats.drb, DOR_PCT.DOR_PCT, FMwt.FMwt
                         ),
                         Stops2 AS (
                         	SELECT
-                        	PlayerStatsD.player_id,
-                          PlayerStatsD.team_id,
-                          (((OpponentStats.Opponent_FGA - OpponentStats.Opponent_FGM - TeamStatsD.blk) / TeamStatsD.min) * FMwt.FMwt * (1 - 1.07 * DOR_PCT.DOR_PCT) + ((OpponentStats.Opponent_TOV - TeamStatsD.stl) / TeamStatsD.min)) * PlayerStatsD.min + (PlayerStatsD.pf / TeamStatsD.pf) * 0.4 * OpponentStats.Opponent_FTA * (1 - (OpponentStats.Opponent_FTM / OpponentStats.Opponent_FTA))^2 AS Stops2 
-                        	FROM PlayerStatsD
+                        	PlayerStats.player_id,
+                          PlayerStats.team_id,
+                          (((OpponentStats.Opponent_FGA - OpponentStats.Opponent_FGM - TeamStats.blk) / TeamStats.min) * FMwt.FMwt * (1 - 1.07 * DOR_PCT.DOR_PCT) + ((OpponentStats.Opponent_TOV - TeamStats.stl) / TeamStats.min)) * PlayerStats.min + (PlayerStats.pf / TeamStats.pf) * 0.4 * OpponentStats.Opponent_FTA * (1 - (OpponentStats.Opponent_FTM / OpponentStats.Opponent_FTA))^2 AS Stops2 
+                        	FROM PlayerStats
                           JOIN OpponentStats
-                          ON PlayerStatsD.team_id = OpponentStats.team_id
-                          JOIN TeamStatsD
-                          ON PlayerStatsD.team_id = TeamStatsD.team_id
+                          ON PlayerStats.team_id = OpponentStats.team_id
+                          JOIN TeamStats
+                          ON PlayerStats.team_id = TeamStats.team_id
                         	JOIN FMwt
-                          ON PlayerStatsD.team_id = FMwt.team_id
+                          ON PlayerStats.team_id = FMwt.team_id
                           JOIN DOR_PCT
-                          ON PlayerStatsD.team_id = DOR_PCT.team_id
+                          ON PlayerStats.team_id = DOR_PCT.team_id
                         ),
                         Stops AS (
                           SELECT
@@ -407,25 +384,25 @@ namespace ReactApp4.Server.Services
                         ),
                         Team_Possessions AS (
                           SELECT
-                          TeamStatsD.team_id,
-                          TeamStatsD.fga - TeamStatsD.orb + TeamStatsD.tov + 0.4 * TeamStatsD.fta AS Team_Possessions
-                          FROM TeamStatsD
+                          TeamStats.team_id,
+                          TeamStats.fga - TeamStats.orb + TeamStats.tov + 0.4 * TeamStats.fta AS Team_Possessions
+                          FROM TeamStats
                         ),
                         Stop_PCT AS (
                           SELECT
-                          PlayerStatsD.player_id,
-                          PlayerStatsD.team_id,
-                          (Stops.Stops * OpponentStats.Opponent_MIN) / (Team_Possessions.Team_Possessions * PlayerStatsD.min) AS Stop_PCT
-                          FROM PlayerStatsD
+                          PlayerStats.player_id,
+                          PlayerStats.team_id,
+                          (Stops.Stops * OpponentStats.Opponent_MIN) / (Team_Possessions.Team_Possessions * PlayerStats.min) AS Stop_PCT
+                          FROM PlayerStats
                           JOIN Stops
-                          ON PlayerStatsD.player_id = Stops.player_id AND PlayerStatsD.team_id = Stops.team_id
+                          ON PlayerStats.player_id = Stops.player_id AND PlayerStats.team_id = Stops.team_id
                           JOIN OpponentStats
-                          ON PlayerStatsD.team_id = OpponentStats.team_id
+                          ON PlayerStats.team_id = OpponentStats.team_id
                           JOIN Team_Possessions
-                          ON PlayerStatsD.team_id = Team_Possessions.team_id
+                          ON PlayerStats.team_id = Team_Possessions.team_id
                         ),
                         Team_Defensive_Rating AS (
-                        	SELECT
+                          SELECT
                           Team_Possessions.team_id,
                           100 * (OpponentStats.Opponent_PTS / Team_Possessions.Team_Possessions) AS Team_Defensive_Rating
                           FROM Team_Possessions
@@ -513,7 +490,7 @@ namespace ReactApp4.Server.Services
                     ";
 
 
-                int pageSize = 100;
+                //int pageSize = 100;
 
                 Console.WriteLine("BoxType: ==> ");
                 Console.WriteLine(boxType);
@@ -679,18 +656,22 @@ namespace ReactApp4.Server.Services
                         GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city 
                         ORDER BY {sortField} {order}";
                     }
-                    var boxScores = await _context.BoxScoreTraditionalPlayers.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    var boxScores = await _context.BoxScoreTraditionalPlayers.FromSqlRaw(query).ToListAsync();
                     Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
 
                 }
                 else if (boxType == "Advanced")
                 {
+                    if (sortField == "min")
+                    {
+                        sortField = "min";
+                    }
 
                     query = offRatingQuery + ", " + defRatingQuery + ", " + advancedStats +
                     $@"
                     SELECT
-                        box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation, box_score_advanced_{season}.team_city,
+                        box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation, 
                         box_score_advanced_{season}.player_id, box_score_advanced_{season}.player_name,
                         SUM(box_score_advanced_{season}.min) AS min,
                         ROUND(Offensive_Rating.Offensive_Rating, 2) AS off_rating,
@@ -706,7 +687,7 @@ namespace ReactApp4.Server.Services
                         Advanced_Stats.Efg_Pct,
                         Advanced_Stats.Ts_Pct,
                         Advanced_Stats.Usg_Pct,
-                        AVG(pie) * 100 as pie,
+                        ROUND(AVG(pie) * 100, 2) as pie,
                         SUM(poss) as poss
                         FROM box_score_advanced_{season}
                         JOIN Offensive_Rating
@@ -715,7 +696,7 @@ namespace ReactApp4.Server.Services
                         ON box_score_advanced_{season}.player_id = Defensive_Rating.player_id AND box_score_advanced_{season}.team_id = Defensive_Rating.team_id
 					    JOIN Advanced_Stats
                         ON box_score_advanced_{season}.player_id = Advanced_Stats.player_id AND box_score_advanced_{season}.team_id = Advanced_Stats.team_id
-                        GROUP BY box_score_advanced_{season}.player_id, box_score_advanced_{season}.player_name, box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation, box_score_advanced_{season}.team_city,
+                        GROUP BY box_score_advanced_{season}.player_id, box_score_advanced_{season}.player_name, box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation, 
                         Offensive_Rating.Offensive_Rating, Defensive_Rating.Defensive_Rating, Advanced_Stats.Ast_Pct, Advanced_Stats.Ast_Tov, Advanced_Stats.Ast_Ratio,
                         Advanced_Stats.Oreb_Pct, Advanced_Stats.Dreb_Pct, Advanced_Stats.Reb_Pct, Advanced_Stats.Tov_Pct, Advanced_Stats.Efg_Pct, Advanced_Stats.Ts_Pct,
                         Advanced_Stats.Usg_Pct 
@@ -723,7 +704,7 @@ namespace ReactApp4.Server.Services
                         ORDER BY {sortField} {order}
                     ";
                     Console.WriteLine(query);
-                    var boxScores = await _context.BoxScoreAdvancedPlayers.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    var boxScores = await _context.BoxScoreAdvancedPlayers.FromSqlRaw(query).ToListAsync();
                     Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
 
@@ -751,7 +732,7 @@ namespace ReactApp4.Server.Services
                         ORDER BY {sortField} {order}
                         ";
 
-                    var boxScores = await _context.BoxScoreFourFactorsPlayers.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    var boxScores = await _context.BoxScoreFourFactorsPlayers.FromSqlRaw(query).ToListAsync();
                     Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
                 }
@@ -866,7 +847,7 @@ namespace ReactApp4.Server.Services
                                 ORDER BY {sortField} {order}";
                     }
                     Console.WriteLine(boxType);
-                    var boxScores = await _context.BoxScoreMiscPlayers.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    var boxScores = await _context.BoxScoreMiscPlayers.FromSqlRaw(query).ToListAsync();
                     Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
                 }
@@ -974,7 +955,7 @@ namespace ReactApp4.Server.Services
                         HAVING SUM({tableName}.min) > 0
                         ORDER BY {sortField} {order}
                     ";
-                    var boxScores = await _context.BoxScoreScoringPlayers.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+                    var boxScores = await _context.BoxScoreScoringPlayers.FromSqlRaw(query).ToListAsync();
                     Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
                 }
