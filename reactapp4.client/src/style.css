@@ -3,11 +3,24 @@
     flex-direction: column;
 }
 
+.dnd-container-flex {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
 .drop-title {
     color: rgb(153, 153, 153);
     font-size: x-small;
     font-weight: 600;
     text-align: left;
+}
+
+.game-option-flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    max-width: 200px;
 }
 
 .drop-flex-select {
@@ -19,6 +32,38 @@
     width: 100%;
 }
 
+.max-width {
+    max-width: 200px;
+}
+
+left-justify {
+    text-align: left;
+}
+
 .drop-flex-option {
     padding: 10px;
+}
+
+.search-list {
+    text-align: left;
+    background-color: white;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 3px rgba(0,0,0,0.1), -2px 2px 3px rgba(0,0,0,0.1);
+}
+
+.prop-bet-div {
+    text-align: left;
+    width: 100%;
+}
+
+.flex {
+    display: flex;
+}
+
+.game-container-flex {
+    display: flex;
+    width: 100%;
 }

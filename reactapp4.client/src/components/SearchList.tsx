@@ -15,8 +15,13 @@ interface SearchListProps {
     inputText: string;
     setInputText: React.Dispatch<React.SetStateAction<string>>;
     data: Player[];
-    selectedPlayer: string;
-    setSelectedPlayer: React.Dispatch<React.SetStateAction<string>>;
+    selectedPlayer: Player | null;
+    setSelectedPlayer: React.Dispatch<React.SetStateAction<Player | null>>;
+    openSearchList: boolean;
+    setOpenSearchList: React.Dispatch<React.SetStateAction<boolean>>;
+    roster: Player[];
+    setRoster: React.Dispatch<React.SetStateAction<Player[]>>;
+    setUsedPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
 }
 
 const SearchList: React.FC<SearchListProps> = ({
@@ -26,6 +31,11 @@ const SearchList: React.FC<SearchListProps> = ({
     data,
     selectedPlayer,
     setSelectedPlayer,
+    openSearchList,
+    setOpenSearchList,
+    roster,
+    setRoster,
+    setUsedPlayers
 }) => {
     const refOne = useRef<HTMLDivElement>(null);
 
@@ -36,7 +46,7 @@ const SearchList: React.FC<SearchListProps> = ({
                 !refOne.current.contains(event.target as Node) &&
                 !refTwo.current?.contains(event.target as Node)
             ) {
-                setInputText('');
+                setOpenSearchList(false);
             }
         }
 
@@ -44,26 +54,35 @@ const SearchList: React.FC<SearchListProps> = ({
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [refTwo, setInputText]);
+    }, [refTwo, setOpenSearchList]);
 
     const filteredData = data.filter((element: Player) => {
-        return element.full_name.toLowerCase().includes(inputText);
+
+        return element.full_name.toLowerCase().includes(inputText.toLowerCase());
     });
 
     const handleList = (item: Player) => {
-        setSelectedPlayer(item.full_name);
+        setSelectedPlayer(item);
+        setRoster(roster => [...roster, item]);
+        setUsedPlayers(usedPlayers => [...usedPlayers, item]);
         console.log(selectedPlayer);
-        setInputText('');
+        setInputText(item.full_name);
+        setOpenSearchList(false);
     };
 
     return (
-        <StyledDiv ref={refOne}>
-            {filteredData.map((item: Player, index: number) => (
-                <StyledOption key={index} onClick={() => handleList(item)}>
-                    {item.full_name}
-                </StyledOption>
-            ))}
-        </StyledDiv>
+        <>
+            {openSearchList ?
+                <div className="search-list" ref={refOne}>
+                    {filteredData.map((item: Player, index: number) => (
+                        <option key={index} onClick={() => handleList(item)}>
+                            {item.full_name}
+                        </option>
+                    ))}
+                </div >
+            : 
+            ""}
+        </>
     );
 };
 

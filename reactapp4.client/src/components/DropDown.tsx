@@ -13,6 +13,7 @@ interface DropDownProps {
     selectedTeam: NBATeam;
     setSelectedTeam: React.Dispatch<React.SetStateAction<NBATeam>>;
     dropDownType: string;
+    setSelectedOpponent: React.Dispatch<React.SetStateAction<NBATeam>>;
 }
 
 const SeasonFlex = styled.div`
@@ -40,7 +41,7 @@ const SeasonOption = styled.option`
     padding: 10px;
 `
 
-const DropDown: React.FC<DropDownProps> = ({ options, perMode, setPerMode, numPlayers, setNumPlayers, selectedTeam, setSelectedTeam, dropDownType }) => {
+const DropDown: React.FC<DropDownProps> = ({ options, perMode, setPerMode, numPlayers, setNumPlayers, selectedTeam, setSelectedTeam, dropDownType, setSelectedOpponent }) => {
 
     const [selectedOption, setSelectedOption] = useState<string | NBATeam>("");
     function handleChange(event: { preventDefault: () => void; target: { value: string | NBATeam; }; }) {
@@ -66,6 +67,10 @@ const DropDown: React.FC<DropDownProps> = ({ options, perMode, setPerMode, numPl
             if (dropDownType === "Team") {
                 console.log(event.target.value);
                 setSelectedTeam(JSON.parse(event.target.value));
+            }
+            if (dropDownType === "Opponent") {
+                console.log(event.target.value);
+                setSelectedOpponent(JSON.parse(event.target.value));
             }
         }
         setSelectedOption(event.target.value);

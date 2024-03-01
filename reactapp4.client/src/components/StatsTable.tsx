@@ -163,9 +163,9 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
         //if no input the return the original
         //return the item which contains the user input
         if (!element.player_name) {
-            return element.group_name.toString().toLowerCase().includes(inputText);
+            return element.group_name.toString().toLowerCase().includes(inputText.toLowerCase());
         } else {
-            return element.player_name.toString().toLowerCase().includes(inputText);
+            return element.player_name.toString().toLowerCase().includes(inputText.toLowerCase());
         }
     })
 

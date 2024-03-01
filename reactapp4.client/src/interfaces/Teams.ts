@@ -3,4 +3,5 @@ interface NBATeam {
     team_name: string;
 }
 
+
 export type { NBATeam }

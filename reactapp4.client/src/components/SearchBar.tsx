@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
@@ -21,8 +21,11 @@ interface SearchBarProps {
     activePlayers: Player[];
     inputText: string;
     setInputText: React.Dispatch<React.SetStateAction<string>>;
-    selectedPlayer: string;
-    setSelectedPlayer: React.Dispatch<React.SetStateAction<string>>;
+    selectedPlayer: Player | null;
+    setSelectedPlayer: React.Dispatch<React.SetStateAction<Player | null>>;
+    roster: Player[];
+    setRoster: React.Dispatch<React.SetStateAction<Player[]>>;
+    setUsedPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -31,12 +34,18 @@ const SearchBar: React.FC<SearchBarProps> = ({
     setInputText,
     selectedPlayer,
     setSelectedPlayer,
+    roster,
+    setRoster,
+    setUsedPlayers
 }) => {
     const refTwo = useRef<HTMLDivElement>(null);
+    const [openSearchList, setOpenSearchList] = useState(false);
 
     const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const lowerCase = e.target.value.toLowerCase();
-        setInputText(lowerCase);
+        setInputText(e.target.value);
+        if (!openSearchList) {
+            setOpenSearchList(true);
+        }
     };
 
     const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -45,6 +54,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
             // navigate(`/${inputText}`);
         }
     };
+
+    const handleClick = () => {
+        setOpenSearchList(true);
+    }
 
     return (
         <ContainerDiv ref={refTwo}>
@@ -61,15 +74,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="start">
-                                
-                                    <div className="search-icon">
-                                        <SearchIcon />
-                                    </div>
-                                
+
+                                <div className="search-icon">
+                                    <SearchIcon />
+                                </div>
+
                             </InputAdornment>
                         ),
                     }}
                     onKeyDown={handleEnter}
+                    onClick={handleClick}
                 />
             </TextDiv>
             <DropdownStyle>
@@ -81,6 +95,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         data={activePlayers}
                         selectedPlayer={selectedPlayer}
                         setSelectedPlayer={setSelectedPlayer}
+                        openSearchList={openSearchList}
+                        setOpenSearchList={setOpenSearchList}
+                        roster={roster}
+                        setRoster={setRoster}
+                        setUsedPlayers={setUsedPlayers}
                     />
                 ) : (
                     ''

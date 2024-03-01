@@ -1,6 +1,6 @@
 import axios from "axios";
 import '../App.css';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -20,10 +20,14 @@ const StyledUl = styled.ul`
     top: 40px;
     left: 0px;
     list-style-type: none;
-    padding: 5px;
+    padding: 10px;
     padding-left: 10px;
     margin: 0px;
     text-align: left;
+    background-color: white;
+    overflow-y: auto;
+    border-radius: 5px;
+    box-shadow: 2px 2px 3px rgba(0,0,0,0.1), -2px 2px 3px rgba(0,0,0,0.1);
 `
 
 const ContainerDiv = styled.div`
@@ -49,6 +53,7 @@ interface LineupPlayerSelectProps {
 
 const LineupPlayerSelect: React.FC<LineupPlayerSelectProps> = ({ options, selectedOption, setSelectedOption, setSortField }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const refOne = useRef<HTMLDivElement>(null);
 
     const toggleSelect = () => {
         setIsOpen(!isOpen);
@@ -65,8 +70,25 @@ const LineupPlayerSelect: React.FC<LineupPlayerSelectProps> = ({ options, select
         console.log(selectedOption)
     }
 
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (
+                refOne.current &&
+                !refOne.current.contains(event.target as Node) //&&
+                //!refTwo.current?.contains(event.target as Node)
+            ) {
+                setIsOpen(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen, setIsOpen]);
+
     return (
-        <ContainerDiv>
+        <ContainerDiv ref={refOne}>
             <StyledButton type="button" value={selectedOption} onClick={toggleSelect}>
                 <ButtonContainer>
                     <ButtonTextDiv>
