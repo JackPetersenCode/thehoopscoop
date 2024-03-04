@@ -20,20 +20,43 @@ namespace ReactApp4.Server.Services
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<IActionResult> GetPropBetResults(string selectedSeason, decimal overUnderLine, string selectedOpponent, [FromQuery] List<Player> roster, [FromQuery] List<PropBetStats> propBetStats)
+        public async Task<IActionResult> GetPropBetResults(string selectedSeason, decimal overUnderLine, string selectedOpponent, string roster, string propBetStats)
         {
-            try
+            //percentage of games over/under the line
+            var decodedRosterJson = System.Net.WebUtility.UrlDecode(roster);
+            var decodedPropBetStatsJson = System.Net.WebUtility.UrlDecode(propBetStats);
+
+            // Deserialize the JSON strings into lists of objects
+            var rosterList = JsonConvert.DeserializeObject<List<Player>>(decodedRosterJson);
+            var propBetStatsList = JsonConvert.DeserializeObject<List<PropBetStats>>(decodedPropBetStatsJson);
+
+            // Now you can work with 'rosterList' and 'propBetStatsList' as lists of objects
+
+            // Example: Logging the contents of the 'rosterList'
+            if (rosterList != null)
             {
-                var query = $@"SELECT * FROM box_score_traditional_2023_24";
-                var boxScores = await _context.BoxScoreTraditionals.FromSqlRaw(query).ToListAsync();
-                Console.WriteLine(boxScores.Count);
+                var playerIds = rosterList.Select(player => player.Player_id).ToList();
+
+                var query = @"
+
+                            SELECT *
+                            FROM box_score_traditional_2023_24
+                            WHERE player_id = ANY(@player_ids)
+                            GROUP BY player_id";
+                            
+                // Create parameter for the array of strings
+                var parameter = new NpgsqlParameter("@player_ids", NpgsqlDbType.Array | NpgsqlDbType.Text);
+                parameter.Value = playerIds.ToArray();
+
+                var boxScores = await _context.BoxScoreTraditionals
+                    .FromSqlRaw(query, parameter)
+                    .ToListAsync();
+
                 return Ok(boxScores);
+
             }
-            catch (Exception ex)
-            {
-                // Handle exceptions appropriately, log, and return an error response
-                return StatusCode(500, $"Internal Server Error: {ex.Message}");
-            }
+
+            return Ok("roster is null");
         }
     }
 }

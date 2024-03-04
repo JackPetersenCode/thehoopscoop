@@ -31,7 +31,7 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ selectedSeason, overUnd
 
             // Construct the URL with the encoded JSON as a query parameter
             try {
-                const results = await axios.get(`/api/PropBetResults?selectedSeason=${selectedSeason}&overUnderLine=${overUnderLine}&selectedOpponent=${selectedOpponent.team_id}&roster=${encodedJsonRoster}&propBetStats=${encodedJsonPropBetStats}`)
+                const results = await axios.get(`/api/PropBetResults?selectedSeason=${selectedSeason}&overUnderLine=${overUnderLine}&selectedOpponent=${selectedOpponent.team_id}&roster=${encodedJsonRoster}&propBetStats=${encodedJsonPropBetStats}`);
                 console.log(results.data);
                 console.log('DDDDAAAAAAAAAAAAAAATTTTTTTTTTTTTTTAAAAAAAAAAAAAAAAAAAA')
             } catch (error) {

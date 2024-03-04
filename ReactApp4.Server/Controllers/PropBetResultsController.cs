@@ -22,7 +22,7 @@ namespace ReactApp4.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPropBetResults(string selectedSeason, decimal overUnderLine, string selectedOpponent, [FromQuery] List<Player> roster, [FromQuery] List<PropBetStats> propBetStats)
+        public async Task<IActionResult> GetPropBetResults(string selectedSeason, decimal overUnderLine, string selectedOpponent, string roster, string propBetStats)
         {
             return await _propBetResultsDatabaseHandler.GetPropBetResults(selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats);
         }
