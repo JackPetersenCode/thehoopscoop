@@ -67,3 +67,9 @@ left-justify {
     display: flex;
     width: 100%;
 }
+
+.draggable-item-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}

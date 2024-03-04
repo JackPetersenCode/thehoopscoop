@@ -11,42 +11,44 @@ namespace ReactApp4.Server
         {
 
             // Register other services
+            services.AddScoped<LeagueGameDataHandler>();
             services.AddScoped<LeagueGameDatabaseHandler>();
             services.AddScoped<LeagueGameFileHandler>();
-            services.AddScoped<LeagueGameDataHandler>();
 
+            services.AddScoped<PlayerDataHandler>();
             services.AddScoped<PlayerDatabaseHandler>();
             services.AddScoped<PlayerFileHandler>();
-            services.AddScoped<PlayerDataHandler>();
 
+            services.AddScoped<BoxScoreTraditionalDataHandler>();
             services.AddScoped<BoxScoreTraditionalDatabaseHandler>();
             services.AddScoped<BoxScoreTraditionalFileHandler>();
-            services.AddScoped<BoxScoreTraditionalDataHandler>();
 
+            services.AddScoped<BoxScoreAdvancedDataHandler>();
             services.AddScoped<BoxScoreAdvancedDatabaseHandler>();
             services.AddScoped<BoxScoreAdvancedFileHandler>();
-            services.AddScoped<BoxScoreAdvancedDataHandler>();
 
+            services.AddScoped<BoxScoreFourFactorsDataHandler>();
             services.AddScoped<BoxScoreFourFactorsDatabaseHandler>();
             services.AddScoped<BoxScoreFourFactorsFileHandler>();
-            services.AddScoped<BoxScoreFourFactorsDataHandler>();
 
+            services.AddScoped<BoxScoreMiscDataHandler>();
             services.AddScoped<BoxScoreMiscDatabaseHandler>();
             services.AddScoped<BoxScoreMiscFileHandler>();
-            services.AddScoped<BoxScoreMiscDataHandler>();
 
+            services.AddScoped<BoxScoreScoringDataHandler>();
             services.AddScoped<BoxScoreScoringDatabaseHandler>();
             services.AddScoped<BoxScoreScoringFileHandler>();
-            services.AddScoped<BoxScoreScoringDataHandler>();
 
+            services.AddScoped<BoxScoresDataHandler>();
             services.AddScoped<BoxScoresDatabaseHandler>();
             services.AddScoped<BoxScoresFileHandler>();
-            services.AddScoped<BoxScoresDataHandler>();
 
             // Other service registrations might already exist...
             services.AddScoped<LeagueDashLineupsDataHandler>();
             services.AddScoped<LeagueDashLineupsDatabaseHandler>();
             services.AddScoped<LeagueDashLineupsFileHandler>();
+
+            services.AddScoped<PropBetResultsDatabaseHandler>();
         }
     }
 }

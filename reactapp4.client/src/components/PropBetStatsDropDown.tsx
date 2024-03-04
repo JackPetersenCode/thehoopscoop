@@ -5,9 +5,11 @@ import { PropBetStats } from '../interfaces/PropBetStats';
 interface PropBetStatsDropDownProps {
     selectedStat: PropBetStats | null;
     setSelectedStat: React.Dispatch<React.SetStateAction<PropBetStats | null>>;
+    propBetStats: PropBetStats[];
+    setPropBetStats: React.Dispatch<React.SetStateAction<PropBetStats[]>>;
 }
 
-const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ selectedStat, setSelectedStat }) => {
+const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ selectedStat, setSelectedStat, propBetStats, setPropBetStats }) => {
 
     const stats: PropBetStats[] = [
         { label: 'Points', accessor: 'pts' },
@@ -21,15 +23,18 @@ const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ selectedSta
         const selectedValue = JSON.parse(event.target.value);
         setSelectedStat(selectedValue);
         console.log(selectedValue);
+        setPropBetStats(propBetStats => [...propBetStats, selectedValue]);
+        console.log(selectedValue);
     }
+
 
     return (
             <div>
-                <select className="drop-flex-select" value={selectedStat ? JSON.stringify(selectedStat) : ''} onChange={handleStatChange}>
+            <select className="drop-flex-select" value={selectedStat ? JSON.stringify(selectedStat) : ''} onChange={handleStatChange}>
                     <option className="drop-flex-option" value="0">Select Stat</option>
 
-                    {stats.map((option, index) => (
-                        <option key={index} value={JSON.stringify(option)}>
+                {stats.map((option: PropBetStats, index: number) => (
+                        <option key={index} value={JSON.stringify(option)} >
                             {option.label}
                         </option>
                     ))}

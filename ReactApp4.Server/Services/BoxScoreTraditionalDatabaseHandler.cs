@@ -23,7 +23,7 @@ namespace ReactApp4.Server.Services
         {
             var tableName = $"box_score_traditional_{season}";
 
-            var query = $"SELECT * FROM {tableName}";
+            var query = $"SELECT * FROM {tableName} LIMIT 1";
 
             var boxScoreTraditionalBySeason = await _context.BoxScoreTraditionals.FromSqlRaw(query).ToListAsync();
 
