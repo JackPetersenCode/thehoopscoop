@@ -38,11 +38,13 @@ namespace ReactApp4.Server.Services
                 var playerIds = rosterList.Select(player => player.Player_id).ToList();
 
                 var query = @"
-
-                            SELECT *
-                            FROM box_score_traditional_2023_24
-                            WHERE player_id = ANY(@player_ids)
-                            GROUP BY player_id";
+                            WITH box_scores AS (
+                                SELECT *
+                                FROM box_score_traditional_2023_24
+                                WHERE player_id = ANY(@player_ids)
+                                GROUP BY player_id
+                            )
+                            ";
                             
                 // Create parameter for the array of strings
                 var parameter = new NpgsqlParameter("@player_ids", NpgsqlDbType.Array | NpgsqlDbType.Text);

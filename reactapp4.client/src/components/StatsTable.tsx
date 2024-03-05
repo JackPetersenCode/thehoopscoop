@@ -6,7 +6,7 @@ import '../App.css';
 import axios from 'axios';
 import StatsTableHeaders from "./StatsTableHeaders";
 import StatsTableBody from "./StatsTableBody";
-import { Column, LeagueDashLineupAdvanced, Stats } from "../interfaces/StatsTable";
+import { Column, Stats } from "../interfaces/StatsTable";
 import { advancedLineupColumns, advancedPlayerColumns, basePlayerColumns, fourFactorsPlayerColumns, miscPlayerColumns,scoringPlayerColumns, baseLineupColumns, fourFactorsLineupColumns, miscLineupColumns, scoringLineupColumns, opponentLineupColumns } from "../interfaces/Columns";
 import styled from 'styled-components';
 import { NBATeam } from "../interfaces/Teams";
@@ -170,19 +170,19 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
     })
 
     return (
-        <TableContainer>
+        <div className="player-box-container">
             <StyledTable>
                 <caption>
                     Click on a stat header to sort all players by stat
                 </caption>
-                <StatsTableHeaders columns={columns} handleSorting={handleSorting} smallHeaders={false} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} setPage={setPage} />
+                <StatsTableHeaders columns={columns} smallHeaders={false} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} setPage={setPage} />
                 <StatsTableBody columns={columns} tableData={filteredData} />
             </StyledTable>
             <div>
                 <button onClick={handlePrevPage} disabled={page === 1}>Previous</button>
                 <button onClick={handleNextPage}>Next</button>
             </div>
-        </TableContainer>
+        </div>
     );
 };
 

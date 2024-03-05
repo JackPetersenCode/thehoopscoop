@@ -4,13 +4,12 @@ import { SortingFunction, Column } from "../interfaces/StatsTable";
 
 interface StatsTableHeadersProps {
     columns: Column[] | string[];
-    handleSorting: SortingFunction;
-    smallHeaders: boolean;
-    sortField: string;
-    setSortField: React.Dispatch<React.SetStateAction<string>>;
-    order: string;
-    setOrder: React.Dispatch<React.SetStateAction<string>>;
-    setPage: React.Dispatch<React.SetStateAction<number>>;
+    smallHeaders?: boolean;
+    sortField?: string;
+    setSortField?: React.Dispatch<React.SetStateAction<string>>;
+    order?: string;
+    setOrder?: React.Dispatch<React.SetStateAction<string>>;
+    setPage?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 
@@ -20,7 +19,7 @@ const isColumnArray = (input: Column[] | string[]): input is Column[] => {
 };
 
 
-const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, handleSorting, smallHeaders, sortField, setSortField, order, setOrder, setPage }) => {
+const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, smallHeaders, sortField, setSortField, order, setOrder, setPage }) => {
 
     console.log(columns)
     console.log(sortField)
@@ -42,21 +41,24 @@ const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, handleSo
         );
     } else {
         const handleSortingChange = (accessor: string) => {
-            console.log('handle sorting change')
-            const sortOrder =
-                accessor === sortField && order === "asc" ? "desc" : "asc";
-            console.log(accessor);
-            setSortField(accessor);
-            setOrder(sortOrder);
-            setPage(1);
+            if (setSortField && setOrder) {
+                console.log('handle sorting change')
+                const sortOrder =
+                    accessor === sortField && order === "asc" ? "desc" : "asc";
+                console.log(accessor);
+                setSortField(accessor);
+                setOrder(sortOrder);
+                //setPage(1);
+            }
             //handleSorting(accessor, sortOrder);
         };
         if (smallHeaders) {
             return (
-                <thead className="smallHeaders">
+                <thead className="small-headers">
                     <tr>
                         {columns.map(({ label, accessor }) => {
                             return (
+
                                 <th key={accessor} className="header-item" onClick={() => handleSortingChange(accessor)}>
                                     {label}
                                 </th>
@@ -70,7 +72,7 @@ const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, handleSo
             return (
                 <thead className="regularHeaders">
                     <tr>
-                            {columns.map(({ label, accessor }) => {
+                        {columns.map(({ label, accessor }) => {
                             return (
                                 <th key={accessor} className="header-item" onClick={() => handleSortingChange(accessor)}>
                                     {label}

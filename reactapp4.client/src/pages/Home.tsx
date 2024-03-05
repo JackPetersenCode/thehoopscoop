@@ -14,6 +14,9 @@ import DragNDropRoster from '../components/DragNDropRoster';
 import OverUnderLineInput from '../components/OverUnderLineInput';
 import PropBetStatsDragNDrop from '../components/PropBetStatsDragNDrop';
 import PropBetResults from '../components/PropBetResults';
+import { BoxScoreTraditional } from '../interfaces/BoxScoreTraditional';
+import PropBetResultsTable from '../components/PropBetResultsTable';
+import { Stats } from '../interfaces/StatsTable';
 
 const DataFlex = styled.div`
     display: flex;
@@ -38,6 +41,7 @@ function Home() {
     const [overUnderLine, setOverUnderLine] = useState<number | null>(null);
     const [selectedOpponent, setSelectedOpponent] = useState({ team_id: '1', team_name: 'All Teams' });
     const [propBetStats, setPropBetStats] = useState<PropBetStats[]>([]);
+    const [playerBoxScores, setPlayerBoxScores] = useState<Stats[]>([]);
 
 
 
@@ -178,6 +182,9 @@ function Home() {
                     />
                 </div>
             </div>
+
+            <PropBetResults selectedSeason={selectedSeason} overUnderLine={overUnderLine} selectedOpponent={selectedOpponent} roster={roster} propBetStats={propBetStats} setPlayerBoxScores={setPlayerBoxScores} />
+            <PropBetResultsTable playerBoxScores={playerBoxScores} />
             <DataFlex>
 
                 <div>
@@ -234,7 +241,6 @@ function Home() {
                     setSelectedOpponent={setSelectedOpponent}
                 />
             </DataFlex>
-            <PropBetResults selectedSeason={selectedSeason} overUnderLine={overUnderLine} selectedOpponent={selectedOpponent} roster={roster} propBetStats={propBetStats} />
             <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputText} setInputText={setInputText} />
 
         </div>

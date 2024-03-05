@@ -46,6 +46,8 @@ builder.Services.AddScoped<LeagueDashLineupsDatabaseHandler>();
 builder.Services.AddScoped<LeagueDashLineupsFileHandler>();
 
 builder.Services.AddScoped<PropBetResultsDatabaseHandler>();
+builder.Services.AddScoped<PlayerResultsDatabaseHandler>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

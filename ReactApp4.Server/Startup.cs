@@ -49,6 +49,7 @@ namespace ReactApp4.Server
             services.AddScoped<LeagueDashLineupsFileHandler>();
 
             services.AddScoped<PropBetResultsDatabaseHandler>();
+            services.AddScoped<PlayerResultsDatabaseHandler>();
         }
     }
 }

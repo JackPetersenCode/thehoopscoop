@@ -73,3 +73,13 @@ left-justify {
     flex-wrap: wrap;
     align-items: center;
 }
+
+.small-headers {
+    font-size: x-small;
+}
+
+.player-box-container {
+    max-width: 800px;
+    max-height: 300px;
+    overflow: auto;
+}

@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { SetStateAction, useEffect } from 'react';
 import { NBATeam } from '../interfaces/Teams';
 import { Player } from '../interfaces/Player';
 import { PropBetStats } from '../interfaces/PropBetStats';
 import axios from 'axios';
+import { BoxScoreTraditional } from '../interfaces/BoxScoreTraditional';
+import { Stats } from '../interfaces/StatsTable';
 
 
 interface PropBetResultsProps {
@@ -11,9 +13,10 @@ interface PropBetResultsProps {
     propBetStats: PropBetStats[];
     overUnderLine: number | null;
     selectedOpponent: NBATeam;
+    setPlayerBoxScores: React.Dispatch<SetStateAction<Stats[]>>
 }
 
-const PropBetResults: React.FC<PropBetResultsProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats }) => {
+const PropBetResults: React.FC<PropBetResultsProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats, setPlayerBoxScores }) => {
 
 
     useEffect(() => {
@@ -30,12 +33,16 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ selectedSeason, overUnd
             const encodedJsonRoster = encodeURIComponent(jsonRoster);
 
             // Construct the URL with the encoded JSON as a query parameter
-            try {
-                const results = await axios.get(`/api/PropBetResults?selectedSeason=${selectedSeason}&overUnderLine=${overUnderLine}&selectedOpponent=${selectedOpponent.team_id}&roster=${encodedJsonRoster}&propBetStats=${encodedJsonPropBetStats}`);
-                console.log(results.data);
-                console.log('DDDDAAAAAAAAAAAAAAATTTTTTTTTTTTTTTAAAAAAAAAAAAAAAAAAAA')
-            } catch (error) {
-                console.log(error);
+            for (const player of roster) {
+
+                try {
+                    const results = await axios.get(`/api/PlayerResults?selectedSeason=${selectedSeason}&overUnderLine=${overUnderLine}&selectedOpponent=${selectedOpponent.team_id}&player_id=${player.player_id}&propBetStats=${encodedJsonPropBetStats}`);
+                    console.log(results.data);
+                    setPlayerBoxScores(results.data);
+                    console.log('DDDDAAAAAAAAAAAAAAATTTTTTTTTTTTTTTAAAAAAAAAAAAAAAAAAAA')
+                } catch (error) {
+                    console.log(error);
+                }
             }
         }
         if (roster.length > 0 && propBetStats.length > 0 && overUnderLine && selectedOpponent) {
