@@ -95,6 +95,31 @@ const basePlayerColumns = [
     { label: "PLUS MINUS", accessor: "plus_minus" }
 ];
 
+const basePlayerColumnsNoName = [
+    { label: "TEAM", accessor: "team_abbreviation" },
+    { label: "DATE", accessor: "game_date"},
+    { label: "MIN", accessor: "min" },
+    { label: "FGM", accessor: "fgm" },
+    { label: "FGA", accessor: "fga" },
+    { label: "FG%", accessor: "fg_pct" },
+    { label: "FG3M", accessor: "fg3m" },
+    { label: "FG3A", accessor: "fg3a" },
+    { label: "FG3%", accessor: "fg3_pct" },
+    { label: "FTM", accessor: "ftm" },
+    { label: "FTA", accessor: "fta" },
+    { label: "FT%", accessor: "ft_pct" },
+    { label: "OREB", accessor: "oreb" },
+    { label: "DREB", accessor: "dreb" },
+    { label: "REB", accessor: "reb" },
+    { label: "AST", accessor: "ast" },
+    { label: "STL", accessor: "stl" },
+    { label: "BLK", accessor: "blk" },
+    { label: "TOV", accessor: "tov" },
+    { label: "PF", accessor: "pf" },
+    { label: "PTS", accessor: "pts" },
+    { label: "PLUS MINUS", accessor: "plus_minus" }
+];
+
 const advancedLineupColumns = [
     { label: "GROUP NAME", accessor: "group_name" },
     { label: "TEAM", accessor: "team_abbreviation" },
@@ -366,4 +391,4 @@ const opponentLineupColumns = [
 ];
 
 
-export { advancedPlayerColumns, basePlayerColumns, miscPlayerColumns, fourFactorsPlayerColumns, scoringPlayerColumns, advancedLineupColumns, baseLineupColumns, fourFactorsLineupColumns, miscLineupColumns, scoringLineupColumns, opponentLineupColumns }
+export { advancedPlayerColumns, basePlayerColumns, miscPlayerColumns, fourFactorsPlayerColumns, scoringPlayerColumns, advancedLineupColumns, baseLineupColumns, fourFactorsLineupColumns, miscLineupColumns, scoringLineupColumns, opponentLineupColumns, basePlayerColumnsNoName }

@@ -13,6 +13,7 @@ using System.Numerics;
 using System.Reflection.Emit;
 using ReactApp4.Server.Controllers;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System;
 
 namespace ReactApp4.Server.Services
 {
@@ -28,11 +29,17 @@ namespace ReactApp4.Server.Services
             // Deserialize the JSON strings into lists of objects
             var propBetStatsList = JsonConvert.DeserializeObject<List<PropBetStats>>(decodedPropBetStatsJson);
 
+            var decodedSelectedOpponentJson = System.Net.WebUtility.UrlDecode(selectedOpponent);
+
+            // Deserialize the JSON strings into lists of objects
+            var selectedOpponentObject = JsonConvert.DeserializeObject<NBATeam>(decodedSelectedOpponentJson);
+
             // Now you can work with 'rosterList' and 'propBetStatsList' as lists of objects
             try
             {
 
                 var tableName = "box_score_traditional_" + selectedSeason;
+                var leagueGamesTable = "league_games_" + selectedSeason;
 
                 var query = $@"
                         WITH Box_Scores AS (
@@ -46,32 +53,49 @@ namespace ReactApp4.Server.Services
                             WHERE player_id = @player_id
                             AND min > 0
                         )
-                        SELECT *
+                        SELECT Games_Played.*, {leagueGamesTable}.game_date, {leagueGamesTable}.matchup
                         FROM Games_Played 
-                        ";
+                        JOIN {leagueGamesTable}
+                        ON Games_Played.game_id = {leagueGamesTable}.game_id
+                        AND Games_Played.team_id = {leagueGamesTable}.team_id";
+                if (selectedOpponentObject != null)
+                {
+                    query += $@" WHERE {leagueGamesTable}.matchup LIKE '%{selectedOpponentObject.Team_abbreviation}%'";
+                }
+                        
                 if (propBetStatsList != null)
                 {
-                    query += " WHERE ";
+                    if (selectedOpponentObject != null)
+                    {
+                        query += " AND ";
+                    } else
+                    {
+                        query += " WHERE ";
+                    }
                     foreach (var stat in propBetStatsList)
                     {
-                        query += $"{stat.Accessor} + ";
+                        query += $"Games_Played.{stat.Accessor} + ";
                     }
                     // Remove the trailing comma and space
                     query = query.TrimEnd(' ', '+');
                     query += $@" > @overUnderLine";
 
                 }
-                else
-                {
 
-                }
                 Console.WriteLine(query);
                 //var playerId = new NpgsqlParameter("@player_id", NpgsqlDbType.Text);
                 //playerId.Value = player_id.ToString();
                 //var OULine = new NpgsqlParameter("@overUnderLine", NpgsqlDbType.Numeric);
                 //OULine.Value = overUnderLine;
 
-                var boxScores = await _context.BoxScoreTraditionals.FromSqlRaw(query, new NpgsqlParameter("@player_id", player_id), new NpgsqlParameter("@overUnderLine", overUnderLine)).ToListAsync();
+                var boxScores = await _context.BoxScoreWithGameDates.FromSqlRaw(query,
+                        new NpgsqlParameter("@player_id", player_id),
+                        new NpgsqlParameter("@overUnderLine", overUnderLine))
+                    .ToListAsync();
+
+                Console.WriteLine(boxScores.ToString());
+                Console.WriteLine(boxScores);
+                Console.Write(boxScores);
                 return Ok(boxScores);
                 //using (var cmd = new NpgsqlCommand(query, connection))
                 //{
@@ -101,6 +125,7 @@ namespace ReactApp4.Server.Services
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());   
                 return StatusCode(500, $"Internal Server Error: {ex}");
             }
         }

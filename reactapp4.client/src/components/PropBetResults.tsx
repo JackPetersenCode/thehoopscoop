@@ -27,16 +27,16 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ selectedSeason, overUnd
             // Encode the JSON string for inclusion in the URL
             const encodedJsonPropBetStats = encodeURIComponent(jsonPropBetStats);
 
-            const jsonRoster = JSON.stringify(roster);
+            const jsonSelectedOpponent = JSON.stringify(selectedOpponent);
 
             // Encode the JSON string for inclusion in the URL
-            const encodedJsonRoster = encodeURIComponent(jsonRoster);
+            const encodedJsonSelectedOpponent = encodeURIComponent(jsonSelectedOpponent);
 
             // Construct the URL with the encoded JSON as a query parameter
             for (const player of roster) {
 
                 try {
-                    const results = await axios.get(`/api/PlayerResults?selectedSeason=${selectedSeason}&overUnderLine=${overUnderLine}&selectedOpponent=${selectedOpponent.team_id}&player_id=${player.player_id}&propBetStats=${encodedJsonPropBetStats}`);
+                    const results = await axios.get(`/api/PlayerResults?selectedSeason=${selectedSeason}&overUnderLine=${overUnderLine}&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.player_id}&propBetStats=${encodedJsonPropBetStats}`);
                     console.log(results.data);
                     setPlayerBoxScores(results.data);
                     console.log('DDDDAAAAAAAAAAAAAAATTTTTTTTTTTTTTTAAAAAAAAAAAAAAAAAAAA')
@@ -52,14 +52,7 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ selectedSeason, overUnd
 
     return (
         <>
-        {
-            roster.length > 0 && propBetStats.length > 0 && overUnderLine && selectedOpponent ?
-            <div>
-                WHISTLES
-            </div>
-            :
-            ""
-        }
+
         </>
   );
 }

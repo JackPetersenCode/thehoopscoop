@@ -28,9 +28,4 @@ namespace ReactApp4.Server.Controllers
         }
 
     }
-    public class PropBetStats
-    {
-        public string? Label { get; set; }
-        public string? Accessor { get; set; }
-    }
 }

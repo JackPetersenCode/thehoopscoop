@@ -21,6 +21,8 @@ namespace ReactApp4.Server.Data
         public DbSet<Baller> Ballers { get; set; }
         public DbSet<LeagueGame> LeagueGames { get; set; }
         public DbSet<BoxScoreTraditional> BoxScoreTraditionals { get; set; }
+        public DbSet<BoxScoreWithGameDate> BoxScoreWithGameDates { get; set; }
+
         public DbSet<BoxScoreAdvanced> BoxScoreAdvanceds { get; set; }
         public DbSet<BoxScoreFourFactors> BoxScoreFourFactorss { get; set; }
         public DbSet<BoxScoreMisc> BoxScoreMiscs { get; set; }
@@ -35,6 +37,7 @@ namespace ReactApp4.Server.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             // Define table names based on seasons dynamically
             var seasons = new List<string>
             {
@@ -73,6 +76,7 @@ namespace ReactApp4.Server.Data
             }
             modelBuilder.Entity<BoxScoreAdvancedPlayer>().HasNoKey();
             modelBuilder.Entity<BoxScoreTraditionalPlayer>().HasNoKey();
+            modelBuilder.Entity<BoxScoreWithGameDate>().HasNoKey();
             modelBuilder.Entity<BoxScoreFourFactorsPlayer>().HasNoKey();
             modelBuilder.Entity<BoxScoreMiscPlayer>().HasNoKey();
             modelBuilder.Entity<BoxScoreScoringPlayer>().HasNoKey();
