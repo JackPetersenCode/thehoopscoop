@@ -1,20 +1,20 @@
 import React from 'react';
 
 interface OverUnderLineInputProps {
-    overUnderLine: number | null;
-    setOverUnderLine: React.Dispatch<React.SetStateAction<number | null>>;
+    overUnderLine: number;
+    setOverUnderLine: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const OverUnderLineInput: React.FC<OverUnderLineInputProps> = ({ overUnderLine, setOverUnderLine }) => {
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = parseFloat(event.target.value);
-        setOverUnderLine(isNaN(newValue) ? null : newValue);
+        setOverUnderLine(newValue);
     };
 
     return (
-        <div>
-            <input type="number" value={overUnderLine || ""} onChange={handleInputChange} />
+        <div className="form-group">
+            <input type="number" className="form-control border-radius-5 placeholder-gray" value={overUnderLine} onChange={handleInputChange} placeholder="Over Under" />
         </div>
     );
 }

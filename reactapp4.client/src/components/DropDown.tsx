@@ -14,38 +14,17 @@ interface DropDownProps {
     setSelectedTeam: React.Dispatch<React.SetStateAction<NBATeam>>;
     dropDownType: string;
     setSelectedOpponent: React.Dispatch<React.SetStateAction<NBATeam>>;
+    setHomeOrVisitor: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const SeasonFlex = styled.div`
-    display: flex;
-    flex-direction: column;
-`
-
-const DropTitle = styled.div`
-    color: rgb(153, 153, 153);
-    font-size: x-small;
-    font-weight: 600;
-    text-align: left;
-`
-
-const SeasonSelect = styled.select`
-    padding: 5px;
-    border: solid transparent;
-    border-right: 12px solid transparent;
-    background-color: rgb(238, 238, 238);
-    border-radius: 5px;
-    width: 100%;
-`
-
-const SeasonOption = styled.option`
-    padding: 10px;
-`
-
-const DropDown: React.FC<DropDownProps> = ({ options, perMode, setPerMode, numPlayers, setNumPlayers, selectedTeam, setSelectedTeam, dropDownType, setSelectedOpponent }) => {
+const DropDown: React.FC<DropDownProps> = ({ options, perMode, setPerMode, numPlayers, setNumPlayers, selectedTeam, setSelectedTeam, dropDownType, setSelectedOpponent, setHomeOrVisitor }) => {
 
     const [selectedOption, setSelectedOption] = useState<string | NBATeam>("");
     function handleChange(event: { preventDefault: () => void; target: { value: string | NBATeam; }; }) {
         event.preventDefault();
+
+        console.log(event.target.value);
+        console.log(dropDownType);
 
         if (typeof event.target.value === 'string') {
             console.log(typeof event.target.value);
@@ -72,15 +51,23 @@ const DropDown: React.FC<DropDownProps> = ({ options, perMode, setPerMode, numPl
                 console.log(event.target.value);
                 setSelectedOpponent(JSON.parse(event.target.value));
             }
+            if (dropDownType === "Home or Visitor") {
+                console.log('booger');
+                setHomeOrVisitor(event.target.value);
+            }
         }
         setSelectedOption(event.target.value);
     }
 
     return (
         <div className="drop-flex">
-            <div className="drop-title">
-                {dropDownType}
-            </div>
+            {dropDownType === "Opponent" ?
+                ""
+                :
+                <div className="drop-title">
+                    {dropDownType}
+                </div>
+            }
             <div>
                 <select className="drop-flex-select" value={typeof selectedOption === 'object' ? selectedOption.team_name : selectedOption} onChange={handleChange}>
                     <option className="drop-flex-option" value="0">Select {dropDownType}</option>

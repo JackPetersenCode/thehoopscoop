@@ -22,9 +22,9 @@ namespace ReactApp4.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPlayerResults(string selectedSeason, decimal overUnderLine, string selectedOpponent, string player_id, string propBetStats)
+        public async Task<IActionResult> GetPlayerResults(string selectedSeason, string selectedOpponent, string player_id, string propBetStats)
         {
-            return await _playerResultsDatabaseHandler.GetPlayerResults(selectedSeason, overUnderLine, selectedOpponent, player_id, propBetStats);
+            return await _playerResultsDatabaseHandler.GetPlayerResults(selectedSeason, selectedOpponent, player_id, propBetStats);
         }
 
     }

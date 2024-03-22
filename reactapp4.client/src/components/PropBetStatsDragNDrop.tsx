@@ -2,7 +2,6 @@ import React, { CSSProperties, useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable, DraggingStyle, NotDraggingStyle, DropResult } from "react-beautiful-dnd";
 
 import styled from "styled-components";
-import { Player } from "../interfaces/Player";
 import { PropBetStats } from "../interfaces/PropBetStats";
 
 const Xbutton = styled.button`
@@ -119,7 +118,7 @@ const PropBetStatsDragNDrop: React.FC<PropBetStatsDragNDropProps> = ({ propBetSt
                         <div {...provided.droppableProps} ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
                             {propBetStats.map((stat, index) => (
 
-                                <Draggable key={stat.label} draggableId={stat.label} index={index}>
+                                <Draggable key={index} draggableId={stat.label} index={index}>
                                     {(provided, snapshot) => (
                                         <div key={index}
                                             ref={provided.innerRef}

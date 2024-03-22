@@ -36,7 +36,7 @@ const TableContainer = styled.div`
 
 
 
-const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode, selectedTeam, sortField, setSortField, inputText, setInputText }) => {
+const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode, selectedTeam, sortField, setSortField, inputText, setInputText }) => {
 
     const [order, setOrder] = useState("desc");
     const [tableData, setTableData] = useState<Stats[]>([]);
@@ -170,20 +170,20 @@ const StatsTable: React.FC<StatsTableProps> = ({ selectedSeason, selectedLineupP
     })
 
     return (
-        <div className="player-box-container">
-            <StyledTable>
+        <div className="ml-10 mr-10 overflow-auto">
+            <table className="text-center bg-white rounded mx-auto">
                 <caption>
                     Click on a stat header to sort all players by stat
                 </caption>
                 <StatsTableHeaders columns={columns} smallHeaders={false} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} setPage={setPage} />
                 <StatsTableBody columns={columns} tableData={filteredData} />
-            </StyledTable>
+            </table>
             <div>
                 <button onClick={handlePrevPage} disabled={page === 1}>Previous</button>
                 <button onClick={handleNextPage}>Next</button>
             </div>
         </div>
     );
-};
+});
 
 export default StatsTable;

@@ -33,7 +33,7 @@ namespace ReactApp4.Server.Data
         public DbSet<BoxScoreMiscPlayer> BoxScoreMiscPlayers { get; set; }
         public DbSet<BoxScoreScoringPlayer> BoxScoreScoringPlayers { get; set; }
 
-
+        public DbSet<CountOfGamesPlayed> CountOfGamesPlayeds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -80,6 +80,7 @@ namespace ReactApp4.Server.Data
             modelBuilder.Entity<BoxScoreFourFactorsPlayer>().HasNoKey();
             modelBuilder.Entity<BoxScoreMiscPlayer>().HasNoKey();
             modelBuilder.Entity<BoxScoreScoringPlayer>().HasNoKey();
+            modelBuilder.Entity<CountOfGamesPlayed>().HasNoKey();
 
         }
         public DbSet<TableLength> TableLengths { get; set; }

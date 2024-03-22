@@ -13,13 +13,15 @@ import GameOptionDropDown from '../components/GameOptionDropDown';
 import DragNDropRoster from '../components/DragNDropRoster';
 import OverUnderLineInput from '../components/OverUnderLineInput';
 import PropBetStatsDragNDrop from '../components/PropBetStatsDragNDrop';
-import PropBetResults from '../components/PropBetResults';
-import { BoxScoreTraditional } from '../interfaces/BoxScoreTraditional';
 import PropBetResultsTable from '../components/PropBetResultsTable';
 import { Stats } from '../interfaces/StatsTable';
+import FindPlayerBottom from '../components/FindPlayerBottom';
+import PropBetResults from '../components/PropBetResults';
 
 const DataFlex = styled.div`
     display: flex;
+    align-items: center;
+    white-space: nowrap;
 `
 
 function Home() {
@@ -28,6 +30,8 @@ function Home() {
     const [activePlayers, setActivePlayers] = useState<Player[]>([]);
     const [inputText, setInputText] = useState('');
     const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+    const [inputTextBottom, setInputTextBottom] = useState('');
+    const [selectedPlayerBottom, setSelectedPlayerBottom] = useState<Player | null>(null);
     const [selectedLineupPlayer, setSelectedLineupPlayer] = useState('Lineups');
     const [selectedBoxType, setSelectedBoxType] = useState('Base');
     const [numPlayers, setNumPlayers] = useState('5');
@@ -38,12 +42,15 @@ function Home() {
     const [gameOption, setGameOption] = useState<string>('Prop Bet');
     const [roster, setRoster] = useState<Player[]>([]);
     const [usedPlayers, setUsedPlayers] = useState<Player[]>([]);
-    const [overUnderLine, setOverUnderLine] = useState<number | null>(null);
+    const [overUnderLine, setOverUnderLine] = useState<number>(0);
     const [selectedOpponent, setSelectedOpponent] = useState({ team_id: '1', team_name: 'All Teams', team_abbreviation: ''});
     const [propBetStats, setPropBetStats] = useState<PropBetStats[]>([]);
     const [playerBoxScores, setPlayerBoxScores] = useState<Stats[]>([]);
+    const [careerPlayerBoxScores, setCareerPlayerBoxScores] = useState<Stats[]>([]);
 
-
+    const [gamesPlayed, setGamesPlayed] = useState<Stats[]>([]);
+    const [careerGamesPlayed, setCareerGamesPlayed] = useState<Stats[]>([]);
+    const [homeOrVisitor, setHomeOrVisitor] = useState<string>("");
 
     const lineupPlayerOptions = [
         'Lineups',
@@ -71,6 +78,12 @@ function Home() {
         '3',
         '4',
         '5'
+    ];
+
+    const homeOrVisitorOptions = [
+        'All Games',
+        'Home',
+        'Visitor'
     ];
 
     const nbaTeams: NBATeam[] = [
@@ -146,30 +159,28 @@ function Home() {
 
     return (
         <div>
-            <h1>NBA</h1>
+            <h1>NBA STAT BLASTER</h1>
 
-
-                <div className="search-container">
-                    <SearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} />
-                </div>
+            <GameOptionDropDown gameOption={gameOption} setGameOption={setGameOption} />
 
             
-            <GameOptionDropDown gameOption={gameOption} setGameOption={setGameOption} />
-            <div>
-                {selectedPlayer?.full_name ? selectedPlayer.full_name : ""}
-            </div>
-            <div className="game-container-flex">
-                <div className="w-100">
-                    <DragNDropRoster roster={roster} setRoster={setRoster} deletePlayer={deletePlayer} />
+            <div className="d-flex">
+                <div>
+                    <SearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
+                    <div className="mt-2">
+                        <DragNDropRoster roster={roster} setRoster={setRoster} deletePlayer={deletePlayer} />
+                    </div>
                 </div>
-                <div className="w-100">
+                <div>
                     <PropBetStatsDropDown selectedStat={selectedStat} setSelectedStat={setSelectedStat} propBetStats={propBetStats} setPropBetStats={setPropBetStats} />
-                    <PropBetStatsDragNDrop propBetStats={propBetStats} setPropBetStats={setPropBetStats} deletePropBetStat={deletePropBetStat} />
+                    <div className="mt-2">
+                        <PropBetStatsDragNDrop propBetStats={propBetStats} setPropBetStats={setPropBetStats} deletePropBetStat={deletePropBetStat} />
+                    </div>
                 </div>
-                <div className="w-100">
+                <div>
                     <OverUnderLineInput overUnderLine={overUnderLine} setOverUnderLine={setOverUnderLine} />
                 </div>
-                <div className="w-100">
+                <div>
                     <DropDown
                         options={nbaTeams}
                         perMode={perMode}
@@ -180,12 +191,27 @@ function Home() {
                         setSelectedTeam={setSelectedTeam}
                         dropDownType="Opponent"
                         setSelectedOpponent={setSelectedOpponent}
+                        setHomeOrVisitor={setHomeOrVisitor}
+                    />
+                </div>
+                <div>
+                    <DropDown
+                        options={homeOrVisitorOptions}
+                        perMode={perMode}
+                        setPerMode={setPerMode}
+                        numPlayers={numPlayers}
+                        setNumPlayers={setNumPlayers}
+                        selectedTeam={selectedTeam}
+                        setSelectedTeam={setSelectedTeam}
+                        dropDownType="Home or Visitor"
+                        setSelectedOpponent={setSelectedOpponent}
+                        setHomeOrVisitor={setHomeOrVisitor}
                     />
                 </div>
             </div>
+            <PropBetResults careerPlayerBoxScores={careerPlayerBoxScores} setCareerPlayerBoxScores={setCareerPlayerBoxScores} gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} />
 
-            <PropBetResults selectedSeason={selectedSeason} overUnderLine={overUnderLine} selectedOpponent={selectedOpponent} roster={roster} propBetStats={propBetStats} setPlayerBoxScores={setPlayerBoxScores} />
-            <PropBetResultsTable playerBoxScores={playerBoxScores} />
+            <PropBetResultsTable selectedSeason={selectedSeason} overUnderLine={overUnderLine} selectedOpponent={selectedOpponent} roster={roster} propBetStats={propBetStats} setPlayerBoxScores={setPlayerBoxScores} playerBoxScores={playerBoxScores} setGamesPlayed={setGamesPlayed} homeOrVisitor={homeOrVisitor} />
             <DataFlex>
 
                 <div>
@@ -196,53 +222,67 @@ function Home() {
                 </div>
 
             </DataFlex>
-            <DataFlex>
+            <div className="d-flex justify-content-between align-items-end">
+                <div>
                 <SeasonsDropDown
                     selectedSeason={selectedSeason}
                     setSelectedSeason={setSelectedSeason}
                     predictions={false}
-                />
-                {selectedBoxType === "Base" || selectedBoxType === "Misc" || selectedBoxType === "Opponent" ?
-                    <DropDown
-                        options={perModeOptions}
-                        perMode={perMode}
-                        setPerMode={setPerMode}
-                        numPlayers={numPlayers}
-                        setNumPlayers={setNumPlayers}
-                        selectedTeam={selectedTeam}
-                        setSelectedTeam={setSelectedTeam}
-                        dropDownType="Per Mode"
-                        setSelectedOpponent={setSelectedOpponent}
                     />
+                </div>
+                {selectedBoxType === "Base" || selectedBoxType === "Misc" || selectedBoxType === "Opponent" ?
+                    <div>
+                    <DropDown
+                            options={perModeOptions}
+                            perMode={perMode}
+                            setPerMode={setPerMode}
+                            numPlayers={numPlayers}
+                            setNumPlayers={setNumPlayers}
+                            selectedTeam={selectedTeam}
+                            setSelectedTeam={setSelectedTeam}
+                            dropDownType="Per Mode"
+                            setSelectedOpponent={setSelectedOpponent}
+                            setHomeOrVisitor={setHomeOrVisitor}
+                    />
+                    </div>
                     :
                     ""}
                 {selectedLineupPlayer === "Lineups" ?
+                    <div>
                     <DropDown
-                        options={numPlayersOptions}
+                            options={numPlayersOptions}
+                            perMode={perMode}
+                            setPerMode={setPerMode}
+                            numPlayers={numPlayers}
+                            setNumPlayers={setNumPlayers}
+                            selectedTeam={selectedTeam}
+                            setSelectedTeam={setSelectedTeam}
+                            dropDownType="# of Players"
+                            setSelectedOpponent={setSelectedOpponent}
+                            setHomeOrVisitor={setHomeOrVisitor}
+                    />
+                    </div>
+                    :
+                    ""}
+                <div>
+                <DropDown
+                        options={nbaTeams}
                         perMode={perMode}
                         setPerMode={setPerMode}
                         numPlayers={numPlayers}
                         setNumPlayers={setNumPlayers}
                         selectedTeam={selectedTeam}
                         setSelectedTeam={setSelectedTeam}
-                        dropDownType="# of Players"
+                        dropDownType="Team"
                         setSelectedOpponent={setSelectedOpponent}
+                        setHomeOrVisitor={setHomeOrVisitor}
                     />
-                    :
-                    ""}
-                <DropDown
-                    options={nbaTeams}
-                    perMode={perMode}
-                    setPerMode={setPerMode}
-                    numPlayers={numPlayers}
-                    setNumPlayers={setNumPlayers}
-                    selectedTeam={selectedTeam}
-                    setSelectedTeam={setSelectedTeam}
-                    dropDownType="Team"
-                    setSelectedOpponent={setSelectedOpponent}
-                />
-            </DataFlex>
-            <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputText} setInputText={setInputText} />
+                </div>
+                <div>
+                    <FindPlayerBottom activePlayers={activePlayers} inputTextBottom={inputTextBottom} setInputTextBottom={setInputTextBottom} selectedPlayerBottom={selectedPlayerBottom} setSelectedPlayerBottom={setSelectedPlayerBottom} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
+                </div>
+            </div>
+            <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} />
 
         </div>
     );

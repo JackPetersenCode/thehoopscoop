@@ -23,14 +23,18 @@ const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ selectedSta
         const selectedValue = JSON.parse(event.target.value);
         setSelectedStat(selectedValue);
         console.log(selectedValue);
-        setPropBetStats(propBetStats => [...propBetStats, selectedValue]);
-        console.log(selectedValue);
+        if (propBetStats.some(stat => stat.label === selectedValue.label)) {
+            return;
+        } else {
+            setPropBetStats(propBetStats => [...propBetStats, selectedValue]);
+            console.log(selectedValue);
+        }
     }
 
 
     return (
             <div>
-            <select className="drop-flex-select" value={selectedStat ? JSON.stringify(selectedStat) : ''} onChange={handleStatChange}>
+            <select className="drop-flex-select" value={"0"} onChange={handleStatChange}>
                     <option className="drop-flex-option" value="0">Select Stat</option>
 
                 {stats.map((option: PropBetStats, index: number) => (

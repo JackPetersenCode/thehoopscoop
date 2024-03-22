@@ -15,6 +15,7 @@ const TextDiv = styled.div``;
 
 const DropdownStyle = styled.div`
     position: absolute;
+    z-index: 5;
 `;
 
 interface SearchBarProps {
@@ -26,6 +27,7 @@ interface SearchBarProps {
     roster: Player[];
     setRoster: React.Dispatch<React.SetStateAction<Player[]>>;
     setUsedPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
+    gameOption: string;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -36,7 +38,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
     setSelectedPlayer,
     roster,
     setRoster,
-    setUsedPlayers
+    setUsedPlayers,
+    gameOption
 }) => {
     const refTwo = useRef<HTMLDivElement>(null);
     const [openSearchList, setOpenSearchList] = useState(false);
@@ -100,6 +103,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         roster={roster}
                         setRoster={setRoster}
                         setUsedPlayers={setUsedPlayers}
+                        gameOption={gameOption}
                     />
                 ) : (
                     ''

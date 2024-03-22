@@ -3,7 +3,7 @@ export default function Layout() {
     return (
         <>
 
-            <Link to="/">Home</Link>&nbsp;&nbsp;&nbsp;
+            <Link to="/">Home</Link>
             <br></br>
 
             OUTLET BELOW

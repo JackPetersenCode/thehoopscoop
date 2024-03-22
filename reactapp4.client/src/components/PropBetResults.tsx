@@ -1,26 +1,40 @@
-import React, { SetStateAction, useEffect } from 'react';
+import React, { SetStateAction, useEffect, useState } from 'react';
+import axios from 'axios';
+import { PropBetStats } from '../interfaces/PropBetStats';
 import { NBATeam } from '../interfaces/Teams';
 import { Player } from '../interfaces/Player';
-import { PropBetStats } from '../interfaces/PropBetStats';
-import axios from 'axios';
-import { BoxScoreTraditional } from '../interfaces/BoxScoreTraditional';
 import { Stats } from '../interfaces/StatsTable';
-
+import { homeAwayFilteredBoxScores, overUnderFilteredBoxScores } from '../helpers/BoxScoreFilterFunctions';
 
 interface PropBetResultsProps {
-    selectedSeason: string;
-    roster: Player[];
+    careerPlayerBoxScores: Stats[];
+    setCareerPlayerBoxScores: React.Dispatch<SetStateAction<Stats[]>>;
+    gamesPlayed: Stats[];
+    careerGamesPlayed: Stats[];
+    setCareerGamesPlayed: React.Dispatch<SetStateAction<Stats[]>>;
+    overUnderLine: number;
     propBetStats: PropBetStats[];
-    overUnderLine: number | null;
     selectedOpponent: NBATeam;
-    setPlayerBoxScores: React.Dispatch<SetStateAction<Stats[]>>
+    roster: Player[];
+    playerBoxScores: Stats[];
+    homeOrVisitor: string;
 }
 
-const PropBetResults: React.FC<PropBetResultsProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats, setPlayerBoxScores }) => {
+const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, setCareerPlayerBoxScores, gamesPlayed, careerGamesPlayed, setCareerGamesPlayed, overUnderLine, propBetStats, selectedOpponent, roster, playerBoxScores, homeOrVisitor }) => {
 
+
+    //useEffect(() => {
+    //
+    //    const getPropBetResults = async () => {
+    //        const results = await axios.get('/api/PlayerResults')
+    //    }
+    //}, []);
+
+    //display avg stat
 
     useEffect(() => {
-        const getPropBetResults = async () => {
+
+        const getCareerPlayerResults = async() => {
 
             const jsonPropBetStats = JSON.stringify(propBetStats);
 
@@ -31,30 +45,54 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ selectedSeason, overUnd
 
             // Encode the JSON string for inclusion in the URL
             const encodedJsonSelectedOpponent = encodeURIComponent(jsonSelectedOpponent);
+            console.log(roster);
 
-            // Construct the URL with the encoded JSON as a query parameter
-            for (const player of roster) {
+            if (roster.length == 0) {
+                setCareerPlayerBoxScores([]);
+            } else {
+                for (const player of roster) {
 
-                try {
-                    const results = await axios.get(`/api/PlayerResults?selectedSeason=${selectedSeason}&overUnderLine=${overUnderLine}&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.player_id}&propBetStats=${encodedJsonPropBetStats}`);
-                    console.log(results.data);
-                    setPlayerBoxScores(results.data);
-                    console.log('DDDDAAAAAAAAAAAAAAATTTTTTTTTTTTTTTAAAAAAAAAAAAAAAAAAAA')
-                } catch (error) {
-                    console.log(error);
+                    try {
+                        const results = await axios.get(`/api/PlayerResults?selectedSeason=1&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.player_id}&propBetStats=${encodedJsonPropBetStats}`);
+                        console.log(results.data);
+
+                        const OUFilteredBoxScores = await overUnderFilteredBoxScores(results.data, propBetStats, overUnderLine);
+                        const homeVisitorOverUnderFilteredBoxScores = await homeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
+                        const homeVisitorFilteredBoxScores = await homeAwayFilteredBoxScores(results.data, homeOrVisitor);
+
+                        console.log(homeVisitorOverUnderFilteredBoxScores);
+                        console.log(homeVisitorFilteredBoxScores);
+                        setCareerGamesPlayed(homeVisitorFilteredBoxScores)
+                        setCareerPlayerBoxScores(homeVisitorOverUnderFilteredBoxScores);
+                        console.log('DDDDAAAAAAAAAAAAAAATTTTTTTTTTTTTTTAAAAAAAAAAAAAAAAAAAA')
+                    } catch (error) {
+                        console.log(error);
+                    }
                 }
             }
         }
-        if (roster.length > 0 && propBetStats.length > 0 && overUnderLine && selectedOpponent) {
-            getPropBetResults();
-        }
-    }, [selectedSeason, roster, propBetStats, overUnderLine, selectedOpponent])
+        getCareerPlayerResults();
+
+    }, [roster, propBetStats, overUnderLine, selectedOpponent, homeOrVisitor])
 
     return (
         <>
+        {
+                careerPlayerBoxScores.length > 0 ?
+                <div>
+                    <div className="player-box-container">
+                        {careerPlayerBoxScores.length} / {careerGamesPlayed.length}
+                    </div>
+                    <div>
+                        {playerBoxScores.length} / {gamesPlayed.length}
+                    </div>
+                </div>
+                :
 
+                ""
+            }
         </>
-  );
+    );
 }
 
 export default PropBetResults;

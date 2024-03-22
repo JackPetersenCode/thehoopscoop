@@ -6,15 +6,16 @@ import { Player } from "../interfaces/Player";
 
 const Xbutton = styled.button`
 border: none;
-padding: 5px;
 color: white;
 background-color: black;
-border-radius: 5px;
-opacity: .5
+border-radius: 3px;
+opacity: .9
 `
 
-const StyledSpan = styled.span`
+const StyledSpan = styled.div`
+  color: rgb(200,100,150);
   font-size: medium;
+  padding: 5px;
 `
 
 interface DragNDropRosterProps {
@@ -75,37 +76,39 @@ const DragNDropRoster: React.FC<DragNDropRosterProps> = ({ roster, setRoster, de
 
     const getStarterStyle = (isDragging: boolean, draggableStyle: CSSProperties): CSSProperties => ({
         userSelect: 'none',
-        padding: 10,
+        padding: 5,
         marginLeft: 'auto',
         marginRight: 'auto',
         maxWidth: '100%',
         marginBottom: '10px',
-        borderRadius: '5px',
-        background: isDragging ? 'lightgreen' : 'rgb(204, 255, 200)',
+        borderRadius: '3px',
+        background: isDragging ? 'lightgreen' : 'rgb(0,0,20)',
         outline: 'outset',
-        outlineWidth: '4px',
+        outlineWidth: '2px',
         outlineColor: 'lightgreen',
         display: 'flex',
         justifyContent: 'space-between',
-
+        alignItems: 'center',
+        whiteSpace: 'nowrap',
         ...draggableStyle
     })
 
     const getBenchStyle = (isDragging: boolean, draggableStyle: CSSProperties): CSSProperties => ({
         userSelect: 'none',
-        padding: 10,
+        padding: 5,
         maxWidth: '100%',
         marginLeft: 'auto',
         marginRight: 'auto',
         marginBottom: '10px',
-        borderRadius: '5px',
-        background: isDragging ? 'lightblue' : 'rgb(238,238,238)',
+        borderRadius: '3px',
+        background: isDragging ? 'lightblue' : 'rgb(0,0,40)',
         outline: 'outset',
-        outlineWidth: '4px',
+        outlineWidth: '2px',
         outlineColor: 'rgb(210,210,210)',
         display: 'flex',
         justifyContent: 'space-between',
-
+        alignItems: 'center',
+        whiteSpace: 'nowrap',
         ...draggableStyle
     })
 
