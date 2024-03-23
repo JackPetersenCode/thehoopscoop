@@ -1,17 +1,21 @@
 import { PropBetStats } from "../interfaces/PropBetStats";
 import { Stats } from "../interfaces/StatsTable";
 
-const overUnderFilteredBoxScores = async (boxScores: Stats[], propBetStats: PropBetStats[], overUnderLine: number) => {
+const overUnderFilteredBoxScores = async (boxScores: Stats[], propBetStats: PropBetStats[], overUnderLine: number | string) => {
 
     const filteredBoxScores = boxScores.filter((element: Stats) => {
         let total = 0;
-        if (propBetStats != null && propBetStats.length > 0) {
-            for (const stat of propBetStats) {
-                total += element[stat.accessor] as number;
-            }
-            return total >= overUnderLine;
-        } else {
+        if (isNaN(overUnderLine as number)) {
             return true;
+        } else {
+            if (propBetStats != null && propBetStats.length > 0) {
+                for (const stat of propBetStats) {
+                    total += element[stat.accessor] as number;
+                }
+                return total >= (overUnderLine as number);
+            } else {
+                return true;
+            }
         }
     });
 
@@ -24,7 +28,6 @@ const overUnderFilteredBoxScores = async (boxScores: Stats[], propBetStats: Prop
 }
 
 const homeAwayFilteredBoxScores = async (boxScores: Stats[], homeOrVisitor: string) => {
-
 
     let filteredBoxScores = [];
     if (homeOrVisitor == "Home") {

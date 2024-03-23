@@ -1,9 +1,5 @@
 import React, { useRef, useState } from 'react';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import SearchIcon from '@mui/icons-material/Search';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { Player } from '../interfaces/Player';
 import SearchList from './SearchList';
 
@@ -11,7 +7,6 @@ const ContainerDiv = styled.div`
     position: relative;
 `;
 
-const TextDiv = styled.div``;
 
 const DropdownStyle = styled.div`
     position: absolute;
@@ -64,31 +59,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
     return (
         <ContainerDiv ref={refTwo}>
-            <TextDiv>
-                <TextField
-                    fullWidth
-                    id="outlined-basic"
-                    onChange={inputHandler}
-                    variant="outlined"
-                    label="Find Player"
-                    size="small"
-                    style={{ backgroundColor: 'white', borderRadius: '5px' }}
-                    value={inputText}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="start">
-
-                                <div className="search-icon">
-                                    <SearchIcon />
-                                </div>
-
-                            </InputAdornment>
-                        ),
-                    }}
-                    onKeyDown={handleEnter}
-                    onClick={handleClick}
-                />
-            </TextDiv>
+            <div>
+                <input type="text" className="input-box" value={inputText} placeholder="Find Player" onChange={inputHandler} onKeyDown={handleEnter} onClick={handleClick} />
+            </div>
             <DropdownStyle>
                 {activePlayers.length > 0 && inputText.length > 0 ? (
                     <SearchList

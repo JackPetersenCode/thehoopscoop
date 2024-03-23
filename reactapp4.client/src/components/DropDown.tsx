@@ -61,7 +61,7 @@ const DropDown: React.FC<DropDownProps> = ({ options, perMode, setPerMode, numPl
 
     return (
         <div className="drop-flex">
-            {dropDownType === "Opponent" ?
+            {dropDownType === "Opponent" || dropDownType === "Home or Visitor" ?
                 ""
                 :
                 <div className="drop-title">
@@ -70,7 +70,7 @@ const DropDown: React.FC<DropDownProps> = ({ options, perMode, setPerMode, numPl
             }
             <div>
                 <select className="drop-flex-select" value={typeof selectedOption === 'object' ? selectedOption.team_name : selectedOption} onChange={handleChange}>
-                    <option className="drop-flex-option" value="0">Select {dropDownType}</option>
+                    <option className="drop-flex-option" value="0">{dropDownType}</option>
 
                     {options.map((option, index) => (
                         <option key={index} value={typeof option === 'object' ? JSON.stringify(option) : (option as string)}>

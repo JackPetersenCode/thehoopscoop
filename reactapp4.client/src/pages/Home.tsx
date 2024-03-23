@@ -17,6 +17,8 @@ import PropBetResultsTable from '../components/PropBetResultsTable';
 import { Stats } from '../interfaces/StatsTable';
 import FindPlayerBottom from '../components/FindPlayerBottom';
 import PropBetResults from '../components/PropBetResults';
+import OverUnderLine from '../components/OverUnderLine';
+import PropBetOpponent from '../components/PropBetOpponent';
 
 const DataFlex = styled.div`
     display: flex;
@@ -42,7 +44,7 @@ function Home() {
     const [gameOption, setGameOption] = useState<string>('Prop Bet');
     const [roster, setRoster] = useState<Player[]>([]);
     const [usedPlayers, setUsedPlayers] = useState<Player[]>([]);
-    const [overUnderLine, setOverUnderLine] = useState<number>(0);
+    const [overUnderLine, setOverUnderLine] = useState<number | string>(0);
     const [selectedOpponent, setSelectedOpponent] = useState({ team_id: '1', team_name: 'All Teams', team_abbreviation: ''});
     const [propBetStats, setPropBetStats] = useState<PropBetStats[]>([]);
     const [playerBoxScores, setPlayerBoxScores] = useState<Stats[]>([]);
@@ -158,29 +160,37 @@ function Home() {
 
 
     return (
-        <div>
+        <div className="home-container">
             <h1>NBA STAT BLASTER</h1>
 
             <GameOptionDropDown gameOption={gameOption} setGameOption={setGameOption} />
 
             
-            <div className="d-flex">
-                <div>
+            <div className="flex">
+                <div className="drop-down">
                     <SearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
-                    <div className="mt-2">
-                        <DragNDropRoster roster={roster} setRoster={setRoster} deletePlayer={deletePlayer} />
-                    </div>
                 </div>
-                <div>
+                <div className="drop-down">
                     <PropBetStatsDropDown selectedStat={selectedStat} setSelectedStat={setSelectedStat} propBetStats={propBetStats} setPropBetStats={setPropBetStats} />
-                    <div className="mt-2">
-                        <PropBetStatsDragNDrop propBetStats={propBetStats} setPropBetStats={setPropBetStats} deletePropBetStat={deletePropBetStat} />
-                    </div>
                 </div>
-                <div>
+                <div className="drop-down">
                     <OverUnderLineInput overUnderLine={overUnderLine} setOverUnderLine={setOverUnderLine} />
                 </div>
-                <div>
+                <div className="drop-down">
+                    <DropDown
+                        options={homeOrVisitorOptions}
+                        perMode={perMode}
+                        setPerMode={setPerMode}
+                        numPlayers={numPlayers}
+                        setNumPlayers={setNumPlayers}
+                        selectedTeam={selectedTeam}
+                        setSelectedTeam={setSelectedTeam}
+                        dropDownType="Home or Visitor"
+                        setSelectedOpponent={setSelectedOpponent}
+                        setHomeOrVisitor={setHomeOrVisitor}
+                    />
+                </div>
+                <div className="drop-down">
                     <DropDown
                         options={nbaTeams}
                         perMode={perMode}
@@ -194,19 +204,23 @@ function Home() {
                         setHomeOrVisitor={setHomeOrVisitor}
                     />
                 </div>
+            </div>
+            <div className="results-flex">
                 <div>
-                    <DropDown
-                        options={homeOrVisitorOptions}
-                        perMode={perMode}
-                        setPerMode={setPerMode}
-                        numPlayers={numPlayers}
-                        setNumPlayers={setNumPlayers}
-                        selectedTeam={selectedTeam}
-                        setSelectedTeam={setSelectedTeam}
-                        dropDownType="Home or Visitor"
-                        setSelectedOpponent={setSelectedOpponent}
-                        setHomeOrVisitor={setHomeOrVisitor}
-                    />
+                    <DragNDropRoster roster={roster} setRoster={setRoster} deletePlayer={deletePlayer} />
+                </div>
+                <div>
+                    <PropBetStatsDragNDrop propBetStats={propBetStats} setPropBetStats={setPropBetStats} deletePropBetStat={deletePropBetStat} />
+                </div>
+                <div>
+                    {overUnderLine ?
+                        <OverUnderLine overUnderLine={overUnderLine} setOverUnderLine={setOverUnderLine} />
+                        :
+                        ""
+                    }
+                </div>
+                <div>
+                    <PropBetOpponent selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} />
                 </div>
             </div>
             <PropBetResults careerPlayerBoxScores={careerPlayerBoxScores} setCareerPlayerBoxScores={setCareerPlayerBoxScores} gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} />
@@ -222,7 +236,7 @@ function Home() {
                 </div>
 
             </DataFlex>
-            <div className="d-flex justify-content-between align-items-end">
+            <div className="d-flex">
                 <div>
                 <SeasonsDropDown
                     selectedSeason={selectedSeason}
@@ -282,6 +296,7 @@ function Home() {
                     <FindPlayerBottom activePlayers={activePlayers} inputTextBottom={inputTextBottom} setInputTextBottom={setInputTextBottom} selectedPlayerBottom={selectedPlayerBottom} setSelectedPlayerBottom={setSelectedPlayerBottom} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
                 </div>
             </div>
+            
             <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} />
 
         </div>

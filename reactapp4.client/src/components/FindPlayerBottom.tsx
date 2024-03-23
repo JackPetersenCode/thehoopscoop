@@ -63,7 +63,7 @@ const FindPlayerBottom: React.FC<FindPlayerBottomProps> = ({
 
     return (
         <ContainerDiv ref={refTwo}>
-            <input type="text" value={inputTextBottom} placeholder="Find Player" onChange={inputHandler} onKeyDown={handleEnter} onClick={handleClick} />
+            <input type="text" className="input-box" value={inputTextBottom} placeholder="Find Player" onChange={inputHandler} onKeyDown={handleEnter} onClick={handleClick} />
 
             <DropdownStyle>
                 {activePlayers.length > 0 && inputTextBottom.length > 0 ? (

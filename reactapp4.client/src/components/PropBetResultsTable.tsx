@@ -14,7 +14,7 @@ interface PropBetResultsTableProps {
     selectedSeason: string;
     roster: Player[];
     propBetStats: PropBetStats[];
-    overUnderLine: number;
+    overUnderLine: number | string;
     selectedOpponent: NBATeam;
     setPlayerBoxScores: React.Dispatch<SetStateAction<Stats[]>>
     playerBoxScores: Stats[];
@@ -52,6 +52,7 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
                         console.log(results.data);
 
                         const OUFilteredBoxScores = await overUnderFilteredBoxScores(results.data, propBetStats, overUnderLine);
+                        console.log(OUFilteredBoxScores);
                         const homeVisitorOverUnderFilteredBoxScores = await homeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
                         const homeVisitorFilteredBoxScores = await homeAwayFilteredBoxScores(results.data, homeOrVisitor);
 

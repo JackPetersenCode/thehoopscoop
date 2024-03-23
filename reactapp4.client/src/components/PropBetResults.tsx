@@ -12,7 +12,7 @@ interface PropBetResultsProps {
     gamesPlayed: Stats[];
     careerGamesPlayed: Stats[];
     setCareerGamesPlayed: React.Dispatch<SetStateAction<Stats[]>>;
-    overUnderLine: number;
+    overUnderLine: number | string;
     propBetStats: PropBetStats[];
     selectedOpponent: NBATeam;
     roster: Player[];

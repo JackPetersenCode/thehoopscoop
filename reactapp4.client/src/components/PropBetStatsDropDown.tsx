@@ -35,7 +35,7 @@ const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ selectedSta
     return (
             <div>
             <select className="drop-flex-select" value={"0"} onChange={handleStatChange}>
-                    <option className="drop-flex-option" value="0">Select Stat</option>
+                    <option className="drop-flex-option" value="0">Prop Bet Stats</option>
 
                 {stats.map((option: PropBetStats, index: number) => (
                         <option key={index} value={JSON.stringify(option)} >

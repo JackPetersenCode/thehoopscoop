@@ -170,8 +170,8 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
     })
 
     return (
-        <div className="ml-10 mr-10 overflow-auto">
-            <table className="text-center bg-white rounded mx-auto">
+        <div>
+            <table className="stats-table">
                 <caption>
                     Click on a stat header to sort all players by stat
                 </caption>
