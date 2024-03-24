@@ -52,15 +52,12 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
                         console.log(results.data);
 
                         const OUFilteredBoxScores = await overUnderFilteredBoxScores(results.data, propBetStats, overUnderLine);
-                        console.log(OUFilteredBoxScores);
                         const homeVisitorOverUnderFilteredBoxScores = await homeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
                         const homeVisitorFilteredBoxScores = await homeAwayFilteredBoxScores(results.data, homeOrVisitor);
 
-                        console.log(homeVisitorOverUnderFilteredBoxScores);
-                        console.log(homeVisitorFilteredBoxScores);
+                    
                         setGamesPlayed(homeVisitorFilteredBoxScores)
                         setPlayerBoxScores(homeVisitorOverUnderFilteredBoxScores);
-                        console.log('DDDDAAAAAAAAAAAAAAATTTTTTTTTTTTTTTAAAAAAAAAAAAAAAAAAAA')
                     } catch (error) {
                         console.log(error);
                     }

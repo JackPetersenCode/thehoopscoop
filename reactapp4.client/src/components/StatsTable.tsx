@@ -58,10 +58,8 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
             if (selectedLineupPlayer === 'Lineups') {
 
                 try {
-                    console.log(selectedBoxType);
-                    console.log(perMode);
+                    
                     const data = await axios.get(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}`);
-                    console.log(data.data);
                     console.log(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}`);
                     setTableData(data.data);
                     if (selectedBoxType === 'Advanced') {

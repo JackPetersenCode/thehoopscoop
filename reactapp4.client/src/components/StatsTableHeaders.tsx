@@ -21,11 +21,8 @@ const isColumnArray = (input: Column[] | string[]): input is Column[] => {
 
 const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, smallHeaders, sortField, setSortField, order, setOrder, setPage }) => {
 
-    console.log(columns)
-    console.log(sortField)
-    console.log(order)
+  
     if (!isColumnArray(columns)) {
-        console.log('not column array')
         return (
             <thead>
                 <tr>
@@ -42,10 +39,8 @@ const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, smallHea
     } else {
         const handleSortingChange = (accessor: string) => {
             if (setSortField && setOrder) {
-                console.log('handle sorting change')
                 const sortOrder =
                     accessor === sortField && order === "asc" ? "desc" : "asc";
-                console.log(accessor);
                 setSortField(accessor);
                 setOrder(sortOrder);
                 //setPage(1);
@@ -68,7 +63,6 @@ const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, smallHea
                 </thead>
             );
         } else {
-            console.log('regular headers')
             return (
                 <thead className="regularHeaders">
                     <tr>

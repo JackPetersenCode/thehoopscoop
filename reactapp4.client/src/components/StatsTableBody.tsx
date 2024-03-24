@@ -20,7 +20,6 @@ function isNumber(value: string | number): value is number {
 //</td>
 
 const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData }) => {
-    console.log(tableData);
 
     if (!isTableDataArray(tableData)) {
         return (
@@ -33,7 +32,6 @@ const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData }) =
             </tbody>
         );
     } else {
-        console.log('is table data array')
         if (isColumnArray(columns)) {
 
             return (

@@ -6,7 +6,7 @@ function Admin() {
     const loadLineupsLoop = () => {
         const seasons = ['2015_16', '2016_17', '2017_18', '2018_19', '2019_20', '2020_21', '2021_22', '2022_23', '2023_24'];
         //const seasons = ['2015_16'];
-        const boxTypes = ['Opponent'];
+        const boxTypes = ['Base'];
         const numPlayers = ['2', '3', '4', '5'];
 
         for (let i = 0; i < boxTypes.length; i++) {

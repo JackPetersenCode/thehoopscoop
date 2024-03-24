@@ -19,6 +19,7 @@ import FindPlayerBottom from '../components/FindPlayerBottom';
 import PropBetResults from '../components/PropBetResults';
 import OverUnderLine from '../components/OverUnderLine';
 import PropBetOpponent from '../components/PropBetOpponent';
+import PropBetHomeOrVisitor from '../components/PropBetHomeOrVisitor';
 
 const DataFlex = styled.div`
     display: flex;
@@ -53,6 +54,9 @@ function Home() {
     const [gamesPlayed, setGamesPlayed] = useState<Stats[]>([]);
     const [careerGamesPlayed, setCareerGamesPlayed] = useState<Stats[]>([]);
     const [homeOrVisitor, setHomeOrVisitor] = useState<string>("");
+    const [showOpponent, setShowOpponent] = useState(false);
+    const [selectedOption, setSelectedOption] = useState<string | NBATeam>("");
+
 
     const lineupPlayerOptions = [
         'Lineups',
@@ -186,8 +190,15 @@ function Home() {
                         selectedTeam={selectedTeam}
                         setSelectedTeam={setSelectedTeam}
                         dropDownType="Home or Visitor"
+                        selectedOpponent={selectedOpponent}
                         setSelectedOpponent={setSelectedOpponent}
+                        homeOrVisitor={homeOrVisitor}
                         setHomeOrVisitor={setHomeOrVisitor}
+                        showOpponent={showOpponent}
+                        setShowOpponent={setShowOpponent}
+                        selectedOption={selectedOption}
+                        setSelectedOption={setSelectedOption}
+
                     />
                 </div>
                 <div className="drop-down">
@@ -200,8 +211,15 @@ function Home() {
                         selectedTeam={selectedTeam}
                         setSelectedTeam={setSelectedTeam}
                         dropDownType="Opponent"
+                        selectedOpponent={selectedOpponent}
                         setSelectedOpponent={setSelectedOpponent}
+                        homeOrVisitor={homeOrVisitor}
                         setHomeOrVisitor={setHomeOrVisitor}
+                        showOpponent={showOpponent}
+                        setShowOpponent={setShowOpponent}
+                        selectedOption={selectedOption}
+                        setSelectedOption={setSelectedOption}
+
                     />
                 </div>
             </div>
@@ -220,8 +238,12 @@ function Home() {
                     }
                 </div>
                 <div>
-                    <PropBetOpponent selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} />
+                    <PropBetHomeOrVisitor homeOrVisitor={homeOrVisitor} setHomeOrVisitor={setHomeOrVisitor} />
                 </div>
+                <div>
+                    <PropBetOpponent selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} dropDownType="Opponent" />
+                </div>
+
             </div>
             <PropBetResults careerPlayerBoxScores={careerPlayerBoxScores} setCareerPlayerBoxScores={setCareerPlayerBoxScores} gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} />
 
@@ -255,8 +277,15 @@ function Home() {
                             selectedTeam={selectedTeam}
                             setSelectedTeam={setSelectedTeam}
                             dropDownType="Per Mode"
+                            selectedOpponent={selectedOpponent}
                             setSelectedOpponent={setSelectedOpponent}
+                            homeOrVisitor={homeOrVisitor}
                             setHomeOrVisitor={setHomeOrVisitor}
+                            showOpponent={showOpponent}
+                            setShowOpponent={setShowOpponent}
+                            selectedOption={selectedOption}
+                            setSelectedOption={setSelectedOption}
+
                     />
                     </div>
                     :
@@ -272,8 +301,15 @@ function Home() {
                             selectedTeam={selectedTeam}
                             setSelectedTeam={setSelectedTeam}
                             dropDownType="# of Players"
+                            selectedOpponent={selectedOpponent}
                             setSelectedOpponent={setSelectedOpponent}
+                            homeOrVisitor={homeOrVisitor}
                             setHomeOrVisitor={setHomeOrVisitor}
+                            showOpponent={showOpponent}
+                            setShowOpponent={setShowOpponent}
+                            selectedOption={selectedOption}
+                            setSelectedOption={setSelectedOption}
+
                     />
                     </div>
                     :
@@ -288,8 +324,16 @@ function Home() {
                         selectedTeam={selectedTeam}
                         setSelectedTeam={setSelectedTeam}
                         dropDownType="Team"
+                        selectedOpponent={selectedOpponent}
                         setSelectedOpponent={setSelectedOpponent}
+                        homeOrVisitor={homeOrVisitor}
                         setHomeOrVisitor={setHomeOrVisitor}
+                        showOpponent={showOpponent}
+                        setShowOpponent={setShowOpponent}
+                        selectedOption={selectedOption}
+                        setSelectedOption={setSelectedOption}
+                        
+
                     />
                 </div>
                 <div>

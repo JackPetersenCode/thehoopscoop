@@ -23,15 +23,6 @@ interface PropBetResultsProps {
 const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, setCareerPlayerBoxScores, gamesPlayed, careerGamesPlayed, setCareerGamesPlayed, overUnderLine, propBetStats, selectedOpponent, roster, playerBoxScores, homeOrVisitor }) => {
 
 
-    //useEffect(() => {
-    //
-    //    const getPropBetResults = async () => {
-    //        const results = await axios.get('/api/PlayerResults')
-    //    }
-    //}, []);
-
-    //display avg stat
-
     useEffect(() => {
 
         const getCareerPlayerResults = async() => {
@@ -45,7 +36,6 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, 
 
             // Encode the JSON string for inclusion in the URL
             const encodedJsonSelectedOpponent = encodeURIComponent(jsonSelectedOpponent);
-            console.log(roster);
 
             if (roster.length == 0) {
                 setCareerPlayerBoxScores([]);
@@ -60,11 +50,9 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, 
                         const homeVisitorOverUnderFilteredBoxScores = await homeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
                         const homeVisitorFilteredBoxScores = await homeAwayFilteredBoxScores(results.data, homeOrVisitor);
 
-                        console.log(homeVisitorOverUnderFilteredBoxScores);
-                        console.log(homeVisitorFilteredBoxScores);
+              
                         setCareerGamesPlayed(homeVisitorFilteredBoxScores)
                         setCareerPlayerBoxScores(homeVisitorOverUnderFilteredBoxScores);
-                        console.log('DDDDAAAAAAAAAAAAAAATTTTTTTTTTTTTTTAAAAAAAAAAAAAAAAAAAA')
                     } catch (error) {
                         console.log(error);
                     }

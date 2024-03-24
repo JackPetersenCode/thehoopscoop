@@ -302,7 +302,7 @@ namespace ReactApp4.Server.Services
                     {
 
                         case "Base":
-                            sql = $"INSERT INTO league_dash_lineups_base_{numPlayers}man_{season} (group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, reb, ast, stl, blk, blka, pf, pfd, pts, plus_minus, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, fgm_rank, fga_rank, fg_pct_rank, fg3m_rank, fg3a_rank, fg3_pct_rank, ftm_rank, fta_rank, ft_pct_rank, oreb_rank, dreb_rank, reb_rank, ast_rank, tov_rank, stl_rank, blk_rank, blka_rank, pf_rank, pfd_rank, pts_rank, plus_minus_rank) VALUES (@group_set, @group_id, @group_name, @team_id, @team_abbreviation, @gp, @w, @l, @w_pct, @min, @fgm, @fga, @fg_pct, @fg3m, @fg3a, @fg3_pct, @ftm, @fta, @ft_pct, @oreb, @dreb, @reb, @ast, @stl, @blk, @blka, @pf, @pfd, @pts, @plus_minus, @gp_rank, @w_rank, @l_rank, @w_pct_rank, @min_rank, @fgm_rank, @fga_rank, @fg_pct_rank, @fg3m_rank, @fg3a_rank, @fg3_pct_rank, @ftm_rank, @fta_rank, @ft_pct_rank, @oreb_rank, @dreb_rank, @reb_rank, @ast_rank, @tov_rank, @stl_rank, @blk_rank, @blka_rank, @pf_rank, @pfd_rank, @pts_rank, @plus_minus_rank);";
+                            sql = $"INSERT INTO league_dash_lineups_base_{numPlayers}man_{season} (group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, reb, ast, tov, stl, blk, blka, pf, pfd, pts, plus_minus, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, fgm_rank, fga_rank, fg_pct_rank, fg3m_rank, fg3a_rank, fg3_pct_rank, ftm_rank, fta_rank, ft_pct_rank, oreb_rank, dreb_rank, reb_rank, ast_rank, tov_rank, stl_rank, blk_rank, blka_rank, pf_rank, pfd_rank, pts_rank, plus_minus_rank) VALUES (@group_set, @group_id, @group_name, @team_id, @team_abbreviation, @gp, @w, @l, @w_pct, @min, @fgm, @fga, @fg_pct, @fg3m, @fg3a, @fg3_pct, @ftm, @fta, @ft_pct, @oreb, @dreb, @reb, @ast, @tov, @stl, @blk, @blka, @pf, @pfd, @pts, @plus_minus, @gp_rank, @w_rank, @l_rank, @w_pct_rank, @min_rank, @fgm_rank, @fga_rank, @fg_pct_rank, @fg3m_rank, @fg3a_rank, @fg3_pct_rank, @ftm_rank, @fta_rank, @ft_pct_rank, @oreb_rank, @dreb_rank, @reb_rank, @ast_rank, @tov_rank, @stl_rank, @blk_rank, @blka_rank, @pf_rank, @pfd_rank, @pts_rank, @plus_minus_rank);";
 
                             Console.WriteLine(leagueDashLineup.Length);
                             Console.WriteLine(leagueDashLineup);
@@ -345,103 +345,106 @@ namespace ReactApp4.Server.Services
                             string? ast_string = leagueDashLineup[22]?.ToString();
                             decimal? ast = !string.IsNullOrEmpty(ast_string) ? JsonConvert.DeserializeObject<decimal>(ast_string) : (decimal?)null;
 
-                            string? stl_string = leagueDashLineup[23]?.ToString();
+                            string? tov_string = leagueDashLineup[23]?.ToString();
+                            decimal? tov = !string.IsNullOrEmpty(tov_string) ? JsonConvert.DeserializeObject<decimal>(tov_string) : (decimal?)null;
+
+                            string? stl_string = leagueDashLineup[24]?.ToString();
                             decimal? stl = !string.IsNullOrEmpty(stl_string) ? JsonConvert.DeserializeObject<decimal>(stl_string) : (decimal?)null;
 
-                            string? blk_string = leagueDashLineup[24]?.ToString();
+                            string? blk_string = leagueDashLineup[25]?.ToString();
                             decimal? blk = !string.IsNullOrEmpty(blk_string) ? JsonConvert.DeserializeObject<decimal>(blk_string) : (decimal?)null;
 
-                            string? blka_string = leagueDashLineup[25]?.ToString();
+                            string? blka_string = leagueDashLineup[26]?.ToString();
                             decimal? blka = !string.IsNullOrEmpty(blka_string) ? JsonConvert.DeserializeObject<decimal>(blka_string) : (decimal?)null;
 
-                            string? pf_string = leagueDashLineup[26]?.ToString();
+                            string? pf_string = leagueDashLineup[27]?.ToString();
                             decimal? pf = !string.IsNullOrEmpty(pf_string) ? JsonConvert.DeserializeObject<decimal>(pf_string) : (decimal?)null;
 
-                            string? pfd_string = leagueDashLineup[27]?.ToString();
+                            string? pfd_string = leagueDashLineup[28]?.ToString();
                             decimal? pfd = !string.IsNullOrEmpty(pfd_string) ? JsonConvert.DeserializeObject<decimal>(pfd_string) : (decimal?)null;
 
-                            string? pts_string = leagueDashLineup[28]?.ToString();
+                            string? pts_string = leagueDashLineup[29]?.ToString();
                             decimal? pts = !string.IsNullOrEmpty(pts_string) ? JsonConvert.DeserializeObject<decimal>(pts_string) : (decimal?)null;
 
-                            string? plus_minus_string = leagueDashLineup[29]?.ToString();
+                            string? plus_minus_string = leagueDashLineup[30]?.ToString();
                             decimal? plus_minus = !string.IsNullOrEmpty(plus_minus_string) ? JsonConvert.DeserializeObject<decimal>(plus_minus_string) : (decimal?)null;
 
-                            string? gp_rank_string = leagueDashLineup[30]?.ToString();
+                            string? gp_rank_string = leagueDashLineup[31]?.ToString();
                             decimal? gp_rank = !string.IsNullOrEmpty(gp_rank_string) ? JsonConvert.DeserializeObject<decimal>(gp_rank_string) : (decimal?)null;
 
-                            string? w_rank_string = leagueDashLineup[31]?.ToString();
+                            string? w_rank_string = leagueDashLineup[32]?.ToString();
                             decimal? w_rank = !string.IsNullOrEmpty(w_rank_string) ? JsonConvert.DeserializeObject<decimal>(w_rank_string) : (decimal?)null;
 
-                            string? l_rank_string = leagueDashLineup[32]?.ToString();
+                            string? l_rank_string = leagueDashLineup[33]?.ToString();
                             decimal? l_rank = !string.IsNullOrEmpty(l_rank_string) ? JsonConvert.DeserializeObject<decimal>(l_rank_string) : (decimal?)null;
 
-                            string? w_pct_rank_string = leagueDashLineup[33]?.ToString();
+                            string? w_pct_rank_string = leagueDashLineup[34]?.ToString();
                             decimal? w_pct_rank = !string.IsNullOrEmpty(w_pct_rank_string) ? JsonConvert.DeserializeObject<decimal>(w_pct_rank_string) : (decimal?)null;
 
-                            string? min_rank_string = leagueDashLineup[34]?.ToString();
+                            string? min_rank_string = leagueDashLineup[35]?.ToString();
                             decimal? min_rank = !string.IsNullOrEmpty(min_rank_string) ? JsonConvert.DeserializeObject<decimal>(min_rank_string) : (decimal?)null;
 
-                            string? fgm_rank_string = leagueDashLineup[35]?.ToString();
+                            string? fgm_rank_string = leagueDashLineup[36]?.ToString();
                             decimal? fgm_rank = !string.IsNullOrEmpty(fgm_rank_string) ? JsonConvert.DeserializeObject<decimal>(fgm_rank_string) : (decimal?)null;
 
-                            string? fga_rank_string = leagueDashLineup[36]?.ToString();
+                            string? fga_rank_string = leagueDashLineup[37]?.ToString();
                             decimal? fga_rank = !string.IsNullOrEmpty(fga_rank_string) ? JsonConvert.DeserializeObject<decimal>(fga_rank_string) : (decimal?)null;
 
-                            string? fg_pct_rank_string = leagueDashLineup[37]?.ToString();
+                            string? fg_pct_rank_string = leagueDashLineup[38]?.ToString();
                             decimal? fg_pct_rank = !string.IsNullOrEmpty(fg_pct_rank_string) ? JsonConvert.DeserializeObject<decimal>(fg_pct_rank_string) : (decimal?)null;
 
-                            string? fg3m_rank_string = leagueDashLineup[38]?.ToString();
+                            string? fg3m_rank_string = leagueDashLineup[39]?.ToString();
                             decimal? fg3m_rank = !string.IsNullOrEmpty(fg3m_rank_string) ? JsonConvert.DeserializeObject<decimal>(fg3m_rank_string) : (decimal?)null;
 
-                            string? fg3a_rank_string = leagueDashLineup[39]?.ToString();
+                            string? fg3a_rank_string = leagueDashLineup[40]?.ToString();
                             decimal? fg3a_rank = !string.IsNullOrEmpty(fg3a_rank_string) ? JsonConvert.DeserializeObject<decimal>(fg3a_rank_string) : (decimal?)null;
 
-                            string? fg3_pct_rank_string = leagueDashLineup[40]?.ToString();
+                            string? fg3_pct_rank_string = leagueDashLineup[41]?.ToString();
                             decimal? fg3_pct_rank = !string.IsNullOrEmpty(fg3_pct_rank_string) ? JsonConvert.DeserializeObject<decimal>(fg3_pct_rank_string) : (decimal?)null;
 
-                            string? ftm_rank_string = leagueDashLineup[41]?.ToString();
+                            string? ftm_rank_string = leagueDashLineup[42]?.ToString();
                             decimal? ftm_rank = !string.IsNullOrEmpty(ftm_rank_string) ? JsonConvert.DeserializeObject<decimal>(ftm_rank_string) : (decimal?)null;
 
-                            string? fta_rank_string = leagueDashLineup[42]?.ToString();
+                            string? fta_rank_string = leagueDashLineup[43]?.ToString();
                             decimal? fta_rank = !string.IsNullOrEmpty(fta_rank_string) ? JsonConvert.DeserializeObject<decimal>(fta_rank_string) : (decimal?)null;
 
-                            string? ft_pct_rank_string = leagueDashLineup[43]?.ToString();
+                            string? ft_pct_rank_string = leagueDashLineup[44]?.ToString();
                             decimal? ft_pct_rank = !string.IsNullOrEmpty(ft_pct_rank_string) ? JsonConvert.DeserializeObject<decimal>(ft_pct_rank_string) : (decimal?)null;
 
-                            string? oreb_rank_string = leagueDashLineup[44]?.ToString();
+                            string? oreb_rank_string = leagueDashLineup[45]?.ToString();
                             decimal? oreb_rank = !string.IsNullOrEmpty(oreb_rank_string) ? JsonConvert.DeserializeObject<decimal>(oreb_rank_string) : (decimal?)null;
 
-                            string? dreb_rank_string = leagueDashLineup[45]?.ToString();
+                            string? dreb_rank_string = leagueDashLineup[46]?.ToString();
                             decimal? dreb_rank = !string.IsNullOrEmpty(dreb_rank_string) ? JsonConvert.DeserializeObject<decimal>(dreb_rank_string) : (decimal?)null;
 
-                            string? reb_rank_string = leagueDashLineup[46]?.ToString();
+                            string? reb_rank_string = leagueDashLineup[47]?.ToString();
                             decimal? reb_rank = !string.IsNullOrEmpty(reb_rank_string) ? JsonConvert.DeserializeObject<decimal>(reb_rank_string) : (decimal?)null;
 
-                            string? ast_rank_string = leagueDashLineup[47]?.ToString();
+                            string? ast_rank_string = leagueDashLineup[48]?.ToString();
                             decimal? ast_rank = !string.IsNullOrEmpty(ast_rank_string) ? JsonConvert.DeserializeObject<decimal>(ast_rank_string) : (decimal?)null;
 
-                            string? tov_rank_string = leagueDashLineup[48]?.ToString();
+                            string? tov_rank_string = leagueDashLineup[49]?.ToString();
                             decimal? tov_rank = !string.IsNullOrEmpty(tov_rank_string) ? JsonConvert.DeserializeObject<decimal>(tov_rank_string) : (decimal?)null;
 
-                            string? stl_rank_string = leagueDashLineup[49]?.ToString();
+                            string? stl_rank_string = leagueDashLineup[50]?.ToString();
                             decimal? stl_rank = !string.IsNullOrEmpty(stl_rank_string) ? JsonConvert.DeserializeObject<decimal>(stl_rank_string) : (decimal?)null;
 
-                            string? blk_rank_string = leagueDashLineup[50]?.ToString();
+                            string? blk_rank_string = leagueDashLineup[51]?.ToString();
                             decimal? blk_rank = !string.IsNullOrEmpty(blk_rank_string) ? JsonConvert.DeserializeObject<decimal>(blk_rank_string) : (decimal?)null;
 
-                            string? blka_rank_string = leagueDashLineup[51]?.ToString();
+                            string? blka_rank_string = leagueDashLineup[52]?.ToString();
                             decimal? blka_rank = !string.IsNullOrEmpty(blka_rank_string) ? JsonConvert.DeserializeObject<decimal>(blka_rank_string) : (decimal?)null;
 
-                            string? pf_rank_string = leagueDashLineup[52]?.ToString();
+                            string? pf_rank_string = leagueDashLineup[53]?.ToString();
                             decimal? pf_rank = !string.IsNullOrEmpty(pf_rank_string) ? JsonConvert.DeserializeObject<decimal>(pf_rank_string) : (decimal?)null;
 
-                            string? pfd_rank_string = leagueDashLineup[53]?.ToString();
+                            string? pfd_rank_string = leagueDashLineup[54]?.ToString();
                             decimal? pfd_rank = !string.IsNullOrEmpty(pfd_rank_string) ? JsonConvert.DeserializeObject<decimal>(pfd_rank_string) : (decimal?)null;
 
-                            string? pts_rank_string = leagueDashLineup[54]?.ToString();
+                            string? pts_rank_string = leagueDashLineup[55]?.ToString();
                             decimal? pts_rank = !string.IsNullOrEmpty(pts_rank_string) ? JsonConvert.DeserializeObject<decimal>(pts_rank_string) : (decimal?)null;
 
-                            string? plus_minus_rank_string = leagueDashLineup[55]?.ToString();
+                            string? plus_minus_rank_string = leagueDashLineup[56]?.ToString();
                             decimal? plus_minus_rank = !string.IsNullOrEmpty(plus_minus_rank_string) ? JsonConvert.DeserializeObject<decimal>(plus_minus_rank_string) : (decimal?)null;
 
                             using (var cmd = new NpgsqlCommand(sql, connection))
@@ -469,6 +472,7 @@ namespace ReactApp4.Server.Services
                                 cmd.Parameters.AddWithValue("@dreb", dreb ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@reb", reb ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@ast", ast ?? (object)DBNull.Value);
+                                cmd.Parameters.AddWithValue("@tov", tov ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@stl", stl ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@blk", blk ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@blka", blka ?? (object)DBNull.Value);
@@ -502,6 +506,7 @@ namespace ReactApp4.Server.Services
                                 cmd.Parameters.AddWithValue("@pfd_rank", pfd_rank ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@pts_rank", pts_rank ?? (object)DBNull.Value);
                                 cmd.Parameters.AddWithValue("@plus_minus_rank", plus_minus_rank ?? (object)DBNull.Value);
+
                                 await cmd.ExecuteNonQueryAsync();
                             }
 
