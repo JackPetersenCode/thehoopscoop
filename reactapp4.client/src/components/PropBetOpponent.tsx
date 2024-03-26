@@ -1,4 +1,4 @@
-import React, { SetStateAction, useState, useEffect } from 'react';
+import React, { SetStateAction } from 'react';
 import { NBATeam } from '../interfaces/Teams';
 
 interface PropBetOpponentProps {
@@ -20,7 +20,7 @@ const PropBetOpponent: React.FC<PropBetOpponentProps> = ({ selectedOpponent, set
         <div>
             {showOpponent &&
                 <div className="over-under-flex">
-                    <div>
+                    <div className="text-in-box">
                         {selectedOpponent.team_abbreviation}
                     </div>
                     <div>

@@ -20,6 +20,8 @@ const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ selectedSta
         { label: 'Turnovers', accessor: 'tov' }
     ];
     function handleStatChange(event: React.ChangeEvent<HTMLSelectElement>) {
+        event.preventDefault();
+
         const selectedValue = JSON.parse(event.target.value);
         setSelectedStat(selectedValue);
         console.log(selectedValue);
@@ -33,7 +35,10 @@ const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ selectedSta
 
 
     return (
-            <div>
+        <div className="drop-flex">
+            <div className="drop-title">
+                Prop Bet Stats
+            </div>
             <select className="drop-flex-select" value={"0"} onChange={handleStatChange}>
                     <option className="drop-flex-option" value="0">Prop Bet Stats</option>
 

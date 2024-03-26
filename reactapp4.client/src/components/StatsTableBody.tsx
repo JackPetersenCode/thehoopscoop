@@ -21,6 +21,7 @@ function isNumber(value: string | number): value is number {
 
 const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData }) => {
 
+
     if (!isTableDataArray(tableData)) {
         return (
             <tbody>
@@ -54,7 +55,7 @@ const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData }) =
                                         tData = (data[accessor] as number).toFixed(2);
                                     }
 
-                                    return <td key={accessor}>{tData}</td>;
+                                    return <td className={accessor === "group_name" ? "" : "white-space-no-wrap"} key={accessor}>{tData}</td>;
                                 })}
                             </tr>
                         );

@@ -96,7 +96,7 @@ const basePlayerColumns = [
 ];
 
 const basePlayerColumnsNoName = [
-    { label: "TEAM", accessor: "team_abbreviation" },
+    { label: "MATCHUP", accessor: "matchup" },
     { label: "DATE", accessor: "game_date"},
     { label: "MIN", accessor: "min" },
     { label: "FGM", accessor: "fgm" },

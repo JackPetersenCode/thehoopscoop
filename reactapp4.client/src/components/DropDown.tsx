@@ -50,16 +50,16 @@ const DropDown: React.FC<DropDownProps> = React.memo(({ options, perMode, setPer
                 console.log(event.target.value);
                 setSelectedTeam(JSON.parse(event.target.value));
             }
-            if (dropDownType === "Opponent") {
-                console.log(event.target.value);
-                console.log('set selected Opponent')
-                setSelectedOpponent(JSON.parse(event.target.value));
-                setShowOpponent(true);
-            }
-            if (dropDownType === "Home or Visitor") {
-                console.log('booger');
-                setHomeOrVisitor(event.target.value);
-            }
+            //if (dropDownType === "Opponent") {
+            //    console.log(event.target.value);
+            //    console.log('set selected Opponent')
+            //    setSelectedOpponent(JSON.parse(event.target.value));
+            //    setShowOpponent(true);
+            //}
+            //if (dropDownType === "Home or Visitor") {
+            //    console.log('booger');
+            //    setHomeOrVisitor(event.target.value);
+            //}
         }
 
 
@@ -67,17 +67,6 @@ const DropDown: React.FC<DropDownProps> = React.memo(({ options, perMode, setPer
         console.log(typeof selectedOption)
         console.log(selectedOption);
     }
-
-    useEffect(() => {
-        const resetOpponent = async () => {
-            setSelectedOption(JSON.stringify({ "team_id": "1", "team_name": "All Teams", "team_abbreviation": "" }))
-            console.log(selectedOpponent);
-
-        }
-        if (selectedOpponent.team_name === "All Teams") {
-            resetOpponent();
-        }
-    }, [selectedOpponent]);
 
     //useMemo(() => {
     //    const resetHomeVisitor = async () => {

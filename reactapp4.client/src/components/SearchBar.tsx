@@ -59,6 +59,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
     return (
         <ContainerDiv ref={refTwo}>
+            <div className="drop-title">
+                Find Player
+            </div>
             <div>
                 <input type="text" className="input-box" value={inputText} placeholder="Find Player" onChange={inputHandler} onKeyDown={handleEnter} onClick={handleClick} />
             </div>

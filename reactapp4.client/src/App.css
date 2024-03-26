@@ -1,5 +1,6 @@
 ﻿#root {
     max-width: 100%;
+    background-color: rgb(238, 232, 222)
 }
 
 tr:nth-child(even) {
@@ -7,7 +8,7 @@ tr:nth-child(even) {
 }
 
 tr:nth-child(odd) {
-    background: #FFF;
+    background: floralwhite;
 }
 
 th, td {

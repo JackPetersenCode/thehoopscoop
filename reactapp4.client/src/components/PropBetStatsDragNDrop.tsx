@@ -12,12 +12,6 @@ border-radius: 3px;
 opacity: .9
 `
 
-const StyledSpan = styled.div`
-  color: rgb(200,100,150);
-  font-size: medium;
-  padding: 5px;
-`
-
 interface PropBetStatsDragNDropProps {
     propBetStats: PropBetStats[];
     setPropBetStats: React.Dispatch<React.SetStateAction<PropBetStats[]>>;
@@ -57,9 +51,7 @@ const PropBetStatsDragNDrop: React.FC<PropBetStatsDragNDropProps> = ({ propBetSt
 
     const getListStyle = (isDraggingOver: boolean) => ({
         background: isDraggingOver ? 'lightblue' : 'white',
-        width: 'auto',
-        marginLeft: 'auto',
-        marginRight: 'auto',
+
         maxWidth: '100%',
     })
 
@@ -76,13 +68,11 @@ const PropBetStatsDragNDrop: React.FC<PropBetStatsDragNDropProps> = ({ propBetSt
 
     const getStarterStyle = (isDragging: boolean, draggableStyle: CSSProperties): CSSProperties => ({
         userSelect: 'none',
-        
+        padding: 5,
+
         maxWidth: '100%',
         borderRadius: '3px',
         background: isDragging ? 'lightgreen' : 'rgb(0,0,20)',
-        outline: 'outset',
-        outlineWidth: '2px',
-        outlineColor: 'lightgreen',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -99,9 +89,7 @@ const PropBetStatsDragNDrop: React.FC<PropBetStatsDragNDropProps> = ({ propBetSt
         marginBottom: '10px',
         borderRadius: '5px',
         background: isDragging ? 'lightblue' : 'rgb(238,238,238)',
-        outline: 'outset',
-        outlineWidth: '4px',
-        outlineColor: 'rgb(210,210,210)',
+
         display: 'flex',
         justifyContent: 'space-between',
 
@@ -125,9 +113,9 @@ const PropBetStatsDragNDrop: React.FC<PropBetStatsDragNDropProps> = ({ propBetSt
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
                                             style={index < 5 ? getStarterStyle(snapshot.isDragging, provided.draggableProps.style as CSSProperties) : getBenchStyle(snapshot.isDragging, provided.draggableProps.style as CSSProperties)}>
-                                            <StyledSpan>
+                                            <div className="text-in-box" >
                                                 {stat.label}
-                                            </StyledSpan>
+                                            </div>
                                             <div>
                                                 <Xbutton onClick={() => (deletePropBetStat(stat))}>x</Xbutton>
                                             </div>

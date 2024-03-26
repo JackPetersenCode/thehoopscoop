@@ -57,9 +57,7 @@ const DragNDropRoster: React.FC<DragNDropRosterProps> = ({ roster, setRoster, de
 
     const getListStyle = (isDraggingOver: boolean) => ({
         background: isDraggingOver ? 'lightblue' : 'white',
-        width: 'auto',
-        marginLeft: 'auto',
-        marginRight: 'auto',
+
         maxWidth: '100%',
     })
 
@@ -82,11 +80,9 @@ const DragNDropRoster: React.FC<DragNDropRosterProps> = ({ roster, setRoster, de
         maxWidth: '100%',
         borderRadius: '3px',
         background: isDragging ? 'lightgreen' : 'rgb(0,0,20)',
-        outline: 'outset',
-        outlineWidth: '2px',
-        outlineColor: 'lightgreen',
         display: 'flex',
         justifyContent: 'space-between',
+
         alignItems: 'center',
         whiteSpace: 'nowrap',
         ...draggableStyle
@@ -104,8 +100,8 @@ const DragNDropRoster: React.FC<DragNDropRosterProps> = ({ roster, setRoster, de
         outlineWidth: '2px',
         outlineColor: 'rgb(210,210,210)',
         display: 'flex',
-        justifyContent: 'space-between',
         alignItems: 'center',
+        justifyContent: 'space-between',
         whiteSpace: 'nowrap',
         ...draggableStyle
     })
@@ -127,12 +123,12 @@ const DragNDropRoster: React.FC<DragNDropRosterProps> = ({ roster, setRoster, de
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
                                             style={index < 5 ? getStarterStyle(snapshot.isDragging, provided.draggableProps.style as CSSProperties) : getBenchStyle(snapshot.isDragging, provided.draggableProps.style as CSSProperties)}>
-                                            <StyledSpan>
+                                            <div className="text-in-box">
                                                 {player.full_name}
-                                            </StyledSpan>
-                                            <span className="deletePlayer">
+                                            </div>
+                                            <div className="deletePlayer">
                                                 <Xbutton onClick={() => (deletePlayer(player))}>x</Xbutton>
-                                            </span>
+                                            </div>
                                         </div>
                                     )}
                                 </Draggable>

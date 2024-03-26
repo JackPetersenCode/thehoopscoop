@@ -20,7 +20,7 @@ const PropBetHomeOrVisitor: React.FC<PropBetHomeOrVisitorProps> = ({ homeOrVisit
         <div>
             {homeOrVisitor !== "" ?
                 <div className="over-under-flex">
-                    <div>
+                    <div className="text-in-box">
                         {homeOrVisitor === "Home" ? "vs." : homeOrVisitor === "Visitor" ? "@" : "All Games"}
                     </div>
                     <div>

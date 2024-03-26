@@ -73,9 +73,6 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
         <div className="player-box-container">
             {playerBoxScores.length > 0 ?
                 <div>
-                    <div className="text-left">
-                        {playerBoxScores[0].player_name + " " + playerBoxScores[0].team_abbreviation}
-                    </div>
                     <table>
                         <StatsTableHeaders columns={columns} smallHeaders={true} />
                         <StatsTableBody columns={columns} tableData={playerBoxScores} />

@@ -17,9 +17,13 @@ const OverUnderLineInput: React.FC<OverUnderLineInputProps> = ({ overUnderLine, 
     };
 
     return (
-        <>
+        <div className="drop-flex">
+            <div className="drop-title">
+                Over Under Line
+            </div>
+            
             <input type="number" className="input-box" min="0" max="100" value={typeof overUnderLine == 'number' ? overUnderLine : ""} onChange={handleInputChange} placeholder="Over Under" />
-        </>
+        </div>
     );
 }
 

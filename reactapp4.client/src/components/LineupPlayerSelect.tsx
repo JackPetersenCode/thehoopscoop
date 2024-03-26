@@ -12,7 +12,7 @@ const StyledButton = styled.button`
     border - right: 12px solid transparent;
     background - color: rgb(238, 238, 238);
     border - radius: 5px;
-    width: 100 %;
+    width: 100%;
 ` 
 
 const StyledUl = styled.ul`
@@ -38,6 +38,7 @@ const ButtonContainer = styled.div`
     display: flex;
     white-space: nowrap;
     align-items: center;
+    justify-content: space-between;
 `
 
 const ButtonTextDiv = styled.div`

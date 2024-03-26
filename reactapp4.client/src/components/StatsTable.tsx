@@ -168,12 +168,12 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
     })
 
     return (
-        <div>
+        <div className="player-box-container">
             <table className="stats-table">
                 <caption>
                     Click on a stat header to sort all players by stat
                 </caption>
-                <StatsTableHeaders columns={columns} smallHeaders={false} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} setPage={setPage} />
+                <StatsTableHeaders columns={columns} smallHeaders={true} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} setPage={setPage} />
                 <StatsTableBody columns={columns} tableData={filteredData} />
             </table>
             <div>
