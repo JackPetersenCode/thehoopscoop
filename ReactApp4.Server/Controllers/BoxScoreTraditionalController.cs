@@ -45,6 +45,12 @@ namespace ReactApp4.Server.Controllers
         {
             return await _boxScoreTraditionalDataHandler.CreateBoxScoreTraditional(boxScoreTraditional, season);
         }
+
+        [HttpGet("roster/{season}/{teamId}")]
+        public async Task<ActionResult<IEnumerable<SelectedPlayer>>> GetRosterBySeasonByTeam(string season, string teamId)
+        {
+            return await _boxScoreTraditionalDataHandler.GetRosterBySeasonByTeam(season, teamId);
+        }
     }
 }
 

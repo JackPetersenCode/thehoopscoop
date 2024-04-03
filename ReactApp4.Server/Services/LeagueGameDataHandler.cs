@@ -21,6 +21,11 @@ namespace ReactApp4.Server.Services
             return await _leagueGameDatabaseHandler.GetGamesBySeason(season);
         }
 
+        public async Task<ActionResult<IEnumerable<ShotChartsGame>>> GetShotChartsGames(string playerId, string season)
+        {
+            return await _leagueGameDatabaseHandler.GetShotChartsGames(playerId, season);
+        }
+
         public async Task<IActionResult> GetGamesFromFile(string season)
         {
             return await _leagueGameFileHandler.GetGamesFromFile(season);

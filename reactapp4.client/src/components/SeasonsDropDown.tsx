@@ -3,10 +3,14 @@ import '../App.css';
 import React, { useEffect, useState } from "react";
 import styled from 'styled-components';
 import '../style.css';
+import { SelectedPlayer } from "../interfaces/Player";
+import { ShotChartsGamesData } from "../interfaces/Shot";
 interface SeasonsDropDownProps {
     selectedSeason: string;
     setSelectedSeason: React.Dispatch<React.SetStateAction<string>>;
-    predictions: boolean;
+    setSelectedPlayer: React.Dispatch<React.SetStateAction<SelectedPlayer | string>>;
+    setSelectedGame: React.Dispatch<React.SetStateAction<ShotChartsGamesData | string>>;
+    isShotCharts: boolean;
 }
 
 const SeasonFlex = styled.div`
@@ -34,7 +38,7 @@ const SeasonOption = styled.option`
     padding: 10px;
 `
 
-const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSelectedSeason, predictions }) => {
+const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSelectedSeason, setSelectedPlayer, setSelectedGame, isShotCharts }) => {
 
    
     const predictionSeasonsData = [
@@ -65,6 +69,10 @@ const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSe
             return;
         }
         setSelectedSeason(event.target.value);
+        if (isShotCharts) {
+            setSelectedPlayer("");
+            setSelectedGame("");
+        }
         console.log(selectedSeason)
     }
 

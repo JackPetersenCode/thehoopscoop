@@ -29,6 +29,19 @@ namespace ReactApp4.Server.Services
 
             return boxScoreTraditionalBySeason;
         }
+        public async Task<ActionResult<IEnumerable<SelectedPlayer>>> GetRosterBySeasonByTeam(string season, string teamId)
+        {
+            Console.WriteLine(season);
+            Console.WriteLine(teamId);
+            var tableName = $"box_score_traditional_{season}";
+
+            var query = $@"SELECT DISTINCT(player_id), player_name, team_id, team_abbreviation FROM {tableName} 
+                        WHERE team_id LIKE '%{teamId}%'";
+
+            var roster = await _context.SelectedPlayers.FromSqlRaw(query).ToListAsync();
+
+            return roster;
+        }
 
         public async Task<IActionResult> CreateBoxScoreTraditional([FromBody] BoxScoreTraditional boxScoreTraditional, string season)
         {

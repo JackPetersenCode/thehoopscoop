@@ -31,6 +31,12 @@ namespace ReactApp4.Server.Controllers
             return await _leagueGameDataHandler.GetGamesBySeason(season);
         }
 
+        [HttpGet("shotChartsGames/{playerId}/{season}")]
+        public async Task<ActionResult<IEnumerable<ShotChartsGame>>> GetShotChartsGames(string playerId, string season)
+        {
+            return await _leagueGameDataHandler.GetShotChartsGames(playerId, season);
+        }
+
         [HttpGet("read/{season}")]
         public async Task<IActionResult> GetGamesFromFile(string season)
         {

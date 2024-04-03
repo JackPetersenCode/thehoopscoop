@@ -1,5 +1,5 @@
 import { getJsonResponseStartup } from './GetJsonResponse';
-import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason } from './PostFunctions';
+import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason } from './PostFunctions';
 
 const loadLeagueGamesBySeason = async () => {
     const years = ['2015_2016', '2016_2017', '2017_2018', '2018_2019', '2019_2020', '2020_2021', '2021_2022', '2022_2023', '2023_2024'];
@@ -329,6 +329,53 @@ const loadBoxScoresScoring = async () => {
     }
 }
 
+const loadShotsBySeason = async () => {
+    const years = ['2015_16'];
+
+    //let years = ['2015-2016', '2016-2017', '2017-2018', '2018-2019', '2019-2020', '2020-2021', '2021-2022'];
+    const tableLength = await getJsonResponseStartup(`/api/tablelength/shots_${years[0]}`);
+    console.log(tableLength);
+    const shotsArray = await getJsonResponseStartup(`/api/Shot/read/${years[0]}`);
+    console.log(shotsArray.resultSets[0].rowSet.length)
+
+    for (let m = tableLength.count; m < shotsArray.resultSets[0].rowSet.length; m++) {
+
+        console.log(m)
+
+        const shotObject = {
+            grid_type: shotsArray.resultSets[0].rowSet[m][0],
+            game_id: shotsArray.resultSets[0].rowSet[m][1].toString(),
+            game_event_id: shotsArray.resultSets[0].rowSet[m][2].toString(),
+            player_id: shotsArray.resultSets[0].rowSet[m][3].toString(),
+            player_name: shotsArray.resultSets[0].rowSet[m][4],
+            team_id: shotsArray.resultSets[0].rowSet[m][5].toString(),
+            team_name: shotsArray.resultSets[0].rowSet[m][6],
+            period: shotsArray.resultSets[0].rowSet[m][7].toString(),
+            minutes_remaining: shotsArray.resultSets[0].rowSet[m][8].toString(),
+            seconds_remaining: shotsArray.resultSets[0].rowSet[m][9].toString(),
+            event_type: shotsArray.resultSets[0].rowSet[m][10],
+            action_type: shotsArray.resultSets[0].rowSet[m][11],
+            shot_type: shotsArray.resultSets[0].rowSet[m][12],
+            shot_zone_basic: shotsArray.resultSets[0].rowSet[m][13],
+            shot_zone_area: shotsArray.resultSets[0].rowSet[m][14],
+            shot_zone_range: shotsArray.resultSets[0].rowSet[m][15],
+            shot_distance: shotsArray.resultSets[0].rowSet[m][16].toString(),
+            loc_x: shotsArray.resultSets[0].rowSet[m][17].toString(),
+            loc_y: shotsArray.resultSets[0].rowSet[m][18].toString(),
+            shot_attempted_flag: shotsArray.resultSets[0].rowSet[m][19].toString(),
+            shot_made_flag: shotsArray.resultSets[0].rowSet[m][20].toString(),
+            game_date: shotsArray.resultSets[0].rowSet[m][21].toString(),
+            htm: shotsArray.resultSets[0].rowSet[m][22],
+            vtm: shotsArray.resultSets[0].rowSet[m][23]
+        }
+        //ACTIVATE CODE IF YOU NEED TO LOAD SHOTS INTO YOUR DATABASE
+        const results = await postShotBySeason(shotObject, years[0]);
+    }
+
+
+    console.log('FINISHED!!!!!!!!!!!!!!!!!!!!!!1');
+}
+
 const loadLeagueDashLineupsFunction = async (season: string, boxType: string, numPlayers: string) => {
     const results = await getJsonResponseStartup(`/api/LeagueDashLineups/read/${season}/${boxType}/${numPlayers}`);
     console.log(results.resultSets[0].rowSet.length)
@@ -341,4 +388,4 @@ const loadLeagueDashLineupsFunction = async (season: string, boxType: string, nu
 }
 
 
-export { loadLeagueGamesBySeason, loadPlayers, loadBoxScoresTraditional, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring }
+export { loadLeagueGamesBySeason, loadPlayers, loadBoxScoresTraditional, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring, loadShotsBySeason }

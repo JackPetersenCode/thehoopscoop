@@ -6,22 +6,13 @@ import '../style.css';
 import { NBATeam } from "../interfaces/Teams";
 interface DropDownProps {
     options: string[] | NBATeam[];
-    perMode: string;
     setPerMode: React.Dispatch<React.SetStateAction<string>>;
-    numPlayers: string;
     setNumPlayers: React.Dispatch<React.SetStateAction<string>>;
-    selectedTeam: NBATeam;
     setSelectedTeam: React.Dispatch<React.SetStateAction<NBATeam>>;
     dropDownType: string;
-    selectedOpponent: NBATeam;
-    setSelectedOpponent: React.Dispatch<React.SetStateAction<NBATeam>>;
-    homeOrVisitor: string;
-    setHomeOrVisitor: React.Dispatch<React.SetStateAction<string>>;
-    showOpponent: boolean;
-    setShowOpponent: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DropDown: React.FC<DropDownProps> = React.memo(({ options, perMode, setPerMode, numPlayers, setNumPlayers, selectedTeam, setSelectedTeam, dropDownType, selectedOpponent, setSelectedOpponent, homeOrVisitor, setHomeOrVisitor, showOpponent, setShowOpponent }) => {
+const DropDown: React.FC<DropDownProps> = React.memo(({ options, setPerMode, setNumPlayers, setSelectedTeam, dropDownType }) => {
 
     const [selectedOption, setSelectedOption] = useState<string | NBATeam>("");
     function handleChange(event: { preventDefault: () => void; target: { value: string | NBATeam; }; }) {
@@ -79,16 +70,12 @@ const DropDown: React.FC<DropDownProps> = React.memo(({ options, perMode, setPer
 
     return (
         <div className="drop-flex">
-            {dropDownType === "Opponent" || dropDownType === "Home or Visitor" ?
-                ""
-                :
-                <div className="drop-title">
-                    {dropDownType}
-                </div>
-            }
+            <div className="drop-title">
+                {dropDownType}
+            </div>
             <div>
                 <select className="drop-flex-select" value={typeof selectedOption === 'object' ? selectedOption.team_name : selectedOption} onChange={handleChange}>
-                    <option className="drop-flex-option" value="0">{dropDownType}</option>
+                    <option className="drop-flex-option" value="0">Select {dropDownType}</option>
 
                     {options.map((option, index) => (
                         <option key={index} className="option-select" value={typeof option === 'object' ? JSON.stringify(option) : (option as string)}>

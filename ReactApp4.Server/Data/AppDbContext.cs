@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CsvHelper.Configuration.Attributes;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace ReactApp4.Server.Data
@@ -35,6 +36,9 @@ namespace ReactApp4.Server.Data
 
         public DbSet<CountOfGamesPlayed> CountOfGamesPlayeds { get; set; }
 
+        public DbSet<SelectedPlayer> SelectedPlayers { get; set; }
+        public DbSet<ShotChartsGame> ShotChartsGames { get; set; }
+        public DbSet<Shot> Shots { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -73,6 +77,9 @@ namespace ReactApp4.Server.Data
                 modelBuilder.Entity<BoxScoreScoring>()
                     .ToTable($"box_score_scoring_{season}", schema: "dbo")
                     .HasKey(x => x.Id); // Define the primary key
+                modelBuilder.Entity<Shot>()
+                    .ToTable($"shots_{season}", schema: "dbo")
+                    .HasKey(x => x.Id); // Define the primary key
             }
             modelBuilder.Entity<BoxScoreAdvancedPlayer>().HasNoKey();
             modelBuilder.Entity<BoxScoreTraditionalPlayer>().HasNoKey();
@@ -81,6 +88,9 @@ namespace ReactApp4.Server.Data
             modelBuilder.Entity<BoxScoreMiscPlayer>().HasNoKey();
             modelBuilder.Entity<BoxScoreScoringPlayer>().HasNoKey();
             modelBuilder.Entity<CountOfGamesPlayed>().HasNoKey();
+            modelBuilder.Entity<SelectedPlayer>().HasNoKey();
+            modelBuilder.Entity<ShotChartsGame>().HasNoKey();
+
 
         }
         public DbSet<TableLength> TableLengths { get; set; }

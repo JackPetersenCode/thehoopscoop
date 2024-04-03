@@ -22,6 +22,11 @@ namespace ReactApp4.Server.Services
             return await _boxScoreTraditionalDatabaseHandler.GetBoxScoreTraditionalBySeason(season);
         }
 
+        public async Task<ActionResult<IEnumerable<SelectedPlayer>>> GetRosterBySeasonByTeam(string season, string teamId)
+        {
+            return await _boxScoreTraditionalDatabaseHandler.GetRosterBySeasonByTeam(season, teamId);
+        }
+
         public async Task<IActionResult> GetBoxScoreTraditionalFromFile(string season)
         {
             return await _boxScoreTraditionalFileHandler.GetBoxScoreTraditionalFromFile(season);

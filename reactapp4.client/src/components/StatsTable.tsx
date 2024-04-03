@@ -170,16 +170,9 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
     return (
         <div className="player-box-container">
             <table className="stats-table">
-                <caption>
-                    Click on a stat header to sort all players by stat
-                </caption>
                 <StatsTableHeaders columns={columns} smallHeaders={true} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} setPage={setPage} />
                 <StatsTableBody columns={columns} tableData={filteredData} />
             </table>
-            <div>
-                <button onClick={handlePrevPage} disabled={page === 1}>Previous</button>
-                <button onClick={handleNextPage}>Next</button>
-            </div>
         </div>
     );
 });

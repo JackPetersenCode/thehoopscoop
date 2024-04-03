@@ -4,6 +4,7 @@ import { BoxScoreFourFactors } from "../interfaces/BoxScoreFourFactors";
 import { BoxScoreMisc } from "../interfaces/BoxScoreMisc";
 import { BoxScoreScoring } from "../interfaces/BoxScoreScoring";
 import { Player } from "../interfaces/Player";
+import { Shot } from "../interfaces/Shot";
 
 const postLeagueGamesBySeason = async (obj: [], season: string) => {
     console.log(season);
@@ -175,4 +176,27 @@ const postLeagueDashLineups = async (obj: Record<string, unknown>, season: strin
     }
 }
 
-export { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postBoxScoresAdvancedBySeason, postLeagueDashLineups, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason }
+const postShotBySeason = async (obj: Shot, season: string) => {
+    console.log(obj)
+    console.log('cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc');
+    const url = `/api/Shot/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+        if (response.ok) {
+            const jsonResponse = response.json();
+            return jsonResponse;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+export { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postBoxScoresAdvancedBySeason, postLeagueDashLineups, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason }

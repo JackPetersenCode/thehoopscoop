@@ -23,6 +23,8 @@ import PropBetHomeOrVisitor from '../components/PropBetHomeOrVisitor';
 import { numPlayersOptions, lineupPlayerOptions, statOptions, nbaTeams, perModeOptions } from '../interfaces/DropDownOptions';
 import PropBetOpponentDropDown from '../components/PropBetOpponentDropDown';
 import HomeOrVisitorDropDown from '../components/HomeOrVisitorDropDown';
+import Footer from '../components/Footer';
+import ShotCharts from '../components/ShotCharts';
 
 const DataFlex = styled.div`
     display: flex;
@@ -109,51 +111,60 @@ function Home() {
                 <GameOptionDropDown gameOption={gameOption} setGameOption={setGameOption} />
             </div>
 
-            
-            <div className="flex">
-                <div className="drop-down">
-                    <SearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
-                </div>
-                <div className="drop-down">
-                    <PropBetStatsDropDown selectedStat={selectedStat} setSelectedStat={setSelectedStat} propBetStats={propBetStats} setPropBetStats={setPropBetStats} />
-                </div>
-                <div className="drop-down">
-                    <OverUnderLineInput overUnderLine={overUnderLine} setOverUnderLine={setOverUnderLine} />
-                </div>
-                <div className="drop-down">
-                    <HomeOrVisitorDropDown homeOrVisitor={homeOrVisitor} setHomeOrVisitor={setHomeOrVisitor} showHomeOrVisitor={showHomeOrVisitor} setShowHomeOrVisitor={setShowHomeOrVisitor} />
-                </div>
-                <div className="drop-down" style={{ marginRight: "0px" }}>
-                    <PropBetOpponentDropDown selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} />
-                </div>
-            </div>
-            <div className="results-flex">
-                <div className="w-100 m-2">
-                    <DragNDropRoster roster={roster} setRoster={setRoster} deletePlayer={deletePlayer} />
-                </div>
-                <div className="w-100 m-2">
-                    <PropBetStatsDragNDrop propBetStats={propBetStats} setPropBetStats={setPropBetStats} deletePropBetStat={deletePropBetStat} />
-                </div>
-                <div className="w-100 m-2">
-                    {overUnderLine ?
-                        <OverUnderLine overUnderLine={overUnderLine} setOverUnderLine={setOverUnderLine} />
-                        :
-                        ""
-                    }
-                </div>
-                <div className="w-100 m-2">
-                    <PropBetHomeOrVisitor homeOrVisitor={homeOrVisitor} setHomeOrVisitor={setHomeOrVisitor} />
-                </div>
-                <div className="w-100 m-2">
-                    <PropBetOpponent selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} />
+            {gameOption === "Prop Bet" ?
+            <div>
+                <div className="flex">
+                    <div className="drop-down">
+                        <SearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
+                    </div>
+                    <div className="drop-down">
+                        <PropBetStatsDropDown selectedStat={selectedStat} setSelectedStat={setSelectedStat} propBetStats={propBetStats} setPropBetStats={setPropBetStats} />
+                    </div>
+                    <div className="drop-down">
+                        <OverUnderLineInput overUnderLine={overUnderLine} setOverUnderLine={setOverUnderLine} />
+                    </div>
+                    <div className="drop-down">
+                        <HomeOrVisitorDropDown homeOrVisitor={homeOrVisitor} setHomeOrVisitor={setHomeOrVisitor} showHomeOrVisitor={showHomeOrVisitor} setShowHomeOrVisitor={setShowHomeOrVisitor} />
+                    </div>
+                    <div className="drop-down" style={{ marginRight: "0px" }}>
+                        <PropBetOpponentDropDown selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} />
+                    </div>
                 </div>
 
-            </div>
-            <div className="prop-bet-results-wrapper">
-                <PropBetResults careerPlayerBoxScores={careerPlayerBoxScores} setCareerPlayerBoxScores={setCareerPlayerBoxScores} gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} selectedSeason={selectedSeason} />
-            </div>
+                <div className="results-flex">
+                    <div className="w-100 m-2">
+                        <DragNDropRoster roster={roster} setRoster={setRoster} deletePlayer={deletePlayer} />
+                    </div>
+                    <div className="w-100 m-2">
+                        <PropBetStatsDragNDrop propBetStats={propBetStats} setPropBetStats={setPropBetStats} deletePropBetStat={deletePropBetStat} />
+                    </div>
+                    <div className="w-100 m-2">
+                        {overUnderLine ?
+                            <OverUnderLine overUnderLine={overUnderLine} setOverUnderLine={setOverUnderLine} />
+                            :
+                            ""
+                        }
+                    </div>
+                    <div className="w-100 m-2">
+                        <PropBetHomeOrVisitor homeOrVisitor={homeOrVisitor} setHomeOrVisitor={setHomeOrVisitor} />
+                    </div>
+                    <div className="w-100 m-2">
+                        <PropBetOpponent selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} />
+                    </div>
 
-            <PropBetResultsTable selectedSeason={selectedSeason} overUnderLine={overUnderLine} selectedOpponent={selectedOpponent} roster={roster} propBetStats={propBetStats} setPlayerBoxScores={setPlayerBoxScores} playerBoxScores={playerBoxScores} setGamesPlayed={setGamesPlayed} homeOrVisitor={homeOrVisitor} />
+                </div>
+                <div className="prop-bet-results-wrapper">
+                    <PropBetResults careerPlayerBoxScores={careerPlayerBoxScores} setCareerPlayerBoxScores={setCareerPlayerBoxScores} gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} selectedSeason={selectedSeason} />
+                </div>
+
+                <PropBetResultsTable selectedSeason={selectedSeason} overUnderLine={overUnderLine} selectedOpponent={selectedOpponent} roster={roster} propBetStats={propBetStats} setPlayerBoxScores={setPlayerBoxScores} playerBoxScores={playerBoxScores} setGamesPlayed={setGamesPlayed} homeOrVisitor={homeOrVisitor} />
+            </div>
+            : gameOption === "Shot Charts" ?
+            <div>
+                <ShotCharts />
+            </div>
+            :
+            ""}
             <DataFlex>
 
                 <div className="drop-down">
@@ -166,29 +177,22 @@ function Home() {
             </DataFlex>
             <div className="d-flex">
                 <div className="drop-down">
-                <SeasonsDropDown
-                    selectedSeason={selectedSeason}
-                    setSelectedSeason={setSelectedSeason}
-                    predictions={false}
+                    <SeasonsDropDown
+                        selectedSeason={selectedSeason}
+                        setSelectedSeason={setSelectedSeason}
+                        setSelectedPlayer={() => { }}
+                        setSelectedGame={() => { }}
+                        isShotCharts={false}
                     />
                 </div>
                 {selectedBoxType === "Base" || selectedBoxType === "Misc" || selectedBoxType === "Opponent" ?
                     <div className="drop-down">
                     <DropDown
                             options={perModeOptions}
-                            perMode={perMode}
                             setPerMode={setPerMode}
-                            numPlayers={numPlayers}
                             setNumPlayers={setNumPlayers}
-                            selectedTeam={selectedTeam}
                             setSelectedTeam={setSelectedTeam}
                             dropDownType="Per Mode"
-                            selectedOpponent={selectedOpponent}
-                            setSelectedOpponent={setSelectedOpponent}
-                            homeOrVisitor={homeOrVisitor}
-                            setHomeOrVisitor={setHomeOrVisitor}
-                            showOpponent={showOpponent}
-                            setShowOpponent={setShowOpponent}
                     />
                     </div>
                     :
@@ -197,19 +201,10 @@ function Home() {
                     <div className="drop-down">
                     <DropDown
                             options={numPlayersOptions}
-                            perMode={perMode}
                             setPerMode={setPerMode}
-                            numPlayers={numPlayers}
                             setNumPlayers={setNumPlayers}
-                            selectedTeam={selectedTeam}
                             setSelectedTeam={setSelectedTeam}
                             dropDownType="# of Players"
-                            selectedOpponent={selectedOpponent}
-                            setSelectedOpponent={setSelectedOpponent}
-                            homeOrVisitor={homeOrVisitor}
-                            setHomeOrVisitor={setHomeOrVisitor}
-                            showOpponent={showOpponent}
-                            setShowOpponent={setShowOpponent}
                     />
                     </div>
                     :
@@ -217,19 +212,10 @@ function Home() {
                 <div className="drop-down">
                 <DropDown
                         options={nbaTeams}
-                        perMode={perMode}
                         setPerMode={setPerMode}
-                        numPlayers={numPlayers}
                         setNumPlayers={setNumPlayers}
-                        selectedTeam={selectedTeam}
                         setSelectedTeam={setSelectedTeam}
                         dropDownType="Team"
-                        selectedOpponent={selectedOpponent}
-                        setSelectedOpponent={setSelectedOpponent}
-                        homeOrVisitor={homeOrVisitor}
-                        setHomeOrVisitor={setHomeOrVisitor}
-                        showOpponent={showOpponent}
-                        setShowOpponent={setShowOpponent}
                     />
                 </div>
                 <div className="drop-down" style={{marginRight: "0px"}}>
@@ -238,7 +224,7 @@ function Home() {
             </div>
             
             <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} />
-
+            <Footer />
         </div>
     );
 }

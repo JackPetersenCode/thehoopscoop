@@ -13,7 +13,8 @@ const SeasonsDropDown: React.FC<GameOptionDropDownProps> = ({ gameOption, setGam
 
     const options = [
         "Prop Bet",
-        "Head 2 Head"
+        "Head 2 Head",
+        "Shot Charts"
     ];
     function handleGameOptionChange(event: { preventDefault: () => void; target: { value: string; }; }) {
         event.preventDefault();
@@ -27,11 +28,11 @@ const SeasonsDropDown: React.FC<GameOptionDropDownProps> = ({ gameOption, setGam
     return (
         <div className="game-option-flex">
             <div className="drop-title">
-                Game Option
+                Tool Option
             </div>
             <div>
                 <select className="drop-flex-select" value={gameOption} onChange={handleGameOptionChange}>
-                    <option className="drop-flex-option" value="0">Select Game Option</option>
+                    <option className="drop-flex-option" value="0">Select Tool Option</option>
 
                     {options.map((option, index) => (
                         <option key={index} value={option}>{option}</option>

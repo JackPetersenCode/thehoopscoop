@@ -6,4 +6,11 @@ interface Player {
     player_id: string;
 }
 
-export type { Player };
+interface SelectedPlayer {
+    player_name: string;
+    player_id: string;
+    team_id: string;
+    team_abbreviation: string;
+}
+
+export type { Player, SelectedPlayer };

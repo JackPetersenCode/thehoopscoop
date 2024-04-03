@@ -31,6 +31,27 @@ namespace ReactApp4.Server.Services
             return gamesBySeason;
         }
 
+        public async Task<ActionResult<IEnumerable<ShotChartsGame>>> GetShotChartsGames(string playerId, string season)
+        {
+            var tableName = $"league_games_{season}";
+            Console.WriteLine(tableName);
+
+            var query = $@"SELECT DISTINCT(league_games_{season}.game_id), 
+                        league_games_{season}.game_date, 
+                        matchup 
+                        FROM league_games_{season}
+                        INNER JOIN shots_{season}
+                        ON league_games_{season}.game_id = shots_{season}.game_id
+                        WHERE shots_{season}.player_id = '{playerId}'
+                        AND matchup LIKE '%vs.%'
+                        ORDER BY league_games_{season}.game_date";
+
+            var games = await _context.ShotChartsGames.FromSqlRaw(query).ToListAsync();
+
+            Console.WriteLine(games);
+
+            return games;
+        }
         public async Task<IActionResult> CreateLeagueGame([FromBody] object[] leagueGame)
         {
             // Implement logic to create a new league game in the database
