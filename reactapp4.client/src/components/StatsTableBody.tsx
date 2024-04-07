@@ -51,11 +51,17 @@ const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData }) =
                                         tData = "No data";
                                     }
                                     if (isNumber(data[accessor])) {
-                                        
-                                        tData = (data[accessor] as number).toFixed(2);
+
+                                        if (accessor.includes("pct") && !accessor.includes("rank")) {
+                                            
+                                            const temp = data[accessor] as number * 100;
+                                            tData = temp.toFixed(1);
+                                        } else {
+                                            tData = (data[accessor] as number).toFixed(1);
+                                        }
                                     }
 
-                                    return <td className={accessor === "group_name" ? "" : "white-space-no-wrap"} key={accessor}>{tData}</td>;
+                                    return <td className={accessor === "group_name" ? "group-name p-1" : "not-group-name"} key={accessor}>{tData}</td>;
                                 })}
                             </tr>
                         );

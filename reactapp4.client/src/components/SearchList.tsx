@@ -23,6 +23,7 @@ interface SearchListProps {
     setRoster: React.Dispatch<React.SetStateAction<Player[]>>;
     setUsedPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
     gameOption: string;
+    isBottomFindPlayerInput: boolean;
 }
 
 const SearchList: React.FC<SearchListProps> = ({
@@ -37,7 +38,8 @@ const SearchList: React.FC<SearchListProps> = ({
     roster,
     setRoster,
     setUsedPlayers,
-    gameOption
+    gameOption,
+    isBottomFindPlayerInput
 }) => {
     const refOne = useRef<HTMLDivElement>(null);
 
@@ -65,10 +67,12 @@ const SearchList: React.FC<SearchListProps> = ({
 
     const handleList = (item: Player) => {
         setSelectedPlayer(item);
-        if (gameOption == "Head 2 Head") {
-            setRoster(roster => [...roster, item]);
-        } else if (gameOption == "Prop Bet") {
-            setRoster([item]);
+        if (!isBottomFindPlayerInput) {
+            if (gameOption == "Head 2 Head") {
+                setRoster(roster => [...roster, item]);
+            } else if (gameOption == "Prop Bet") {
+                setRoster([item]);
+            }
         }
         setUsedPlayers(usedPlayers => [...usedPlayers, item]);
         console.log(selectedPlayer);

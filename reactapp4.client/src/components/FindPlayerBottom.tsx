@@ -42,6 +42,7 @@ const FindPlayerBottom: React.FC<FindPlayerBottomProps> = ({
 }) => {
     const refTwo = useRef<HTMLDivElement>(null);
     const [openSearchListBottom, setOpenSearchListBottom] = useState(false);
+    
 
     const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputTextBottom(e.target.value);
@@ -83,6 +84,7 @@ const FindPlayerBottom: React.FC<FindPlayerBottomProps> = ({
                         setRoster={setRoster}
                         setUsedPlayers={setUsedPlayers}
                         gameOption={gameOption}
+                        isBottomFindPlayerInput={true}
                     />
                 ) : (
                     ''

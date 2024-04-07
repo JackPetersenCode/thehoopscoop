@@ -89,10 +89,6 @@ left-justify {
     text-align: left;
 }
 
-table.body {
-    text-align: center;
-}
-
 .table-container {
     text-align: center;
     margin-left: auto;
@@ -105,14 +101,6 @@ table.body {
     margin-right: 10%;
 }
 
-.stat-table {
-    text-align: center;
-    background-color: rgb(255, 255, 255);
-    border-radius: 5px;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 100%;
-}
 
 .home-container {
     margin-right: 10%;
@@ -208,10 +196,29 @@ table.body {
     white-space: nowrap;
 }
 
+.svg-container {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 20px;
+}
+
+.shots-title-flex {
+    display: flex;
+    white-space: nowrap;
+    align-items: center;
+    font-size: small;
+}
+
 .copyright {
     color: white;
     text-align: center;
     font-size: medium;
+}
+
+.single-shot-chart-container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
 }
 
 .logo-nav-container {
@@ -234,6 +241,32 @@ table.body {
     width: 100%;
 }
 
+.group-name {
+    min-width: 200px;
+    font-weight: 400;
+    font-size: small;
+    font-family: Roboto Condensed, Arial, sans-serif;
+    line-height: 1.25;
+    font-stretch: condensed;
+    border-top: solid 1px #ebe9e7;
+}
+
+.not-group-name {
+    white-space: nowrap;
+    font-size: small;
+    font-weight: 400;
+    font-family: Roboto Condensed, Arial, sans-serif;
+    line-height: 1.25;
+    font-stretch: condensed;
+    border-top: solid 1px #ebe9e7;
+    padding: 8px 6px;
+}
+
+.header-item {
+    text-align: left;
+    font-family: Roboto Condensed, Arial, sans-serif;
+}
+
 @media screen and (max-width: 768px) {
     .flex {
         flex-direction: column;
@@ -241,5 +274,17 @@ table.body {
     .results-flex {
         flex-direction: column;
         width: 50%;
+    }
+}
+
+@media screen and (max-width: 1350px) {
+    :root {
+        --screen-size: 2;
+    }
+}
+
+@media screen and (min-width: 1350px) {
+    :root {
+        --screen-size: 1;
     }
 }

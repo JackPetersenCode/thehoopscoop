@@ -20,11 +20,13 @@ import PropBetResults from '../components/PropBetResults';
 import OverUnderLine from '../components/OverUnderLine';
 import PropBetOpponent from '../components/PropBetOpponent';
 import PropBetHomeOrVisitor from '../components/PropBetHomeOrVisitor';
-import { numPlayersOptions, lineupPlayerOptions, statOptions, nbaTeams, perModeOptions } from '../interfaces/DropDownOptions';
+import { numPlayersOptions, lineupPlayerOptions, statOptionsLineups, statOptionsPlayers, nbaTeams, perModeOptions } from '../interfaces/DropDownOptions';
 import PropBetOpponentDropDown from '../components/PropBetOpponentDropDown';
 import HomeOrVisitorDropDown from '../components/HomeOrVisitorDropDown';
 import Footer from '../components/Footer';
 import ShotCharts from '../components/ShotCharts';
+import LineupsPlayersSelect from '../components/LineupsPlayersSelect';
+import BoxTypeSelect from '../components/LineupPlayerSelect';
 
 const DataFlex = styled.div`
     display: flex;
@@ -168,10 +170,10 @@ function Home() {
             <DataFlex>
 
                 <div className="drop-down">
-                    <LineupPlayerSelect options={lineupPlayerOptions} selectedOption={selectedLineupPlayer} setSelectedOption={setSelectedLineupPlayer} setSortField={setSortField} />
+                    <LineupsPlayersSelect options={lineupPlayerOptions} selectedLineupPlayer={selectedLineupPlayer} setSelectedLineupPlayer={setSelectedLineupPlayer} setSelectedBoxType={setSelectedBoxType} setSortField={setSortField} />
                 </div>
                 <div className="drop-down">
-                    <LineupPlayerSelect options={statOptions} selectedOption={selectedBoxType} setSelectedOption={setSelectedBoxType} setSortField={setSortField} />
+                    <BoxTypeSelect options={selectedLineupPlayer === 'Players' ? statOptionsPlayers : statOptionsLineups} selectedBoxType={selectedBoxType} setSelectedBoxType={setSelectedBoxType} setSortField={setSortField} />
                 </div>
 
             </DataFlex>

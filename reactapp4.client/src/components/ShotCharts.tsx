@@ -23,35 +23,25 @@ const SingleShotChartContainer = styled.div`
     display: flex;
     flex-direction: column;
     text-align: center;
-    width: 100%;
-`
-const SVGContainer = styled.div`
-  display: flex;
-`
-const ShotsTitleFlex = styled.div`
-  display: flex;
-  white-space: nowrap;
-  margin: auto;
 `
 const MadeMissedShotDiv = styled.div`
-  margin-left: 20px;
-  width: 100%;
+    margin-left: 20px;
 `
 const ShotColorsFlexDiv = styled.div`
-  display: flex;
-  text-align: center;
-  align-items: center;
-  white-space: nowrap;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    white-space: nowrap;
 `
 const GreenBlock = styled.div`
-  width: 10px;
-  height: 10px;
-  background-color: rgb(191, 255, 0);
+    width: 10px;
+    height: 10px;
+    background-color: rgb(191, 255, 0);
 `
 const BlueBlock = styled.div`
-  width: 10px;
-  height: 10px;
-  background-color: rgb(64, 154, 244);
+    width: 10px;
+    height: 10px;
+    background-color: rgb(64, 154, 244);
 `
 const ShotCharts = () => {
 
@@ -130,12 +120,12 @@ const ShotCharts = () => {
                 </DropDownWrapper>
             </ContainerDiv>
 
-            <SVGContainer>
-                <SingleShotChartContainer>
-                    <ShotsTitleFlex>
-                        <h1 style={{ width: '100%' }}>
-                            {seasonShotsData.length > 0 ? `${selectedSeason} Regular Season` : ''}
-                        </h1>
+            <div className="svg-container">
+                <div className="single-shot-chart-container">
+                    <div className="shots-title-flex">
+                        <div>
+                            {seasonShotsData.length > 0 ? `${selectedSeason.replace("_", "-")} Regular Season` : ''}
+                        </div>
                         <MadeMissedShotDiv>
                             <ShotColorsFlexDiv>
                                 <GreenBlock>
@@ -153,16 +143,16 @@ const ShotCharts = () => {
                                 </div>
                             </ShotColorsFlexDiv>
                         </MadeMissedShotDiv>
-                    </ShotsTitleFlex>
+                    </div>
                     <div>
                         <ShotChartsSVG shotsData={seasonShotsData} isGameChart={false} />
                     </div>
-                </SingleShotChartContainer>
-                <SingleShotChartContainer>
-                    <ShotsTitleFlex>
-                        <h1>
+                </div>
+                <div className="single-shot-chart-container">
+                    <div className="shots-title-flex">
+                        <div>
                             {seasonShotsData.length > 0 && typeof selectedGame !== 'string' ? selectedGame.game_date + ' ' + selectedGame.matchup : ''}
-                        </h1>
+                        </div>
                         <MadeMissedShotDiv>
                             <ShotColorsFlexDiv>
                                 <GreenBlock>
@@ -180,12 +170,12 @@ const ShotCharts = () => {
                                 </div>
                             </ShotColorsFlexDiv>
                         </MadeMissedShotDiv>
-                    </ShotsTitleFlex>
+                    </div>
                     <div>
                         <ShotChartsSVG shotsData={gameShotsData} isGameChart={true} />
                     </div>
-                </SingleShotChartContainer>
-            </SVGContainer>
+                </div>
+            </div>
         </>
     );
 }

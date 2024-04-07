@@ -80,6 +80,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                         setRoster={setRoster}
                         setUsedPlayers={setUsedPlayers}
                         gameOption={gameOption}
+                        isBottomFindPlayerInput={false}
                     />
                 ) : (
                     ''

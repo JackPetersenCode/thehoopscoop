@@ -222,7 +222,7 @@ namespace ReactApp4.Server.Services
                                 WHERE player_id = @player_id
                             ),
                             Games_Played AS (
-                                SELECT * 
+                                SELECT *
                                 FROM {tableName}
                                 WHERE player_id = @player_id
                                 AND min > 0

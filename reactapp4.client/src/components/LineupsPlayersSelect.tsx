@@ -13,7 +13,7 @@ const StyledButton = styled.button`
     background - color: rgb(238, 238, 238);
     border - radius: 5px;
     width: 100%;
-` 
+`
 
 const StyledUl = styled.ul`
     position: absolute;
@@ -44,14 +44,15 @@ const ButtonContainer = styled.div`
 const ButtonTextDiv = styled.div`
     padding: 5px;
 `
-interface BoxTypeSelectProps {
+interface LineupsPlayersSelectProps {
     options: string[];
-    selectedBoxType: string;
+    selectedLineupPlayer: string;
+    setSelectedLineupPlayer: React.Dispatch<React.SetStateAction<string>>;
     setSelectedBoxType: React.Dispatch<React.SetStateAction<string>>;
     setSortField: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const BoxTypeSelect: React.FC<BoxTypeSelectProps> = ({ options, selectedBoxType, setSelectedBoxType, setSortField }) => {
+const LineupsPlayersSelect: React.FC<LineupsPlayersSelectProps> = ({ options, selectedLineupPlayer, setSelectedLineupPlayer, setSelectedBoxType, setSortField }) => {
     const [isOpen, setIsOpen] = useState(false);
     const refOne = useRef<HTMLDivElement>(null);
 
@@ -60,11 +61,14 @@ const BoxTypeSelect: React.FC<BoxTypeSelectProps> = ({ options, selectedBoxType,
         console.log(isOpen);
     };
     function handleOptionChange(option: string) {
-        
+
         if (option === "0") {
             return;
         }
-        setSelectedBoxType(option === 'Traditional' ? 'Base' : option);
+        if (option === 'Players') {
+            setSelectedBoxType('Base');
+        }
+        setSelectedLineupPlayer(option);
         setSortField("min");
         setIsOpen(!isOpen);
     }
@@ -88,10 +92,10 @@ const BoxTypeSelect: React.FC<BoxTypeSelectProps> = ({ options, selectedBoxType,
 
     return (
         <ContainerDiv ref={refOne}>
-            <StyledButton type="button" value={selectedBoxType} onClick={toggleSelect}>
+            <StyledButton type="button" value={selectedLineupPlayer} onClick={toggleSelect}>
                 <ButtonContainer>
                     <ButtonTextDiv>
-                        {selectedBoxType === 'Base' ? 'Traditional' : selectedBoxType}
+                        {selectedLineupPlayer}
                     </ButtonTextDiv>
                     {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 </ButtonContainer>
@@ -100,7 +104,7 @@ const BoxTypeSelect: React.FC<BoxTypeSelectProps> = ({ options, selectedBoxType,
             {isOpen && (
                 <StyledUl>
                     {options.map((option: string, index: React.Key | null | undefined) => (
-                        <li key={index} value={option} onClick={() => handleOptionChange(option)}>{option === 'Base' ? 'Traditional' : option}</li>
+                        <li key={index} value={option} onClick={() => handleOptionChange(option)}>{option}</li>
                     ))}
                 </StyledUl>
             )}
@@ -109,4 +113,4 @@ const BoxTypeSelect: React.FC<BoxTypeSelectProps> = ({ options, selectedBoxType,
     );
 };
 
-export default BoxTypeSelect;
+export default LineupsPlayersSelect;

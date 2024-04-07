@@ -5,13 +5,21 @@ const lineupPlayerOptions = [
     'Players'
 ];
 
-const statOptions = [
+const statOptionsLineups = [
     'Traditional',
     'Advanced',
     'FourFactors',
     'Misc',
     'Scoring',
     'Opponent'
+];
+
+const statOptionsPlayers = [
+    'Traditional',
+    'Advanced',
+    'FourFactors',
+    'Misc',
+    'Scoring',
 ];
 
 const perModeOptions = [
@@ -68,4 +76,4 @@ const nbaTeams: NBATeam[] = [
     { team_id: "1610612760", team_name: "Oklahoma City Thunder", team_abbreviation: "OKC" },
 ];
 
-export { lineupPlayerOptions, statOptions, perModeOptions, numPlayersOptions, homeOrVisitorOptions, nbaTeams }
+export { lineupPlayerOptions, statOptionsLineups, statOptionsPlayers, perModeOptions, numPlayersOptions, homeOrVisitorOptions, nbaTeams }

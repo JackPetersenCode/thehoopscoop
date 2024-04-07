@@ -64,7 +64,7 @@ const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, smallHea
             );
         } else {
             return (
-                <thead className="regularHeaders">
+                <thead>
                     <tr>
                         {columns.map(({ label, accessor }) => {
                             return (

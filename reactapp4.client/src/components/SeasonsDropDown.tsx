@@ -79,7 +79,7 @@ const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSe
     return (
         <div className="drop-flex">
             <div className="drop-title">
-                SEASON
+                Season
             </div>
             <div>
                 <select className="drop-flex-select" value={selectedSeason} onChange={handleSeasonChange}>
