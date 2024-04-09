@@ -18,11 +18,12 @@ interface PropBetResultsTableProps {
     selectedOpponent: NBATeam;
     setPlayerBoxScores: React.Dispatch<SetStateAction<Stats[]>>
     playerBoxScores: Stats[];
+    gamesPlayed: Stats[];
     setGamesPlayed: React.Dispatch<SetStateAction<Stats[]>>;
     homeOrVisitor: string;
 }
 
-const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats, setPlayerBoxScores, playerBoxScores, setGamesPlayed, homeOrVisitor }) => {
+const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats, setPlayerBoxScores, playerBoxScores, gamesPlayed, setGamesPlayed, homeOrVisitor }) => {
 
     const [columns, setColumns] = useState<Column[]>(basePlayerColumnsNoName);
 
@@ -48,12 +49,12 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
                 for (const player of roster) {
 
                     try {
-                        const results = await axios.get(`/api/PlayerResults?selectedSeason=${selectedSeason}&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.player_id}&propBetStats=${encodedJsonPropBetStats}`);
-                        console.log(results.data);
+                        const resultsWithOpponent = await axios.get(`/api/PlayerResults?selectedSeason=${selectedSeason}&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.player_id}&propBetStats=${encodedJsonPropBetStats}`);
+                        console.log(resultsWithOpponent.data);
 
-                        const OUFilteredBoxScores = await overUnderFilteredBoxScores(results.data, propBetStats, overUnderLine);
+                        const OUFilteredBoxScores = await overUnderFilteredBoxScores(resultsWithOpponent.data, propBetStats, overUnderLine);
                         const homeVisitorOverUnderFilteredBoxScores = await homeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
-                        const homeVisitorFilteredBoxScores = await homeAwayFilteredBoxScores(results.data, homeOrVisitor);
+                        const homeVisitorFilteredBoxScores = await homeAwayFilteredBoxScores(resultsWithOpponent.data, homeOrVisitor);
 
                     
                         setGamesPlayed(homeVisitorFilteredBoxScores)
@@ -71,11 +72,11 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
 
     return (
         <div className="player-box-container">
-            {playerBoxScores.length > 0 ?
+            {gamesPlayed.length > 0 ?
                 <div>
                     <table>
                         <StatsTableHeaders columns={columns} smallHeaders={true} />
-                        <StatsTableBody columns={columns} tableData={playerBoxScores} />
+                        <StatsTableBody columns={columns} tableData={gamesPlayed} filteredBoxScores={playerBoxScores} />
                     </table>
                 </div>
                 :

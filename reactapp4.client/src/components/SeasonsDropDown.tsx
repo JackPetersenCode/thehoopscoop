@@ -3,12 +3,12 @@ import '../App.css';
 import React, { useEffect, useState } from "react";
 import styled from 'styled-components';
 import '../style.css';
-import { SelectedPlayer } from "../interfaces/Player";
+import { Player, SelectedPlayer } from "../interfaces/Player";
 import { ShotChartsGamesData } from "../interfaces/Shot";
 interface SeasonsDropDownProps {
     selectedSeason: string;
     setSelectedSeason: React.Dispatch<React.SetStateAction<string>>;
-    setSelectedPlayer: React.Dispatch<React.SetStateAction<SelectedPlayer | string>>;
+    setSelectedPlayerShotCharts: React.Dispatch<React.SetStateAction<SelectedPlayer | string>>;
     setSelectedGame: React.Dispatch<React.SetStateAction<ShotChartsGamesData | string>>;
     isShotCharts: boolean;
 }
@@ -38,7 +38,7 @@ const SeasonOption = styled.option`
     padding: 10px;
 `
 
-const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSelectedSeason, setSelectedPlayer, setSelectedGame, isShotCharts }) => {
+const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSelectedSeason, setSelectedPlayerShotCharts, setSelectedGame, isShotCharts }) => {
 
    
     const predictionSeasonsData = [
@@ -68,9 +68,11 @@ const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSe
         if (event.target.value === "0") {
             return;
         }
+        console.log(event.target.value);
         setSelectedSeason(event.target.value);
         if (isShotCharts) {
-            setSelectedPlayer("");
+
+            setSelectedPlayerShotCharts("");
             setSelectedGame("");
         }
         console.log(selectedSeason)

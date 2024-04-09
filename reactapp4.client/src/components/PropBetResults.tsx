@@ -68,28 +68,23 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, 
         <>
         {
                 careerPlayerBoxScores.length > 0 ?
-                <div>
-                    <div className="prop-results-flex">
-                        <div className="prop-results">
+                <div className="prop-results-container">
+                    <div>
+                        <div className="prop-results bold">
                             Career Games: 
                         </div>
                         <div className="prop-results">
-                            {careerPlayerBoxScores.length} / {careerGamesPlayed.length}
-                        </div>
-                            <div className="prop-results">
-                                {careerGamesPlayed.length === 0 ? 0 : (100 * careerPlayerBoxScores.length / careerGamesPlayed.length).toFixed(2)}%
+                                {careerPlayerBoxScores.length} / {careerGamesPlayed.length} {careerGamesPlayed.length === 0 ? 0 : (100 * careerPlayerBoxScores.length / careerGamesPlayed.length).toFixed(2)}%
+
                         </div>
                     </div>
                   
-                    <div className="prop-results-flex">
-                        <div className="prop-results">
+                    <div>
+                        <div className="prop-results bold">
                             {selectedSeason.replace("_", "-")} Games:
                         </div>
                         <div className="prop-results">
-                            {playerBoxScores.length} / {gamesPlayed.length}
-                        </div>
-                        <div className="prop-results">
-                            {gamesPlayed.length === 0 ? 0 : (100 * playerBoxScores.length / gamesPlayed.length).toFixed(2)}%
+                                {playerBoxScores.length} / {gamesPlayed.length} {gamesPlayed.length === 0 ? 0 : (100 * playerBoxScores.length / gamesPlayed.length).toFixed(2)}%
                         </div>
                     </div>
                 </div>

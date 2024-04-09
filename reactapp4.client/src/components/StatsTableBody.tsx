@@ -3,6 +3,7 @@ import { SortingFunction, Column, Stats } from "../interfaces/StatsTable";
 interface StatsTableBodyProps {
     columns: Column[] | string[];
     tableData: Stats[] | string[];
+    filteredBoxScores: Stats[];
 }
 
 const isTableDataArray = (input: Stats[] | string[]): input is Stats[] => {
@@ -19,7 +20,7 @@ function isNumber(value: string | number): value is number {
 //    <button onClick={() => (deletePlayer(index))}>x</button>
 //</td>
 
-const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData }) => {
+const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData, filteredBoxScores }) => {
 
 
     if (!isTableDataArray(tableData)) {
@@ -39,7 +40,7 @@ const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData }) =
                 <tbody>
                     {tableData.map((data, index) => {
                         return (
-                            <tr key={index}>
+                            <tr key={index} className={filteredBoxScores.includes(data) ? "green" : ""} >
                                 {columns.map(({ accessor }) => {
                                     let tData;
                                    

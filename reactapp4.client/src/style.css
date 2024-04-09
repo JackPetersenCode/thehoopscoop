@@ -33,9 +33,7 @@
     width: 100%;
 }
 
-.max-width {
-    max-width: 200px;
-}
+
 
 left-justify {
     text-align: left;
@@ -63,6 +61,12 @@ left-justify {
 .flex {
     display: flex;
     justify-content: space-between;
+    width: 100%;
+}
+
+.prop-bet-container {
+    display: flex;
+    flex-direction: column;
 }
 
 .game-container-flex {
@@ -119,6 +123,15 @@ left-justify {
     margin-top: 0px;
 }
 
+
+
+.results-flex-item {
+    width: 100%;
+    margin: 5px;
+    margin-left: 0px;
+    margin-top: 0px;
+}
+
 .input-box {
     border-radius: 5px;
     background-color: rgb(255,255,255);
@@ -140,6 +153,8 @@ left-justify {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
+    margin-top: 20px;
 }
 
 .over-under-flex {
@@ -168,11 +183,19 @@ left-justify {
     opacity: .9
 }
 
-.prop-results-flex {
+.prop-results {
+    white-space: nowrap;
+    text-align: center;
+    width: 100%;
+}
+
+.bold {
+    font-weight: 500;
+}
+
+.prop-results-container {
     display: flex;
-    justify-content: space-between;   
-    font-weight: 700;
-    font-size: x-large;
+    justify-content: space-evenly;
 
 }
 
@@ -184,12 +207,10 @@ left-justify {
 }
 
 .prop-bet-results-wrapper {
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     background-color: #FFF;
-    max-width: 50%;
     border-radius: 5px;
-    padding: 20px;
 }
 
 .white-space-no-wrap {
@@ -262,18 +283,52 @@ left-justify {
     padding: 8px 6px;
 }
 
+.green {
+    background-color: rgb(164, 251, 153);
+}
+
 .header-item {
     text-align: left;
     font-family: Roboto Condensed, Arial, sans-serif;
 }
 
-@media screen and (max-width: 768px) {
+.prop-bet-placeholders {
+    text-align: center;
+    font-size: inherit;
+    color: rgb(153, 153, 153, 0.50);
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 900px) {
+    @media screen and (min-width: 863px) {
+        .prop-bet-placeholders {
+            font-size: small;
+            padding-top: 17px;
+            padding-bottom: 17px;
+        }
+    }
+}
+
+@media screen and (max-width: 862px) {
     .flex {
         flex-direction: column;
+        margin-right: 20px;
     }
+
     .results-flex {
         flex-direction: column;
-        width: 50%;
+    }
+    .prop-bet-container {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .results-flex-item {
+        margin-right: 0px;
     }
 }
 

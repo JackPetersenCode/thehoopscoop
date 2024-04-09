@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using Microsoft.Extensions.FileSystemGlobbing;
 using System.Numerics;
 using System.Reflection.Emit;
+using ReactApp4.Server.Controllers;
 
 namespace ReactApp4.Server.Services
 {
@@ -18,8 +19,11 @@ namespace ReactApp4.Server.Services
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<IActionResult> GetBoxScores(string season, string boxType, string order, string sortField, string perMode, string selectedTeam)
+        public async Task<IActionResult> GetBoxScores(string season, string boxType, string order, string sortField, string perMode, string selectedTeam, string selectedOpponent )
         {
+
+            
+
             try
             {
                 if (boxType == "Base")
@@ -31,61 +35,87 @@ namespace ReactApp4.Server.Services
 
                 var query = $"SELECT * FROM {tableName} WHERE team_id LIKE '%{selectedTeam}%' ORDER BY {sortField} {order}";
 
-                var gamesPlayedQuery = $"WITH GamesPlayed AS( " +
-                    $"SELECT COUNT(DISTINCT game_id) AS gp, player_id " +
-                    $"FROM {tableName} " +
-                    $"WHERE min > 0 " +
-                    $"GROUP BY player_id " +
-                $") ";
+                var gamesPlayedQuery =
+
+                    $@"WITH GamesPlayed AS (
+                        SELECT COUNT(DISTINCT {tableName}.game_id) AS gp, player_id
+                        FROM {tableName}
+                        JOIN league_games_{season}
+                        ON {tableName}.game_id = league_games_{season}.game_id
+                        AND {tableName}.team_id = league_games_{season}.team_id
+                        WHERE {tableName}.min > 0 ";
+                    if (selectedOpponent != "1")
+                    {                  
+                        gamesPlayedQuery += 
+                            $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
+                    }
+                    gamesPlayedQuery += $@"GROUP BY player_id
+                    )";
 
                 var offRatingQuery = $@"
                         WITH PlayerStats AS (
                         SELECT player_id,
                           player_name,
-                          team_id,
-                          team_abbreviation,
-                          SUM(ast) AS ast,
-                          SUM(fgm) AS fgm,
-                          SUM(fg3m) AS fg3m,
-                          SUM(pts) AS pts,
-                          SUM(ftm) AS ftm,
-                          SUM(fta) AS fta,
-                          SUM(fga) AS fga,
-                          SUM(oreb) AS orb,
-                          SUM(dreb) AS drb,
-                          SUM(reb) AS reb,
-                          SUM(min) AS min,
-                          SUM(tov) AS tov,
-                          SUM(stl) AS stl,
-                          SUM(blk) AS blk,
-                          SUM(pf) AS pf
+                          box_score_traditional_{season}.team_id,
+                          box_score_traditional_{season}.team_abbreviation,
+                          SUM(box_score_traditional_{season}.ast) AS ast,
+                          SUM(box_score_traditional_{season}.fgm) AS fgm,
+                          SUM(box_score_traditional_{season}.fg3m) AS fg3m,
+                          SUM(box_score_traditional_{season}.pts) AS pts,
+                          SUM(box_score_traditional_{season}.ftm) AS ftm,
+                          SUM(box_score_traditional_{season}.fta) AS fta,
+                          SUM(box_score_traditional_{season}.fga) AS fga,
+                          SUM(box_score_traditional_{season}.oreb) AS orb,
+                          SUM(box_score_traditional_{season}.dreb) AS drb,
+                          SUM(box_score_traditional_{season}.reb) AS reb,
+                          SUM(box_score_traditional_{season}.min) AS min,
+                          SUM(box_score_traditional_{season}.tov) AS tov,
+                          SUM(box_score_traditional_{season}.stl) AS stl,
+                          SUM(box_score_traditional_{season}.blk) AS blk,
+                          SUM(box_score_traditional_{season}.pf) AS pf
                           FROM box_score_traditional_{season}
-                          WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' 
-                          GROUP BY player_id, player_name, team_id, team_abbreviation
+                          JOIN league_games_{season}
+                          ON box_score_traditional_{season}.game_id = league_games_{season}.game_id
+                          AND box_score_traditional_{season}.team_id = league_games_{season}.team_id
+                          WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' ";
+                    if (selectedOpponent != "1")
+                    {                  
+                        offRatingQuery += 
+                            $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
+                    }
+                offRatingQuery += $@"GROUP BY player_id, player_name, box_score_traditional_{season}.team_id, box_score_traditional_{season}.team_abbreviation
                         ),
                         
                         TeamStats AS(
-                          SELECT team_id,
-                          team_abbreviation,
-                          SUM(fgm) AS fgm,
-                          SUM(fga) AS fga,
-                          SUM(fg3a) AS fg3a,
-                          SUM(fg3m) AS fg3m,
-                          SUM(ftm) AS ftm,
-                          SUM(fta) AS fta,
-                          SUM(tov) AS tov,
-                          SUM(oreb) AS orb,
-                          SUM(dreb) AS drb,
-                          SUM(reb) AS reb,
-                          SUM(pts) AS pts,
-                          SUM(min) AS min,
-                          SUM(ast) AS ast,
-                          SUM(blk) AS blk, 
-                          SUM(stl) AS stl,
-                          SUM(pf) AS pf
+                          SELECT box_score_traditional_{season}.team_id,
+                          box_score_traditional_{season}.team_abbreviation,
+                          SUM(box_score_traditional_{season}.fgm) AS fgm,
+                          SUM(box_score_traditional_{season}.fga) AS fga,
+                          SUM(box_score_traditional_{season}.fg3a) AS fg3a,
+                          SUM(box_score_traditional_{season}.fg3m) AS fg3m,
+                          SUM(box_score_traditional_{season}.ftm) AS ftm,
+                          SUM(box_score_traditional_{season}.fta) AS fta,
+                          SUM(box_score_traditional_{season}.tov) AS tov,
+                          SUM(box_score_traditional_{season}.oreb) AS orb,
+                          SUM(box_score_traditional_{season}.dreb) AS drb,
+                          SUM(box_score_traditional_{season}.reb) AS reb,
+                          SUM(box_score_traditional_{season}.pts) AS pts,
+                          SUM(box_score_traditional_{season}.min) AS min,
+                          SUM(box_score_traditional_{season}.ast) AS ast,
+                          SUM(box_score_traditional_{season}.blk) AS blk, 
+                          SUM(box_score_traditional_{season}.stl) AS stl,
+                          SUM(box_score_traditional_{season}.pf) AS pf
                           FROM box_score_traditional_{season}
-                          WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' 
-                          GROUP BY team_id, team_abbreviation
+                          JOIN league_games_{season}
+                          ON box_score_traditional_{season}.game_id = league_games_{season}.game_id
+                          AND box_score_traditional_{season}.team_id = league_games_{season}.team_id
+                          WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' ";
+                if (selectedOpponent != "1")
+                {
+                    offRatingQuery +=
+                        $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
+                }
+                offRatingQuery += $@"GROUP BY box_score_traditional_{season}.team_id, box_score_traditional_{season}.team_abbreviation
                         ),  
                         Opponent_RB AS(
                             SELECT
@@ -136,13 +166,11 @@ namespace ReactApp4.Server.Services
                           ON Team_ORB_PCT.team_id = Team_Play_PCT.team_id
                         ),
                         qAST AS(
-                             SELECT
-                            b.player_id,
+                          SELECT
+                          b.player_id,
                           b.team_id,
                           ((PlayerStats.min / (TeamStats.min / 5)) *(1.14 * ((TeamStats.ast - PlayerStats.ast) / TeamStats.fgm))) +((((TeamStats.ast / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.ast) / ((TeamStats.fgm / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.fgm)) * (1 - (PlayerStats.min / (TeamStats.min / 5)))) AS qAST
-                        
-                            FROM
-                        
+                          FROM
                               box_score_traditional_{season} b
                           JOIN PlayerStats
                           ON b.player_id = PlayerStats.player_id AND b.team_id = PlayerStats.team_id
@@ -289,8 +317,7 @@ namespace ReactApp4.Server.Services
                         SELECT PProd.player_id, PProd.team_id,
                           CASE
                               WHEN Total_Poss.Total_Poss IS NULL OR Total_Poss.Total_Poss = 0 THEN 0
-                        
-                                ELSE 100 * (PProd.PProd / Total_Poss.Total_Poss)
+                              ELSE 100 * (PProd.PProd / Total_Poss.Total_Poss)
                           END AS Offensive_Rating
                           FROM PProd
                           JOIN Total_Poss
@@ -499,36 +526,44 @@ namespace ReactApp4.Server.Services
                     if (perMode == "Totals")
                     {
                         query =
-                            $"SELECT " +
-                                $"team_id, team_abbreviation, team_city, " +
-                                $"player_id, player_name, " +
-                                $"SUM(min) AS min, " +
-                                $"SUM(fgm) AS fgm, " +
-                                $"SUM(fga) AS fga, " +
-                                $"SUM(fgm) / NULLIF(SUM(fga), 0) AS fg_pct, " +
-                                $"SUM(fg3m) AS fg3m, " +
-                                $"SUM(fg3a) AS fg3a, " +
-                                $"SUM(fg3m) / NULLIF(SUM(fg3a), 0) AS fg3_pct, " +
-                                $"SUM(ftm) AS ftm, " +
-                                $"SUM(fta) AS fta, " +
-                                $"SUM(ftm) / NULLIF(SUM(fta), 0) AS ft_pct, " +
-                                $"SUM(oreb) AS oreb, " +
-                                $"SUM(dreb) AS dreb, " +
-                                $"SUM(reb) AS reb, " +
-                                $"SUM(ast) AS ast, " +
-                                $"SUM(stl) AS stl, " +
-                                $"SUM(blk) AS blk, " +
-                                $"SUM(tov) AS tov, " +
-                                $"SUM(pf) AS pf, " +
-                                $"SUM(pts) AS pts, " +
-                                $"SUM(plus_minus) AS plus_minus " +
-                            $"FROM " +
-                                $"{tableName} boxScoreTable " +
-                            $"WHERE " +
-                                $"min > 0 " +
-                            $"AND team_id LIKE '%{selectedTeam}%' " +
-                            $"GROUP BY player_id, player_name, team_id, team_abbreviation, team_city " +
-                            $"ORDER BY {sortField} {order}";
+                            $@"SELECT 
+                                {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city, 
+                                player_id, player_name, 
+                                SUM({tableName}.min) AS min, 
+                                SUM({tableName}.fgm) AS fgm, 
+                                SUM({tableName}.fga) AS fga, 
+                                SUM({tableName}.fgm) / NULLIF(SUM({tableName}.fga), 0) AS fg_pct, 
+                                SUM({tableName}.fg3m) AS fg3m, 
+                                SUM({tableName}.fg3a) AS fg3a, 
+                                SUM({tableName}.fg3m) / NULLIF(SUM({tableName}.fg3a), 0) AS fg3_pct, 
+                                SUM({tableName}.ftm) AS ftm, 
+                                SUM({tableName}.fta) AS fta, 
+                                SUM({tableName}.ftm) / NULLIF(SUM({tableName}.fta), 0) AS ft_pct, 
+                                SUM({tableName}.oreb) AS oreb, 
+                                SUM({tableName}.dreb) AS dreb, 
+                                SUM({tableName}.reb) AS reb, 
+                                SUM({tableName}.ast) AS ast, 
+                                SUM({tableName}.stl) AS stl, 
+                                SUM({tableName}.blk) AS blk, 
+                                SUM({tableName}.tov) AS tov, 
+                                SUM({tableName}.pf) AS pf, 
+                                SUM({tableName}.pts) AS pts, 
+                                SUM({tableName}.plus_minus) AS plus_minus 
+                            FROM 
+                                {tableName}
+                            JOIN league_games_{season}
+                            ON {tableName}.game_id = league_games_{season}.game_id
+                            AND {tableName}.team_id = league_games_{season}.team_id
+                            WHERE 
+                                {tableName}.min > 0 ";
+                        if (selectedOpponent != "1")
+                        {
+                            query += $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
+                        }
+
+                        query += $@"AND {tableName}.team_id LIKE '%{selectedTeam}%' 
+                            GROUP BY player_id, player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city 
+                            ORDER BY {sortField} {order}";
                     }
                     else if (perMode == "Per Game")
                     {

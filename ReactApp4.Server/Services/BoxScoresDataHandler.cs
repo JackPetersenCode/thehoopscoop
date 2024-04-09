@@ -25,9 +25,9 @@ namespace ReactApp4.Server.Services
             return await _boxScoresFileHandler.GetBoxScoresFromFile(season, boxType, numPlayers);
         }
 
-        public async Task<IActionResult> GetBoxScores(string season, string boxType, string order, string sortField, string perMode, string selectedTeam)
+        public async Task<IActionResult> GetBoxScores(string season, string boxType, string order, string sortField, string perMode, string selectedTeam, string selectedOpponent)
         {
-            return await _boxScoresDatabaseHandler.GetBoxScores(season, boxType, order, sortField, perMode, selectedTeam);
+            return await _boxScoresDatabaseHandler.GetBoxScores(season, boxType, order, sortField, perMode, selectedTeam, selectedOpponent);
         }
 
 

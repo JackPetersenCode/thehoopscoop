@@ -22,6 +22,7 @@ interface StatsTableProps {
     setSortField: React.Dispatch<React.SetStateAction<string>>;
     inputText: string;
     setInputText: React.Dispatch<React.SetStateAction<string>>;
+    selectedOpponent: NBATeam;
 }
 
 const StyledTable = styled.table`
@@ -36,7 +37,7 @@ const TableContainer = styled.div`
 
 
 
-const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode, selectedTeam, sortField, setSortField, inputText, setInputText }) => {
+const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode, selectedTeam, sortField, setSortField, inputText, setInputText, selectedOpponent }) => {
 
     const [order, setOrder] = useState("desc");
     const [tableData, setTableData] = useState<Stats[]>([]);
@@ -60,7 +61,7 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
                 try {
                     
                     const data = await axios.get(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}`);
-                    console.log(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}`);
+                    console.log(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}/`);
                     setTableData(data.data);
                     if (selectedBoxType === 'Advanced') {
                         setColumns(advancedLineupColumns);
@@ -85,10 +86,10 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
                 try {
                     console.log(selectedBoxType);
                     console.log(perMode);
-
-                    const data = await axios.get(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}`);
+                    console.log(selectedOpponent);
+                    const data = await axios.get(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}/${selectedOpponent.team_abbreviation}`);
                     console.log(data.data);
-                    console.log(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}`);
+                    console.log(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}/${selectedOpponent.team_abbreviation}`);
                     setTableData(data.data);
                     console.log("PLAYERSSSSS")
                     if (selectedBoxType === 'Advanced') {
@@ -111,7 +112,7 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
         if (selectedSeason) {
             getStats()
         }
-    }, [numPlayers, selectedLineupPlayer, selectedSeason, selectedBoxType, sortField, order, perMode, selectedTeam]);
+    }, [numPlayers, selectedLineupPlayer, selectedSeason, selectedBoxType, sortField, order, perMode, selectedTeam, selectedOpponent]);
 
     /*
     const columns = [
@@ -172,7 +173,7 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
             {tableData.length > 0 ?
                 <table className="">
                     <StatsTableHeaders columns={columns} smallHeaders={true} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} setPage={setPage} />
-                    <StatsTableBody columns={columns} tableData={filteredData} />
+                    <StatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]} />
                 </table>
             :
             ""}

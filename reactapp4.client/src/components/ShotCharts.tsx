@@ -90,7 +90,8 @@ const ShotCharts = () => {
                 <DropDownWrapper>
                     <SeasonsDropDown selectedSeason={selectedSeason}
                         setSelectedSeason={setSelectedSeason}
-                        setSelectedPlayer={setSelectedPlayer}
+                        setSelectedPlayerShotCharts={setSelectedPlayer}
+                        setSelectedPlayerPropBet={() => { } }
                         setSelectedGame={setSelectedGame}
                         isShotCharts={true}
                     />

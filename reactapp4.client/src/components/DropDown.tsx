@@ -9,10 +9,11 @@ interface DropDownProps {
     setPerMode: React.Dispatch<React.SetStateAction<string>>;
     setNumPlayers: React.Dispatch<React.SetStateAction<string>>;
     setSelectedTeam: React.Dispatch<React.SetStateAction<NBATeam>>;
+    setSelectedOpponent: React.Dispatch<React.SetStateAction<NBATeam>>;
     dropDownType: string;
 }
 
-const DropDown: React.FC<DropDownProps> = React.memo(({ options, setPerMode, setNumPlayers, setSelectedTeam, dropDownType }) => {
+const DropDown: React.FC<DropDownProps> = React.memo(({ options, setPerMode, setNumPlayers, setSelectedTeam, setSelectedOpponent, dropDownType }) => {
 
     const [selectedOption, setSelectedOption] = useState<string | NBATeam>("");
     function handleChange(event: { preventDefault: () => void; target: { value: string | NBATeam; }; }) {
@@ -41,12 +42,11 @@ const DropDown: React.FC<DropDownProps> = React.memo(({ options, setPerMode, set
                 console.log(event.target.value);
                 setSelectedTeam(JSON.parse(event.target.value));
             }
-            //if (dropDownType === "Opponent") {
-            //    console.log(event.target.value);
-            //    console.log('set selected Opponent')
-            //    setSelectedOpponent(JSON.parse(event.target.value));
-            //    setShowOpponent(true);
-            //}
+            if (dropDownType === "Opponent") {
+                console.log(event.target.value);
+                console.log('set selected Opponent')
+                setSelectedOpponent(JSON.parse(event.target.value));
+            }
             //if (dropDownType === "Home or Visitor") {
             //    console.log('booger');
             //    setHomeOrVisitor(event.target.value);
