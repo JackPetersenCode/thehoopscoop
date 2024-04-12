@@ -29,7 +29,7 @@ namespace ReactApp4.Server.Controllers
             return await _boxScoresDataHandler.GetBoxScoresFromFile(season, boxType, numPlayers);
         }
 
-        [HttpGet("{season?}/{boxType?}/{order?}/{sortField?}/{perMode?}/{selectedTeam?}/{selectedOpponent?}")]
+        [HttpGet("{season?}/{boxType?}/{order?}/{sortField?}/{perMode?}/{selectedTeam?}/{selectedOpponent?}/{nMinutes?}")]
         public async Task<IActionResult> GetBoxScores(string season = "2023_24", string boxType = "Traditional", string order = "desc", string sortField = "id", string perMode = "Totals", string selectedTeam = "1", string selectedOpponent = "1")
         {
             return await _boxScoresDataHandler.GetBoxScores(season, boxType, order, sortField, perMode, selectedTeam, selectedOpponent);

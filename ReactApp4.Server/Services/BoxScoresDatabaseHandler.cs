@@ -54,8 +54,8 @@ namespace ReactApp4.Server.Services
 
                 var offRatingQuery = $@"
                         WITH PlayerStats AS (
-                        SELECT player_id,
-                          player_name,
+                          Select box_score_traditional_{season}.player_id,
+					      box_score_traditional_{season}.player_name,
                           box_score_traditional_{season}.team_id,
                           box_score_traditional_{season}.team_abbreviation,
                           SUM(box_score_traditional_{season}.ast) AS ast,
@@ -78,14 +78,35 @@ namespace ReactApp4.Server.Services
                           ON box_score_traditional_{season}.game_id = league_games_{season}.game_id
                           AND box_score_traditional_{season}.team_id = league_games_{season}.team_id
                           WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' ";
-                    if (selectedOpponent != "1")
-                    {                  
-                        offRatingQuery += 
-                            $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
-                    }
-                offRatingQuery += $@"GROUP BY player_id, player_name, box_score_traditional_{season}.team_id, box_score_traditional_{season}.team_abbreviation
+                if (selectedOpponent != "1")
+                {
+                    offRatingQuery +=
+                        $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
+
+                }
+
+
+                offRatingQuery += $@"GROUP BY box_score_traditional_{season}.player_id, box_score_traditional_{season}.player_name, box_score_traditional_{season}.team_id, box_score_traditional_{season}.team_abbreviation 
                         ),
-                        
+                        PlayerStatsAdvanced AS (
+                         Select box_score_advanced_{season}.player_id,
+					      box_score_advanced_{season}.player_name,
+                          box_score_advanced_{season}.team_id,
+                          box_score_advanced_{season}.team_abbreviation,
+                          ROUND(AVG(pie) * 100, 2) as pie,
+                          SUM(poss) as poss
+                          FROM box_score_advanced_{season}
+                          JOIN league_games_{season}
+                          ON box_score_advanced_{season}.game_id = league_games_{season}.game_id
+                          AND box_score_advanced_{season}.team_id = league_games_{season}.team_id
+                          WHERE box_score_advanced_{season}.team_id LIKE '%{selectedTeam}%' ";
+                if (selectedOpponent != "1")
+                {
+                    offRatingQuery += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
+
+                }
+               			  offRatingQuery += $@"GROUP BY box_score_advanced_{season}.player_id, box_score_advanced_{season}.player_name, box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation
+                        ),
                         TeamStats AS(
                           SELECT box_score_traditional_{season}.team_id,
                           box_score_traditional_{season}.team_abbreviation,
@@ -110,12 +131,15 @@ namespace ReactApp4.Server.Services
                           ON box_score_traditional_{season}.game_id = league_games_{season}.game_id
                           AND box_score_traditional_{season}.team_id = league_games_{season}.team_id
                           WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' ";
+
                 if (selectedOpponent != "1")
                 {
                     offRatingQuery +=
-                        $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
+                        $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
                 }
+
                 offRatingQuery += $@"GROUP BY box_score_traditional_{season}.team_id, box_score_traditional_{season}.team_abbreviation
+
                         ),  
                         Opponent_RB AS(
                             SELECT
@@ -130,9 +154,16 @@ namespace ReactApp4.Server.Services
                                 FROM league_games_{season}
                             ) AS t
                         JOIN
-                            league_games_{season} lg
-                            ON(lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%')
-                        GROUP BY
+                            league_games_{season} lg ";
+                if (selectedOpponent != "1")
+                {
+                    offRatingQuery += $@"ON(lg.matchup LIKE '%{selectedOpponent} vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%{selectedOpponent} @ ' || t.team_abbreviation || '%') ";
+                }
+                else
+                {
+                    offRatingQuery += $@"ON(lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%') ";
+                }
+                offRatingQuery += $@"GROUP BY
                             t.team_abbreviation, t.team_id
                         ),
                         Team_Scoring_Poss AS(
@@ -159,7 +190,7 @@ namespace ReactApp4.Server.Services
                         ),
                         Team_ORB_Weight AS(
                           SELECT Team_ORB_PCT.team_id,
-                          ((1 - Team_ORB_PCT.Team_ORB_PCT) *Team_Play_PCT.Team_Play_PCT) / ((1 - Team_ORB_PCT.Team_ORB_PCT) * Team_Play_PCT.Team_Play_PCT + Team_ORB_PCT.Team_ORB_PCT * (1 - Team_Play_PCT.Team_Play_PCT)) AS Team_ORB_Weight
+                          ((1 - Team_ORB_PCT.Team_ORB_PCT) * Team_Play_PCT.Team_Play_PCT) / ((1 - Team_ORB_PCT.Team_ORB_PCT) * Team_Play_PCT.Team_Play_PCT + Team_ORB_PCT.Team_ORB_PCT * (1 - Team_Play_PCT.Team_Play_PCT)) AS Team_ORB_Weight
                         
                             FROM Team_ORB_PCT
                           JOIN Team_Play_PCT
@@ -169,7 +200,7 @@ namespace ReactApp4.Server.Services
                           SELECT
                           b.player_id,
                           b.team_id,
-                          ((PlayerStats.min / (TeamStats.min / 5)) *(1.14 * ((TeamStats.ast - PlayerStats.ast) / TeamStats.fgm))) +((((TeamStats.ast / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.ast) / ((TeamStats.fgm / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.fgm)) * (1 - (PlayerStats.min / (TeamStats.min / 5)))) AS qAST
+                          ((PlayerStats.min / (TeamStats.min / 5)) * (1.14 * ((TeamStats.ast - PlayerStats.ast) / TeamStats.fgm))) +((((TeamStats.ast / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.ast) / ((TeamStats.fgm / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.fgm)) * (1 - (PlayerStats.min / (TeamStats.min / 5)))) AS qAST
                           FROM
                               box_score_traditional_{season} b
                           JOIN PlayerStats
@@ -347,9 +378,16 @@ namespace ReactApp4.Server.Services
                                 FROM league_games_{season}
                             ) AS t
                         JOIN 
-                            league_games_{season} lg 
-                            ON (lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%')
-                        GROUP BY 
+                            league_games_{season} lg ";
+                if (selectedOpponent != "1")
+                {
+                    defRatingQuery += $@"ON(lg.matchup LIKE '%{selectedOpponent} vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%{selectedOpponent} @ ' || t.team_abbreviation || '%') ";
+                }
+                else
+                {
+                    defRatingQuery += $@"ON(lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%') ";
+                }
+                        defRatingQuery += $@"GROUP BY 
                             t.team_abbreviation, t.team_id
                         ),
                         DFG_PCT AS (
@@ -437,7 +475,7 @@ namespace ReactApp4.Server.Services
                           ON Team_Possessions.team_id = OpponentStats.team_id
                         ),
                         D_Pts_Per_ScPoss AS (
-                        	SELECT 
+                          SELECT 
                           OpponentStats.team_id,
                           OpponentStats.Opponent_PTS / (OpponentStats.Opponent_FGM + (1 - (1 - (OpponentStats.Opponent_FTM / OpponentStats.Opponent_FTA))^2) * OpponentStats.Opponent_FTA * 0.4) AS D_Pts_Per_ScPoss
                           FROM OpponentStats
@@ -468,8 +506,9 @@ namespace ReactApp4.Server.Services
                         
                         Advanced_Stats AS (
                           SELECT
-                          PlayerStats.player_id, PlayerStats.team_id,
-                          ROUND(100 * PlayerStats.ast / (((PlayerStats.min / (TeamStats.min / 5)) * TeamStats.fgm) - PlayerStats.fgm), 2) AS Ast_Pct,
+                          PlayerStats.player_id, PlayerStats.player_name, PlayerStats.team_id, PlayerStats.team_abbreviation,
+                          PlayerStats.min AS min,
+                          ROUND(PlayerStats.ast / (((PlayerStats.min / (TeamStats.min / 5)) * TeamStats.fgm) - PlayerStats.fgm), 2) AS Ast_Pct,
                           CASE 
                             WHEN PlayerStats.tov IS NULL OR PlayerStats.tov = 0 THEN 0
                             ELSE ROUND(PlayerStats.ast / PlayerStats.tov, 2)
@@ -480,39 +519,43 @@ namespace ReactApp4.Server.Services
                           END AS Ast_Ratio,
                           CASE
                           	WHEN (PlayerStats.min * (TeamStats.orb + OpponentStats.Opponent_DRB)) IS NULL OR (PlayerStats.min * (TeamStats.orb + OpponentStats.Opponent_DRB)) = 0 THEN 0
-                          	ELSE ROUND(100 * (PlayerStats.orb * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.orb + OpponentStats.Opponent_DRB)), 2)
+                          	ELSE ROUND((PlayerStats.orb * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.orb + OpponentStats.Opponent_DRB)), 2)
                           END AS Oreb_Pct,
                           CASE
                           	WHEN (PlayerStats.min * (TeamStats.drb + OpponentStats.Opponent_ORB)) IS NULL OR (PlayerStats.min * (TeamStats.drb + OpponentStats.Opponent_ORB)) = 0 THEN 0
-                          	ELSE ROUND(100 * (PlayerStats.drb * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.drb + OpponentStats.Opponent_ORB)), 2)
+                          	ELSE ROUND((PlayerStats.drb * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.drb + OpponentStats.Opponent_ORB)), 2)
                           END AS Dreb_Pct,
                           CASE
                             WHEN (PlayerStats.min * (TeamStats.reb + OpponentStats.Opponent_TRB)) IS NULL OR (PlayerStats.min * (TeamStats.reb + OpponentStats.Opponent_TRB)) = 0 THEN 0
-                            ELSE ROUND(100 * (PlayerStats.reb * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.reb + OpponentStats.Opponent_TRB)), 2)
+                            ELSE ROUND((PlayerStats.reb * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.reb + OpponentStats.Opponent_TRB)), 2)
                           END AS Reb_Pct,
                           CASE
                             WHEN (PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov) IS NULL OR (PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov) = 0 THEN 0
-                            ELSE ROUND(100 * PlayerStats.tov / (PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov), 2)
+                            ELSE ROUND(PlayerStats.tov / (PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov), 2)
                           END AS Tov_Pct,
                           CASE
                             WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN 0 
-                            ELSE ROUND(100 * (PlayerStats.fgm + 0.5 * PlayerStats.fg3m) / PlayerStats.fga, 2)
+                            ELSE ROUND((PlayerStats.fgm + 0.5 * PlayerStats.fg3m) / PlayerStats.fga, 2)
                           END AS Efg_Pct,
                           CASE
                             WHEN (2 * (PlayerStats.fga + 0.44 * PlayerStats.fta)) IS NULL OR (2 * (PlayerStats.fga + 0.44 * PlayerStats.fta)) = 0 THEN 0
-                            ELSE ROUND(100 * PlayerStats.pts / (2 * (PlayerStats.fga + 0.44 * PlayerStats.fta)), 2)
+                            ELSE ROUND(PlayerStats.pts / (2 * (PlayerStats.fga + 0.44 * PlayerStats.fta)), 2)
                           END AS Ts_Pct,
                           CASE
                             WHEN (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)) IS NULL OR (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)) = 0 THEN 0
-                            ELSE ROUND(100 * ((PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov) * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)), 2)
-                          END AS Usg_Pct
+                            ELSE ROUND(((PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov) * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)), 2)
+                          END AS Usg_Pct,
+                          PlayerStatsAdvanced.pie AS Pie,
+                          PlayerStatsAdvanced.poss AS Poss
 
                           FROM PlayerStats
                           JOIN TeamStats
                           ON PlayerStats.team_id = TeamStats.team_id
                           JOIN OpponentStats
                           ON PlayerStats.team_id = OpponentStats.team_id
-
+                          JOIN PlayerStatsAdvanced
+                          ON PlayerStats.player_id = PlayerStatsAdvanced.player_id
+                          AND PlayerStats.team_id = PlayerStatsAdvanced.team_id
                         )
                     ";
 
@@ -571,80 +614,105 @@ namespace ReactApp4.Server.Services
                         query = gamesPlayedQuery +
                         $@"
                         SELECT
-                            team_id, team_abbreviation, team_city,
+                            {tableName}.team_id, {tableName}.team_abbreviation, team_city,
                             {tableName}.player_id, player_name, 
-                            SUM(min) / GamesPlayed.gp AS min,
-                            SUM(fgm) / GamesPlayed.gp AS fgm,
-                            SUM(fga) / GamesPlayed.gp AS fga,
-                            SUM(fgm) / NULLIF(SUM(fga), 0) AS fg_pct,
-                            SUM(fg3m) / GamesPlayed.gp AS fg3m,
-                            SUM(fg3a) / GamesPlayed.gp AS fg3a,
-                            SUM(fg3m) / NULLIF(SUM(fg3a), 0) AS fg3_pct,
-                            SUM(ftm) / GamesPlayed.gp AS ftm,
-                            SUM(fta) / GamesPlayed.gp AS fta,
-                            SUM(ftm) / NULLIF(SUM(fta), 0) AS ft_pct,
-                            SUM(oreb) / GamesPlayed.gp AS oreb,
-                            SUM(dreb) / GamesPlayed.gp AS dreb,
-                            SUM(reb) / GamesPlayed.gp AS reb,
-                            SUM(ast) / GamesPlayed.gp AS ast,
-                            SUM(stl) / GamesPlayed.gp AS stl,
-                            SUM(blk) / GamesPlayed.gp AS blk,
-                            SUM(tov) / GamesPlayed.gp AS tov,
-                            SUM(pf) / GamesPlayed.gp AS pf,
-                            SUM(pts) / GamesPlayed.gp AS pts,
-                            SUM(plus_minus) / GamesPlayed.gp AS plus_minus
+                            SUM({tableName}.min) / GamesPlayed.gp AS min,
+                            SUM({tableName}.fgm) / GamesPlayed.gp AS fgm,
+                            SUM({tableName}.fga) / GamesPlayed.gp AS fga,
+                            SUM({tableName}.fgm) / NULLIF(SUM({tableName}.fga), 0) AS fg_pct,
+                            SUM({tableName}.fg3m) / GamesPlayed.gp AS fg3m,
+                            SUM({tableName}.fg3a) / GamesPlayed.gp AS fg3a,
+                            SUM({tableName}.fg3m) / NULLIF(SUM({tableName}.fg3a), 0) AS fg3_pct,
+                            SUM({tableName}.ftm) / GamesPlayed.gp AS ftm,
+                            SUM({tableName}.fta) / GamesPlayed.gp AS fta,
+                            SUM({tableName}.ftm) / NULLIF(SUM({tableName}.fta), 0) AS ft_pct,
+                            SUM({tableName}.oreb) / GamesPlayed.gp AS oreb,
+                            SUM({tableName}.dreb) / GamesPlayed.gp AS dreb,
+                            SUM({tableName}.reb) / GamesPlayed.gp AS reb,
+                            SUM({tableName}.ast) / GamesPlayed.gp AS ast,
+                            SUM({tableName}.stl) / GamesPlayed.gp AS stl,
+                            SUM({tableName}.blk) / GamesPlayed.gp AS blk,
+                            SUM({tableName}.tov) / GamesPlayed.gp AS tov,
+                            SUM({tableName}.pf) / GamesPlayed.gp AS pf,
+                            SUM({tableName}.pts) / GamesPlayed.gp AS pts,
+                            SUM({tableName}.plus_minus) / GamesPlayed.gp AS plus_minus
                         FROM
                             {tableName}
                         JOIN GamesPlayed
                             ON {tableName}.player_id = GamesPlayed.player_id
+                        JOIN league_games_{season}
+                            ON {tableName}.game_id = league_games_{season}.game_id
+                            AND {tableName}.team_id = league_games_{season}.team_id
                         WHERE
-                            min > 0
+                            {tableName}.min > 0
                         AND 
-                            team_id LIKE '%{selectedTeam}%' 
-                        GROUP BY  
-                            {tableName}.player_id, player_name, team_id, team_abbreviation, team_city, GamesPlayed.gp
+                            {tableName}.team_id LIKE '%{selectedTeam}%' ";
+                        if (selectedOpponent != "1")
+                        {
+                            query += $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
+                        }
+                        query += $@"GROUP BY  
+                            {tableName}.player_id, player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp
                         ORDER BY {sortField} {order}";
 
                         Console.WriteLine("HERE");
                         Console.WriteLine(query);
 
                     }
-                    else if (perMode == "Per Minute")
+                    else if (perMode == "Per Minute" || perMode == "Per 12 Minutes" || perMode == "Per 24 Minutes")
                     {
+                        var nMinutes = 1;
+
+                        if (perMode == "Per 12 Minutes")
+                        {
+                            nMinutes = 12;
+                        }
+                        else if (perMode == "Per 24 Minutes")
+                        {
+                            nMinutes = 24;
+                        }
+
                         query = gamesPlayedQuery +
                         $@"
                         SELECT
-                            team_id, team_abbreviation, team_city,
+                            {tableName}.team_id, {tableName}.team_abbreviation, team_city,
                             {tableName}.player_id, player_name, 
-                            SUM(min) / GamesPlayed.gp AS min,
-                            SUM(fgm) / SUM(min) AS fgm,
-                            SUM(fga) / SUM(min) AS fga,
-                            SUM(fgm) / NULLIF(SUM(fga), 0) AS fg_pct,
-                            SUM(fg3m) / SUM(min) AS fg3m,
-                            SUM(fg3a) / SUM(min) AS fg3a,
-                            SUM(fg3m) / NULLIF(SUM(fg3a), 0) AS fg3_pct,
-                            SUM(ftm) / SUM(min) AS ftm,
-                            SUM(fta) / SUM(min) AS fta,
-                            SUM(ftm) / NULLIF(SUM(fta), 0) AS ft_pct,
-                            SUM(oreb) / SUM(min) AS oreb,
-                            SUM(dreb) / SUM(min) AS dreb,
-                            SUM(reb) / SUM(min) AS reb,
-                            SUM(ast) / SUM(min) AS ast,
-                            SUM(stl) / SUM(min) AS stl,
-                            SUM(blk) / SUM(min) AS blk,
-                            SUM(tov) / SUM(min) AS tov,
-                            SUM(pf) / SUM(min) AS pf,
-                            SUM(pts) / SUM(min) AS pts,
-                            SUM(plus_minus) / SUM(min) AS plus_minus
+                            SUM({tableName}.min) / GamesPlayed.gp AS min,
+                            {nMinutes} * (SUM({tableName}.fgm) / NULLIF(SUM({tableName}.min), 0)) AS fgm,
+                            {nMinutes} * (SUM({tableName}.fga) / NULLIF(SUM({tableName}.min), 0)) AS fga,
+                            SUM({tableName}.fgm) / NULLIF(SUM({tableName}.fga), 0) AS fg_pct,
+                            {nMinutes} * (SUM({tableName}.fg3m) / NULLIF(SUM({tableName}.min), 0)) AS fg3m,
+                            {nMinutes} * (SUM({tableName}.fg3a) / NULLIF(SUM({tableName}.min), 0)) AS fg3a,
+                            SUM({tableName}.fg3m) / NULLIF(SUM({tableName}.fg3a), 0) AS fg3_pct,
+                            {nMinutes} * (SUM({tableName}.ftm) / NULLIF(SUM({tableName}.min), 0)) AS ftm,
+                            {nMinutes} * (SUM({tableName}.fta) / NULLIF(SUM({tableName}.min), 0)) AS fta,
+                            SUM({tableName}.ftm) / NULLIF(SUM({tableName}.fta), 0) AS ft_pct,
+                            {nMinutes} * (SUM({tableName}.oreb) / NULLIF(SUM({tableName}.min), 0)) AS oreb,
+                            {nMinutes} * (SUM({tableName}.dreb) / NULLIF(SUM({tableName}.min), 0)) AS dreb,
+                            {nMinutes} * (SUM({tableName}.reb) / NULLIF(SUM({tableName}.min), 0)) AS reb,
+                            {nMinutes} * (SUM({tableName}.ast) / NULLIF(SUM({tableName}.min), 0)) AS ast,
+                            {nMinutes} * (SUM({tableName}.stl) / NULLIF(SUM({tableName}.min), 0)) AS stl,
+                            {nMinutes} * (SUM({tableName}.blk) / NULLIF(SUM({tableName}.min), 0)) AS blk,
+                            {nMinutes} * (SUM({tableName}.tov) / NULLIF(SUM({tableName}.min), 0)) AS tov,
+                            {nMinutes} * (SUM({tableName}.pf) / NULLIF(SUM({tableName}.min), 0)) AS pf,
+                            {nMinutes} * (SUM({tableName}.pts) / NULLIF(SUM({tableName}.min), 0)) AS pts,
+                            {nMinutes} * (SUM({tableName}.plus_minus) / NULLIF(SUM({tableName}.min), 0)) AS plus_minus
                         FROM
                             {tableName}
                         JOIN GamesPlayed
                             ON {tableName}.player_id = GamesPlayed.player_id
+                        JOIN league_games_{season}
+                            ON {tableName}.game_id = league_games_{season}.game_id
+                            AND {tableName}.team_id = league_games_{season}.team_id
                         WHERE
-                            min > 0
+                            {tableName}.min > 0
                         AND
-                            {tableName}.team_id LIKE '%{selectedTeam}%'
-                        GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, team_abbreviation, team_city, GamesPlayed.gp
+                            {tableName}.team_id LIKE '%{selectedTeam}%' ";
+                        if (selectedOpponent != "1")
+                        {
+                            query += $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
+                        }
+                        query += $@"GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp 
                         ORDER BY {sortField} {order}";
                         Console.WriteLine(query);
 
@@ -659,36 +727,43 @@ namespace ReactApp4.Server.Services
                             {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city,
                             {tableName}.player_id, {tableName}.player_name, 
                             100 * SUM({tableName}.min) / NULLIF(SUM({joinedTable}.poss), 0) AS min,
-                            100 * SUM(fgm) / NULLIF(SUM({joinedTable}.poss), 0) AS fgm,
-                            100 * SUM(fga) / NULLIF(SUM({joinedTable}.poss), 0) AS fga,
-                            SUM(fgm) / NULLIF(SUM(fga), 0) AS fg_pct,
-                            100 * SUM(fg3m) / NULLIF(SUM({joinedTable}.poss), 0) AS fg3m,
-                            100 * SUM(fg3a) / NULLIF(SUM({joinedTable}.poss), 0) AS fg3a,
-                            SUM(fg3m) / NULLIF(SUM(fg3a), 0) AS fg3_pct,
-                            100 * SUM(ftm) / NULLIF(SUM({joinedTable}.poss), 0) AS ftm,
-                            100 * SUM(fta) / NULLIF(SUM({joinedTable}.poss), 0) AS fta,
-                            SUM(ftm) / NULLIF(SUM(fta), 0) AS ft_pct,
-                            100 * SUM(oreb) / NULLIF(SUM({joinedTable}.poss), 0) AS oreb,
-                            100 * SUM(dreb) / NULLIF(SUM({joinedTable}.poss), 0) AS dreb,
-                            100 * SUM(reb) / NULLIF(SUM({joinedTable}.poss), 0) AS reb,
-                            100 * SUM(ast) / NULLIF(SUM({joinedTable}.poss), 0) AS ast,
-                            100 * SUM(stl) / NULLIF(SUM({joinedTable}.poss), 0) AS stl,
-                            100 * SUM(blk) / NULLIF(SUM({joinedTable}.poss), 0) AS blk,
-                            100 * SUM(tov) / NULLIF(SUM({joinedTable}.poss), 0) AS tov,
-                            100 * SUM(pf) / NULLIF(SUM({joinedTable}.poss), 0) AS pf,
-                            100 * SUM(pts) / NULLIF(SUM({joinedTable}.poss), 0) AS pts,
-                            100 * SUM(plus_minus) / NULLIF(SUM({joinedTable}.poss), 0) AS plus_minus
+                            100 * SUM({tableName}.fgm) / NULLIF(SUM({joinedTable}.poss), 0) AS fgm,
+                            100 * SUM({tableName}.fga) / NULLIF(SUM({joinedTable}.poss), 0) AS fga,
+                            SUM({tableName}.fgm) / NULLIF(SUM({tableName}.fga), 0) AS fg_pct,
+                            100 * SUM({tableName}.fg3m) / NULLIF(SUM({joinedTable}.poss), 0) AS fg3m,
+                            100 * SUM({tableName}.fg3a) / NULLIF(SUM({joinedTable}.poss), 0) AS fg3a,
+                            SUM({tableName}.fg3m) / NULLIF(SUM({tableName}.fg3a), 0) AS fg3_pct,
+                            100 * SUM({tableName}.ftm) / NULLIF(SUM({joinedTable}.poss), 0) AS ftm,
+                            100 * SUM({tableName}.fta) / NULLIF(SUM({joinedTable}.poss), 0) AS fta,
+                            SUM({tableName}.ftm) / NULLIF(SUM({tableName}.fta), 0) AS ft_pct,
+                            100 * SUM({tableName}.oreb) / NULLIF(SUM({joinedTable}.poss), 0) AS oreb,
+                            100 * SUM({tableName}.dreb) / NULLIF(SUM({joinedTable}.poss), 0) AS dreb,
+                            100 * SUM({tableName}.reb) / NULLIF(SUM({joinedTable}.poss), 0) AS reb,
+                            100 * SUM({tableName}.ast) / NULLIF(SUM({joinedTable}.poss), 0) AS ast,
+                            100 * SUM({tableName}.stl) / NULLIF(SUM({joinedTable}.poss), 0) AS stl,
+                            100 * SUM({tableName}.blk) / NULLIF(SUM({joinedTable}.poss), 0) AS blk,
+                            100 * SUM({tableName}.tov) / NULLIF(SUM({joinedTable}.poss), 0) AS tov,
+                            100 * SUM({tableName}.pf) / NULLIF(SUM({joinedTable}.poss), 0) AS pf,
+                            100 * SUM({tableName}.pts) / NULLIF(SUM({joinedTable}.poss), 0) AS pts,
+                            100 * SUM({tableName}.plus_minus) / NULLIF(SUM({joinedTable}.poss), 0) AS plus_minus
                         FROM
                             {tableName}
                         JOIN {joinedTable}
                             ON {tableName}.player_id = {joinedTable}.player_id
                             AND {tableName}.team_id = {joinedTable}.team_id
                             AND {tableName}.game_id = {joinedTable}.game_id
+                        JOIN league_games_{season}
+                            ON {tableName}.game_id = league_games_{season}.game_id
+                            AND {tableName}.team_id = league_games_{season}.team_id
                         WHERE
                             {tableName}.min > 0
                         AND
-                            {tableName}.team_id LIKE '%{selectedTeam}%'
-                        GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city 
+                            {tableName}.team_id LIKE '%{selectedTeam}%' ";
+                        if (selectedOpponent != "1")
+                        {
+                            query += $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
+                        }
+                        query += $@"GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city 
                         ORDER BY {sortField} {order}";
                     }
                     var boxScores = await _context.BoxScoreTraditionalPlayers.FromSqlRaw(query).ToListAsync();
@@ -698,6 +773,10 @@ namespace ReactApp4.Server.Services
                 }
                 else if (boxType == "Advanced")
                 {
+                    Console.WriteLine("shithole");
+                    Console.WriteLine(selectedTeam);
+                    Console.WriteLine(selectedOpponent);
+
                     if (sortField == "min")
                     {
                         sortField = "min";
@@ -706,9 +785,9 @@ namespace ReactApp4.Server.Services
                     query = offRatingQuery + ", " + defRatingQuery + ", " + advancedStats +
                     $@"
                     SELECT
-                        box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation, 
-                        box_score_advanced_{season}.player_id, box_score_advanced_{season}.player_name,
-                        SUM(box_score_advanced_{season}.min) AS min,
+                        Advanced_Stats.team_id, Advanced_Stats.team_abbreviation, 
+                        Advanced_Stats.player_id, Advanced_Stats.player_name,
+                        Advanced_Stats.min,
                         ROUND(Offensive_Rating.Offensive_Rating, 2) AS off_rating,
                         ROUND(Defensive_Rating.Defensive_Rating, 2) AS def_rating,
                         ROUND(Offensive_Rating.Offensive_Rating - Defensive_Rating.Defensive_Rating, 2) AS net_rating,
@@ -722,20 +801,18 @@ namespace ReactApp4.Server.Services
                         Advanced_Stats.Efg_Pct,
                         Advanced_Stats.Ts_Pct,
                         Advanced_Stats.Usg_Pct,
-                        ROUND(AVG(pie) * 100, 2) as pie,
-                        SUM(poss) as poss
-                        FROM box_score_advanced_{season}
+                        Advanced_Stats.Pie,
+                        Advanced_Stats.Poss
+                        FROM Advanced_Stats
                         JOIN Offensive_Rating
-                        ON box_score_advanced_{season}.player_id = Offensive_Rating.player_id AND box_score_advanced_{season}.team_id = Offensive_Rating.team_id
+                        ON Advanced_Stats.player_id = Offensive_Rating.player_id AND Advanced_Stats.team_id = Offensive_Rating.team_id
                         JOIN Defensive_Rating
-                        ON box_score_advanced_{season}.player_id = Defensive_Rating.player_id AND box_score_advanced_{season}.team_id = Defensive_Rating.team_id
-					    JOIN Advanced_Stats
-                        ON box_score_advanced_{season}.player_id = Advanced_Stats.player_id AND box_score_advanced_{season}.team_id = Advanced_Stats.team_id
-                        GROUP BY box_score_advanced_{season}.player_id, box_score_advanced_{season}.player_name, box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation, 
+                        ON Advanced_Stats.player_id = Defensive_Rating.player_id AND Advanced_Stats.team_id = Defensive_Rating.team_id
+                        GROUP BY Advanced_Stats.player_id, Advanced_Stats.player_name, Advanced_Stats.team_id, Advanced_Stats.team_abbreviation, Advanced_Stats.min, 
                         Offensive_Rating.Offensive_Rating, Defensive_Rating.Defensive_Rating, Advanced_Stats.Ast_Pct, Advanced_Stats.Ast_Tov, Advanced_Stats.Ast_Ratio,
                         Advanced_Stats.Oreb_Pct, Advanced_Stats.Dreb_Pct, Advanced_Stats.Reb_Pct, Advanced_Stats.Tov_Pct, Advanced_Stats.Efg_Pct, Advanced_Stats.Ts_Pct,
-                        Advanced_Stats.Usg_Pct 
-                        HAVING SUM(box_score_advanced_{season}.min) > 0
+                        Advanced_Stats.Usg_Pct, Advanced_Stats.Pie, Advanced_Stats.Poss
+                        HAVING Advanced_Stats.min > 0
                         ORDER BY {sortField} {order}
                     ";
                     Console.WriteLine(query);

@@ -26,6 +26,8 @@ const perModeOptions = [
     'Per Game',
     'Per 100 Poss',
     'Per Minute',
+    'Per 12 Minutes',
+    'Per 24 Minutes',
     'Totals'
 ];
 
