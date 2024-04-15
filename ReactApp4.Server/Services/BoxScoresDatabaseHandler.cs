@@ -37,24 +37,24 @@ namespace ReactApp4.Server.Services
 
                 var gamesPlayedQuery =
 
-                    $@"WITH GamesPlayed AS (
+                        $@"WITH GamesPlayed AS (
                         SELECT COUNT(DISTINCT {tableName}.game_id) AS gp, player_id
                         FROM {tableName}
                         JOIN league_games_{season}
                         ON {tableName}.game_id = league_games_{season}.game_id
                         AND {tableName}.team_id = league_games_{season}.team_id
                         WHERE {tableName}.min > 0 ";
-                    if (selectedOpponent != "1")
-                    {                  
-                        gamesPlayedQuery += 
-                            $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
-                    }
-                    gamesPlayedQuery += $@"GROUP BY player_id
+                if (selectedOpponent != "1")
+                {
+                    gamesPlayedQuery +=
+                        $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
+                }
+                gamesPlayedQuery += $@"GROUP BY player_id
                     )";
 
                 var offRatingQuery = $@"
                         WITH PlayerStats AS (
-                          Select box_score_traditional_{season}.player_id,
+                          SELECT box_score_traditional_{season}.player_id,
 					      box_score_traditional_{season}.player_name,
                           box_score_traditional_{season}.team_id,
                           box_score_traditional_{season}.team_abbreviation,
@@ -105,7 +105,7 @@ namespace ReactApp4.Server.Services
                     offRatingQuery += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
 
                 }
-               			  offRatingQuery += $@"GROUP BY box_score_advanced_{season}.player_id, box_score_advanced_{season}.player_name, box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation
+                offRatingQuery += $@"GROUP BY box_score_advanced_{season}.player_id, box_score_advanced_{season}.player_name, box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation
                         ),
                         TeamStats AS(
                           SELECT box_score_traditional_{season}.team_id,
@@ -169,7 +169,7 @@ namespace ReactApp4.Server.Services
                         Team_Scoring_Poss AS(
                           SELECT
                           TeamStats.team_id,
-                            TeamStats.fgm +(1 - (1 - (TeamStats.ftm / TeamStats.fta)) ^ 2) * TeamStats.fta * 0.4 AS Team_Scoring_Poss
+                            TeamStats.fgm + (1 - (1 - (TeamStats.ftm / TeamStats.fta)) ^ 2) * TeamStats.fta * 0.4 AS Team_Scoring_Poss
                         
                             FROM TeamStats
                         ),
@@ -198,25 +198,25 @@ namespace ReactApp4.Server.Services
                         ),
                         qAST AS(
                           SELECT
-                          b.player_id,
-                          b.team_id,
-                          ((PlayerStats.min / (TeamStats.min / 5)) * (1.14 * ((TeamStats.ast - PlayerStats.ast) / TeamStats.fgm))) +((((TeamStats.ast / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.ast) / ((TeamStats.fgm / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.fgm)) * (1 - (PlayerStats.min / (TeamStats.min / 5)))) AS qAST
+                          PlayerStats.player_id,
+                          PlayerStats.team_id,
+                          ((PlayerStats.min / NULLIF((TeamStats.min / 5), 0)) * (1.14 * NULLIF(((TeamStats.ast - PlayerStats.ast) / TeamStats.fgm), 0))) +
+                              ((((NULLIF((TeamStats.ast / TeamStats.min), 0)) * PlayerStats.min * 5 - PlayerStats.ast) /
+                              NULLIF(((TeamStats.fgm / TeamStats.min) * PlayerStats.min * 5 - PlayerStats.fgm), 0)) *
+                              (1 - (PlayerStats.min / NULLIF((TeamStats.min / 5), 0)))) AS qAST
                           FROM
-                              box_score_traditional_{season} b
-                          JOIN PlayerStats
-                          ON b.player_id = PlayerStats.player_id AND b.team_id = PlayerStats.team_id
+                              PlayerStats
                           JOIN TeamStats
-                          ON b.team_id = TeamStats.team_id
+                          ON PlayerStats.team_id = TeamStats.team_id
                           GROUP BY
-                          b.player_id, b.team_id, PlayerStats.min, TeamStats.min, PlayerStats.ast, TeamStats.ast, PlayerStats.fgm, TeamStats.fgm
+                          PlayerStats.player_id, PlayerStats.team_id, PlayerStats.min, TeamStats.min, PlayerStats.ast, TeamStats.ast, PlayerStats.fgm, TeamStats.fgm
                         ),
                         PProd_ORB_Part AS(
                           SELECT
                           PlayerStats.player_id,
                           PlayerStats.team_id,
-                          PlayerStats.orb* Team_ORB_Weight.Team_ORB_Weight* Team_Play_PCT.Team_Play_PCT* (TeamStats.pts / (TeamStats.fgm + (1 - (1 - (TeamStats.ftm / TeamStats.fta)) ^ 2) * 0.4 * TeamStats.fta)) AS PProd_ORB_Part
-                        
-                            FROM PlayerStats
+                          PlayerStats.orb * Team_ORB_Weight.Team_ORB_Weight * Team_Play_PCT.Team_Play_PCT * (TeamStats.pts / (TeamStats.fgm + (1 - (1 - (TeamStats.ftm / TeamStats.fta)) ^ 2) * 0.4 * TeamStats.fta)) AS PProd_ORB_Part
+                          FROM PlayerStats
                           JOIN Team_ORB_Weight
                           ON PlayerStats.team_id = Team_ORB_Weight.team_id
                           JOIN Team_Play_PCT
@@ -387,7 +387,7 @@ namespace ReactApp4.Server.Services
                 {
                     defRatingQuery += $@"ON(lg.matchup LIKE '%vs. ' || t.team_abbreviation || '%' OR lg.matchup LIKE '%@ ' || t.team_abbreviation || '%') ";
                 }
-                        defRatingQuery += $@"GROUP BY 
+                defRatingQuery += $@"GROUP BY 
                             t.team_abbreviation, t.team_id
                         ),
                         DFG_PCT AS (
@@ -457,8 +457,10 @@ namespace ReactApp4.Server.Services
                           SELECT
                           PlayerStats.player_id,
                           PlayerStats.team_id,
-                          (Stops.Stops * OpponentStats.Opponent_MIN) / (Team_Possessions.Team_Possessions * PlayerStats.min) AS Stop_PCT
-                          FROM PlayerStats
+                          CASE
+                          	WHEN (Team_Possessions.Team_Possessions * PlayerStats.min) IS NULL OR (Team_Possessions.Team_Possessions * PlayerStats.min) = 0 THEN 0
+                          	ELSE (Stops.Stops * OpponentStats.Opponent_MIN) / (Team_Possessions.Team_Possessions * PlayerStats.min) 
+                          END AS Stop_PCT  FROM PlayerStats
                           JOIN Stops
                           ON PlayerStats.player_id = Stops.player_id AND PlayerStats.team_id = Stops.team_id
                           JOIN OpponentStats
@@ -490,7 +492,6 @@ namespace ReactApp4.Server.Services
                           JOIN D_Pts_Per_ScPoss
                           ON Stop_PCT.team_id = D_Pts_Per_ScPoss.team_id
                         )";
-
                 var advancedStats = $@"
                         Player_Possessions AS (
                             SELECT
@@ -508,7 +509,10 @@ namespace ReactApp4.Server.Services
                           SELECT
                           PlayerStats.player_id, PlayerStats.player_name, PlayerStats.team_id, PlayerStats.team_abbreviation,
                           PlayerStats.min AS min,
-                          ROUND(PlayerStats.ast / (((PlayerStats.min / (TeamStats.min / 5)) * TeamStats.fgm) - PlayerStats.fgm), 2) AS Ast_Pct,
+                          CASE
+                          	WHEN (((PlayerStats.min / (TeamStats.min / 5)) * TeamStats.fgm) - PlayerStats.fgm) IS NULL OR (((PlayerStats.min / (TeamStats.min / 5)) * TeamStats.fgm) - PlayerStats.fgm) = 0 THEN 0
+                          	ELSE ROUND(PlayerStats.ast / (((PlayerStats.min / (TeamStats.min / 5)) * TeamStats.fgm) - PlayerStats.fgm), 2)
+                          END AS Ast_Pct,
                           CASE 
                             WHEN PlayerStats.tov IS NULL OR PlayerStats.tov = 0 THEN 0
                             ELSE ROUND(PlayerStats.ast / PlayerStats.tov, 2)
@@ -544,18 +548,14 @@ namespace ReactApp4.Server.Services
                           CASE
                             WHEN (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)) IS NULL OR (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)) = 0 THEN 0
                             ELSE ROUND(((PlayerStats.fga + 0.44 * PlayerStats.fta + PlayerStats.tov) * (TeamStats.min / 5)) / (PlayerStats.min * (TeamStats.fga + 0.44 * TeamStats.fta + TeamStats.tov)), 2)
-                          END AS Usg_Pct,
-                          PlayerStatsAdvanced.pie AS Pie,
-                          PlayerStatsAdvanced.poss AS Poss
+                          END AS Usg_Pct
+
 
                           FROM PlayerStats
                           JOIN TeamStats
                           ON PlayerStats.team_id = TeamStats.team_id
                           JOIN OpponentStats
                           ON PlayerStats.team_id = OpponentStats.team_id
-                          JOIN PlayerStatsAdvanced
-                          ON PlayerStats.player_id = PlayerStatsAdvanced.player_id
-                          AND PlayerStats.team_id = PlayerStatsAdvanced.team_id
                         )
                     ";
 
@@ -601,7 +601,9 @@ namespace ReactApp4.Server.Services
                                 {tableName}.min > 0 ";
                         if (selectedOpponent != "1")
                         {
-                            query += $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
+                            query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') 
+                                        AND {tableName}.team_abbreviation != '{selectedOpponent}' ";
+
                         }
 
                         query += $@"AND {tableName}.team_id LIKE '%{selectedTeam}%' 
@@ -649,7 +651,9 @@ namespace ReactApp4.Server.Services
                             {tableName}.team_id LIKE '%{selectedTeam}%' ";
                         if (selectedOpponent != "1")
                         {
-                            query += $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
+                            query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') 
+                                        AND {tableName}.team_abbreviation != '{selectedOpponent}' ";
+
                         }
                         query += $@"GROUP BY  
                             {tableName}.player_id, player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp
@@ -710,7 +714,8 @@ namespace ReactApp4.Server.Services
                             {tableName}.team_id LIKE '%{selectedTeam}%' ";
                         if (selectedOpponent != "1")
                         {
-                            query += $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
+                            query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') 
+                                        AND {tableName}.team_abbreviation != '{selectedOpponent}' ";
                         }
                         query += $@"GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp 
                         ORDER BY {sortField} {order}";
@@ -761,7 +766,8 @@ namespace ReactApp4.Server.Services
                             {tableName}.team_id LIKE '%{selectedTeam}%' ";
                         if (selectedOpponent != "1")
                         {
-                            query += $@"AND league_games_{season}.matchup LIKE '%{selectedOpponent}%' ";
+                            query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') 
+                                        AND {tableName}.team_abbreviation != '{selectedOpponent}' ";
                         }
                         query += $@"GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city 
                         ORDER BY {sortField} {order}";
@@ -801,17 +807,19 @@ namespace ReactApp4.Server.Services
                         Advanced_Stats.Efg_Pct,
                         Advanced_Stats.Ts_Pct,
                         Advanced_Stats.Usg_Pct,
-                        Advanced_Stats.Pie,
-                        Advanced_Stats.Poss
+                        PlayerStatsAdvanced.pie AS Pie,
+                        PlayerStatsAdvanced.poss AS Poss
                         FROM Advanced_Stats
                         JOIN Offensive_Rating
                         ON Advanced_Stats.player_id = Offensive_Rating.player_id AND Advanced_Stats.team_id = Offensive_Rating.team_id
                         JOIN Defensive_Rating
                         ON Advanced_Stats.player_id = Defensive_Rating.player_id AND Advanced_Stats.team_id = Defensive_Rating.team_id
+                        JOIN PlayerStatsAdvanced
+                        ON Advanced_Stats.player_id = PlayerStatsAdvanced.player_id AND Advanced_Stats.team_id = PlayerStatsAdvanced.team_id
                         GROUP BY Advanced_Stats.player_id, Advanced_Stats.player_name, Advanced_Stats.team_id, Advanced_Stats.team_abbreviation, Advanced_Stats.min, 
                         Offensive_Rating.Offensive_Rating, Defensive_Rating.Defensive_Rating, Advanced_Stats.Ast_Pct, Advanced_Stats.Ast_Tov, Advanced_Stats.Ast_Ratio,
                         Advanced_Stats.Oreb_Pct, Advanced_Stats.Dreb_Pct, Advanced_Stats.Reb_Pct, Advanced_Stats.Tov_Pct, Advanced_Stats.Efg_Pct, Advanced_Stats.Ts_Pct,
-                        Advanced_Stats.Usg_Pct, Advanced_Stats.Pie, Advanced_Stats.Poss
+                        Advanced_Stats.Usg_Pct, PlayerStatsAdvanced.Pie, PlayerStatsAdvanced.Poss
                         HAVING Advanced_Stats.min > 0
                         ORDER BY {sortField} {order}
                     ";
@@ -871,11 +879,23 @@ namespace ReactApp4.Server.Services
                                 SUM({tableName}.blka) AS blka,
                                 SUM({tableName}.pf) AS pf,
                                 SUM({tableName}.pfd) AS pfd
-                                FROM {tableName}
-                                WHERE team_id LIKE '%{selectedTeam}%'
-                                GROUP BY player_id, player_name, team_id, team_abbreviation
-                                HAVING SUM({tableName}.min) > 0
-                                ORDER BY {sortField} {order}";
+                                FROM 
+                                {tableName}
+                                JOIN league_games_{season}
+                                ON {tableName}.game_id = league_games_{season}.game_id
+                                AND {tableName}.team_id = league_games_{season}.team_id
+                                WHERE 
+                                {tableName}.min > 0 ";
+                        if (selectedOpponent != "1")
+                        {
+                            query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') 
+                                        AND {tableName}.team_abbreviation != '{selectedOpponent}' ";
+
+                        }
+
+                        query += $@"AND {tableName}.team_id LIKE '%{selectedTeam}%' 
+                            GROUP BY player_id, player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city 
+                            ORDER BY {sortField} {order}";
                     }
                     else if (perMode == "Per 100 Poss")
                     {
@@ -950,12 +970,25 @@ namespace ReactApp4.Server.Services
                                 SUM({tableName}.blka) / GamesPlayed.gp AS blka,
                                 SUM({tableName}.pf) / GamesPlayed.gp AS pf,
                                 SUM({tableName}.pfd) / GamesPlayed.gp AS pfd
-                                FROM {tableName}
+                                FROM
+                                    {tableName}
                                 JOIN GamesPlayed
-                                ON {tableName}.player_id = GamesPlayed.player_id
-                                WHERE {tableName}.team_id LIKE '%{selectedTeam}%'
-                                GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, GamesPlayed.gp
-                                HAVING SUM({tableName}.min) > 0
+                                    ON {tableName}.player_id = GamesPlayed.player_id
+                                JOIN league_games_{season}
+                                    ON {tableName}.game_id = league_games_{season}.game_id
+                                    AND {tableName}.team_id = league_games_{season}.team_id
+                                WHERE
+                                    {tableName}.min > 0
+                                AND 
+                                    {tableName}.team_id LIKE '%{selectedTeam}%' ";
+                                if (selectedOpponent != "1")
+                                {
+                                    query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') 
+                                                AND {tableName}.team_abbreviation != '{selectedOpponent}' ";
+
+                                }
+                                query += $@"GROUP BY  
+                                    {tableName}.player_id, player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp
                                 ORDER BY {sortField} {order}";
                     }
                     Console.WriteLine(boxType);

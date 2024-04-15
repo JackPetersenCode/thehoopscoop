@@ -45,6 +45,7 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
 
             if (roster.length == 0) {
                 setPlayerBoxScores([]);
+                setGamesPlayed([]);
             } else {
                 for (const player of roster) {
 
@@ -74,7 +75,7 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
         <div className="player-box-container">
             {gamesPlayed.length > 0 ?
                 <div>
-                    <table>
+                    <table className="w-100">
                         <StatsTableHeaders columns={columns} smallHeaders={true} />
                         <StatsTableBody columns={columns} tableData={gamesPlayed} filteredBoxScores={playerBoxScores} />
                     </table>

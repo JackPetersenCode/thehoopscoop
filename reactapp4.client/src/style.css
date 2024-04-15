@@ -1,3 +1,7 @@
+table tr:hover {
+    background-color: rgba(174, 194, 255, 0.5);
+}
+
 .drop-flex {
     display: flex;
     flex-direction: column;
@@ -86,6 +90,7 @@ left-justify {
 
 .player-box-container {
     max-height: 600px;
+    width: 100%;
     overflow: auto;
 }
 
@@ -97,7 +102,7 @@ left-justify {
     text-align: center;
     margin-left: auto;
     margin-right: auto;
-    max-width: 100%;
+    width: 100%;
 }
 
 .ultimate-div {
@@ -107,6 +112,7 @@ left-justify {
 
 
 .home-container {
+    max-width: 100%;
     margin-right: 10%;
     margin-left: 10%;
     overflow: auto;

@@ -53,9 +53,9 @@ const advancedPlayerColumns = [
     { label: "NAME", accessor: "player_name" },
     { label: "TEAM", accessor: "team_abbreviation" },
     { label: "MIN", accessor: "min" },
-    { label: "OFF RATING", accessor: "off_rating" },
-    { label: "DEF RATING", accessor: "def_rating" },
-    { label: "NET RATING", accessor: "net_rating" },
+    { label: "OFF RTG", accessor: "off_rating" },
+    { label: "DEF RTG", accessor: "def_rating" },
+    { label: "NET RTG", accessor: "net_rating" },
     { label: "AST%", accessor: "ast_pct" },
     { label: "AST TOV", accessor: "ast_tov" },
     { label: "AST RATIO", accessor: "ast_ratio" },
@@ -92,7 +92,7 @@ const basePlayerColumns = [
     { label: "TOV", accessor: "tov" },
     { label: "PF", accessor: "pf" },
     { label: "PTS", accessor: "pts" },
-    { label: "PLUS MINUS", accessor: "plus_minus" }
+    { label: "+/-", accessor: "plus_minus" }
 ];
 
 const basePlayerColumnsNoName = [
@@ -117,7 +117,7 @@ const basePlayerColumnsNoName = [
     { label: "TOV", accessor: "tov" },
     { label: "PF", accessor: "pf" },
     { label: "PTS", accessor: "pts" },
-    { label: "PLUS MINUS", accessor: "plus_minus" }
+    { label: "+/-", accessor: "plus_minus" }
 ];
 
 const advancedLineupColumns = [
@@ -128,12 +128,12 @@ const advancedLineupColumns = [
     { label: "L", accessor: "l" },
     { label: "W%", accessor: "w_pct" },
     { label: "MIN", accessor: "min" },
-    { label: "E OFF RATING", accessor: "e_off_rating" },
-    { label: "OFF RATING", accessor: "off_rating" },
-    { label: "E DEF RATING", accessor: "e_def_rating" },
-    { label: "DEF RATING", accessor: "def_rating" },
-    { label: "E NET RATING", accessor: "e_net_rating" },
-    { label: "NET RATING", accessor: "net_rating" },
+    { label: "E OFF RTG", accessor: "e_off_rating" },
+    { label: "OFF RTG", accessor: "off_rating" },
+    { label: "E DEF RTG", accessor: "e_def_rating" },
+    { label: "DEF RTG", accessor: "def_rating" },
+    { label: "E NET RTG", accessor: "e_net_rating" },
+    { label: "NET RTG", accessor: "net_rating" },
     { label: "AST%", accessor: "ast_pct" },
     { label: "AST TO", accessor: "ast_to" },
     { label: "AST RATIO", accessor: "ast_ratio" },
@@ -153,9 +153,9 @@ const advancedLineupColumns = [
     { label: "L RANK", accessor: "l_rank" },
     { label: "W% RANK", accessor: "w_pct_rank" },
     { label: "MIN RANK", accessor: "min_rank" },
-    { label: "OFF RATING RANK", accessor: "off_rating_rank" },
-    { label: "DEF RATING RANK", accessor: "def_rating_rank" },
-    { label: "NET RATING RANK", accessor: "net_rating_rank" },
+    { label: "OFF RTG RANK", accessor: "off_rating_rank" },
+    { label: "DEF RTG RANK", accessor: "def_rating_rank" },
+    { label: "NET RTG RANK", accessor: "net_rating_rank" },
     { label: "AST% RANK", accessor: "ast_pct_rank" },
     { label: "AST TO RANK", accessor: "ast_to_rank" },
     { label: "AST RATIO RANK", accessor: "ast_ratio_rank" },
@@ -197,7 +197,7 @@ const baseLineupColumns = [
     { label: "PF", accessor: "pf" },
     { label: "PFD", accessor: "pfd" },
     { label: "PTS", accessor: "pts" },
-    { label: "PLUS MINUS", accessor: "plus_minus" },
+    { label: "+/-", accessor: "plus_minus" },
     { label: "GP RANK", accessor: "gp_rank" },
     { label: "W RANK", accessor: "w_rank" },
     { label: "L RANK", accessor: "l_rank" },
@@ -223,7 +223,7 @@ const baseLineupColumns = [
     { label: "PF RANK", accessor: "pf_rank" },
     { label: "PFD RANK", accessor: "pfd_rank" },
     { label: "PTS RANK", accessor: "pts_rank" },
-    { label: "PLUS MINUS RANK", accessor: "plus_minus_rank" }
+    { label: "+/- RANK", accessor: "plus_minus_rank" }
 ];
 
 const fourFactorsLineupColumns = [
@@ -361,7 +361,7 @@ const opponentLineupColumns = [
     { label: "OPP PF", accessor: "opp_pf" },
     { label: "OPP PFD", accessor: "opp_pfd" },
     { label: "OPP PTS", accessor: "opp_pts" },
-    { label: "PLUS MINUS", accessor: "plus_minus" },
+    { label: "+/-", accessor: "plus_minus" },
     { label: "GP RANK", accessor: "gp_rank" },
     { label: "W RANK", accessor: "w_rank" },
     { label: "L RANK", accessor: "l_rank" },
@@ -387,7 +387,7 @@ const opponentLineupColumns = [
     { label: "OPP PF RANK", accessor: "opp_pf_rank" },
     { label: "OPP PFD RANK", accessor: "opp_pfd1_rank" },
     { label: "OPP PTS RANK", accessor: "opp_pts_rank" },
-    { label: "PLUS MINUS RANK", accessor: "plus_minus_rank" }
+    { label: "+/- RANK", accessor: "plus_minus_rank" }
 ];
 
 
