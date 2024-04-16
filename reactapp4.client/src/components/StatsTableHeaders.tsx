@@ -3,11 +3,12 @@ import { SortingFunction, Column } from "../interfaces/StatsTable";
 
 
 interface StatsTableHeadersProps {
+    sortingFunction: SortingFunction;
     columns: Column[] | string[];
     smallHeaders?: boolean;
     sortField?: string;
     setSortField?: React.Dispatch<React.SetStateAction<string>>;
-    order?: string;
+    order: string;
     setOrder?: React.Dispatch<React.SetStateAction<string>>;
     setPage?: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -19,7 +20,7 @@ const isColumnArray = (input: Column[] | string[]): input is Column[] => {
 };
 
 
-const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, smallHeaders, sortField, setSortField, order, setOrder, setPage }) => {
+const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ sortingFunction, columns, smallHeaders, sortField, setSortField, order, setOrder, setPage }) => {
 
   
     if (!isColumnArray(columns)) {
@@ -54,7 +55,7 @@ const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, smallHea
                         {columns.map(({ label, accessor }) => {
                             return (
 
-                                <th key={accessor} className="header-item" onClick={() => handleSortingChange(accessor)}>
+                                <th key={accessor} className="header-item" onClick={() => sortingFunction(accessor, order)}>
                                     {label}
                                 </th>
                             );
@@ -68,7 +69,7 @@ const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, smallHea
                     <tr>
                         {columns.map(({ label, accessor }) => {
                             return (
-                                <th key={accessor} className="header-item" onClick={() => handleSortingChange(accessor)}>
+                                <th key={accessor} className="header-item" onClick={() => sortingFunction(accessor, order)}>
                                     {label}
                                 </th>
                             );

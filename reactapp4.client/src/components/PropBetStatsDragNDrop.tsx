@@ -7,8 +7,8 @@ import { PropBetStats } from "../interfaces/PropBetStats";
 const Xbutton = styled.button`
 border: none;
 color: white;
-background-color: black;
-border-radius: 3px;
+background-color: rgb(6, 6, 9);
+border-radius: 5px;
 opacity: .9
 `
 
@@ -71,8 +71,8 @@ const PropBetStatsDragNDrop: React.FC<PropBetStatsDragNDropProps> = ({ propBetSt
         padding: 5,
 
         maxWidth: '100%',
-        borderRadius: '3px',
-        background: isDragging ? 'lightgreen' : 'rgb(0,0,20)',
+        borderRadius: '5px',
+        background: isDragging ? 'lightgreen' : 'rgb(6, 6, 9)',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -82,16 +82,15 @@ const PropBetStatsDragNDrop: React.FC<PropBetStatsDragNDropProps> = ({ propBetSt
 
     const getBenchStyle = (isDragging: boolean, draggableStyle: CSSProperties): CSSProperties => ({
         userSelect: 'none',
-        padding: 10,
-        maxWidth: '100%',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        marginBottom: '10px',
-        borderRadius: '5px',
-        background: isDragging ? 'lightblue' : 'rgb(238,238,238)',
+        padding: 5,
 
+        maxWidth: '100%',
+        borderRadius: '5px',
+        background: isDragging ? 'lightgreen' : 'rgb(6, 6, 9)',
         display: 'flex',
         justifyContent: 'space-between',
+        alignItems: 'center',
+        whiteSpace: 'nowrap',
 
         ...draggableStyle
     })

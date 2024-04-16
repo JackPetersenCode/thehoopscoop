@@ -31,7 +31,7 @@ const SeasonsDropDown: React.FC<GameOptionDropDownProps> = ({ gameOption, setGam
                 Tool Option
             </div>
             <div>
-                <select className="drop-flex-select" value={gameOption} onChange={handleGameOptionChange}>
+                <select className="drop-flex-select-blue" value={gameOption} onChange={handleGameOptionChange}>
                     <option className="drop-flex-option" value="0">Select Tool Option</option>
 
                     {options.map((option, index) => (

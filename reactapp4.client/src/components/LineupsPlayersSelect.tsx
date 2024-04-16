@@ -92,14 +92,14 @@ const LineupsPlayersSelect: React.FC<LineupsPlayersSelectProps> = ({ options, se
 
     return (
         <ContainerDiv ref={refOne}>
-            <StyledButton type="button" value={selectedLineupPlayer} onClick={toggleSelect}>
+            <button className="lineup-player-dropdown" type="button" value={selectedLineupPlayer} onClick={toggleSelect}>
                 <ButtonContainer>
                     <ButtonTextDiv>
                         {selectedLineupPlayer}
                     </ButtonTextDiv>
                     {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 </ButtonContainer>
-            </StyledButton>
+            </button>
 
             {isOpen && (
                 <StyledUl>

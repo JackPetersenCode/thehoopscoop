@@ -3,7 +3,7 @@ type Column = {
     accessor: string;
 };
 
-type SortingFunction = (sortField: string, sortOrder: 'asc' | 'desc') => void;
+type SortingFunction = (sortField: string, sortOrder: string) => void;
 
 type Stats = {
     [key: string]: number | string

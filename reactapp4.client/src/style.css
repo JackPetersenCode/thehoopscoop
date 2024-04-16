@@ -20,6 +20,7 @@ table tr:hover {
     text-align: left;
 }
 
+
 .game-option-flex {
     display: flex;
     flex-direction: column;
@@ -33,6 +34,17 @@ table tr:hover {
     border: solid transparent;
     border-right: 12px solid transparent;
     background-color: rgb(238, 238, 238);
+    border-radius: 5px;
+    width: 100%;
+}
+
+.drop-flex-select-blue {
+    padding: 5px;
+    font-size: smaller;
+    border: solid transparent;
+    border-right: 12px solid transparent;
+    background-color: rgb(6, 6, 9);
+    color: rgb(238,238,238);
     border-radius: 5px;
     width: 100%;
 }
@@ -110,6 +122,11 @@ left-justify {
     margin-right: 10%;
 }
 
+.prop-results-item {
+    padding: 20px;
+    background-color: rgb(6, 6, 9);
+    border-radius: 5px;
+}
 
 .home-container {
     max-width: 100%;
@@ -132,6 +149,7 @@ left-justify {
 
 
 .results-flex-item {
+
     width: 100%;
     margin: 5px;
     margin-left: 0px;
@@ -166,9 +184,9 @@ left-justify {
 .over-under-flex {
     display: flex;
     user-select: none;
-    background: rgb(0,0,20);
+    background: rgb(6, 6, 9);
     max-width: 100%;
-    border-radius: 3px;
+    border-radius: 5px;
     justify-content: space-between;
     align-items: center;
     white-space: nowrap;
@@ -178,20 +196,38 @@ left-justify {
 }
 
 .neon-orange {
-    color: rgb(255 156 0);
+    color: rgb(93, 255, 73);
+    font-weight: 500;
 }
 
 .x-button {
     border: none;
     color: white;
-    background-color: black;
-    border-radius: 3px;
+    background-color: rgb(6, 6, 9);
+    border-radius: 5px;
     opacity: .9
 }
 
 .prop-results {
     white-space: nowrap;
     text-align: center;
+    width: 100%;
+    font-size: x-large;
+    color: rgb(238,238,238);
+}
+
+.prop-results-fraction {
+    margin-right: 15px;
+}
+
+.lineup-player-dropdown {
+    position: relative;
+    padding: 2px;
+    border: solid transparent;
+    border-right: 12px solid transparent;
+    background-color: rgb(6, 6, 9);
+    color: rgb(238,238,238);
+    border-radius: 5px;
     width: 100%;
 }
 
@@ -290,7 +326,7 @@ left-justify {
 }
 
 .green {
-    background-color: rgb(164, 251, 153);
+    background-color: rgb(203, 255, 191);
 }
 
 .header-item {
@@ -301,12 +337,12 @@ left-justify {
 .prop-bet-placeholders {
     text-align: center;
     font-size: inherit;
-    color: rgb(153, 153, 153, 0.50);
-    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+    color: rgb(178, 178, 178);
+    box-shadow: inset 0 0 8px rgb(213, 213, 213);
     padding: 5px;
     padding-top: 14px;
     padding-bottom: 14px;
-    border-radius: 3px;
+    border-radius: 5px;
     white-space: nowrap;
 }
 
@@ -328,6 +364,7 @@ left-justify {
 
     .results-flex {
         flex-direction: column;
+        margin-top: 0px;
     }
     .prop-bet-container {
         flex-direction: row;

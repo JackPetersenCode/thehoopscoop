@@ -10,7 +10,7 @@ const StyledButton = styled.button`
     padding: 2px;
     border: solid transparent;
     border - right: 12px solid transparent;
-    background - color: rgb(238, 238, 238);
+    background - color: rgb(;
     border - radius: 5px;
     width: 100%;
 ` 
@@ -88,14 +88,14 @@ const BoxTypeSelect: React.FC<BoxTypeSelectProps> = ({ options, selectedBoxType,
 
     return (
         <ContainerDiv ref={refOne}>
-            <StyledButton type="button" value={selectedBoxType} onClick={toggleSelect}>
+            <button className="lineup-player-dropdown" type="button" value={selectedBoxType} onClick={toggleSelect}>
                 <ButtonContainer>
                     <ButtonTextDiv>
                         {selectedBoxType === 'Base' ? 'Traditional' : selectedBoxType}
                     </ButtonTextDiv>
                     {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 </ButtonContainer>
-            </StyledButton>
+            </button>
 
             {isOpen && (
                 <StyledUl>

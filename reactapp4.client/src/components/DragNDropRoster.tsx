@@ -7,8 +7,8 @@ import { Player } from "../interfaces/Player";
 const Xbutton = styled.button`
 border: none;
 color: white;
-background-color: black;
-border-radius: 3px;
+background-color: rgb(6, 6, 9);
+border-radius: 5px;
 opacity: .9
 `
 
@@ -78,8 +78,8 @@ const DragNDropRoster: React.FC<DragNDropRosterProps> = ({ roster, setRoster, de
         marginLeft: 'auto',
         marginRight: 'auto',
         maxWidth: '100%',
-        borderRadius: '3px',
-        background: isDragging ? 'lightgreen' : 'rgb(0,0,20)',
+        borderRadius: '5px',
+        background: isDragging ? 'lightgreen' : 'rgb(6, 6, 9)',
         display: 'flex',
         justifyContent: 'space-between',
 
@@ -94,8 +94,8 @@ const DragNDropRoster: React.FC<DragNDropRosterProps> = ({ roster, setRoster, de
         maxWidth: '100%',
         marginLeft: 'auto',
         marginRight: 'auto',
-        borderRadius: '3px',
-        background: isDragging ? 'lightblue' : 'rgb(0,0,40)',
+        borderRadius: '5px',
+        background: isDragging ? 'lightblue' : 'rgb(6, 6, 9)',
         outline: 'outset',
         outlineWidth: '2px',
         outlineColor: 'rgb(210,210,210)',

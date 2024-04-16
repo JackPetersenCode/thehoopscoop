@@ -39,7 +39,7 @@ const TableContainer = styled.div`
 
 const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode, selectedTeam, sortField, setSortField, inputText, setInputText, selectedOpponent }) => {
 
-    const [order, setOrder] = useState("desc");
+    const [order, setOrder] = useState<string>("desc");
     const [tableData, setTableData] = useState<Stats[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
     const [page, setPage] = useState(1);
@@ -112,7 +112,7 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
         if (selectedSeason) {
             getStats()
         }
-    }, [numPlayers, selectedLineupPlayer, selectedSeason, selectedBoxType, sortField, order, perMode, selectedTeam, selectedOpponent]);
+    }, [numPlayers, selectedLineupPlayer, selectedSeason, selectedBoxType, perMode, selectedTeam, selectedOpponent]);
 
     /*
     const columns = [
@@ -122,20 +122,19 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
     ];*/
 
 
-    const handleSorting = (sortField: string, sortOrder: 'asc' | 'desc') => {
+    const handleSorting = (sortField: string, sortOrder: string) => {
         if (sortField) {
             const sorted = [...tableData].sort((a, b) => {
-                console.log(sorted)
                 if (a[sortField] === null) return 1;
                 if (b[sortField] === null) return -1;
                 if (a[sortField] === null && b[sortField] === null) return 0;
 
-                const nonNumeric = ['player_id', 'player_name', 'team_id', 'team_abbreviation'];
+                const nonNumeric = ['player_id', 'player_name', 'team_id', 'team_abbreviation', 'team_city', 'group_name', 'comment', 'start_position'];
 
-                //if (!nonNumeric.includes(sortField)) {
-                //    
-                //    return (a[sortField] - b[sortField]) * (sortOrder === 'desc' ? 1 : -1);
-                //}
+                if (!nonNumeric.includes(sortField)) {
+                    
+                    return (a[sortField] as number - (b[sortField] as number)) * (sortOrder === 'desc' ? 1 : -1);
+                }
 
                 return (
                     a[sortField].toString().localeCompare(b[sortField].toString(), 'en', {
@@ -144,6 +143,7 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
                 );
             });
 
+            setOrder(order === "asc" ? "desc" : "asc");
             setTableData(sorted);
         }
     };
@@ -172,7 +172,7 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
         <div className="player-box-container">
             {tableData.length > 0 ?
                 <table className="w-100">
-                    <StatsTableHeaders columns={columns} smallHeaders={true} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} setPage={setPage} />
+                    <StatsTableHeaders sortingFunction={handleSorting} columns={columns} smallHeaders={true} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} setPage={setPage} />
                     <StatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]} />
                 </table>
             :

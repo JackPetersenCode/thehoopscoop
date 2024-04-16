@@ -60,6 +60,7 @@ namespace ReactApp4.Server.Services
                           box_score_traditional_{season}.team_abbreviation,
                           SUM(box_score_traditional_{season}.ast) AS ast,
                           SUM(box_score_traditional_{season}.fgm) AS fgm,
+                          SUM(box_score_traditional_{season}.fg3a) AS fg3a,
                           SUM(box_score_traditional_{season}.fg3m) AS fg3m,
                           SUM(box_score_traditional_{season}.pts) AS pts,
                           SUM(box_score_traditional_{season}.ftm) AS ftm,
@@ -821,7 +822,6 @@ namespace ReactApp4.Server.Services
                         Advanced_Stats.Oreb_Pct, Advanced_Stats.Dreb_Pct, Advanced_Stats.Reb_Pct, Advanced_Stats.Tov_Pct, Advanced_Stats.Efg_Pct, Advanced_Stats.Ts_Pct,
                         Advanced_Stats.Usg_Pct, PlayerStatsAdvanced.Pie, PlayerStatsAdvanced.Poss
                         HAVING Advanced_Stats.min > 0
-                        ORDER BY {sortField} {order}
                     ";
                     Console.WriteLine(query);
                     var boxScores = await _context.BoxScoreAdvancedPlayers.FromSqlRaw(query).ToListAsync();
@@ -888,8 +888,7 @@ namespace ReactApp4.Server.Services
                                 {tableName}.min > 0 ";
                         if (selectedOpponent != "1")
                         {
-                            query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') 
-                                        AND {tableName}.team_abbreviation != '{selectedOpponent}' ";
+                            query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
 
                         }
 
@@ -921,33 +920,60 @@ namespace ReactApp4.Server.Services
                                 ON {tableName}.player_id = {joinedTable}.player_id
                                 AND {tableName}.team_id = {joinedTable}.team_id
                                 AND {tableName}.game_id = {joinedTable}.game_id
-                                WHERE {tableName}.team_id LIKE '%{selectedTeam}%'
-                                GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation
+                                JOIN league_games_{season}
+                                ON {tableName}.game_id = league_games_{season}.game_id
+                                AND {tableName}.team_id = league_games_{season}.team_id
+                                WHERE {tableName}.team_id LIKE '%{selectedTeam}%' ";
+                        if (selectedOpponent != "1")
+                        {
+                            query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
+
+                        }
+
+                        query += $@"GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation
                                 HAVING SUM({tableName}.min) > 0
                                 ORDER BY {sortField} {order}";
                     }
-                    else if (perMode == "Per Minute")
+                    else if (perMode == "Per Minute" || perMode == "Per 12 Minutes" || perMode == "Per 24 Minutes")
                     {
+                        var nMinutes = 1;
+
+                        if (perMode == "Per 12 Minutes")
+                        {
+                            nMinutes = 12;
+                        }
+                        else if (perMode == "Per 24 Minutes")
+                        {
+                            nMinutes = 24;
+                        }
                         query = $@"SELECT
                                 {tableName}.player_id, {tableName}.player_name,
                                 {tableName}.team_id,
                                 {tableName}.team_abbreviation,
-                                SUM(min) AS min,
-                                SUM({tableName}.pts_off_tov) / NULLIF(SUM(min), 0) AS pts_off_tov,
-                                SUM({tableName}.pts_2nd_chance) / NULLIF(SUM(min), 0) AS pts_2nd_chance,
-                                SUM({tableName}.pts_fb) / NULLIF(SUM(min), 0) AS pts_fb,
-                                SUM({tableName}.pts_paint) / NULLIF(SUM(min), 0) AS pts_paint,
-                                SUM({tableName}.opp_pts_off_tov) / NULLIF(SUM(min), 0) AS opp_pts_off_tov,
-                                SUM({tableName}.opp_pts_2nd_chance) / NULLIF(SUM(min), 0) AS opp_pts_2nd_chance,
-                                SUM({tableName}.opp_pts_fb) / NULLIF(SUM(min), 0) AS opp_pts_fb,
-                                SUM({tableName}.opp_pts_paint) / NULLIF(SUM(min), 0) AS opp_pts_paint,
-                                SUM({tableName}.blk) / NULLIF(SUM(min), 0) AS blk,
-                                SUM({tableName}.blka) / NULLIF(SUM(min), 0) AS blka,
-                                SUM({tableName}.pf) / NULLIF(SUM(min), 0) AS pf,
-                                SUM({tableName}.pfd) / NULLIF(SUM(min), 0) AS pfd
+                                SUM({tableName}.min) AS min,
+                                {nMinutes} * (SUM({tableName}.pts_off_tov) / NULLIF(SUM({tableName}.min), 0)) AS pts_off_tov,
+                                {nMinutes} * (SUM({tableName}.pts_2nd_chance) / NULLIF(SUM({tableName}.min), 0)) AS pts_2nd_chance,
+                                {nMinutes} * (SUM({tableName}.pts_fb) / NULLIF(SUM({tableName}.min), 0)) AS pts_fb,
+                                {nMinutes} * (SUM({tableName}.pts_paint) / NULLIF(SUM({tableName}.min), 0)) AS pts_paint,
+                                {nMinutes} * (SUM({tableName}.opp_pts_off_tov) / NULLIF(SUM({tableName}.min), 0)) AS opp_pts_off_tov,
+                                {nMinutes} * (SUM({tableName}.opp_pts_2nd_chance) / NULLIF(SUM({tableName}.min), 0)) AS opp_pts_2nd_chance,
+                                {nMinutes} * (SUM({tableName}.opp_pts_fb) / NULLIF(SUM({tableName}.min), 0)) AS opp_pts_fb,
+                                {nMinutes} * (SUM({tableName}.opp_pts_paint) / NULLIF(SUM({tableName}.min), 0)) AS opp_pts_paint,
+                                {nMinutes} * (SUM({tableName}.blk) / NULLIF(SUM({tableName}.min), 0)) AS blk,
+                                {nMinutes} * (SUM({tableName}.blka) / NULLIF(SUM({tableName}.min), 0)) AS blka,
+                                {nMinutes} * (SUM({tableName}.pf) / NULLIF(SUM({tableName}.min), 0)) AS pf,
+                                {nMinutes} * (SUM({tableName}.pfd) / NULLIF(SUM({tableName}.min), 0)) AS pfd
                                 FROM {tableName}
-                                WHERE {tableName}.team_id LIKE '%{selectedTeam}%'
-                                GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation
+                                JOIN league_games_{season}
+                                ON {tableName}.game_id = league_games_{season}.game_id
+                                AND {tableName}.team_id = league_games_{season}.team_id
+                                WHERE {tableName}.team_id LIKE '%{selectedTeam}%' ";
+                        if (selectedOpponent != "1")
+                        {
+                            query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
+
+                        }
+                                query += $@"GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation
                                 HAVING SUM({tableName}.min) > 0
                                 ORDER BY {sortField} {order}";
                     }
@@ -983,12 +1009,11 @@ namespace ReactApp4.Server.Services
                                     {tableName}.team_id LIKE '%{selectedTeam}%' ";
                                 if (selectedOpponent != "1")
                                 {
-                                    query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') 
-                                                AND {tableName}.team_abbreviation != '{selectedOpponent}' ";
+                            query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
 
                                 }
                                 query += $@"GROUP BY  
-                                    {tableName}.player_id, player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp
+                                    {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp
                                 ORDER BY {sortField} {order}";
                     }
                     Console.WriteLine(boxType);
@@ -999,93 +1024,71 @@ namespace ReactApp4.Server.Services
                 else if (boxType == "Scoring")
                 {
                     Console.WriteLine("Scoring!");
-                    query = $@"
-                        WITH PlayerStats AS(
-                        SELECT player_id,
-                          player_name,
-                          team_id,
-                          team_abbreviation,
-                          SUM(ast) AS ast,
-                          SUM(fgm) AS fgm,
-                          SUM(fg3m) AS fg3m,
-                          SUM(fg3a) AS fg3a,
-                          SUM(pts) AS pts,
-                          SUM(ftm) AS ftm,
-                          SUM(fta) AS fta,
-                          SUM(fga) AS fga,
-                          SUM(oreb) AS orb,
-                          SUM(dreb) AS drb,
-                          SUM(reb) AS reb,
-                          SUM(min) AS min,
-                          SUM(tov) AS tov
-                   
-                          FROM box_score_traditional_{season}
-                          WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%'
-                          GROUP BY player_id, player_name, team_id, team_abbreviation
-                        )
-                    
+                    query =
+                        gamesPlayedQuery + ", " + offRatingQuery + 
+                        $@"                       
                         SELECT box_score_scoring_{season}.player_name, box_score_scoring_{season}.player_id,
                         box_score_scoring_{season}.team_id, box_score_scoring_{season}.team_abbreviation,
-                        PlayerStats.min,
+                        PlayerStats.min / GamesPlayed.gp AS min,
                         CASE
                           WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN 0
-                          ELSE 100 * (PlayerStats.fga - PlayerStats.fg3a) / PlayerStats.fga
+                          ELSE (PlayerStats.fga - PlayerStats.fg3a) / PlayerStats.fga
                         END AS pct_fga_2pt,
                         CASE
                           WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN 0
-                          ELSE 100 * PlayerStats.fg3a / PlayerStats.fga
+                          ELSE PlayerStats.fg3a / PlayerStats.fga
                         END AS pct_fga_3pt,
                         CASE
                           WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
-                          ELSE 100 * ((PlayerStats.fgm - PlayerStats.fg3m) * 2) / PlayerStats.pts
+                          ELSE ((PlayerStats.fgm - PlayerStats.fg3m) * 2) / PlayerStats.pts
                         END AS pct_pts_2pt,
                         CASE
                           WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
-                          ELSE 100 * (PlayerStats.fg3m * 3) / PlayerStats.pts
+                          ELSE (PlayerStats.fg3m * 3) / PlayerStats.pts
                         END AS pct_pts_3pt,
                         CASE
                           WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
-                          ELSE 100 * SUM(box_score_scoring_{season}.pct_pts_2pt_mr * box_score_traditional_{season}.pts) / PlayerStats.pts
+                          ELSE SUM(box_score_scoring_{season}.pct_pts_2pt_mr * box_score_traditional_{season}.pts) / PlayerStats.pts
                         END AS pct_pts_2pt_mr,
                         CASE
                           WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
-                          ELSE 100 * SUM(box_score_scoring_{season}.pct_pts_fb * box_score_traditional_{season}.pts) / PlayerStats.pts
+                          ELSE SUM(box_score_scoring_{season}.pct_pts_fb * box_score_traditional_{season}.pts) / PlayerStats.pts
                         END AS pct_pts_fb,
                         CASE
                           WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
-                          ELSE 100 * PlayerStats.ftm / PlayerStats.pts
+                          ELSE PlayerStats.ftm / PlayerStats.pts
                         END AS pct_pts_ft,
                         CASE
                           WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
-                          ELSE 100 * SUM(box_score_scoring_{season}.pct_pts_off_tov * box_score_traditional_{season}.pts) / PlayerStats.pts
+                          ELSE SUM(box_score_scoring_{season}.pct_pts_off_tov * box_score_traditional_{season}.pts) / PlayerStats.pts
                         END AS pct_pts_off_tov,
                         CASE
                           WHEN PlayerStats.pts IS NULL OR PlayerStats.pts = 0 THEN 0
-                          ELSE 100 * SUM(box_score_scoring_{season}.pct_pts_paint * box_score_traditional_{season}.pts) / PlayerStats.pts
+                          ELSE SUM(box_score_scoring_{season}.pct_pts_paint * box_score_traditional_{season}.pts) / PlayerStats.pts
                         END AS pct_pts_paint,
                         CASE
                           WHEN SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m) IS NULL OR SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m) = 0 THEN 0
-                          ELSE 100 * SUM(box_score_scoring_{season}.pct_ast_2pm * (box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m)) / SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m)
+                          ELSE SUM(box_score_scoring_{season}.pct_ast_2pm * (box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m)) / SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m)
                         END AS pct_ast_2pm,
                         CASE
                           WHEN SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m) IS NULL OR SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m) = 0 THEN 0
-                          ELSE 100 * SUM(box_score_scoring_{season}.pct_uast_2pm * (box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m)) / SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m)
+                          ELSE SUM(box_score_scoring_{season}.pct_uast_2pm * (box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m)) / SUM(box_score_traditional_{season}.fgm - box_score_traditional_{season}.fg3m)
                         END AS pct_uast_2pm,
                         CASE
                           WHEN SUM(box_score_traditional_{season}.fg3m) IS NULL OR SUM(box_score_traditional_{season}.fg3m) = 0 THEN 0
-                          ELSE 100 * SUM(box_score_scoring_{season}.pct_ast_3pm * box_score_traditional_{season}.fg3m) / SUM(box_score_traditional_{season}.fg3m)
+                          ELSE SUM(box_score_scoring_{season}.pct_ast_3pm * box_score_traditional_{season}.fg3m) / SUM(box_score_traditional_{season}.fg3m)
                         END AS pct_ast_3pm,
                         CASE
                           WHEN SUM(box_score_traditional_{season}.fg3m) IS NULL OR SUM(box_score_traditional_{season}.fg3m) = 0 THEN 0
-                          ELSE 100 * SUM(box_score_scoring_{season}.pct_uast_3pm * box_score_traditional_{season}.fg3m) / SUM(box_score_traditional_{season}.fg3m)
+                          ELSE SUM(box_score_scoring_{season}.pct_uast_3pm * box_score_traditional_{season}.fg3m) / SUM(box_score_traditional_{season}.fg3m)
                         END AS pct_uast_3pm,
                         CASE
                           WHEN SUM(box_score_traditional_{season}.fgm) IS NULL OR SUM(box_score_traditional_{season}.fgm) = 0 THEN 0
-                          ELSE 100 * SUM(box_score_scoring_{season}.pct_ast_fgm * box_score_traditional_{season}.fgm) / SUM(box_score_traditional_{season}.fgm)
+                          ELSE SUM(box_score_scoring_{season}.pct_ast_fgm * box_score_traditional_{season}.fgm) / SUM(box_score_traditional_{season}.fgm)
                         END AS pct_ast_fgm,
                         CASE
                           WHEN SUM(box_score_traditional_{season}.fgm) IS NULL OR SUM(box_score_traditional_{season}.fgm) = 0 THEN 0
-                          ELSE 100 * SUM(box_score_scoring_{season}.pct_uast_fgm * box_score_traditional_{season}.fgm) / SUM(box_score_traditional_{season}.fgm)
+                          ELSE SUM(box_score_scoring_{season}.pct_uast_fgm * box_score_traditional_{season}.fgm) / SUM(box_score_traditional_{season}.fgm)
                         END AS pct_uast_fgm
                         FROM box_score_scoring_{season}
                         JOIN PlayerStats
@@ -1095,9 +1098,21 @@ namespace ReactApp4.Server.Services
                         ON box_score_scoring_{season}.player_id = box_score_traditional_{season}.player_id
                         AND box_score_scoring_{season}.team_id = box_score_traditional_{season}.team_id
                         AND box_score_scoring_{season}.game_id = box_score_traditional_{season}.game_id
-                        GROUP BY box_score_scoring_{season}.player_name, box_score_scoring_{season}.player_id, box_score_scoring_{season}.team_id, box_score_scoring_{season}.team_abbreviation, PlayerStats.min, PlayerStats.fga,
-                        PlayerStats.fg3a, PlayerStats.pts, PlayerStats.fgm, PlayerStats.fg3m, PlayerStats.ftm
-                        HAVING SUM({tableName}.min) > 0
+                        JOIN league_games_{season}
+                        ON box_score_scoring_{season}.game_id = league_games_{season}.game_id
+                        AND box_score_scoring_{season}.team_id = league_games_{season}.team_id
+                        JOIN GamesPlayed
+                        ON {tableName}.player_id = GamesPlayed.player_id
+                        WHERE box_score_scoring_{season}.team_id LIKE '%{selectedTeam}%' ";
+                if (selectedOpponent != "1")
+                {
+                    query +=
+                        $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
+
+                }
+                     query += $@"GROUP BY box_score_scoring_{season}.player_name, box_score_scoring_{season}.player_id, box_score_scoring_{season}.team_id, box_score_scoring_{season}.team_abbreviation, PlayerStats.min, PlayerStats.fga,
+                        PlayerStats.fg3a, PlayerStats.pts, PlayerStats.fgm, PlayerStats.fg3m, PlayerStats.ftm, GamesPlayed.gp
+                        HAVING SUM(box_score_scoring_{season}.min) > 0
                         ORDER BY {sortField} {order}
                     ";
                     var boxScores = await _context.BoxScoreScoringPlayers.FromSqlRaw(query).ToListAsync();

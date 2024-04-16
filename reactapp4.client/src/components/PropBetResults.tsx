@@ -69,22 +69,22 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, 
         {
                 careerPlayerBoxScores.length > 0 ?
                 <div className="prop-results-container">
-                    <div>
+                    <div className="prop-results-item">
                         <div className="prop-results bold">
                             Career Games: 
                         </div>
                         <div className="prop-results">
-                                {careerPlayerBoxScores.length} / {careerGamesPlayed.length} {careerGamesPlayed.length === 0 ? 0 : (100 * careerPlayerBoxScores.length / careerGamesPlayed.length).toFixed(2)}%
+                                <span className="prop-results-fraction">{careerPlayerBoxScores.length} / {careerGamesPlayed.length}</span> <span className="neon-orange">{careerGamesPlayed.length === 0 ? 0 : (100 * careerPlayerBoxScores.length / careerGamesPlayed.length).toFixed(2)}%</span>
 
                         </div>
                     </div>
                   
-                    <div>
+                    <div className="prop-results-item">
                         <div className="prop-results bold">
                             {selectedSeason.replace("_", "-")} Games:
                         </div>
-                        <div className="prop-results">
-                                {playerBoxScores.length} / {gamesPlayed.length} {gamesPlayed.length === 0 ? 0 : (100 * playerBoxScores.length / gamesPlayed.length).toFixed(2)}%
+                            <div className="prop-results">
+                                <span className="prop-results-fraction">{playerBoxScores.length} / {gamesPlayed.length}</span> <span className="neon-orange">{gamesPlayed.length === 0 ? 0 : (100 * playerBoxScores.length / gamesPlayed.length).toFixed(2)}%</span>
                         </div>
                     </div>
                 </div>
