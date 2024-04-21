@@ -11,15 +11,15 @@ using CsvHelper.Configuration;
 
 namespace ReactApp4.Server.Services
 {
-    public class BoxScoresFileHandler
+    public class GamblingFileHandler
     {
-        public async Task<IActionResult> GetBoxScoresFromFile(string season, string boxType, string numPlayers)
+        public async Task<IActionResult> GetNewOddsFromFile(string season)
         {
             List<object> data = new List<object>();
 
             try
             {
-                using (var reader = new StreamReader($"../juicystats/box_score_summary_{season}.csv"))
+                using (var reader = new StreamReader($"../juicystats/newOdds{season}.csv"))
                 using (var csv = new CsvReader(reader, new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture)
                 {
                     Delimiter = ",",
@@ -30,8 +30,7 @@ namespace ReactApp4.Server.Services
                     var records = csv.GetRecords<dynamic>();
                     foreach (var record in records)
                     {
-                        Console.WriteLine(record);
-                        if (record.GAME_ID != "GAME_ID")
+                        if (record.commence_time != "commence_time")
                         {
                             data.Add(record);
                         }

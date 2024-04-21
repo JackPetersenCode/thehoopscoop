@@ -2,32 +2,17 @@ import { useEffect, useState } from 'react';
 import { Player } from '../interfaces/Player';
 import styled from "styled-components";
 import SeasonsDropDown from '../components/SeasonsDropDown';
-import SearchBar from '../components/SearchBar';
-import LineupPlayerSelect from '../components/LineupPlayerSelect';
 import StatsTable from '../components/StatsTable';
-import DropDown from '../components/DropDown';
-import { NBATeam } from '../interfaces/Teams';
-import { PropBetStats } from '../interfaces/PropBetStats';
-import PropBetStatsDropDown from '../components/PropBetStatsDropDown';
 import GameOptionDropDown from '../components/GameOptionDropDown';
-import DragNDropRoster from '../components/DragNDropRoster';
-import OverUnderLineInput from '../components/OverUnderLineInput';
-import PropBetStatsDragNDrop from '../components/PropBetStatsDragNDrop';
-import PropBetResultsTable from '../components/PropBetResultsTable';
-import { Stats } from '../interfaces/StatsTable';
 import FindPlayerBottom from '../components/FindPlayerBottom';
-import PropBetResults from '../components/PropBetResults';
-import OverUnderLine from '../components/OverUnderLine';
-import PropBetOpponent from '../components/PropBetOpponent';
-import PropBetHomeOrVisitor from '../components/PropBetHomeOrVisitor';
 import { numPlayersOptions, lineupPlayerOptions, statOptionsLineups, statOptionsPlayers, nbaTeams, perModeOptions } from '../interfaces/DropDownOptions';
-import PropBetOpponentDropDown from '../components/PropBetOpponentDropDown';
-import HomeOrVisitorDropDown from '../components/HomeOrVisitorDropDown';
 import Footer from '../components/Footer';
 import ShotCharts from '../components/ShotCharts';
 import LineupsPlayersSelect from '../components/LineupsPlayersSelect';
 import BoxTypeSelect from '../components/LineupPlayerSelect';
 import PropBet from '../components/PropBet';
+import LegacyPredictions from '../components/LegacyPredictions';
+import DropDown from '../components/DropDown';
 
 const DataFlex = styled.div`
     display: flex;
@@ -103,6 +88,10 @@ function Home() {
             : gameOption === "Shot Charts" ?
                 <div>
                     <ShotCharts />
+                </div>
+            : gameOption === "Legacy Predictions" ?
+                <div>
+                    <LegacyPredictions />
                 </div>
             :
             ""}

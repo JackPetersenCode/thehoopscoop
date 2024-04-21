@@ -28,6 +28,8 @@ namespace ReactApp4.Server.Data
         public DbSet<BoxScoreFourFactors> BoxScoreFourFactorss { get; set; }
         public DbSet<BoxScoreMisc> BoxScoreMiscs { get; set; }
         public DbSet<BoxScoreScoring> BoxScoreScorings { get; set; }
+        public DbSet<BoxScoreSummary> BoxScoreSummarys { get; set; }
+
         public DbSet<BoxScoreAdvancedPlayer> BoxScoreAdvancedPlayers { get; set; }
         public DbSet<BoxScoreTraditionalPlayer> BoxScoreTraditionalPlayers { get; set; }
         public DbSet<BoxScoreFourFactorsPlayer> BoxScoreFourFactorsPlayers { get; set; }
@@ -76,6 +78,9 @@ namespace ReactApp4.Server.Data
                     .HasKey(x => x.Id); // Define the primary key
                 modelBuilder.Entity<BoxScoreScoring>()
                     .ToTable($"box_score_scoring_{season}", schema: "dbo")
+                    .HasKey(x => x.Id); // Define the primary key
+                modelBuilder.Entity<BoxScoreSummary>()
+                    .ToTable($"box_score_summary_{season}", schema: "dbo")
                     .HasKey(x => x.Id); // Define the primary key
                 modelBuilder.Entity<Shot>()
                     .ToTable($"shots_{season}", schema: "dbo")

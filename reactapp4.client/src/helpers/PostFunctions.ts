@@ -5,6 +5,7 @@ import { BoxScoreMisc } from "../interfaces/BoxScoreMisc";
 import { BoxScoreScoring } from "../interfaces/BoxScoreScoring";
 import { Player } from "../interfaces/Player";
 import { Shot } from "../interfaces/Shot";
+import { BoxScoreSummary } from "../interfaces/BoxScoreSummary";
 
 const postLeagueGamesBySeason = async (obj: [], season: string) => {
     console.log(season);
@@ -198,5 +199,60 @@ const postShotBySeason = async (obj: Shot, season: string) => {
     }
 }
 
+const postNewOdds = async (odds: object, season: string) => {
 
-export { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postBoxScoresAdvancedBySeason, postLeagueDashLineups, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason }
+    const url = `/api/gambling/newOdds/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            body: JSON.stringify(odds),
+        })
+        if (response.ok) {
+            const jsonResponse = response.json();
+            return jsonResponse;
+        }
+    } catch (error) {
+        console.log('error!');
+        console.log(error);
+    }
+}
+
+const postBoxScoreSummary = async (obj: BoxScoreSummary, season: string) => {
+    console.log(obj);
+    const url = `/api/BoxScoreSummary/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+        if (response.ok) {
+            const jsonResponse = response.json();
+            return jsonResponse;
+        }
+    } catch (error) {
+        console.log('error!');
+        console.log(error);
+    }
+}
+
+export {
+    postLeagueGamesBySeason,
+    postPlayersNBA,
+    postBoxScoresTraditionalBySeason,
+    postBoxScoresAdvancedBySeason,
+    postLeagueDashLineups,
+    postBoxScoresFourFactorsBySeason,
+    postBoxScoresMiscBySeason,
+    postBoxScoresScoringBySeason,
+    postShotBySeason,
+    postNewOdds,
+    postBoxScoreSummary
+}

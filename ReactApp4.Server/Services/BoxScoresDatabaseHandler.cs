@@ -53,7 +53,7 @@ namespace ReactApp4.Server.Services
                     )";
 
                 var offRatingQuery = $@"
-                        WITH PlayerStats AS (
+                        PlayerStats AS (
                           SELECT box_score_traditional_{season}.player_id,
 					      box_score_traditional_{season}.player_name,
                           box_score_traditional_{season}.team_id,
@@ -789,7 +789,7 @@ namespace ReactApp4.Server.Services
                         sortField = "min";
                     }
 
-                    query = offRatingQuery + ", " + defRatingQuery + ", " + advancedStats +
+                    query = $@"WITH " + offRatingQuery + ", " + defRatingQuery + ", " + advancedStats +
                     $@"
                     SELECT
                         Advanced_Stats.team_id, Advanced_Stats.team_abbreviation, 

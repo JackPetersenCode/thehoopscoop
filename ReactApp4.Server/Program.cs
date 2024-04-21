@@ -51,6 +51,10 @@ namespace ReactApp4.Server
             builder.Services.AddScoped<BoxScoresDatabaseHandler>();
             builder.Services.AddScoped<BoxScoresFileHandler>();
 
+            builder.Services.AddScoped<BoxScoreSummaryDataHandler>();
+            builder.Services.AddScoped<BoxScoreSummaryDatabaseHandler>();
+            builder.Services.AddScoped<BoxScoreSummaryFileHandler>();
+
             builder.Services.AddScoped<LeagueDashLineupsDataHandler>();
             builder.Services.AddScoped<LeagueDashLineupsDatabaseHandler>();
             builder.Services.AddScoped<LeagueDashLineupsFileHandler>();
@@ -58,6 +62,10 @@ namespace ReactApp4.Server
             builder.Services.AddScoped<ShotDataHandler>();
             builder.Services.AddScoped<ShotDatabaseHandler>();
             builder.Services.AddScoped<ShotFileHandler>();
+
+            builder.Services.AddScoped<GamblingDataHandler>();
+            builder.Services.AddScoped<GamblingDatabaseHandler>();
+            builder.Services.AddScoped<GamblingFileHandler>();
 
             builder.Services.AddScoped<PropBetResultsDatabaseHandler>();
             builder.Services.AddScoped<PlayerResultsDatabaseHandler>();

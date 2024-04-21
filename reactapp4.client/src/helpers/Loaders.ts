@@ -1,5 +1,5 @@
 import { getJsonResponseStartup } from './GetJsonResponse';
-import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason } from './PostFunctions';
+import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason, postNewOdds, postBoxScoreSummary } from './PostFunctions';
 
 const loadLeagueGamesBySeason = async () => {
     const years = ['2015_2016', '2016_2017', '2017_2018', '2018_2019', '2019_2020', '2020_2021', '2021_2022', '2022_2023', '2023_2024'];
@@ -387,5 +387,69 @@ const loadLeagueDashLineupsFunction = async (season: string, boxType: string, nu
     }
 }
 
+const loadNewOddsFunction = async () => {
+    const season = "2023_24";
 
-export { loadLeagueGamesBySeason, loadPlayers, loadBoxScoresTraditional, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring, loadShotsBySeason }
+    const data = await getJsonResponseStartup(`/api/Gambling/read/newOdds/${season}`);
+    for (let i = 0; i < data.length; i++) {
+        console.log(data[i]);
+        await postNewOdds(data[i], season);
+    }
+}
+
+const loadBoxScoreSummary = async () => {
+    const season = ["2019_20", "2020_21", "2021_22", "2022_23", "2023_24"];
+    for (let j = 0; j < season.length; j++) {
+        const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_summary_${season[j]}`)
+        //tablelength = tablelength[0].count
+        const data = await getJsonResponseStartup(`/api/BoxScores/read/${season[j]}/summary/5`);
+        for (let i = tablelength.count; i < data.length; i++) {
+            if (data[i].GAME_ID === 'GAME_ID') {
+                continue;
+            }
+
+            const boxScore = {
+                game_date_est: data[i].GAME_DATE_EST,
+                game_sequence: data[i].GAME_SEQUENCE,
+                game_id: data[i].GAME_ID,
+                game_status_id: data[i].GAME_STATUS_ID,
+                game_status_text: data[i].GAME_STATUS_TEXT,
+                gamecode: data[i].GAMECODE,
+                home_team_id: data[i].HOME_TEAM_ID,
+                visitor_team_id: data[i].VISITOR_TEAM_ID,
+                season: data[i].SEASON,
+                live_period: data[i].LIVE_PERIOD,
+                live_pc_time: data[i].LIVE_PC_TIME,
+                natl_tv_broadcaster_abbreviation: data[i].NATL_TV_BROADCASTER_ABBREVIATION,
+                live_period_time_bcast: data[i].LIVE_PERIOD_TIME_BCAST,
+                wh_status: data[i].WH_STATUS
+            }
+
+            for (const key in boxScore) {
+                if (Object.prototype.hasOwnProperty.call(boxScore, key)) {
+                    if (boxScore[key as keyof typeof boxScore] === "") {
+                        boxScore[key as keyof typeof boxScore] = null;
+                    }
+                }
+            }
+            console.log(boxScore)
+
+            await postBoxScoreSummary(boxScore, season[j]);
+        }
+    }
+}
+
+
+export {
+    loadLeagueGamesBySeason,
+    loadPlayers,
+    loadBoxScoresTraditional,
+    loadLeagueDashLineupsFunction,
+    loadBoxScoresAdvanced,
+    loadBoxScoresFourFactors,
+    loadBoxScoresMisc,
+    loadBoxScoresScoring,
+    loadShotsBySeason,
+    loadNewOddsFunction,
+    loadBoxScoreSummary,
+}

@@ -43,6 +43,10 @@ namespace ReactApp4.Server
             services.AddScoped<BoxScoresDatabaseHandler>();
             services.AddScoped<BoxScoresFileHandler>();
 
+            services.AddScoped<BoxScoreSummaryDataHandler>();
+            services.AddScoped<BoxScoreSummaryDatabaseHandler>();
+            services.AddScoped<BoxScoreSummaryFileHandler>();
+
             // Other service registrations might already exist...
             services.AddScoped<LeagueDashLineupsDataHandler>();
             services.AddScoped<LeagueDashLineupsDatabaseHandler>();
@@ -51,6 +55,10 @@ namespace ReactApp4.Server
             services.AddScoped<ShotDataHandler>();
             services.AddScoped<ShotDatabaseHandler>();
             services.AddScoped<ShotFileHandler>();
+
+            services.AddScoped<GamblingDataHandler>();
+            services.AddScoped<GamblingDatabaseHandler>();
+            services.AddScoped<GamblingFileHandler>();
 
             services.AddScoped<PropBetResultsDatabaseHandler>();
             services.AddScoped<PlayerResultsDatabaseHandler>();

@@ -1,20 +1,14 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using CsvHelper.Configuration;
 using CsvHelper;
-using System.Formats.Asn1;
-using CsvHelper.Configuration;
-
-
-
+using Microsoft.AspNetCore.Mvc;
 
 namespace ReactApp4.Server.Services
 {
-    public class BoxScoresFileHandler
+    public class BoxScoreSummaryFileHandler
     {
-        public async Task<IActionResult> GetBoxScoresFromFile(string season, string boxType, string numPlayers)
+        public async Task<IActionResult> GetBoxScoreSummaryFromFile(string season)
         {
+            Console.WriteLine(season);
             List<object> data = new List<object>();
 
             try
@@ -30,7 +24,6 @@ namespace ReactApp4.Server.Services
                     var records = csv.GetRecords<dynamic>();
                     foreach (var record in records)
                     {
-                        Console.WriteLine(record);
                         if (record.GAME_ID != "GAME_ID")
                         {
                             data.Add(record);

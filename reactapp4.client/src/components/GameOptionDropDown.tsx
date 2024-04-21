@@ -14,7 +14,8 @@ const SeasonsDropDown: React.FC<GameOptionDropDownProps> = ({ gameOption, setGam
     const options = [
         "Prop Bet",
         "Head 2 Head",
-        "Shot Charts"
+        "Shot Charts",
+        "Legacy Predictions"
     ];
     function handleGameOptionChange(event: { preventDefault: () => void; target: { value: string; }; }) {
         event.preventDefault();
