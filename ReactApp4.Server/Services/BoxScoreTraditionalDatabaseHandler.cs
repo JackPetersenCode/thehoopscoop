@@ -15,10 +15,16 @@ using Newtonsoft.Json.Linq;
 
 namespace ReactApp4.Server.Services
 {
-    public class BoxScoreTraditionalDatabaseHandler(AppDbContext context) : ControllerBase
+    public class BoxScoreTraditionalDatabaseHandler : ControllerBase
     {
-        private readonly AppDbContext _context = context;
+        private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
 
+        public BoxScoreTraditionalDatabaseHandler(AppDbContext context, IConfiguration configuration)
+        {
+            _context = context;
+            _configuration = configuration;
+        }
         public async Task<ActionResult<IEnumerable<BoxScoreTraditional>>> GetBoxScoreTraditionalBySeason(string season)
         {
             var tableName = $"box_score_traditional_{season}";
@@ -43,6 +49,88 @@ namespace ReactApp4.Server.Services
             return roster;
         }
 
+        public async Task<IActionResult> Get82GameAverages(string playerId, string season, string H_or_V, string gameDate)
+        {
+            Console.WriteLine(gameDate);
+            try
+            {
+
+                var sql = $@"
+                    SELECT player_id, player_name AS NAME, team_id, team_abbreviation AS TEAM,
+                    AVG(COALESCE(min, 0.0)) AS MIN, 
+                    AVG(COALESCE(fgm, 0.0)) AS FGM,
+                    AVG(COALESCE(fga, 0.0)) AS FGA,
+                    sum(fgm) / NULLIF(sum(fga), 0) AS FG_PCT,
+                    AVG(COALESCE(fg3m, 0.0)) AS FG3M,
+                    AVG(COALESCE(fg3a, 0.0)) AS FG3A,
+                    sum(fg3m) / NULLIF(sum(fg3a), 0) AS FG3_PCT,
+                    AVG(COALESCE(ftm, 0.0)) AS FTM,
+                    AVG(COALESCE(fta, 0.0)) AS FTA,
+                    sum(ftm) / NULLIF(sum(fta), 0) AS FT_PCT,
+                    AVG(COALESCE(oreb, 0.0)) AS OREB,
+                    AVG(COALESCE(dreb, 0.0)) AS DREB, 
+                    AVG(COALESCE(reb, 0.0)) AS REB, 
+                    AVG(COALESCE(ast, 0.0)) AS AST, 
+                    AVG(COALESCE(stl, 0.0)) AS STL, 
+                    AVG(COALESCE(blk, 0.0)) AS BLK, 
+                    AVG(COALESCE(tov, 0.0)) AS TO, 
+                    AVG(COALESCE(pf, 0.0)) AS PF, 
+                    AVG(COALESCE(pts, 0.0)) AS PTS, 
+                    AVG(COALESCE(plus_minus, 0.0)) AS ""+/-"",
+                    COUNT(DISTINCT box_score_traditional_{season}.game_id)
+                    FROM box_score_traditional_{season}
+                    inner join box_score_summary_{season}
+                    on box_score_traditional_{season}.game_id = box_score_summary_{season}.game_id
+                    WHERE player_id = '{playerId}'
+                    AND box_score_traditional_{season}.team_id = box_score_summary_{season}.{H_or_V}_team_id
+                    AND game_date_est != 'GAME_DATE_EST' ";
+
+                if (gameDate is not null)
+                {
+                    sql += $@"AND (CAST(SUBSTRING(game_date_est, 0, 11) AS DATE) < '{gameDate}') ";
+                }
+                    sql += $@"GROUP BY player_id, player_name, team_id, team_abbreviation
+                ";
+                
+                Console.WriteLine(sql);
+
+                // Ensure your connection string is correct
+                //var connectionString = "Server=localhost;Port=5432;Database=hoop_scoop;User Id=postgres;Password=redsox45;";
+                var connectionString = _configuration.GetConnectionString("WebApiDatabase");
+
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (var cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        using (var reader = await cmd.ExecuteReaderAsync())
+                        {
+                            var dataList = new List<Dictionary<string, object>>();
+                            while (await reader.ReadAsync())
+                            {
+                                var dataDict = new Dictionary<string, object>();
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    dataDict[reader.GetName(i)] = reader.GetValue(i);
+                                }
+                                dataList.Add(dataDict);
+                            }
+
+                            // Convert the list of dictionaries to JSON
+
+                            // Return the JSON data
+                            return Ok(dataList);
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex}");
+            }
+        }
         public async Task<IActionResult> CreateBoxScoreTraditional([FromBody] BoxScoreTraditional boxScoreTraditional, string season)
         {
             // Implement logic to create a new league game in the database

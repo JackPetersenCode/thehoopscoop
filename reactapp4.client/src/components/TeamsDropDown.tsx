@@ -20,7 +20,7 @@ const TeamsDropDown: React.FC<TeamsDropDownProps> = ({ selectedTeam, setSelected
         }
         const selectedValue = JSON.parse(event.target.value);
         console.log(event.target.value);
-        console.log('set selected team')
+        console.log(selectedValue)
         setSelectedTeam(selectedValue);
         setGameData([]);
     }

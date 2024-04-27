@@ -51,6 +51,12 @@ namespace ReactApp4.Server.Controllers
         {
             return await _boxScoreTraditionalDataHandler.GetRosterBySeasonByTeam(season, teamId);
         }
+
+        [HttpGet("82GameAverages/{playerId}/{season}/{H_or_V}/{gameDate?}")]
+        public async Task<IActionResult> Get82GameAverages(string playerId, string season, string H_or_V, string gameDate = null)
+        {
+            return await _boxScoreTraditionalDataHandler.Get82GameAverages(playerId, season, H_or_V, gameDate);
+        }
     }
 }
 

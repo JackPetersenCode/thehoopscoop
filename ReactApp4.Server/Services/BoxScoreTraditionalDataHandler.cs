@@ -27,6 +27,11 @@ namespace ReactApp4.Server.Services
             return await _boxScoreTraditionalDatabaseHandler.GetRosterBySeasonByTeam(season, teamId);
         }
 
+        public async Task<IActionResult> Get82GameAverages(string playerId, string season, string H_or_V, string gameDate)
+        {
+            return await _boxScoreTraditionalDatabaseHandler.Get82GameAverages(playerId, season, H_or_V, gameDate);
+        }
+
         public async Task<IActionResult> GetBoxScoreTraditionalFromFile(string season)
         {
             return await _boxScoreTraditionalFileHandler.GetBoxScoreTraditionalFromFile(season);
