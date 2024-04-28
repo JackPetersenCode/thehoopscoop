@@ -128,7 +128,7 @@ def readLeagueGames():
     response = requests.get(url = URL)
     data = response.json()
     count = data[0]['count']
-    f = open('./juicystats/leaguegames2023-2024.json')
+    f = open('./juicystats/league_games_2023-2024.json')
 	# returns JSON object as 
 	# a dictionary
     games = json.load(f)

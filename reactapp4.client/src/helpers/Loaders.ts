@@ -2,16 +2,17 @@ import { getJsonResponseStartup } from './GetJsonResponse';
 import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason, postNewOdds, postBoxScoreSummary } from './PostFunctions';
 
 const loadLeagueGamesBySeason = async () => {
-    const years = ['2015_2016', '2016_2017', '2017_2018', '2018_2019', '2019_2020', '2020_2021', '2021_2022', '2022_2023', '2023_2024'];
+    const years = ['2015_16', '2016_17', '2017_18', '2018_19', '2019_20', '2020_21', '2021_22', '2022_23', '2023_24'];
     //let years = ['2016-2017'];
     //let tableLength = await getJsonResponseStartup(`/api/tablelength/leagueGames${years[0]}`);
     //tableLength = (tableLength[0].count)
     //console.log(tableLength)
     for (let i = 0; i < years.length; i++) {
         const tableLength = await getJsonResponseStartup(`api/tablelength/league_games_${years[i]}`);
-
+        console.log(tableLength);
         const gamesArray = await getJsonResponseStartup(`api/leagueGames/read/${years[i]}`);
         //console.log(gamesArray.resultSets.length)
+        console.log(gamesArray.resultSets.length);
         for (let j = 0; j < gamesArray.resultSets.length; j++) {
             for (let m = tableLength.count; m < gamesArray.resultSets[j].rowSet.length; m++) {
                 console.log(m)
@@ -59,10 +60,11 @@ function minutesToDecimal(minutesString: string) {
 }
 
 const loadBoxScoresTraditional = async () => {
-    const season = "2022_2023";
+    const season = "2023_24";
     const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_traditional_${season}`)
-    //tablelength = tablelength[0].count
+    console.log(tablelength.count);
     const data = await getJsonResponseStartup(`/api/BoxScoreTraditional/read/${season}`);
+    console.log(data.length);
     for (let i = tablelength.count; i < data.length; i++) {
         if (data[i].MIN === 'MIN') {
             continue;

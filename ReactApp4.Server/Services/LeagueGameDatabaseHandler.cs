@@ -69,9 +69,9 @@ namespace ReactApp4.Server.Services
                     return BadRequest("Invalid season_id value");
                 }
 
-                var season = $"{sub}_{(seasonId + 1)}";
+                var season = $"{sub}_{(seasonId + 1).ToString().Substring(2)}";
 
-
+                Console.WriteLine(season);
 
                 var connectionString = "Server=localhost;Port=5432;Database=hoop_scoop;User Id=postgres;Password=redsox45;\r\n"; // Replace with your actual connection string
 
@@ -79,8 +79,9 @@ namespace ReactApp4.Server.Services
                 {
                     await connection.OpenAsync();
 
+                    Console.WriteLine(season);
                     var sql = $"INSERT INTO league_games_{season} (season_id, team_id, team_abbreviation, team_name, game_id, game_date, matchup, wl, min, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, reb, ast, stl, blk, tov, pf, pts, plus_minus, video_available) VALUES (@season_id, @team_id, @team_abbreviation, @team_name, @game_id, @game_date, @matchup, @wl, @min, @fgm, @fga, @fg_pct, @fg3m, @fg3a, @fg3_pct, @ftm, @fta, @ft_pct, @oreb, @dreb, @reb, @ast, @stl, @blk, @tov, @pf, @pts, @plus_minus, @video_available);";
-
+                    Console.WriteLine(sql);
                     string? seasonIdString = leagueGame[0]?.ToString();
                     NpgsqlParameter seasonIdParam = new NpgsqlParameter("@season_id", NpgsqlDbType.Text);
                     seasonIdParam.Value = seasonIdString;

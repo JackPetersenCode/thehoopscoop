@@ -8,7 +8,7 @@ namespace ReactApp4.Server.Services
         {
             try
             {
-                string filePath = $"../juicystats/leaguegames{season}.json"; // Adjust the path as needed
+                string filePath = $"../juicystats/league_games_{season}.json"; // Adjust the path as needed
                 if (!System.IO.File.Exists(filePath))
                 {
                     return new NotFoundResult(); // Handle case where file doesn't exist
