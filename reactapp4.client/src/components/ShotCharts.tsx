@@ -19,11 +19,7 @@ const DropDownWrapper = styled.div`
     width: 100%;
     margin-right: 5px;
 `
-const SingleShotChartContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-`
+
 const MadeMissedShotDiv = styled.div`
     margin-left: 20px;
 `
@@ -86,14 +82,20 @@ const ShotCharts = () => {
 
     return (
         <>
+            <br></br>
+            <div className='statistics-title'>
+                NBA Shot Charts
+            </div>
+            <div className='yellow-line'>
+            </div>
             <ContainerDiv>
                 <DropDownWrapper>
                     <SeasonsDropDown selectedSeason={selectedSeason}
                         setSelectedSeason={setSelectedSeason}
                         setSelectedPlayerShotCharts={setSelectedPlayer}
-                        setSelectedPlayerPropBet={() => { } }
                         setSelectedGame={setSelectedGame}
                         isShotCharts={true}
+                        isPredictions={false}
                     />
                 </DropDownWrapper>  
                 <DropDownWrapper>

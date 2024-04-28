@@ -30,6 +30,92 @@ table tr:hover {
     padding-bottom: 0px;
 }
 
+.historical-grid {
+  display: grid;
+  grid-template-columns: fit-content(100px) fit-content(100px) minmax(auto, 250px) minmax(auto, 100px) minmax(auto, 100px);
+  align-items: center;
+  font-size: medium;
+  text-align: center;
+  background-color: rgb(238, 238, 238);
+  margin-bottom: 10px;
+}
+
+.historical-headers {
+  font-size: x-small;
+  font-weight: 600;
+  color: rgb(98, 98, 98);
+}
+
+.historical-container {
+  margin-right: 20px;
+  max-height: 1500px;
+  overflow: auto
+}
+
+.historical-div {
+  width: 100%;
+}
+
+.under-construction {
+    font-size: x-large;
+    font-weight: 500;
+    text-align: center;
+}
+
+.steve-balmer {
+    text-align: center;
+    max-width: 100%;
+    height: auto;
+}
+
+.center {
+    text-align: center;
+}
+
+
+
+.yellow-line {
+    background-image: linear-gradient(to right, rgb(255, 230, 0) , rgb(255, 255, 255));
+    height: 5px;
+    margin-bottom: 20px;
+}
+
+.statistics-title {
+    font-size: xx-large;
+    font-weight: 350;
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
+    color: whitesmoke;
+    padding: 5px;
+    padding-left: 10px;
+    text-align: left;
+}
+
+.prop-results-background {
+    font-size: xx-large;
+    font-weight: 200;
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
+    color: whitesmoke;
+}
+
+.expected-info {
+    color: rgb(98,98,98);
+    font-size:small;
+    font-weight: 600;
+    text-align: left;
+}
+
+.upcoming-game-date {
+  display: grid;
+  grid-column: 1/1;
+  grid-row: 1/4;
+  font-size: large;
+  padding: 20px
+}
+
+.upcoming-div {
+    width: 100%;
+}
+
 .logo-flex {
     display: flex;
     align-items: center;
@@ -40,9 +126,64 @@ table tr:hover {
     display: grid
 }
 
+.overall-w-l {
+  font-weight: 600;
+  font-size: small;
+  color:rgb(98,98,98);
+  margin-right: 5px;
+}
+
+.overall-pct {
+  font-weight: 600;
+  font-size: medium;
+  padding-right: 15px;
+  white-space: nowrap;
+
+}
+
+.overall-flex {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 20px;
+
+}
+
+.win-pct-div {
+    margin-bottom: 20px;
+}
+
+.light-green-block {
+  width: 10px;
+  height: 10px;
+  background-color: rgb(204, 255, 200);
+}
+
+.red-block {
+  width: 10px;
+  height: 10px;
+  background-color: rgb(255, 208, 208);
+}
+
 .drop-flex {
     display: flex;
     flex-direction: column;
+}
+
+.container-div {
+    position: relative;
+}
+
+.button-container {
+    display: flex;
+    white-space: nowrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.button-text-div {
+    padding: 5px;
+    font-size: medium;
+    font-weight: 400;
 }
 
 .dnd-container-flex {
@@ -78,10 +219,11 @@ table tr:hover {
 
 .drop-flex-select-blue {
     padding: 5px;
-    font-size: smaller;
+    font-size: medium;
+    font-weight: 400;
     border: solid transparent;
     border-right: 12px solid transparent;
-    background-color: rgb(6, 6, 9);
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
     color: rgb(238,238,238);
     border-radius: 5px;
     width: 100%;
@@ -94,22 +236,51 @@ left-justify {
 }
 
 .drop-flex-option {
+    background-color: rgb(238,238,238);
+    color: black;
     padding: 10px;
 }
 
 .search-list {
     text-align: left;
-    background-color: white;
-    max-height: 300px;
+    background-color: rgb(238,238,238);
     overflow-y: auto;
-    padding: 5px;
+    max-height: 300px;
+    font-size: small;
     border-radius: 5px;
-    box-shadow: 2px 2px 3px rgba(0,0,0,0.1), -2px 2px 3px rgba(0,0,0,0.1);
+    box-shadow: 3px 3px 4px rgba(0,0,0,0.2), -3px 3px 4px rgba(0,0,0,0.2);
+}
+
+.search-list-option {
+    padding-left: 5px;
+}
+
+.search-list-option:hover, .search-list-option:focus {
+    background-color: gray;
+    color: white;
+    width: 100%;
+    cursor: pointer;
+}
+
+.search-list-style {
+    position: absolute;
+    z-index: 2;
+}
+
+.no-stats-exist {
+    font-size: larger;
+    font-weight: 400;
+    text-align: center;
 }
 
 .prop-bet-div {
     text-align: left;
     width: 100%;
+}
+
+.display-flex {
+    display: flex;
+    margin-bottom: 10px;
 }
 
 .flex {
@@ -144,6 +315,14 @@ left-justify {
     overflow: auto;
 }
 
+th {
+    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
+    z-index: 1; /* Ensures header stays above content */
+}
+
+
 .text-left {
     text-align: left;
 }
@@ -162,8 +341,10 @@ left-justify {
 
 .prop-results-item {
     padding: 20px;
-    background-color: rgb(6, 6, 9);
-    border-radius: 5px;
+    font-size: xx-large;
+    font-weight: 200;
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
+    color: whitesmoke;
 }
 
 .home-container {
@@ -173,7 +354,6 @@ left-justify {
     overflow: auto;
     margin-top: 10%;
     background-color: white;
-    padding: 20px;
     border-radius: 5px;
 }
 
@@ -222,8 +402,7 @@ left-justify {
 .over-under-flex {
     display: flex;
     user-select: none;
-    background: rgb(6, 6, 9);
-    max-width: 100%;
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
     border-radius: 5px;
     justify-content: space-between;
     align-items: center;
@@ -241,7 +420,7 @@ left-justify {
 .x-button {
     border: none;
     color: white;
-    background-color: rgb(6, 6, 9);
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
     border-radius: 5px;
     opacity: .9
 }
@@ -263,10 +442,37 @@ left-justify {
     padding: 2px;
     border: solid transparent;
     border-right: 12px solid transparent;
-    background-color: rgb(6, 6, 9);
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
     color: rgb(238,238,238);
     border-radius: 5px;
     width: 100%;
+}
+
+.styled-ul {
+    position: absolute;
+    width: 100%;
+    top: 43px;
+    left: 0px;
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+    text-align: left;
+    background-color: rgb(238,238,238);
+    overflow-y: auto;
+    border-radius: 5px;
+    box-shadow: 2px 2px 3px rgba(0,0,0,0.1), -2px 2px 3px rgba(0,0,0,0.1);
+    z-index: 2;
+}
+
+.styled-ul-option:hover, .styled-ul-option:focus {
+    background-color: gray;
+}
+
+.lineup-player-dropdown:hover, .lineup-player-dropdown:focus {
+    outline: none;
+    border: solid transparent;
+    border-right: 12px solid transparent;
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
 }
 
 .bold {
@@ -316,6 +522,44 @@ left-justify {
     font-size: medium;
 }
 
+.predictions-info {
+    color: rgb(98,98,98);
+    font-size:small;
+    font-weight: 600;
+    text-align: left;
+}
+
+.predictions-drop-flex {
+  display: flex;
+  padding-bottom: 20px;
+  width: 100%;
+}
+
+.predictions-box-flex {
+  display: flex;
+}
+
+.predictions-season-flex {
+  width: 100%;
+  margin-right: 20px;
+}
+
+.inner-predictions {
+  padding: 10px;
+}
+
+.main-predictions-flex {
+    display: flex;
+
+}
+
+.shot-colors {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    white-space: nowrap;
+}
+
 .single-shot-chart-container {
     display: flex;
     flex-direction: column;
@@ -327,7 +571,6 @@ left-justify {
     text-decoration: none;
     justify-content: center;
     align-items: center;
-    padding-top: 40px;
     animation: fadeIn 5s;
     -webkit-animation: fadeIn 5s;
     -moz-animation: fadeIn 5s;
@@ -336,10 +579,22 @@ left-justify {
 }
 
 .footer {
-    background-image: linear-gradient(white, rgb(98,98,98));
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
     padding-bottom: 20px;
     padding-top: 20px;
     width: 100%;
+    margin-top: 20px;
+}
+
+.link {
+  text-decoration: none;
+  font-size: large;
+  color: rgb(255, 255, 255);
+}
+
+.link:hover {
+  color: rgb(252, 255, 65);
+
 }
 
 .group-name {
@@ -369,7 +624,18 @@ left-justify {
 
 .header-item {
     text-align: left;
-    font-family: Roboto Condensed, Arial, sans-serif;
+    font-family: Roboto Condensed, Arial, sans-serif;  
+}
+
+.header-item-center {
+    text-align: center;
+    font-family: Roboto Condensed, Arial, sans-serif;  
+}
+
+.header-item:hover, .header-item:focus, .header-item-center:hover, .header-item-center:focus {
+    cursor: pointer;
+    background-color: gray;
+    color: white;
 }
 
 .prop-bet-placeholders {
@@ -391,6 +657,12 @@ left-justify {
             padding-top: 17px;
             padding-bottom: 17px;
         }
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .display-flex {
+        flex-direction: column;
     }
 }
 

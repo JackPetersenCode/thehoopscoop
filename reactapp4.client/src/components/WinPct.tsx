@@ -20,12 +20,12 @@ const WinPct: React.FC<WinPctProps> = ({ selectedSeason, selectedTeam }) => {
 
         const getWinPct = async() => {
             let results;
-            if(!selectedTeam || selectedTeam === '0') {
+            if(typeof selectedTeam === 'string' || selectedTeam.team_name === 'All Teams') {
                 results = await getJsonResponseStartup(`/api/Gambling/winPct/${selectedSeason}`);
                 console.log(results);
             } else {
                 console.log(selectedTeam)
-                results = await getJsonResponseStartup(`/api/Gambling/winPctByTeam/${selectedSeason}/${typeof selectedTeam === 'string' ? selectedTeam : selectedTeam.team_name}`);
+                results = await getJsonResponseStartup(`/api/Gambling/winPctByTeam/${selectedSeason}/${selectedTeam.team_name}`);
                 console.log(results);
             }
             let pct = 0;
@@ -85,13 +85,13 @@ const WinPct: React.FC<WinPctProps> = ({ selectedSeason, selectedTeam }) => {
             ''}
             {greenOverall + redOverall > 0 ?
             <div>
-                {selectedTeam !== '0' && selectedTeam !== '' ? 
+                {typeof selectedTeam !== 'string' ? 
                 <div className='overall-flex' >
                     <div className='overall-w-l'>
-                        {selectedSeason + ' ' + (selectedTeam as string).toUpperCase() + ':'}
+                        {selectedSeason + ' ' + (selectedTeam.team_name).toUpperCase() + ':'}
                     </div>
                     <div className='overall-pct'>
-                        {greenSeason + ' - ' + redSeason + ' | %' + winPct}
+                        {greenSeason + ' - ' + redSeason + ' | %' + winPct.toFixed(2)}
                     </div>
                 </div>
                 :
@@ -100,7 +100,7 @@ const WinPct: React.FC<WinPctProps> = ({ selectedSeason, selectedTeam }) => {
                         {selectedSeason + ' ALL TEAMS:'}
                     </div>
                     <div className='overall-pct'>
-                        {greenSeason + ' - ' + redSeason + ' | %' + winPct}
+                        {greenSeason + ' - ' + redSeason + ' | %' + winPct.toFixed(2)}
                     </div>
                 </div>
                 }

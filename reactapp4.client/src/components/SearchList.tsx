@@ -1,14 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import styled from 'styled-components';
 import { Player } from '../interfaces/Player';
-
-const StyledDiv = styled.div`
-    /* Styles for the dropdown */
-`;
-
-const StyledOption = styled.div`
-    /* Styles for the dropdown option */
-`;
 
 interface SearchListProps {
     refTwo: React.RefObject<HTMLDivElement>;
@@ -85,7 +76,7 @@ const SearchList: React.FC<SearchListProps> = ({
             {openSearchList ?
                 <div className="search-list" ref={refOne}>
                     {filteredData.map((item: Player, index: number) => (
-                        <option key={index} onClick={() => handleList(item)}>
+                        <option key={index} onClick={() => handleList(item)} className="search-list-option">
                             {item.full_name}
                         </option>
                     ))}

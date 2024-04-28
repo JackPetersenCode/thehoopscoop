@@ -400,7 +400,7 @@ function Admin() {
     }
 
     const loadExpectedBySeason = async() => {
-        const season = "2016_17";
+        const season = "2021_22";
         await getGames(season);
     }
 

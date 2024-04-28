@@ -5,17 +5,11 @@ import styled from "styled-components";
 import { Player } from "../interfaces/Player";
 
 const Xbutton = styled.button`
-border: none;
-color: white;
-background-color: rgb(6, 6, 9);
-border-radius: 5px;
-opacity: .9
-`
-
-const StyledSpan = styled.div`
-  color: rgb(200,100,150);
-  font-size: medium;
-  padding: 5px;
+    border: none;
+    color: white;
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
+    border-radius: 5px;
+    opacity: .9
 `
 
 interface DragNDropRosterProps {
@@ -79,7 +73,7 @@ const DragNDropRoster: React.FC<DragNDropRosterProps> = ({ roster, setRoster, de
         marginRight: 'auto',
         maxWidth: '100%',
         borderRadius: '5px',
-        background: isDragging ? 'lightgreen' : 'rgb(6, 6, 9)',
+        background: isDragging ? 'lightgreen' : 'linear-gradient(rgb(40,40,40), rgb(0, 0, 0))',
         display: 'flex',
         justifyContent: 'space-between',
 

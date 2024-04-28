@@ -11,11 +11,6 @@ const ContainerDiv = styled.div`
     position: relative;
 `;
 
-const TextDiv = styled.div``;
-
-const DropdownStyle = styled.div`
-    position: absolute;
-`;
 
 interface FindPlayerBottomProps {
     activePlayers: Player[];
@@ -69,7 +64,7 @@ const FindPlayerBottom: React.FC<FindPlayerBottomProps> = ({
             </div>
             <input type="text" className="input-box" value={inputTextBottom} placeholder="Find Player" onChange={inputHandler} onKeyDown={handleEnter} onClick={handleClick} />
 
-            <DropdownStyle>
+            <div className='search-list-style'>
                 {activePlayers.length > 0 && inputTextBottom.length > 0 ? (
                     <SearchList
                         refTwo={refTwo}
@@ -89,7 +84,7 @@ const FindPlayerBottom: React.FC<FindPlayerBottomProps> = ({
                 ) : (
                     ''
                 )}
-            </DropdownStyle>
+            </div>
         </ContainerDiv>
     );
 };

@@ -63,6 +63,7 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
                     const data = await axios.get(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}`);
                     console.log(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}/`);
                     setTableData(data.data);
+                    console.log(data.data);
                     if (selectedBoxType === 'Advanced') {
                         setColumns(advancedLineupColumns);
                     } else if (selectedBoxType === 'Base') {
@@ -169,15 +170,20 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
     })
 
     return (
-        <div className="player-box-container">
-            {tableData.length > 0 ?
+        <>
+        {filteredData.length > 0 ?
+            <div className="player-box-container">
                 <table className="w-100">
-                    <StatsTableHeaders sortingFunction={handleSorting} columns={columns} smallHeaders={true} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} setPage={setPage} />
+                    <StatsTableHeaders sortingFunction={handleSorting} columns={columns} smallHeaders={true} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} />
                     <StatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]} />
                 </table>
+            </div>
             :
-            ""}
-        </div>
+            <div className="no-stats-exist">
+                NO STATS EXIST
+            </div>
+        }
+        </>
     );
 });
 

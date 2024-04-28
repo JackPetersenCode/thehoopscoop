@@ -76,7 +76,7 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
             {gamesPlayed.length > 0 ?
                 <div>
                     <table className="w-100">
-                        <StatsTableHeaders columns={columns} smallHeaders={true} />
+                        <StatsTableHeaders columns={columns} smallHeaders={true} sortingFunction={() => {}} order="desc"/>
                         <StatsTableBody columns={columns} tableData={gamesPlayed} filteredBoxScores={playerBoxScores} />
                     </table>
                 </div>

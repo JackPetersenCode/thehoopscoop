@@ -5,30 +5,6 @@ import styled from "styled-components";
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const StyledButton = styled.button`
-    position: relative;
-    padding: 2px;
-    border: solid transparent;
-    border - right: 12px solid transparent;
-    background - color: rgb(;
-    border - radius: 5px;
-    width: 100%;
-` 
-
-const StyledUl = styled.ul`
-    position: absolute;
-    top: 40px;
-    left: 0px;
-    list-style-type: none;
-    padding: 10px;
-    padding-left: 10px;
-    margin: 0px;
-    text-align: left;
-    background-color: white;
-    overflow-y: auto;
-    border-radius: 5px;
-    box-shadow: 2px 2px 3px rgba(0,0,0,0.1), -2px 2px 3px rgba(0,0,0,0.1);
-`
 
 const ContainerDiv = styled.div`
     position: relative;
@@ -43,6 +19,7 @@ const ButtonContainer = styled.div`
 
 const ButtonTextDiv = styled.div`
     padding: 5px;
+    font-weight: 400;
 `
 interface BoxTypeSelectProps {
     options: string[];
@@ -98,11 +75,11 @@ const BoxTypeSelect: React.FC<BoxTypeSelectProps> = ({ options, selectedBoxType,
             </button>
 
             {isOpen && (
-                <StyledUl>
+                <ul className="styled-ul">
                     {options.map((option: string, index: React.Key | null | undefined) => (
-                        <li key={index} value={option} onClick={() => handleOptionChange(option)}>{option === 'Base' ? 'Traditional' : option}</li>
+                        <li className="search-list-option" key={index} value={option} onClick={() => handleOptionChange(option)}>{option === 'Base' ? 'Traditional' : option}</li>
                     ))}
-                </StyledUl>
+                </ul>
             )}
 
         </ContainerDiv>

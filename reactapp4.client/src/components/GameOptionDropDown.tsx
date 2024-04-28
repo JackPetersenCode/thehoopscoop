@@ -1,7 +1,5 @@
-import axios from "axios";
 import '../App.css';
-import React, { useEffect, useState } from "react";
-import styled from 'styled-components';
+import React from "react";
 import '../style.css';
 interface GameOptionDropDownProps {
     gameOption: string;
@@ -36,7 +34,7 @@ const SeasonsDropDown: React.FC<GameOptionDropDownProps> = ({ gameOption, setGam
                     <option className="drop-flex-option" value="0">Select Tool Option</option>
 
                     {options.map((option, index) => (
-                        <option key={index} value={option}>{option}</option>
+                        <option className="drop-flex-option" key={index} value={option}>{option}</option>
                     ))}
 
                 </select>

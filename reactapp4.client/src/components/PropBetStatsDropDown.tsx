@@ -17,7 +17,8 @@ const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ selectedSta
         { label: 'Assists', accessor: 'ast' },
         { label: 'Steals', accessor: 'stl' },
         { label: 'Blocks', accessor: 'blk' },
-        { label: 'Turnovers', accessor: 'tov' }
+        { label: 'Turnovers', accessor: 'tov' },
+        { label: '3 Pointers Made', accessor: 'fg3m' }
     ];
     function handleStatChange(event: React.ChangeEvent<HTMLSelectElement>) {
         event.preventDefault();

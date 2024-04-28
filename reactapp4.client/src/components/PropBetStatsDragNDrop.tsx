@@ -5,11 +5,11 @@ import styled from "styled-components";
 import { PropBetStats } from "../interfaces/PropBetStats";
 
 const Xbutton = styled.button`
-border: none;
-color: white;
-background-color: rgb(6, 6, 9);
-border-radius: 5px;
-opacity: .9
+    border: none;
+    color: white;
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
+    border-radius: 5px;
+    opacity: .9
 `
 
 interface PropBetStatsDragNDropProps {
@@ -72,7 +72,7 @@ const PropBetStatsDragNDrop: React.FC<PropBetStatsDragNDropProps> = ({ propBetSt
 
         maxWidth: '100%',
         borderRadius: '5px',
-        background: isDragging ? 'lightgreen' : 'rgb(6, 6, 9)',
+        background: isDragging ? 'lightgreen' : 'linear-gradient(rgb(40,40,40), rgb(0, 0, 0))',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',

@@ -65,10 +65,16 @@ const PropBet: React.FC<PropBetProps> = ({ activePlayers, roster, setRoster, use
 
     return (
         <div>
+        <br></br>
+        <div className='statistics-title'>
+            NBA Prop Bet Optimizer
+        </div>
+        <div className='yellow-line'>
+        </div>
         <div className="prop-bet-container">
             <div className="flex">
                 <div className="drop-down">
-                    <SeasonsDropDown selectedSeason={selectedSeasonPropBet} setSelectedSeason={setSelectedSeasonPropBet} setSelectedPlayerShotCharts={() => { }} setSelectedGame={setSelectedGame} isShotCharts={false} />
+                    <SeasonsDropDown selectedSeason={selectedSeasonPropBet} setSelectedSeason={setSelectedSeasonPropBet} setSelectedPlayerShotCharts={() => { }} setSelectedGame={setSelectedGame} isShotCharts={false} isPredictions={false} />
                 </div>
                 <div className="drop-down">
                     <SearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />

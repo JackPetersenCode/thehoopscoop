@@ -10,7 +10,6 @@ interface StatsTableHeadersProps {
     setSortField?: React.Dispatch<React.SetStateAction<string>>;
     order: string;
     setOrder?: React.Dispatch<React.SetStateAction<string>>;
-    setPage?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 
@@ -20,7 +19,7 @@ const isColumnArray = (input: Column[] | string[]): input is Column[] => {
 };
 
 
-const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ sortingFunction, columns, smallHeaders, sortField, setSortField, order, setOrder, setPage }) => {
+const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ sortingFunction, columns, smallHeaders, sortField, setSortField, order, setOrder }) => {
 
   
     if (!isColumnArray(columns)) {
@@ -55,7 +54,7 @@ const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ sortingFunction, 
                         {columns.map(({ label, accessor }) => {
                             return (
 
-                                <th key={accessor} className="header-item" onClick={() => sortingFunction(accessor, order)}>
+                                <th key={accessor} className={label === 'NAME' ? 'header-item' : 'header-item-center'} onClick={() => sortingFunction(accessor, order)}>
                                     {label}
                                 </th>
                             );
@@ -69,7 +68,7 @@ const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ sortingFunction, 
                     <tr>
                         {columns.map(({ label, accessor }) => {
                             return (
-                                <th key={accessor} className="header-item" onClick={() => sortingFunction(accessor, order)}>
+                                <th key={accessor} className={label === 'NAME' ? 'header-item' : 'header-item-center'} onClick={() => sortingFunction(accessor, order)}>
                                     {label}
                                 </th>
                             );

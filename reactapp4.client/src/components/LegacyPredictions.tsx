@@ -38,7 +38,7 @@ const LegacyPredictions = () => {
                     <div className="predictions-drop-flex">
         
                         <div className="predictions-season-flex">
-                            <SeasonsDropdown selectedSeason={selectedSeason} setSelectedSeason={setSelectedSeason} setSelectedPlayerShotCharts={() => { }} setSelectedGame={() => { }} isShotCharts={false} />
+                            <SeasonsDropdown selectedSeason={selectedSeason} setSelectedSeason={setSelectedSeason} setSelectedPlayerShotCharts={() => { }} setSelectedGame={() => { }} isShotCharts={false} isPredictions={true} />
                         </div>
         
                         <div className="predictions-season-flex">
