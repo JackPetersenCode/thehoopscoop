@@ -42,7 +42,7 @@ const LegacyPredictions = () => {
                         </div>
         
                         <div className="predictions-season-flex">
-                            <TeamsDropDown selectedTeam={selectedTeam} setSelectedTeam={setSelectedTeam} setGameData={() => { }} />
+                            <TeamsDropDown selectedTeam={selectedTeam} setSelectedTeam={setSelectedTeam} setGameData={() => { }} setSeasonShotsData={() => {}} setGameShotsData={() => {}} />
                         </div>
         
                     </div>
@@ -64,6 +64,7 @@ const LegacyPredictions = () => {
                                 - Incorrect Prediction
                             </div>
                         </div>
+                        <br></br>
                         <h2>
                             Historical Games
                         </h2>
@@ -80,7 +81,7 @@ const LegacyPredictions = () => {
                         - TOTAL CALCULATED PLUS-MINUS AVERAGE IS THEN ADDED TO THE CURRENT AVERAGE SCORE OF ANY GIVEN GAME IN THE SEASON IN QUESTION UP UNTIL THE GAME DATE IN QUESTION TO GET TOTAL ESTIMATED TEAM SCORES
         
                     </h4>
-                    <br></br>
+                    
                     <h2>
                         Upcoming Games
                     </h2>

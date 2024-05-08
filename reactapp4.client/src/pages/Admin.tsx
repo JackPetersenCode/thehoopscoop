@@ -2,6 +2,7 @@ import React from 'react';
 import { loadBoxScoresTraditional, loadLeagueGamesBySeason, loadPlayers, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring, loadShotsBySeason, loadNewOddsFunction, loadBoxScoreSummary } from '../helpers/Loaders';
 import { ExpectedMatchupPostObject, RosterPlayer, teamIds } from '../interfaces/Gambling';
 import { nbaTeams } from '../interfaces/DropDownOptions';
+import axios from 'axios';
 
 
 
@@ -41,14 +42,21 @@ interface LeagueGameWithHomeVisitor {
 
 function Admin() {
 
-    const loadLineupsLoop = () => {
-        const seasons = ['2015_16', '2016_17', '2017_18', '2018_19', '2019_20', '2020_21', '2021_22', '2022_23', '2023_24'];
-        //const seasons = ['2015_16'];
-        const boxTypes = ['Base'];
+    const loadLineupsLoop = async() => {
+        //const seasons = ['2015_16', '2016_17', '2017_18', '2018_19', '2019_20', '2020_21', '2021_22', '2022_23', '2023_24'];
+        const seasons = ['2023_24'];
+        const boxTypes = ['Base', 'Advanced', 'FourFactors', 'Misc', 'Scoring', 'Opponent'];
         const numPlayers = ['2', '3', '4', '5'];
+        for (let j = 0; j < seasons.length; j++) {
+            for (let i = 0; i < boxTypes.length; i++) {
+                for (let k = 0; k < numPlayers.length; k++) {
+                    await axios.delete(`/api/LeagueDashLineups/${seasons[j]}/${boxTypes[i]}/${numPlayers[k]}`)
+                }
+            }
+        }
 
-        for (let i = 0; i < boxTypes.length; i++) {
-            for (let j = 0; j < seasons.length; j++) {
+        for (let j = 0; j < seasons.length; j++) {
+            for (let i = 0; i < boxTypes.length; i++) {
                 for (let k = 0; k < numPlayers.length; k++) {
                     loadLeagueDashLineupsFunction(seasons[j], boxTypes[i], numPlayers[k]);
                 }
@@ -269,6 +277,7 @@ function Admin() {
         }
 
         const visitorRoster = await getRoster(season, visitorTeamId, visitorPrevious, previousSeason);
+        console.log(visitorRoster);
         const homeExpected = await getExpectedFromRoster(season, 'home', homeRoster, homePrevious, stat, previousSeason, game.game_date);
 
         const visitorExpected = await getExpectedFromRoster(season, 'visitor', visitorRoster, visitorPrevious, stat, previousSeason, game.game_date);
@@ -400,7 +409,7 @@ function Admin() {
     }
 
     const loadExpectedBySeason = async() => {
-        const season = "2021_22";
+        const season = "2023_24";
         await getGames(season);
     }
 

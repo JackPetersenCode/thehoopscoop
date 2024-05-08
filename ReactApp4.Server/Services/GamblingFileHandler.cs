@@ -19,7 +19,7 @@ namespace ReactApp4.Server.Services
 
             try
             {
-                using (var reader = new StreamReader($"../juicystats/newOdds{season}.csv"))
+                using (var reader = new StreamReader($"../juicystats/new_odds_{season}.csv"))
                 using (var csv = new CsvReader(reader, new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture)
                 {
                     Delimiter = ",",

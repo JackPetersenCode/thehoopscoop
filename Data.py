@@ -11,7 +11,7 @@ from types import SimpleNamespace
 from unittest import result
 from urllib import response
 from xml.etree.ElementTree import tostring
-from nba_api.stats.endpoints import boxscoremiscv2, boxscoresummaryv2, defensehub, playercareerstats, leaguedashplayerstats, boxscoretraditionalv2, leaguedashplayershotlocations, leaguedashplayerptshot, leaguedashplayerclutch, assistleaders, assisttracker, leaguegamelog, leaguehustlestatsplayer, leaguedashlineups, leaguedashoppptshot, shotchartdetail, alltimeleadersgrids, boxscoreadvancedv2, playergamelog
+from nba_api.stats.endpoints import boxscoremiscv2, boxscorescoringv2, boxscorescoringv3, boxscoresummaryv2, defensehub, playercareerstats, leaguedashplayerstats, boxscoretraditionalv2, leaguedashplayershotlocations, leaguedashplayerptshot, leaguedashplayerclutch, assistleaders, assisttracker, leaguegamelog, leaguehustlestatsplayer, leaguedashlineups, leaguedashoppptshot, shotchartdetail, alltimeleadersgrids, boxscoreadvancedv2, playergamelog
 from nba_api.stats.library.parameters import LeagueID, PerModeSimple, PlayerOrTeam, Season, SeasonType
 from nba_api.stats.library.parameters import ConferenceNullable, DivisionSimpleNullable, PlayerScope, GameScopeDetailed, GameScopeSimpleNullable, LastNGamesNullable, LeagueIDNullable, LocationNullable, MonthNullable, OutcomeNullable, PerModeSimpleNullable, PlayerExperienceNullable, PlayerPositionAbbreviationNullable, SeasonNullable, SeasonSegmentNullable, SeasonTypeAllStarNullable, StarterBenchNullable, DivisionNullable
 from nba_api.stats.library.parameters import EndPeriod, EndRange, RangeType, StartPeriod, StartRange
@@ -124,11 +124,11 @@ def assiststracker():
 
 boxScoreArray = []
 def readLeagueGames():
-    URL = 'http://localhost:3001/api/tablelengthbox/box_score_advanced_2023-2024'
+    URL = 'http://localhost:5190/api/tablelength/box/box_score_advanced_2023_24'
     response = requests.get(url = URL)
     data = response.json()
-    count = data[0]['count']
-    f = open('./juicystats/league_games_2023-2024.json')
+    count = data['count']
+    f = open('./juicystats/league_games_2023_24.json')
 	# returns JSON object as 
 	# a dictionary
     games = json.load(f)
@@ -172,7 +172,67 @@ def boxscoreadvanced(gameId):
 	print(boxData.resultSets[0].headers)
 	header = boxData.resultSets[0].headers
 	try:
-		with open('./juicystats/boxscores2023-2024.csv', 'a', encoding='UTF8', newline='') as f:
+		with open('./juicystats/box_score_advanced_2023_24.csv', 'a', encoding='UTF8', newline='') as f:
+			writer = csv.writer(f)
+			writer.writerow(header)
+			writer.writerows(boxData.resultSets[0].rowSet)
+			f.close()
+	except ValueError:
+		print("VALUE ERROR?!?!?!!?!!??!?!??!??!?!!?")
+
+
+boxScoreScoringArray = []
+def readLeagueGamesScoring():
+    URL = 'http://localhost:5190/api/tablelength/box_score_scoring_2023_24'
+    response = requests.get(url = URL)
+    data = response.json()
+    count = data['count']
+    
+    f = open('./juicystats/league_games_2023_24.json')
+	# returns JSON object as 
+	# a dictionary
+    games = json.load(f)
+	# Iterating through the json
+	# list
+    idList = []
+    end = len(games["resultSets"][0]["rowSet"])
+    start = int(count) * 2
+    print(start)
+    print(end)
+    print(len(games["resultSets"][0]["rowSet"]))
+    for i in range (0, end):
+        ##print(len(games["resultSets"][0]["rowSet"]))
+        ##print(games["resultSets"][0]["rowSet"][i])
+        print(i)
+        if games["resultSets"][0]["rowSet"][i][4] in idList:
+            continue
+        idList.append(games["resultSets"][0]["rowSet"][i][4])
+        box = boxScoreScoring(games["resultSets"][0]["rowSet"][i][4])
+        boxScoreScoringArray.append(box)
+    # Closing file
+    f.close()   
+
+def boxScoreScoring(gameId):
+
+	response = boxscorescoringv2.BoxScoreScoringV2(
+		game_id=gameId,
+		end_period=EndPeriod.default,
+		end_range=EndRange.default,
+		range_type=RangeType.default,
+		start_period=StartPeriod.default,
+		start_range=StartRange.default,
+		proxy=None,
+		headers=None,
+		timeout=30,
+		get_request=True
+	)
+	
+	content = json.loads(response.get_json())
+	jsonContent = json.dumps(content)
+	boxData = json.loads(jsonContent, object_hook=lambda d: SimpleNamespace(**d))
+	header = boxData.resultSets[0].headers
+	try:
+		with open('./juicystats/box_score_scoring_2023_24.csv', 'a', encoding='UTF8', newline='') as f:
 			writer = csv.writer(f)
 			writer.writerow(header)
 			writer.writerows(boxData.resultSets[0].rowSet)
@@ -583,18 +643,18 @@ def leaguedashplayershotlocationsfunction():
 
 boxScoreArrayTraditional = []
 def readLeagueGamesTraditional():
-    URL = 'http://localhost:3001/api/tablelengthbox/boxscorestraditional2023-2024'
+    URL = 'http://localhost:5190/api/tablelength/box/box_score_traditional_2023_24'
     response = requests.get(url = URL)
     data = response.json()
     print(data)
-    count = data[0]['count']
+    count = data['count']
     print(count)
-    f = open('./juicystats/leaguegames2023-2024.json')
+    f = open('./juicystats/league_games_2023_24.json')
     games = json.load(f)
     idList = []
     end = len(games["resultSets"][0]["rowSet"])
     start = int(count) * 2
-    for i in range (start, end):
+    for i in range (start - 1, end):
         print(i)
         if games["resultSets"][0]["rowSet"][i][4] in idList or games["resultSets"][0]["rowSet"][i][4] is None:
             continue
@@ -624,7 +684,7 @@ def boxScoreTraditional(gameId):
     boxData = json.loads(jsonContent, object_hook=lambda d: SimpleNamespace(**d))
     header = boxData.resultSets[0].headers
     try:
-        with open('./juicystats/boxscorestraditional2023-2024.csv', 'a', encoding='UTF8', newline='') as f:
+        with open('./juicystats/box_score_traditional_2023_24.csv', 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(boxData.resultSets[0].rowSet)
@@ -719,18 +779,22 @@ def playerCareerStatsFunction(playerid):
 
 boxScoreSummaryArray = []
 def readBoxScoreSummary():
-    URL = 'http://localhost:3001/api/tablelength/boxscoresummary2023-2024'
+    URL = 'http://localhost:5190/api/tablelength/box_score_summary_2022_23'
     response = requests.get(url = URL)
     data = response.json()
-    count = data[0]['count']
+    count = data['count']
     print(count)
-    f = open('./juicystats/leaguegames2023-2024.json')
+    f = open('./juicystats/league_games_2022_23.json')
     games = json.load(f)
     idList = []
     end = len(games["resultSets"][0]["rowSet"])
-    start = int(count)
+    start = int(count) * 2
+    print('start')
+    print(start)
+    print('end')
+    print(end)
     
-    for i in range (start - 1, end):
+    for i in range (0, end):
         print(i)
         if games["resultSets"][0]["rowSet"][i][4] in idList or games["resultSets"][0]["rowSet"][i][4] is None:
             print(games["resultSets"][0]["rowSet"][i][4])
@@ -756,7 +820,7 @@ def boxScoreSummaryFunction(gameid):
 
     header = careerData.resultSets[0].headers
     try:
-        with open('./juicystats/boxScoreSummary2023-2024.csv', 'a', encoding='UTF8', newline='') as f:
+        with open('./juicystats/box_score_summary_2022_23_FULL.csv', 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(careerData.resultSets[0].rowSet)
@@ -810,7 +874,7 @@ def getOdds():
             rows.append(rowSet)
     header = ['game_id', 'commence_time', 'home_team', 'away_team', 'home_odds', 'away_odds']
     try:
-        with open('./juicystats/newOdds2023-2024.csv', 'a', encoding='UTF8', newline='') as f:
+        with open('./juicystats/new_odds_2023_24.csv', 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(rows)
@@ -821,12 +885,12 @@ def getOdds():
 boxScoreArrayMisc = []
 def readLeagueMisc():
 
-    URL = 'http://localhost:3001/api/tablelengthbox/boxscoremisc2023-2024'
+    URL = 'http://localhost:5190/api/tablelength/box/box_score_misc_2023_24'
     response = requests.get(url = URL)
     data = response.json()
     print(data)
-    count = data[0]['count']
-    f = open('./juicystats/leaguegames2023-2024.json')
+    count = data['count']
+    f = open('./juicystats/league_games_2023_24.json')
     games = json.load(f)
 
     idList = []
@@ -834,7 +898,7 @@ def readLeagueMisc():
     start = int(count) * 2
     print(start)
     print(end)
-    for i in range (start - 1, end):
+    for i in range (0, end):
         print(i)
         if games["resultSets"][0]["rowSet"][i][4] in idList or games["resultSets"][0]["rowSet"][i][4] is None:
             print(games["resultSets"][0]["rowSet"][i][4])
@@ -862,7 +926,7 @@ def boxScoreMiscFunction(gameid):
     boxScoreMiscData = json.loads(jsonContent, object_hook=lambda d: SimpleNamespace(**d))
     header = boxScoreMiscData.resultSets[0].headers
     try:
-        with open('./juicystats/boxscoremisc2023-2024.csv', 'a', encoding='UTF8', newline='') as f:
+        with open('./juicystats/box_score_misc_2023_24.csv', 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(boxScoreMiscData.resultSets[0].rowSet)
@@ -983,10 +1047,16 @@ def defenseHub():
 ##allassists()
 ##assiststracker()
 ##playergamelogfunction('153', '0021700807')
-readLeagueGames()
+##readLeagueGames()
 ##leaguehustlestats()
 ##leaguehustlestatsleaders()
-##leaguedashlineupsfunction('5', 'Opponent', '2023-24')
+##numPlayers = ['2','3','4','5']
+##boxTypes = ['Base', 'Advanced', 'Four Factors', 'Misc', 'Scoring', 'Opponent']
+##for num in numPlayers:
+##    for boxType in boxTypes:
+##        print(num)
+##        print(boxType)
+##        leaguedashlineupsfunction(num, boxType, '2023_24')
 ##leaguedashoppptshotfunction()
 ##write()
 ##leaguedashplayerclutchfunction()
@@ -997,8 +1067,9 @@ readLeagueGames()
 ##playerCareerStatsFunction()
 ##getPlayerIds()
 ##readBoxScoreSummary()
+##readLeagueGamesScoring()
 ##writeNBAplayers()
 
-##getOdds()
+getOdds()
 ##readLeagueMisc()
 ##defenseHub()

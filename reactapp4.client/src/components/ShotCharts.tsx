@@ -55,30 +55,31 @@ const ShotCharts = () => {
         const getSeasonShots = async () => {
 
             if (typeof selectedPlayer === 'string') {
+                setSeasonShotsData([]);
                 return;
             }
             const results = await axios.get(`/api/Shot/${selectedPlayer.player_id}/${selectedSeason}`);
+            console.log(results.data);
             setSeasonShotsData(results.data);
         }
-        if (typeof selectedPlayer !== 'string') {
-            getSeasonShots();
-        }
-    }, [selectedPlayer]);
+        
+        getSeasonShots();
+        
+    }, [selectedPlayer, selectedSeason]);
 
     useEffect(() => {
         console.log('useEffect getGameShots')
         const getGameShots = async () => {
 
             if (typeof selectedGame === 'string' || typeof selectedPlayer === 'string') {
+                setGameShotsData([]);
                 return;
             }
             const results = await axios.get(`/api/Shot/${selectedPlayer.player_id}/${selectedSeason}/${selectedGame.game_id}`);
             setGameShotsData(results.data);
         }
-        if (typeof selectedGame !== 'string') {
-            getGameShots();
-        }
-    }, [selectedGame]);
+        getGameShots();
+    }, [selectedGame, selectedPlayer, selectedSeason]);
 
     return (
         <>
@@ -101,7 +102,10 @@ const ShotCharts = () => {
                 <DropDownWrapper>
                     <TeamsDropDown selectedTeam={selectedTeam}
                         setSelectedTeam={setSelectedTeam}
-                        setGameData={setGameData} />
+                        setGameData={setGameData}
+                        setSeasonShotsData={setSeasonShotsData}
+                        setGameShotsData={setGameShotsData}
+                    />
                 </DropDownWrapper>
                 <DropDownWrapper>
                     <ShotChartsPlayerDropDown selectedPlayer={selectedPlayer}

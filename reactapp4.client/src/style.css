@@ -4,11 +4,11 @@ table tr:hover {
 
 .upcoming-grid {
     display: grid;
-    grid-template-columns: fit-content(100px) fit-content(100px) minmax(auto, 250px) minmax(auto, 100px);
+    grid-template-columns: fit-content(100px) fit-content(100px) minmax(auto, auto) minmax(auto, auto);
     align-items: center;
     font-size: large;
     text-align: center;
-    background-color: rgb(238, 238, 238);
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));;
     max-width: 500px;
     min-width: fit-content;
     margin-bottom: 20px;
@@ -19,13 +19,14 @@ table tr:hover {
     grid-column: 1/1;
     grid-row: 1/4;
     font-size: large;
-    padding: 20px
+    padding: 20px;
+    color:#ebe9e7;
 }
   
 .upcoming-headers {
     font-size: small;
     font-weight: 600;
-    color: rgb(98, 98, 98);
+    color: rgb(198, 198, 198);
     padding: 5px;
     padding-bottom: 0px;
 }
@@ -98,13 +99,13 @@ table tr:hover {
 }
 
 .expected-info {
-    color: rgb(98,98,98);
-    font-size:small;
+    padding: 10px;
+    font-size:x-small;
     font-weight: 600;
     text-align: left;
 }
 
-.upcoming-game-date {
+.historical-game-date {
   display: grid;
   grid-column: 1/1;
   grid-row: 1/4;
@@ -116,9 +117,21 @@ table tr:hover {
     width: 100%;
 }
 
+.team-logo-flex {
+    display: flex;
+    justify-content: space-between;    
+}
+
 .logo-flex {
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    padding-right: 10%;
+    padding-left: 10%;
+    color: whitesmoke;
+    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
 } 
 
 .inner-upcoming-flex {
@@ -141,6 +154,14 @@ table tr:hover {
 
 }
 
+.upcoming-team-abbr {
+    color:#ebe9e7;
+}
+
+.upcoming-scores {
+    color: yellow;
+}
+
 .overall-flex {
   display: flex;
   justify-content: space-between;
@@ -150,6 +171,7 @@ table tr:hover {
 
 .win-pct-div {
     margin-bottom: 20px;
+    
 }
 
 .light-green-block {
@@ -204,7 +226,6 @@ table tr:hover {
     display: flex;
     flex-direction: column;
     justify-content: left;
-    max-width: 25%;
 }
 
 .drop-flex-select {
@@ -223,13 +244,15 @@ table tr:hover {
     font-weight: 400;
     border: solid transparent;
     border-right: 12px solid transparent;
-    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
-    color: rgb(238,238,238);
+    background-color: rgb(255, 230, 0);
     border-radius: 5px;
     width: 100%;
 }
 
-
+.ball {
+    height: 65px;
+    width: 66px;
+}
 
 left-justify {
     text-align: left;
@@ -352,7 +375,6 @@ th {
     margin-right: 10%;
     margin-left: 10%;
     overflow: auto;
-    margin-top: 10%;
     background-color: white;
     border-radius: 5px;
 }
@@ -413,7 +435,7 @@ th {
 }
 
 .neon-orange {
-    color: rgb(93, 255, 73);
+    color: rgb(255, 230, 0);
     font-weight: 500;
 }
 
@@ -550,6 +572,7 @@ th {
 
 .main-predictions-flex {
     display: flex;
+    justify-content: space-between;
 
 }
 
@@ -584,6 +607,12 @@ th {
     padding-top: 20px;
     width: 100%;
     margin-top: 20px;
+}
+
+.hoop-scoop {
+    font-weight: 700;
+    
+
 }
 
 .link {
@@ -660,9 +689,32 @@ th {
     }
 }
 
+.lineup-player-boxtype-dropdown-container {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    justify-content: space-between;
+    max-width: 50%;
+    margin-top: 50px;
+}
+
 @media screen and (max-width: 768px) {
     .display-flex {
         flex-direction: column;
+    }
+    .home-container {
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+    .main-predictions-flex {
+        flex-direction: column-reverse;
+    }
+    .logo-flex {
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+    .lineup-player-boxtype-dropdown-container {
+        max-width: 100%;
     }
 }
 

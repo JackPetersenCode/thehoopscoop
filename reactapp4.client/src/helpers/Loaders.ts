@@ -125,7 +125,7 @@ const loadBoxScoresAdvanced = async () => {
     const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_advanced_${season}`)
     //tablelength = tablelength[0].count
     const data = await getJsonResponseStartup(`/api/BoxScoreAdvanced/read/${season}`);
-    for (let i = tablelength.count; i < data.length; i++) {
+    for (let i = tablelength.count - 1; i < data.length; i++) {
         if (data[i].MIN === 'MIN') {
             continue;
         }
@@ -230,7 +230,7 @@ const loadBoxScoresFourFactors = async () => {
 }
 
 const loadBoxScoresMisc = async () => {
-    const season = "2015_16";
+    const season = "2023_24";
     const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_misc_${season}`)
     //tablelength = tablelength[0].count
     const data = await getJsonResponseStartup(`/api/BoxScoreMisc/read/${season}`);
@@ -279,99 +279,105 @@ const loadBoxScoresMisc = async () => {
 }
 
 const loadBoxScoresScoring = async () => {
-    const season = "2015_16";
-    const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_scoring_${season}`)
-    //tablelength = tablelength[0].count
-    const data = await getJsonResponseStartup(`/api/BoxScoreScoring/read/${season}`);
-    for (let i = tablelength.count; i < data.length; i++) {
-        if (data[i].MIN === 'MIN') {
-            continue;
-        }
-        const mins = minutesToDecimal(data[i].MIN)
+    const season = ["2017_18", "2018_19", "2019_20", "2020_21", "2021_22", "2022_23", "2023_24"];
+    for (let j = 0; j < season.length; j++) {
 
-        const boxScore = {
-            game_id: data[i].GAME_ID,
-            team_id: data[i].TEAM_ID,
-            team_abbreviation: data[i].TEAM_ABBREVIATION,
-            team_city: data[i].TEAM_CITY,
-            player_id: data[i].PLAYER_ID,
-            player_name: data[i].PLAYER_NAME,
-            nickname: data[i].NICKNAME,
-            start_position: data[i].START_POSITION,
-            comment: data[i].COMMENT,
-            min: parseFloat(mins),
-            pct_fga_2pt: parseFloat(data[i].PCT_FGA_2PT),
-            pct_fga_3pt: parseFloat(data[i].PCT_FGA_3PT),
-            pct_pts_2pt: parseFloat(data[i].PCT_PTS_2PT),
-            pct_pts_2pt_mr: parseFloat(data[i].PCT_PTS_2PT_MR),
-            pct_pts_3pt: parseFloat(data[i].PCT_PTS_3PT),
-            pct_pts_fb: parseFloat(data[i].PCT_PTS_FB),
-            pct_pts_ft: parseFloat(data[i].PCT_PTS_FT),
-            pct_pts_off_tov: parseFloat(data[i].PCT_PTS_OFF_TOV),
-            pct_pts_paint: parseFloat(data[i].PCT_PTS_PAINT),
-            pct_ast_2pm: parseFloat(data[i].PCT_AST_2PM),
-            pct_uast_2pm: parseFloat(data[i].PCT_UAST_2PM),
-            pct_ast_3pm: parseFloat(data[i].PCT_AST_3PM),
-            pct_uast_3pm: parseFloat(data[i].PCT_UAST_3PM),
-            pct_ast_fgm: parseFloat(data[i].PCT_AST_FGM),
-            pct_uast_fgm: parseFloat(data[i].PCT_UAST_FGM)
+        const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_scoring_${season[j]}`)
+        //tablelength = tablelength[0].count
+        const data = await getJsonResponseStartup(`/api/BoxScoreScoring/read/${season[j]}`);
+        for (let i = tablelength.count; i < data.length; i++) {
+            if (data[i].MIN === 'MIN') {
+                continue;
+            }
+            const mins = minutesToDecimal(data[i].MIN)
 
-        }
+            const boxScore = {
+                game_id: data[i].GAME_ID,
+                team_id: data[i].TEAM_ID,
+                team_abbreviation: data[i].TEAM_ABBREVIATION,
+                team_city: data[i].TEAM_CITY,
+                player_id: data[i].PLAYER_ID,
+                player_name: data[i].PLAYER_NAME,
+                nickname: data[i].NICKNAME,
+                start_position: data[i].START_POSITION,
+                comment: data[i].COMMENT,
+                min: parseFloat(mins),
+                pct_fga_2pt: parseFloat(data[i].PCT_FGA_2PT),
+                pct_fga_3pt: parseFloat(data[i].PCT_FGA_3PT),
+                pct_pts_2pt: parseFloat(data[i].PCT_PTS_2PT),
+                pct_pts_2pt_mr: parseFloat(data[i].PCT_PTS_2PT_MR),
+                pct_pts_3pt: parseFloat(data[i].PCT_PTS_3PT),
+                pct_pts_fb: parseFloat(data[i].PCT_PTS_FB),
+                pct_pts_ft: parseFloat(data[i].PCT_PTS_FT),
+                pct_pts_off_tov: parseFloat(data[i].PCT_PTS_OFF_TOV),
+                pct_pts_paint: parseFloat(data[i].PCT_PTS_PAINT),
+                pct_ast_2pm: parseFloat(data[i].PCT_AST_2PM),
+                pct_uast_2pm: parseFloat(data[i].PCT_UAST_2PM),
+                pct_ast_3pm: parseFloat(data[i].PCT_AST_3PM),
+                pct_uast_3pm: parseFloat(data[i].PCT_UAST_3PM),
+                pct_ast_fgm: parseFloat(data[i].PCT_AST_FGM),
+                pct_uast_fgm: parseFloat(data[i].PCT_UAST_FGM)
 
-        for (const key in boxScore) {
-            if (Object.prototype.hasOwnProperty.call(boxScore, key)) {
-                if (boxScore[key as keyof typeof boxScore] === "") {
-                    boxScore[key as keyof typeof boxScore] = null;
+            }
+
+            for (const key in boxScore) {
+                if (Object.prototype.hasOwnProperty.call(boxScore, key)) {
+                    if (boxScore[key as keyof typeof boxScore] === "") {
+                        boxScore[key as keyof typeof boxScore] = null;
+                    }
                 }
             }
-        }
-        console.log(boxScore)
+            console.log(boxScore)
 
-        await postBoxScoresScoringBySeason(boxScore, season);
+            await postBoxScoresScoringBySeason(boxScore, season[j]);
+        }
     }
 }
 
 const loadShotsBySeason = async () => {
-    const years = ['2015_16'];
+    //const years = ['2015_16'];
 
-    //let years = ['2015-2016', '2016-2017', '2017-2018', '2018-2019', '2019-2020', '2020-2021', '2021-2022'];
-    const tableLength = await getJsonResponseStartup(`/api/tablelength/shots_${years[0]}`);
-    console.log(tableLength);
-    const shotsArray = await getJsonResponseStartup(`/api/Shot/read/${years[0]}`);
-    console.log(shotsArray.resultSets[0].rowSet.length)
+    let years = ['2015_16', '2016_17', '2017_18', '2018_19', '2019_20', '2020_21', '2021_22', '2022_23', '2023_24'];
+    
+    for (let j = 0; j < years.length; j++) {   
+        const tableLength = await getJsonResponseStartup(`/api/tablelength/shots_${years[j]}`);
+        console.log(tableLength);
+        const shotsArray = await getJsonResponseStartup(`/api/Shot/read/${years[j]}`);
+        console.log(shotsArray.resultSets[0].rowSet.length)
 
-    for (let m = tableLength.count; m < shotsArray.resultSets[0].rowSet.length; m++) {
 
-        console.log(m)
+        for (let m = tableLength.count; m < shotsArray.resultSets[0].rowSet.length; m++) {
+            console.log(m)
 
-        const shotObject = {
-            grid_type: shotsArray.resultSets[0].rowSet[m][0],
-            game_id: shotsArray.resultSets[0].rowSet[m][1].toString(),
-            game_event_id: shotsArray.resultSets[0].rowSet[m][2].toString(),
-            player_id: shotsArray.resultSets[0].rowSet[m][3].toString(),
-            player_name: shotsArray.resultSets[0].rowSet[m][4],
-            team_id: shotsArray.resultSets[0].rowSet[m][5].toString(),
-            team_name: shotsArray.resultSets[0].rowSet[m][6],
-            period: shotsArray.resultSets[0].rowSet[m][7].toString(),
-            minutes_remaining: shotsArray.resultSets[0].rowSet[m][8].toString(),
-            seconds_remaining: shotsArray.resultSets[0].rowSet[m][9].toString(),
-            event_type: shotsArray.resultSets[0].rowSet[m][10],
-            action_type: shotsArray.resultSets[0].rowSet[m][11],
-            shot_type: shotsArray.resultSets[0].rowSet[m][12],
-            shot_zone_basic: shotsArray.resultSets[0].rowSet[m][13],
-            shot_zone_area: shotsArray.resultSets[0].rowSet[m][14],
-            shot_zone_range: shotsArray.resultSets[0].rowSet[m][15],
-            shot_distance: shotsArray.resultSets[0].rowSet[m][16].toString(),
-            loc_x: shotsArray.resultSets[0].rowSet[m][17].toString(),
-            loc_y: shotsArray.resultSets[0].rowSet[m][18].toString(),
-            shot_attempted_flag: shotsArray.resultSets[0].rowSet[m][19].toString(),
-            shot_made_flag: shotsArray.resultSets[0].rowSet[m][20].toString(),
-            game_date: shotsArray.resultSets[0].rowSet[m][21].toString(),
-            htm: shotsArray.resultSets[0].rowSet[m][22],
-            vtm: shotsArray.resultSets[0].rowSet[m][23]
+            const shotObject = {
+                grid_type: shotsArray.resultSets[0].rowSet[m][0],
+                game_id: shotsArray.resultSets[0].rowSet[m][1].toString(),
+                game_event_id: shotsArray.resultSets[0].rowSet[m][2].toString(),
+                player_id: shotsArray.resultSets[0].rowSet[m][3].toString(),
+                player_name: shotsArray.resultSets[0].rowSet[m][4],
+                team_id: shotsArray.resultSets[0].rowSet[m][5].toString(),
+                team_name: shotsArray.resultSets[0].rowSet[m][6],
+                period: shotsArray.resultSets[0].rowSet[m][7].toString(),
+                minutes_remaining: shotsArray.resultSets[0].rowSet[m][8].toString(),
+                seconds_remaining: shotsArray.resultSets[0].rowSet[m][9].toString(),
+                event_type: shotsArray.resultSets[0].rowSet[m][10],
+                action_type: shotsArray.resultSets[0].rowSet[m][11],
+                shot_type: shotsArray.resultSets[0].rowSet[m][12],
+                shot_zone_basic: shotsArray.resultSets[0].rowSet[m][13],
+                shot_zone_area: shotsArray.resultSets[0].rowSet[m][14],
+                shot_zone_range: shotsArray.resultSets[0].rowSet[m][15],
+                shot_distance: shotsArray.resultSets[0].rowSet[m][16].toString(),
+                loc_x: shotsArray.resultSets[0].rowSet[m][17].toString(),
+                loc_y: shotsArray.resultSets[0].rowSet[m][18].toString(),
+                shot_attempted_flag: shotsArray.resultSets[0].rowSet[m][19].toString(),
+                shot_made_flag: shotsArray.resultSets[0].rowSet[m][20].toString(),
+                game_date: shotsArray.resultSets[0].rowSet[m][21].toString(),
+                htm: shotsArray.resultSets[0].rowSet[m][22],
+                vtm: shotsArray.resultSets[0].rowSet[m][23]
+            }
+            //ACTIVATE CODE IF YOU NEED TO LOAD SHOTS INTO YOUR DATABASE
+            const results = await postShotBySeason(shotObject, years[j]);
         }
-        //ACTIVATE CODE IF YOU NEED TO LOAD SHOTS INTO YOUR DATABASE
-        const results = await postShotBySeason(shotObject, years[0]);
     }
 
 
@@ -405,6 +411,8 @@ const loadBoxScoreSummary = async () => {
         const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_summary_${season[j]}`)
         //tablelength = tablelength[0].count
         const data = await getJsonResponseStartup(`/api/BoxScores/read/${season[j]}/summary/5`);
+        console.log(tablelength);
+        console.log(data);
         for (let i = tablelength.count; i < data.length; i++) {
             if (data[i].GAME_ID === 'GAME_ID') {
                 continue;

@@ -95,7 +95,6 @@ namespace ReactApp4.Server.Services
                 Console.WriteLine(sql);
 
                 // Ensure your connection string is correct
-                //var connectionString = "Server=localhost;Port=5432;Database=hoop_scoop;User Id=postgres;Password=redsox45;";
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
@@ -143,7 +142,7 @@ namespace ReactApp4.Server.Services
                     return BadRequest("Invalid boxScoreTraditional data");
                 }
 
-                var connectionString = "Server=localhost;Port=5432;Database=hoop_scoop;User Id=postgres;Password=redsox45;\r\n"; // Replace with your actual connection string
+                var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
                 {

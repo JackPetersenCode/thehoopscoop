@@ -75,6 +75,53 @@ namespace ReactApp4.Server.Services
             }
         }
 
+        public async Task<IActionResult> GetTopTenHistorical(string season)
+        {
+            try
+            {
+
+                var sql = $@"
+                    SELECT game_date, home_team, visitor_team  
+                    FROM matchup_results_{season}
+                    ORDER BY id DESC limit 10    
+                ";
+
+                var connectionString = _configuration.GetConnectionString("WebApiDatabase");
+
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (var cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        using (var reader = await cmd.ExecuteReaderAsync())
+                        {
+                            var dataList = new List<Dictionary<string, object>>();
+                            while (await reader.ReadAsync())
+                            {
+                                var dataDict = new Dictionary<string, object>();
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    dataDict[reader.GetName(i)] = reader.GetValue(i);
+                                }
+                                dataList.Add(dataDict);
+                            }
+
+                            // Convert the list of dictionaries to JSON
+
+                            // Return the JSON data
+                            return Ok(dataList);
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex}");
+            }
+        }
+
         public async Task<IActionResult> GetTeamNameFromId(string teamId)
         {
             try

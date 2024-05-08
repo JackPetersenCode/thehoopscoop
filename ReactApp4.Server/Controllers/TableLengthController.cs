@@ -40,5 +40,28 @@ namespace ReactApp4.Server.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
+
+        [HttpGet("box/{table}")]
+        public IActionResult GetTableLengthBox(string table)
+        {
+            try
+            {
+                var query = $"SELECT COUNT(DISTINCT(game_id)) FROM \"{table}\"";
+
+                int count;
+                using (var command = _context.Database.GetDbConnection().CreateCommand())
+                {
+                    command.CommandText = query;
+                    _context.Database.OpenConnection();
+                    count = Convert.ToInt32(command.ExecuteScalar());
+                }
+
+                return Ok(new { Table = table, Count = count });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
     }
 }

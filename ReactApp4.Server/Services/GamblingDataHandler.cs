@@ -61,6 +61,10 @@ namespace ReactApp4.Server.Services
         {
             return await _gamblingDatabaseHandler.GetHistoricalResults(season, teamName);
         }
+        public async Task<IActionResult> GetTopTenHistorical(string season)
+        {
+            return await _gamblingDatabaseHandler.GetTopTenHistorical(season);
+        }
         public async Task<IActionResult> GetRosterBySeasonByTeamFromAdvanced(string season, string teamId, string gameId)
         {
             return await _gamblingDatabaseHandler.GetRosterBySeasonByTeamFromAdvanced(season, teamId, gameId);

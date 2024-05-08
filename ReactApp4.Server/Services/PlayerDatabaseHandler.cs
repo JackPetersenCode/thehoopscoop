@@ -7,9 +7,16 @@ using ReactApp4.Server.Data;
 
 namespace ReactApp4.Server.Services
 {
-    public class PlayerDatabaseHandler(AppDbContext context) : ControllerBase
+    public class PlayerDatabaseHandler : ControllerBase
     {
-        private readonly AppDbContext _context = context;
+        private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
+
+        public PlayerDatabaseHandler(AppDbContext context, IConfiguration configuration)
+        {
+            _context = context;
+            _configuration = configuration;
+        }        
         public async Task<ActionResult<IEnumerable<Player>>> GetAllPlayers()
         {
             var tableName = $"players";
@@ -60,7 +67,7 @@ namespace ReactApp4.Server.Services
                     return BadRequest("Invalid player data");
                 }
 
-                var connectionString = "Server=localhost;Port=5432;Database=hoop_scoop;User Id=postgres;Password=redsox45;\r\n"; // Replace with your actual connection string
+                var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
                 {

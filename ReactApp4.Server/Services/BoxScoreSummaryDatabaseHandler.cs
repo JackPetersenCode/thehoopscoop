@@ -15,10 +15,16 @@ using Newtonsoft.Json.Linq;
 
 namespace ReactApp4.Server.Services
 {
-    public class BoxScoreSummaryDatabaseHandler(AppDbContext context) : ControllerBase
+    public class BoxScoreSummaryDatabaseHandler : ControllerBase
     {
-        private readonly AppDbContext _context = context;
+        private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
 
+        public BoxScoreSummaryDatabaseHandler(AppDbContext context, IConfiguration configuration)
+        {
+            _context = context;
+            _configuration = configuration;
+        }
         public async Task<ActionResult<IEnumerable<BoxScoreSummary>>> GetBoxScoreSummaryBySeason(string season)
         {
             var tableName = $"box_score_summary_{season}";
@@ -42,7 +48,7 @@ namespace ReactApp4.Server.Services
                     return BadRequest("Invalid boxScoreSummary data");
                 }
 
-                var connectionString = "Server=localhost;Port=5432;Database=hoop_scoop;User Id=postgres;Password=redsox45;\r\n"; // Replace with your actual connection string
+                var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
                 {

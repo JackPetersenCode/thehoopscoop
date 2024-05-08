@@ -14,11 +14,12 @@ namespace ReactApp4.Server.Controllers
     public class BallersController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
 
-
-        public BallersController(AppDbContext context)
+        public BallersController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -31,7 +32,7 @@ namespace ReactApp4.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBaller([FromBody] object[] baller)
         {
-            var connectionString = "Server=localhost;Port=5432;Database=hoop_scoop;User Id=postgres;Password=redsox45;\r\n"; // Replace with your actual connection string
+            var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
             try
             {

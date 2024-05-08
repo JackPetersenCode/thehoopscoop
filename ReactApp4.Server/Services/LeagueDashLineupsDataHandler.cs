@@ -35,5 +35,11 @@ namespace ReactApp4.Server.Services
         }
 
 
+        public async Task<IActionResult> DeleteLeagueDashLineup(string season, string boxType, string numPlayers)
+        {
+            return await _leagueDashLineupsDatabaseHandler.DeleteLeagueDashLineup(season, boxType, numPlayers);
+        }
+
+
     }
 }

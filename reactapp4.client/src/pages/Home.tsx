@@ -15,14 +15,7 @@ import LegacyPredictions from '../components/LegacyPredictions';
 import DropDown from '../components/DropDown';
 import Head2Head from '../components/Head2Head';
 
-const DataFlex = styled.div`
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    justify-content: space-between;
-    max-width: 50%;
-    margin-top: 50px;
-`
+
 
 function Home() {
 
@@ -76,11 +69,17 @@ function Home() {
 
 
     return (
-        <div className="home-container">
-
+        <>
+        <div className='logo-flex'>
+            <div>
+                <img src="../images/ball7.png" className="ball" alt="Home"/>
+            </div>
             <div>
                 <GameOptionDropDown gameOption={gameOption} setGameOption={setGameOption} />
             </div>
+        </div>
+
+        <div className="home-container">
 
             {gameOption === "Prop Bet" ?
                 <div>
@@ -101,7 +100,7 @@ function Home() {
             </div>
             :
             ""}
-            <DataFlex>
+            <div className='lineup-player-boxtype-dropdown-container'>
 
                 <div className="drop-down">
                     <LineupsPlayersSelect options={lineupPlayerOptions} selectedLineupPlayer={selectedLineupPlayer} setSelectedLineupPlayer={setSelectedLineupPlayer} setSelectedBoxType={setSelectedBoxType} setSortField={setSortField} />
@@ -110,7 +109,7 @@ function Home() {
                     <BoxTypeSelect options={selectedLineupPlayer === 'Players' ? statOptionsPlayers : statOptionsLineups} selectedBoxType={selectedBoxType} setSelectedBoxType={setSelectedBoxType} setSortField={setSortField} />
                 </div>
 
-            </DataFlex>
+            </div>
             <div className="display-flex">
                 <div className="drop-down">
                     <SeasonsDropDown
@@ -179,6 +178,7 @@ function Home() {
             
             <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} selectedOpponent={selectedOpponent} />
         </div>
+        </>
     );
 }
 

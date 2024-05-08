@@ -1,7 +1,7 @@
 import React from 'react';
 import { NBATeam } from '../interfaces/Teams';
 import { nbaTeams } from '../interfaces/DropDownOptions'; 
-import { ShotChartsGamesData } from '../interfaces/Shot';
+import { Shot, ShotChartsGamesData } from '../interfaces/Shot';
 
 
 
@@ -10,9 +10,11 @@ interface TeamsDropDownProps {
     selectedTeam: NBATeam | string;
     setSelectedTeam: React.Dispatch<React.SetStateAction<NBATeam | string>>;
     setGameData: React.Dispatch<React.SetStateAction<ShotChartsGamesData[]>>;
+    setSeasonShotsData: React.Dispatch<React.SetStateAction<Shot[]>>;
+    setGameShotsData: React.Dispatch<React.SetStateAction<Shot[]>>;
 }
 
-const TeamsDropDown: React.FC<TeamsDropDownProps> = ({ selectedTeam, setSelectedTeam, setGameData }) => {
+const TeamsDropDown: React.FC<TeamsDropDownProps> = ({ selectedTeam, setSelectedTeam, setGameData, setSeasonShotsData, setGameShotsData }) => {
 
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         if (event.target.value === "0") {
@@ -22,6 +24,8 @@ const TeamsDropDown: React.FC<TeamsDropDownProps> = ({ selectedTeam, setSelected
         console.log(event.target.value);
         console.log(selectedValue)
         setSelectedTeam(selectedValue);
+        setSeasonShotsData([]);
+        setGameShotsData([]);
         setGameData([]);
     }
 

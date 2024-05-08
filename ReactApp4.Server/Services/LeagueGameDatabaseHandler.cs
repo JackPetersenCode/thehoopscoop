@@ -13,10 +13,16 @@ using System.Collections.Generic;
 
 namespace ReactApp4.Server.Services
 {
-    public class LeagueGameDatabaseHandler(AppDbContext context) : ControllerBase
+    public class LeagueGameDatabaseHandler : ControllerBase
     {
-        private readonly AppDbContext _context = context;
+        private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
 
+        public LeagueGameDatabaseHandler(AppDbContext context, IConfiguration configuration)
+        {
+            _context = context;
+            _configuration = configuration;
+        }
         public async Task<ActionResult<IEnumerable<LeagueGame>>> GetGamesBySeason(string season)
         {
             var tableName = $"league_games_{season}";
@@ -73,7 +79,7 @@ namespace ReactApp4.Server.Services
 
                 Console.WriteLine(season);
 
-                var connectionString = "Server=localhost;Port=5432;Database=hoop_scoop;User Id=postgres;Password=redsox45;\r\n"; // Replace with your actual connection string
+                var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
                 {

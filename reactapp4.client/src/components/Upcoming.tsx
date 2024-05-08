@@ -164,6 +164,7 @@ const Upcoming = () => {
                 visitorTeamName: string
             ) => {
 
+
                 const expected = await getExpected(game, season, previousSeason, homeTeamId, visitorTeamId);
 
                 //let game_date = await fixTheGameDate(game.commence_time)
@@ -334,16 +335,43 @@ const Upcoming = () => {
             }
 
             const previousSeason = await getPreviousYear(selectedSeason);
-            const games = await axios.get(`/api/Gambling/upcomingGames/${selectedSeason}`);
-            console.log(games.data);
+            let results = await axios.get(`/api/Gambling/upcomingGames/${selectedSeason}`);
+            let games = results.data;
 
-            for (let i = 0; i < games.data.length; i++) {
-                const homeTeam = games.data[i].home_team;
-                const visitorTeam = games.data[i].away_team;
+            const filteredGames = games.filter((game: UpcomingGame) => {
+                const dateString: string = game.commence_time;
+                const dateParts: string[] = dateString.split("-");
+                const year: number = parseInt(dateParts[0]);
+                const month: number = parseInt(dateParts[1]) - 1; // Months are 0-indexed in JavaScript
+                const day: number = parseInt(dateParts[2]);
+                const dateFromString: Date = new Date(year, month, day);
+
+                // Get current date and time
+                const currentDate: Date = new Date();
+
+                console.log(currentDate);
+                console.log(dateFromString);
+                return dateFromString >= currentDate;
+            })
+
+            if (filteredGames.length <= 0) {
+                const results = await axios.get(`/api/Gambling/topTenHistorical/${selectedSeason}`);
+                games = results.data.forEach((obj: UpcomingGame) => {
+                    obj.home_odds = "unavailable";
+                    obj.away_odds = "unavailable";
+                    obj.game_id = "upcoming";
+                });
+            } else {
+                games = filteredGames;
+            }
+
+            for (let i = 0; i < games.length; i++) {
+                const homeTeam = games[i].home_team;
+                const visitorTeam = games[i].away_team;
                 const homeTeamId = teamIds[homeTeam];
                 const visitorTeamId = teamIds[visitorTeam];
-                console.log(games.data[i]);
-                await getPostObject(games.data[i], selectedSeason, previousSeason, homeTeamId, visitorTeamId, teams[homeTeam], teams[visitorTeam], homeTeam, visitorTeam);
+                console.log(games[i]);
+                await getPostObject(games[i], selectedSeason, previousSeason, homeTeamId, visitorTeamId, teams[homeTeam], teams[visitorTeam], homeTeam, visitorTeam);
             }
         }
         getGames();
@@ -363,37 +391,37 @@ const Upcoming = () => {
                 <div className='upcoming-headers'>MONEYLINE</div>
                 <div className='inner-upcoming-flex'>
                     {game.matchup && game.HomeLogo ? 
-                    <div className='logo-flex'>
+                    <div className='team-logo-flex'>
                         <game.HomeLogo size={50} />
 
-                        <div>
+                        <div className='upcoming-team-abbr'>
                             {' ' + game.home_abbr}
                         </div>
                     </div>
 
                      : 'loading'}
                 </div>
-                <div>
+                <div className='upcoming-scores'>
                     {game.home_expected}
                 </div>
-                <div>
+                <div className='upcoming-scores'>
                     {game.home_odds}
                 </div>
                 <div className='inner-upcoming-flex'>
                     {game.matchup && game.VisitorLogo ? 
-                    <div className='logo-flex'>
+                    <div className='team-logo-flex'>
                         <game.VisitorLogo size={50} /> 
-                        <div>
+                        <div className='upcoming-team-abbr'>
                             {' ' + game.visitor_abbr}
                         </div>
                     </div>
 
                      : 'loading'}
                 </div>
-                <div>
+                <div className='upcoming-scores'>
                     {game.visitor_expected}
                 </div>
-                <div>
+                <div className='upcoming-scores'>
                     {game.visitor_odds}
                 </div>
                     

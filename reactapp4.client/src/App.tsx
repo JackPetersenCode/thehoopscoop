@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Layout from './pages/Layout'
 import Admin from './pages/Admin';
 import LoadingIndicator from './components/LoadingIndicator';
+import axios from 'axios';
 
 
 function App() {
@@ -14,8 +15,8 @@ function App() {
     useEffect(() => {
         const checkBackend = async () => {
             try {
-                const response = await fetch('/api/boxscoretraditional/2023_24'); // Health check endpoint
-                if (response.ok) {
+                const response = await axios.get('/api/boxscoretraditional/2023_24'); // Health check endpoint
+                if (response.data) {
                     setLoading(false); // Backend is ready, stop loading
                 } else {
                     setTimeout(checkBackend, 1000); // Retry after 1 second

@@ -14,9 +14,36 @@ using System.Xml.Linq;
 
 namespace ReactApp4.Server.Services
 {
-    public class LeagueDashLineupsDatabaseHandler(AppDbContext context) : ControllerBase
+    public class LeagueDashLineupsDatabaseHandler : ControllerBase
     {
-        private readonly AppDbContext _context = context;
+        private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
+
+        public LeagueDashLineupsDatabaseHandler(AppDbContext context, IConfiguration configuration)
+        {
+            _context = context;
+            _configuration = configuration;
+        }
+        public async Task<IActionResult> DeleteLeagueDashLineup(string season, string boxType, string numPlayers)
+        {
+            try
+            {
+                string tableName = $"league_dash_lineups_{boxType.ToLower()}_{numPlayers}man_{season}";
+
+                // Construct SQL command to delete rows from the dynamically named table
+                string sql = $"DELETE FROM \"{tableName}\"";
+
+                // Execute the SQL command
+                await _context.Database.ExecuteSqlRawAsync(sql);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return StatusCode(500, "Internal server error");
+            }
+        }
 
         public async Task<IActionResult> GetLeagueDashLineups(string season, string boxType, string numPlayers, string order, string sortField, string perMode, string selectedTeam)
         {
@@ -259,7 +286,7 @@ namespace ReactApp4.Server.Services
                 }
 
 
-                var connectionString = "Server=localhost;Port=5432;Database=hoop_scoop;User Id=postgres;Password=redsox45;\r\n"; // Replace with your actual connection string
+                var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
                 {

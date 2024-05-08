@@ -69,6 +69,12 @@ namespace ReactApp4.Server.Controllers
             return await _gamblingDataHandler.GetHistoricalResults(season, teamName);
         }
 
+        [HttpGet("topTenHistorical/{season}")]
+        public async Task<IActionResult> GetTopTenHistorical(string season)
+        {
+            return await _gamblingDataHandler.GetTopTenHistorical(season);
+        }
+
         [HttpGet("leagueGamesWithHomeVisitor/{season}")]
         public async Task<IActionResult> GetLeagueGamesWithHomeVisitor(string season)
         {

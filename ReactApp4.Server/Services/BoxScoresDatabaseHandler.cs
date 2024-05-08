@@ -88,6 +88,7 @@ namespace ReactApp4.Server.Services
 
 
                 offRatingQuery += $@"GROUP BY box_score_traditional_{season}.player_id, box_score_traditional_{season}.player_name, box_score_traditional_{season}.team_id, box_score_traditional_{season}.team_abbreviation 
+                          HAVING SUM(box_score_traditional_{season}.min) > 0
                         ),
                         PlayerStatsAdvanced AS (
                          Select box_score_advanced_{season}.player_id,
@@ -107,6 +108,7 @@ namespace ReactApp4.Server.Services
 
                 }
                 offRatingQuery += $@"GROUP BY box_score_advanced_{season}.player_id, box_score_advanced_{season}.player_name, box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation
+                          HAVING SUM(box_score_advanced_{season}.min) > 0
                         ),
                         TeamStats AS(
                           SELECT box_score_traditional_{season}.team_id,
@@ -140,7 +142,7 @@ namespace ReactApp4.Server.Services
                 }
 
                 offRatingQuery += $@"GROUP BY box_score_traditional_{season}.team_id, box_score_traditional_{season}.team_abbreviation
-
+                          HAVING SUM(box_score_traditional_{season}.min) > 0
                         ),  
                         Opponent_RB AS(
                             SELECT
@@ -831,8 +833,9 @@ namespace ReactApp4.Server.Services
                 }
                 else if (boxType == "FourFactors")
                 {
-                    query = offRatingQuery + ", " + defRatingQuery + ", " + advancedStats +
-                        $@"SELECT
+                    query = $@"WITH " + offRatingQuery + ", " + defRatingQuery + ", " + advancedStats +
+                        $@"
+                        SELECT
                         PlayerStats.player_id, 
                         PlayerStats.team_id,
                         PlayerStats.team_abbreviation,

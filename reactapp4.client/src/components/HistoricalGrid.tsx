@@ -48,7 +48,8 @@ interface HistoricalGridProps {
 const HistoricalGrid: React.FC<HistoricalGridProps> = ({game}) => {
 
 
-
+    console.log('historical grid')
+    console.log(game);
     let HomeLogo;
     let VisitorLogo;
 
@@ -61,7 +62,7 @@ const HistoricalGrid: React.FC<HistoricalGridProps> = ({game}) => {
 
     return (
         <div className="historical-grid" style={getGreenRed(game.green_red)} >
-            <div className='upcoming-game-date' style={{fontSize: 'small'}}>{game.game_date.charAt(5) === '0' ?
+            <div className='historical-game-date' style={{fontSize: 'small'}}>{game.game_date.charAt(5) === '0' ?
                                                     <>
                                                     {game.game_date.substring(6,10)}
                                                     <br></br>
@@ -86,7 +87,7 @@ const HistoricalGrid: React.FC<HistoricalGridProps> = ({game}) => {
             </div>
             <div className='inner-upcoming-flex'>
                 {game.matchup && HomeLogo ? 
-                <div className='logo-flex'>
+                <div className='team-logo-flex'>
                     <HomeLogo size={35} /> 
                     <div>
                         {' ' + game.matchup.substring(0,3)}
@@ -114,7 +115,7 @@ const HistoricalGrid: React.FC<HistoricalGridProps> = ({game}) => {
             </div>
             <div className='inner-upcoming-flex'>
                 {game.matchup && VisitorLogo ? 
-                <div className='logo-flex'>
+                <div className='team-logo-flex'>
                     <VisitorLogo size={35} /> 
                     <div>
                         {' ' + game.matchup.substring(8,11)}

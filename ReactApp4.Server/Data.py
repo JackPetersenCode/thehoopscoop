@@ -719,13 +719,14 @@ def playerCareerStatsFunction(playerid):
 
 boxScoreSummaryArray = []
 def readBoxScoreSummary():
-    URL = 'http://localhost:3001/api/tablelength/boxscoresummary2023-2024'
+    URL = 'http://localhost:3001/api/tablelength/box_score_summary_2023_24'
     response = requests.get(url = URL)
     data = response.json()
     count = data[0]['count']
     print(count)
-    f = open('./juicystats/leaguegames2023-2024.json')
+    f = open('./juicystats/league_games_2023_24.json')
     games = json.load(f)
+    print(games)
     idList = []
     end = len(games["resultSets"][0]["rowSet"])
     start = int(count)
@@ -756,7 +757,7 @@ def boxScoreSummaryFunction(gameid):
 
     header = careerData.resultSets[0].headers
     try:
-        with open('./juicystats/boxScoreSummary2023-2024.csv', 'a', encoding='UTF8', newline='') as f:
+        with open('./juicystats/box_score_summary_2023_24.csv', 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(careerData.resultSets[0].rowSet)
@@ -978,7 +979,7 @@ def defenseHub():
 #asyncio.get_event_loop().run_forever()
 
 
-leaguegames()
+##leaguegames()
 ##shotchartdetailfunction()
 ##allassists()
 ##assiststracker()
@@ -996,7 +997,7 @@ leaguegames()
 ##leagueDashPlayerStatsFunction()
 ##playerCareerStatsFunction()
 ##getPlayerIds()
-##readBoxScoreSummary()
+readBoxScoreSummary()
 ##writeNBAplayers()
 
 ##getOdds()
