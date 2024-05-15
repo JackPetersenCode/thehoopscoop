@@ -1,7 +1,5 @@
-import React from 'react';
 import { loadBoxScoresTraditional, loadLeagueGamesBySeason, loadPlayers, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring, loadShotsBySeason, loadNewOddsFunction, loadBoxScoreSummary } from '../helpers/Loaders';
-import { ExpectedMatchupPostObject, RosterPlayer, teamIds } from '../interfaces/Gambling';
-import { nbaTeams } from '../interfaces/DropDownOptions';
+import { ExpectedMatchupPostObject, RosterPlayer } from '../interfaces/Gambling';
 import axios from 'axios';
 
 
@@ -64,7 +62,7 @@ function Admin() {
         }
     }
 
-    const loadUpExpectedBySeasonButton = document.getElementById("loadExpectedBySeasonButton");
+    //const loadUpExpectedBySeasonButton = document.getElementById("loadExpectedBySeasonButton");
 
 
     const getJsonResponseJackorithm = async (url: string) => {

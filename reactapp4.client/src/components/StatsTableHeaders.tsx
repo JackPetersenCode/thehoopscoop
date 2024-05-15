@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { SortingFunction, Column } from "../interfaces/StatsTable";
 
 
@@ -19,7 +19,7 @@ const isColumnArray = (input: Column[] | string[]): input is Column[] => {
 };
 
 
-const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ sortingFunction, columns, smallHeaders, sortField, setSortField, order, setOrder }) => {
+const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ sortingFunction, columns, smallHeaders, order }) => {
 
   
     if (!isColumnArray(columns)) {
@@ -37,16 +37,16 @@ const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ sortingFunction, 
             </thead>
         );
     } else {
-        const handleSortingChange = (accessor: string) => {
-            if (setSortField && setOrder) {
-                const sortOrder =
-                    accessor === sortField && order === "asc" ? "desc" : "asc";
-                setSortField(accessor);
-                setOrder(sortOrder);
-                //setPage(1);
-            }
-            //handleSorting(accessor, sortOrder);
-        };
+        //const handleSortingChange = (accessor: string) => {
+        //    if (setSortField && setOrder) {
+        //        const sortOrder =
+        //            accessor === sortField && order === "asc" ? "desc" : "asc";
+        //        setSortField(accessor);
+        //        setOrder(sortOrder);
+        //        //setPage(1);
+        //    }
+        //    //handleSorting(accessor, sortOrder);
+        //};
         if (smallHeaders) {
             return (
                 <thead className="small-headers">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import SeasonsDropdown from "../components/SeasonsDropDown";
 import Upcoming from "../components/Upcoming";
 import '../App.css'

@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./ReactApp4.Server
+      dockerfile: ServerDockerfile  # Assuming you named your server Dockerfile as ServerDockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__WebApiDatabase=Host=db;Database=hoop_scoop;Username=postgres;Password=redsox45
+
+  frontend:
+    build:
+      context: ./reactapp4.client  # Specify the path to your frontend Dockerfile
+      dockerfile: ClientDockerfile
+    ports:
+      - "3000:80"  # Change the port if needed
+    depends_on:
+      - backend
+
+  nginx:
+    build:
+      context: ./nginx  # Use the custom Dockerfile in the ./nginx directory
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: hoop_scoop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: redsox45
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+
+volumes:
+  postgres-data:

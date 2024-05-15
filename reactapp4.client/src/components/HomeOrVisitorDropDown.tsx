@@ -1,5 +1,5 @@
-import React, { SetStateAction, useState, useEffect } from 'react';
-import { homeOrVisitorOptions, nbaTeams } from '../interfaces/DropDownOptions';
+import React, { SetStateAction } from 'react';
+import { homeOrVisitorOptions } from '../interfaces/DropDownOptions';
 
 interface HomeOrVisitorDropDownProps {
     homeOrVisitor: string;
@@ -8,7 +8,7 @@ interface HomeOrVisitorDropDownProps {
     setShowHomeOrVisitor: React.Dispatch<SetStateAction<boolean>>;
 }
 
-const HomeOrVisitorDropDown: React.FC<HomeOrVisitorDropDownProps> = ({ homeOrVisitor, setHomeOrVisitor, showHomeOrVisitor, setShowHomeOrVisitor }) => {
+const HomeOrVisitorDropDown: React.FC<HomeOrVisitorDropDownProps> = ({ homeOrVisitor, setHomeOrVisitor, setShowHomeOrVisitor }) => {
 
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         console.log('booger');

@@ -1,0 +1,27 @@
+# Use the official Node.js image from Docker Hub
+FROM node:20 AS build
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the package.json and package-lock.json files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --legacy-peer-deps
+
+# Copy the remaining files
+COPY . ./
+
+# Copy certificate files into the container
+COPY ./reactapp4.client.pem /app/reactapp4.client.pem
+COPY ./reactapp4.client.key /app/reactapp4.client.key
+
+# Build the React app
+RUN npm run build
+
+# Serve the React app using a lightweight web server
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

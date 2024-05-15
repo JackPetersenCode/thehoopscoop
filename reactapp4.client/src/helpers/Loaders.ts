@@ -18,7 +18,7 @@ const loadLeagueGamesBySeason = async () => {
                 console.log(m)
                 //ACTIVATE CODE IF YOU NEED TO LOAD SHOTS INTO YOUR DATABASE
 
-                const results = await postLeagueGamesBySeason(gamesArray.resultSets[j].rowSet[m], years[i]);
+                await postLeagueGamesBySeason(gamesArray.resultSets[j].rowSet[m], years[i]);
                 console.log(gamesArray.resultSets[j].rowSet[m]);
             }
         }
@@ -45,7 +45,7 @@ const loadPlayers = async () => {
             player_id: players[i].id.toString()
         }
         console.log(player);
-        let results = await postPlayersNBA(player);
+        await postPlayersNBA(player);
     }
     console.log('FINISHED!');
 }
@@ -376,7 +376,7 @@ const loadShotsBySeason = async () => {
                 vtm: shotsArray.resultSets[0].rowSet[m][23]
             }
             //ACTIVATE CODE IF YOU NEED TO LOAD SHOTS INTO YOUR DATABASE
-            const results = await postShotBySeason(shotObject, years[j]);
+            await postShotBySeason(shotObject, years[j]);
         }
     }
 

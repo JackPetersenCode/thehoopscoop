@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { PropBetStats } from '../interfaces/PropBetStats';
 
 
@@ -9,7 +9,7 @@ interface PropBetStatsDropDownProps {
     setPropBetStats: React.Dispatch<React.SetStateAction<PropBetStats[]>>;
 }
 
-const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ selectedStat, setSelectedStat, propBetStats, setPropBetStats }) => {
+const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ setSelectedStat, propBetStats, setPropBetStats }) => {
 
     const stats: PropBetStats[] = [
         { label: 'Points', accessor: 'pts' },

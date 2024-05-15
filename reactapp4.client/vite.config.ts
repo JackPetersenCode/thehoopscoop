@@ -7,12 +7,19 @@ import path from 'path';
 import child_process from 'child_process';
 
 const baseFolder =
-    process.env.APPDATA !== undefined && process.env.APPDATA !== ''
-        ? `${process.env.APPDATA}/ASP.NET/https`
-        : `${process.env.HOME}/.aspnet/https`;
+  process.env.APPDATA !== undefined && process.env.APPDATA !== ''
+    ? path.join(process.env.APPDATA, 'ASP.NET', 'https') // Use path.join() for consistent path format
+    : '/app';
+
+//const baseFolder = '/app/.aspnet/https';
+
+console.log(baseFolder);
+console.log(process.env.HOME);
+console.log(process.env.APPDATA);
 
 const certificateArg = process.argv.map(arg => arg.match(/--name=(?<value>.+)/i)).filter(Boolean)[0];
 const certificateName = certificateArg ? certificateArg.groups.value : "reactapp4.client";
+
 
 if (!certificateName) {
     console.error('Invalid certificate name. Run this script in the context of an npm/yarn script or pass --name=<<app>> explicitly.')
@@ -21,6 +28,8 @@ if (!certificateName) {
 
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
+console.log(certFilePath)
+console.log(keyFilePath)
 
 if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     if (0 !== child_process.spawnSync('dotnet', [
@@ -46,7 +55,8 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/api': {
+            
+            '/api': {
                 target: 'http://localhost:5190/',
                 secure: false
             }

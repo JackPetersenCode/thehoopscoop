@@ -1,12 +1,12 @@
 import '../App.css';
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from 'axios';
 //import ExpectedResults from "./ExpectedResults";
 import {
     TOR, DEN, HOU, IND, CHI, GSW, BOS, LAC, POR, ATL, CLE, DAL, NOP, SAC, MIL, WAS, BKN, LAL,
     SAS, OKC, CHA, MIN, PHX, MEM, NYK, PHI, ORL, MIA, UTA, DET
 } from 'react-nba-logos';
-import { RosterPlayer, UpcomingGame, UpcomingPostObject, TeamIds, Teams, teamIds, teams } from '../interfaces/Gambling';
+import { RosterPlayer, UpcomingGame, UpcomingPostObject, teamIds, teams } from '../interfaces/Gambling';
 import {NBALogoType} from '../interfaces/Gambling';
 
 interface Component {
@@ -51,7 +51,7 @@ const Upcoming = () => {
 
 
     const [upcomingGames, setUpcomingGames] = useState<UpcomingPostObject[]>([]);
-    const [selectedSeason, setSelectedSeason] = useState('2023_24')
+    const [selectedSeason] = useState('2023_24')
     //
     //useEffect(() => {
     //    const getUpcoming = async() => {
@@ -121,37 +121,37 @@ const Upcoming = () => {
             }
 
 
-            const fixTheName = async (name: string) => {
-                let newName = name;
-                if (name === 'Los Angeles Lakers') {
-                    newName = 'LALakers'
-                }
-                else if (name === 'LA Clippers') {
-                    newName = 'LAClippers';
-                }
-                else if (name === 'Portland Trail Blazers') {
-                    newName = 'Portland';
-                } else {
-                    let namesplit = name.split(' ');
-                    if (namesplit.length === 3) {
-                        newName = namesplit[0] + namesplit[1];
-                    } else {
-                        newName = namesplit[0];
-                    }
-                }
-                return newName;
-            }
+            //const fixTheName = async (name: string) => {
+            //    let newName = name;
+            //    if (name === 'Los Angeles Lakers') {
+            //        newName = 'LALakers'
+            //    }
+            //    else if (name === 'LA Clippers') {
+            //        newName = 'LAClippers';
+            //    }
+            //    else if (name === 'Portland Trail Blazers') {
+            //        newName = 'Portland';
+            //    } else {
+            //        let namesplit = name.split(' ');
+            //        if (namesplit.length === 3) {
+            //            newName = namesplit[0] + namesplit[1];
+            //        } else {
+            //            newName = namesplit[0];
+            //        }
+            //    }
+            //    return newName;
+            //}
 
-            const fixTheGameDate = async (date: string) => {
-                let splitDate = date.split('-');
-                let fixedDate;
-                if (splitDate[1].substring(0, 1) === '0') {
-                    fixedDate = (splitDate[1] + splitDate[2]).substring(1)
-                } else {
-                    fixedDate = (splitDate[1] + splitDate[2]);
-                }
-                return fixedDate;
-            }
+            //const fixTheGameDate = async (date: string) => {
+            //    let splitDate = date.split('-');
+            //    let fixedDate;
+            //    if (splitDate[1].substring(0, 1) === '0') {
+            //        fixedDate = (splitDate[1] + splitDate[2]).substring(1)
+            //    } else {
+            //        fixedDate = (splitDate[1] + splitDate[2]);
+            //    }
+            //    return fixedDate;
+            //}
 
             const getPostObject = async (game: UpcomingGame,
                 season: string,

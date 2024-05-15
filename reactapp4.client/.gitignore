@@ -23,5 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
+*.key
+*.pem
 # juicy stats
 /juicystats/

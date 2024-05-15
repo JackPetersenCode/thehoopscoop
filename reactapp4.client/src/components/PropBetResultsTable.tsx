@@ -25,7 +25,7 @@ interface PropBetResultsTableProps {
 
 const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats, setPlayerBoxScores, playerBoxScores, gamesPlayed, setGamesPlayed, homeOrVisitor }) => {
 
-    const [columns, setColumns] = useState<Column[]>(basePlayerColumnsNoName);
+    const [columns] = useState<Column[]>(basePlayerColumnsNoName);
 
     useEffect(() => {
         const getPropBetResults = async () => {

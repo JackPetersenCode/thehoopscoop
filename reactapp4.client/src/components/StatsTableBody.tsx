@@ -1,4 +1,4 @@
-import { SortingFunction, Column, Stats } from "../interfaces/StatsTable";
+import { Column, Stats } from "../interfaces/StatsTable";
 
 interface StatsTableBodyProps {
     columns: Column[] | string[];

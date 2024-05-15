@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Python.Runtime;
 using ReactApp4.Server.Data;
 using ReactApp4.Server.Services;
@@ -91,6 +92,7 @@ namespace ReactApp4.Server
             }
 
             app.UseHttpsRedirection();
+
 
             app.UseAuthorization();
 

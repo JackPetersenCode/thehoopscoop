@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import SeasonsDropDown from '../components/SeasonsDropDown';
-import { nbaTeams } from '../interfaces/DropDownOptions';
 import TeamsDropDown from './TeamsDropDown';
 import { NBATeam } from '../interfaces/Teams';
 import ShotChartsPlayerDropDown from './ShotChartsPlayerDropDown';

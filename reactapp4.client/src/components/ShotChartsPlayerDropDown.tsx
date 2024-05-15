@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NBATeam } from '../interfaces/Teams';
-import { nbaTeams } from '../interfaces/DropDownOptions';
-import { Player, SelectedPlayer } from '../interfaces/Player';
+import { SelectedPlayer } from '../interfaces/Player';
 import axios from 'axios';
 import { ShotChartsGamesData } from '../interfaces/Shot';
 

@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useState } from 'react';
+import React, { SetStateAction, useEffect } from 'react';
 import axios from 'axios';
 import { PropBetStats } from '../interfaces/PropBetStats';
 import { NBATeam } from '../interfaces/Teams';

@@ -1,5 +1,4 @@
-import React, { SetStateAction, useState, useEffect } from 'react';
-import { NBATeam } from '../interfaces/Teams';
+import React, { SetStateAction } from 'react';
 
 interface PropBetHomeOrVisitorProps {
     homeOrVisitor: string;

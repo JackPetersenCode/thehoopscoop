@@ -1,7 +1,5 @@
-import axios from "axios";
 import '../App.css';
-import React, { useEffect, useState, useMemo } from "react";
-import styled from 'styled-components';
+import React, { useState } from "react";
 import '../style.css';
 import { NBATeam } from "../interfaces/Teams";
 interface DropDownProps {

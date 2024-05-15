@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import * as d3 from 'd3';
 import { Shot } from '../interfaces/Shot';
+import * as d3 from 'd3';
 
 
 interface ShotChartsSVGProps {
@@ -15,7 +15,7 @@ const ShotChartSVG: React.FC<ShotChartsSVGProps> = ({ shotsData, isGameChart }) 
         parseInt(getComputedStyle(document.documentElement).getPropertyValue('--screen-size'))
     );
 
-    const [myPlot, setMyPlot] = useState(isGameChart ? "myPlot" : "myPlot2");
+    const [myPlot] = useState(isGameChart ? "myPlot" : "myPlot2");
     //let [chartTitle, setCharTitle] = useState(isGameChart ? "SEASON SHOT CHART" : "GAME SHOT CHART");
 
     useEffect(() => {
@@ -32,7 +32,7 @@ const ShotChartSVG: React.FC<ShotChartsSVGProps> = ({ shotsData, isGameChart }) 
     useEffect(() => {
         const getSVG = async () => {
 
-            const data = [];
+            //const data = [];
             const dataMadeShots = [];
             const dataMissedShots = [];
 
@@ -50,19 +50,15 @@ const ShotChartSVG: React.FC<ShotChartsSVGProps> = ({ shotsData, isGameChart }) 
 
 
             const xSize = 620 / n;
-            const ySize = 570 / n;
-            const xHalf = -350 / n;
             const xPosHalf = 380 / n;
             const xMargin = 120 / n;
             const yMargin = 60 / n;
             const width = xSize - xMargin
-            const height = ySize - yMargin
-            const halfWidth = xHalf + xMargin;
             const halfPosWidth = xPosHalf - xMargin;
             const svg = d3.select(`#${myPlot}`)
                 .append("svg")
                 .append("g")
-                .attr("transform", "translate(" + halfPosWidth + ", " + yMargin + ")", "class", "graph-svg-component")
+                .attr("transform", "translate(" + halfPosWidth + ", " + yMargin + ")")
                 .style('color', 'white');
 
             //d3.select(`#${myPlot}`).selectAll("text").remove()
@@ -257,20 +253,29 @@ const ShotChartSVG: React.FC<ShotChartsSVGProps> = ({ shotsData, isGameChart }) 
                 .attr("stroke", "white")
                 .style("fill", "none");
 
-            const arcGenerator2 = d3.arc()
+            const arcGenerator2 = d3.arc<d3.DefaultArcObject>()
                 .outerRadius(61 / n)
                 .innerRadius(59 / n)
                 .startAngle(0)
                 .endAngle(2 * Math.PI);
-            const halfCourtCircle = svg.append("path")
+
+            const defaultArcData: d3.DefaultArcObject = {
+                innerRadius: 0,
+                outerRadius: 0,
+                startAngle: 0,
+                endAngle: 0
+            };
+
+
+            svg.append("path")
                 .attr("transform", `translate(0, ${418 / n})`)
                 .attr("fill", "white")
-                .attr("d", arcGenerator2());
+                .attr("d", arcGenerator2(defaultArcData));
 
-            const freeThrowCircle = svg.append("path")
+            svg.append("path")
                 .attr("transform", `translate(0, ${137.5 / n})`)
                 .attr("fill", "white")
-                .attr("d", arcGenerator2());
+                .attr("d", arcGenerator2(defaultArcData));
             /*svg.append("circle")
               .attr("cx", 0)
               .attr("cy", 0)
@@ -283,16 +288,17 @@ const ShotChartSVG: React.FC<ShotChartsSVGProps> = ({ shotsData, isGameChart }) 
                 .innerRadius(236.5 / n)
                 .startAngle(Math.PI / 2 + 0.37855)
                 .endAngle(Math.PI * 3 / 2 - 0.37855);
-            const threeLine = svg.append("path")
+            svg.append("path")
                 .attr("transform", "translate(0, 0)")
                 .attr("fill", "white")
-                .attr("d", arcGenerator())
+                .attr("d", arcGenerator(defaultArcData))
+
             svg.append('g')
                 .selectAll("dot")
                 .data(dataMissedShots).enter()
                 .append("circle")
-                .attr("cx", function (d: number[]) { return d[0] / n })
-                .attr("cy", function (d:number[]) { return d[1] / n })
+                .attr("cx", function (d: string[]) { return (parseFloat(d[0]) / n).toString() })
+                .attr("cy", function (d: string[]) { return (parseFloat(d[1]) / n).toString() })
                 .attr("r", 2 / n)
                 .style("opacity", .7)
                 .style("fill", "rgba(64, 154, 244, 0.5)");
@@ -301,8 +307,8 @@ const ShotChartSVG: React.FC<ShotChartsSVGProps> = ({ shotsData, isGameChart }) 
                 .selectAll("dot")
                 .data(dataMadeShots).enter()
                 .append("circle")
-                .attr("cx", function (d: number[]) { return d[0] / n })
-                .attr("cy", function (d: number[]) { return d[1] / n })
+                .attr("cx", function (d: string[]) { return (parseFloat(d[0]) / n).toString() })
+                .attr("cy", function (d: string[]) { return (parseFloat(d[1]) / n).toString() })
                 .style("opacity", .8)
                 .attr("r", 2 / n)
                 .style("fill", "rgb(191, 255, 0)");

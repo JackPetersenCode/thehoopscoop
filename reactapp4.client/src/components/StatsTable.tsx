@@ -8,7 +8,6 @@ import StatsTableHeaders from "./StatsTableHeaders";
 import StatsTableBody from "./StatsTableBody";
 import { Column, Stats } from "../interfaces/StatsTable";
 import { advancedLineupColumns, advancedPlayerColumns, basePlayerColumns, fourFactorsPlayerColumns, miscPlayerColumns,scoringPlayerColumns, baseLineupColumns, fourFactorsLineupColumns, miscLineupColumns, scoringLineupColumns, opponentLineupColumns } from "../interfaces/Columns";
-import styled from 'styled-components';
 import { NBATeam } from "../interfaces/Teams";
 
 interface StatsTableProps {
@@ -25,24 +24,13 @@ interface StatsTableProps {
     selectedOpponent: NBATeam;
 }
 
-const StyledTable = styled.table`
-    max-height: 500px;
-`
-
-const TableContainer = styled.div`
-    max-width: 800px;
-    max-height: 600px;
-    overflow: auto;
-`
 
 
-
-const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode, selectedTeam, sortField, setSortField, inputText, setInputText, selectedOpponent }) => {
+const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, selectedLineupPlayer, selectedBoxType, numPlayers, perMode, selectedTeam, sortField, setSortField, inputText, selectedOpponent }) => {
 
     const [order, setOrder] = useState<string>("desc");
     const [tableData, setTableData] = useState<Stats[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
-    const [page, setPage] = useState(1);
 
     useEffect(() => {
 
@@ -146,16 +134,6 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
 
             setOrder(order === "asc" ? "desc" : "asc");
             setTableData(sorted);
-        }
-    };
-
-    const handleNextPage = () => {
-        setPage(page + 1);
-    };
-
-    const handlePrevPage = () => {
-        if (page > 1) {
-            setPage(page - 1);
         }
     };
 

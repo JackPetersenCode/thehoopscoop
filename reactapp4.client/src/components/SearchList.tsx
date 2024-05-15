@@ -26,7 +26,6 @@ const SearchList: React.FC<SearchListProps> = ({
     setSelectedPlayer,
     openSearchList,
     setOpenSearchList,
-    roster,
     setRoster,
     setUsedPlayers,
     gameOption,

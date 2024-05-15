@@ -1,4 +1,4 @@
-import React, { SetStateAction, useState, useEffect } from 'react';
+import React, { SetStateAction } from 'react';
 import { NBATeam } from '../interfaces/Teams';
 import { nbaTeams } from '../interfaces/DropDownOptions';
 
@@ -9,7 +9,7 @@ interface PropBetOpponentDropDownProps {
     setShowOpponent: React.Dispatch<SetStateAction<boolean>>;
 }
 
-const PropBetOpponentDropDown: React.FC<PropBetOpponentDropDownProps> = ({ selectedOpponent, setSelectedOpponent, showOpponent, setShowOpponent }) => {
+const PropBetOpponentDropDown: React.FC<PropBetOpponentDropDownProps> = ({ selectedOpponent, setSelectedOpponent, setShowOpponent }) => {
 
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         const selectedValue = JSON.parse(event.target.value);

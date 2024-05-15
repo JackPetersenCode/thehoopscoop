@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Player } from '../interfaces/Player';
-import styled from "styled-components";
 import SeasonsDropDown from '../components/SeasonsDropDown';
 import StatsTable from '../components/StatsTable';
 import GameOptionDropDown from '../components/GameOptionDropDown';
 import FindPlayerBottom from '../components/FindPlayerBottom';
 import { numPlayersOptions, lineupPlayerOptions, statOptionsLineups, statOptionsPlayers, nbaTeams, perModeOptions } from '../interfaces/DropDownOptions';
-import Footer from '../components/Footer';
 import ShotCharts from '../components/ShotCharts';
 import LineupsPlayersSelect from '../components/LineupsPlayersSelect';
 import BoxTypeSelect from '../components/BoxTypeSelect';
