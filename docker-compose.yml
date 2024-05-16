@@ -18,18 +18,18 @@ services:
       context: ./reactapp4.client  # Specify the path to your frontend Dockerfile
       dockerfile: ClientDockerfile
     ports:
-      - "3000:80"  # Change the port if needed
+      - "80:80"  # Change the port if needed
     depends_on:
       - backend
 
-  nginx:
-    build:
-      context: ./nginx  # Use the custom Dockerfile in the ./nginx directory
-    ports:
-      - "80:80"
-    depends_on:
-      - frontend
-      - backend
+  #nginx:
+  #  build:
+  #    context: ./nginx  # Use the custom Dockerfile in the ./nginx directory
+  #  ports:
+  #    - "80:80"
+  #  depends_on:
+  #    - frontend
+  #    - backend
 
   db:
     image: postgres:latest
