@@ -11,7 +11,7 @@ services:
       - db
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__WebApiDatabase=Host=db;Database=hoop_scoop;Username=postgres;Password=redsox45
+      - ConnectionStrings__WebApiDatabase=Host=db;Database=hoop_scoop;Username=postgres;Password=*******
 
   frontend:
     build:
