@@ -14,7 +14,7 @@ const Head2Head = () => {
                 Under Construction
             </div>
             <div className='center'>
-                <img className='steve-balmer' src="../images/UnderConstruction.jpg" />
+                <img className='steve-balmer' src="/images/UnderConstruction.jpg" />
             </div>
         </div>
     )

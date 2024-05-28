@@ -487,3 +487,6 @@ Defensive_Rating AS (
                             Advanced_Stats.Usg_Pct
                             HAVING SUM(box_score_advanced_2015_16.min) > 0
                             order by min desc
+
+
+unfortun

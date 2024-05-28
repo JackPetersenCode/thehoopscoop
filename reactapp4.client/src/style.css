@@ -533,7 +533,9 @@ th {
 
 .shots-title-flex {
     display: flex;
+    width: 100%;
     white-space: nowrap;
+    justify-content: center;
     align-items: center;
     font-size: small;
 }
@@ -746,5 +748,18 @@ th {
 @media screen and (min-width: 1350px) {
     :root {
         --screen-size: 1;
+    }
+}
+
+@media screen and (max-width: 570px) {
+    .prop-results-container {
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .svg-container {
+        flex-direction: column;
     }
 }

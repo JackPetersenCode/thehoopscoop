@@ -70,7 +70,7 @@ function Home() {
         <>
         <div className='logo-flex'>
             <div>
-                <img src="../images/ball7.png" className="ball" alt="Home"/>
+                <img src="/images/ball7.png" className="ball" alt="Home"/>
             </div>
             <div>
                 <GameOptionDropDown gameOption={gameOption} setGameOption={setGameOption} />

@@ -1,0 +1,9 @@
+<---- docker build -t your-image-name:tag -f ClientDockerfile . ----->
+
+Replace:
+
+your-image-name with the desired name for your Docker image.
+tag with the version tag you want to assign to the image.
+This command tells Docker to build an image using the Dockerfile named ClientDockerfile located in the current directory (.) and tag it with the specified name and tag.
+
+<----- 

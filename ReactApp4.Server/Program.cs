@@ -121,7 +121,6 @@ namespace ReactApp4.Server
         //    // Call the sayHello function from the Python script periodically
         //
         //    var result = exampleScript.sayHello();
-        //    Console.WriteLine($"Result of calling Python function: {result}");
         //
         //    // Sleep for some time before calling again
         //}
