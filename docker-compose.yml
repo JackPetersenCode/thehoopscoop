@@ -38,7 +38,7 @@ services:
     environment:
       POSTGRES_DB: hoop_scoop
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: redsox45
+      POSTGRES_PASSWORD: '*********'
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d
