@@ -34,21 +34,25 @@ const SearchList: React.FC<SearchListProps> = ({
     const refOne = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
+        function handleClickOutside(event: MouseEvent | TouchEvent) {
             if (
                 refOne.current &&
                 !refOne.current.contains(event.target as Node) &&
                 !refTwo.current?.contains(event.target as Node)
             ) {
+                console.log('inside the if statement')
                 setOpenSearchList(false);
             }
         }
-
+    
         document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('touchstart', handleClickOutside); // Add touchstart event listener
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside); // Remove touchstart event listener on cleanup
         };
     }, [refTwo, setOpenSearchList]);
+    
 
     const filteredData = data.filter((element: Player) => {
 
@@ -71,19 +75,23 @@ const SearchList: React.FC<SearchListProps> = ({
     };
 
     return (
-        <>
-            {openSearchList ?
+        <div>
+            {openSearchList && filteredData.length > 0 ?
                 <div className="search-list" ref={refOne}>
-                    {filteredData.map((item: Player, index: number) => (
-                        <option key={index} onClick={() => handleList(item)} className="search-list-option">
-                            {item.full_name}
-                        </option>
-                    ))}
-                </div >
-            : 
-            ""}
-        </>
+                    <ul className='search-list-ul'>
+                        {filteredData.map((item: Player, index: number) => (
+                            <li key={index} onClick={() => handleList(item)} className="search-list-option">
+                                {item.full_name}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                :
+                ""
+            }
+        </div>
     );
+    
 };
 
 export default SearchList;

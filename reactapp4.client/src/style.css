@@ -264,6 +264,21 @@ left-justify {
     padding: 10px;
 }
 
+.drop-down-style {
+    position: absolute;
+    z-index: 5;
+}
+
+.container-div {
+    position: relative;
+}
+
+.search-list-ul {
+    padding: 0;
+    margin-bottom: 5px;
+}
+
+
 .search-list {
     text-align: left;
     background-color: rgb(238,238,238);
@@ -275,7 +290,10 @@ left-justify {
 }
 
 .search-list-option {
+    list-style-type: none;
     padding-left: 5px;
+    padding-right: 5px;
+    transition: background-color 0.2s;
 }
 
 .search-list-option:hover, .search-list-option:focus {
@@ -402,9 +420,6 @@ th {
     padding: 5px;
     font-size: smaller;
     width: 100%;
-}
-
-.drag-n-drop-container {
 }
 
 .over-under {

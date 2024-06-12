@@ -1,0 +1,74 @@
+1. docker build -t new-frontend-image:latest -f ClientDockerfile .
+
+2. docker tag new-frontend-image:latest 975829034355.dkr.ecr.us-east-1.amazonaws.com/frontend-repo  
+
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password
+-stdin 975829034355.dkr.ecr.us-east-1.amazonaws.com
+
+3. docker push 975829034355.dkr.ecr.us-east-1.amazonaws.com/frontend-repo   
+
+4. Update ECS Task Definition: If you're using ECS, navigate to the ECS console and update the task definition associated with your service. Modify the image tag in the task definition to reference the new version of your Docker image.
+
+5. Redeploy Service: After updating the task definition, redeploy your ECS service to apply the changes. This can typically be done through the ECS console or via the AWS CLI.
+
+18.234.192.89
+
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Trace"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "WebApiDatabase": "Host=localhost; Database=hoop_scoop; Username=postgres; Password=redsox45"
+  }
+}
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./ReactApp4.Server
+      dockerfile: ServerDockerfile  # Assuming you named your server Dockerfile as ServerDockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__WebApiDatabase=Host=db;Database=hoop_scoop;Username=postgres;Password=redsox45
+
+  frontend:
+    build:
+      context: ./reactapp4.client  # Specify the path to your frontend Dockerfile
+      dockerfile: ClientDockerfile
+    ports:
+      - "80:80"  # Change the port if needed
+    depends_on:
+      - backend
+
+  #nginx:
+  #  build:
+  #    context: ./nginx  # Use the custom Dockerfile in the ./nginx directory
+  #  ports:
+  #    - "80:80"
+  #  depends_on:
+  #    - frontend
+  #    - backend
+
+  db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: hoop_scoop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: redsox45
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+
+volumes:
+  postgres-data:

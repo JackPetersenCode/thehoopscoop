@@ -33,7 +33,7 @@ const LineupsPlayersSelect: React.FC<LineupsPlayersSelectProps> = ({ options, se
     }
 
     useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
+        function handleClickOutside(event: MouseEvent | TouchEvent) {
             if (
                 refOne.current &&
                 !refOne.current.contains(event.target as Node) //&&
@@ -44,8 +44,12 @@ const LineupsPlayersSelect: React.FC<LineupsPlayersSelectProps> = ({ options, se
         }
 
         document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('touchstart', handleClickOutside); // Add touchstart event listener
+
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside); // Add touchstart event listener
+
         };
     }, [isOpen, setIsOpen]);
 

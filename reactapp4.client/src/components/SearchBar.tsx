@@ -3,15 +3,7 @@ import styled from 'styled-components';
 import { Player } from '../interfaces/Player';
 import SearchList from './SearchList';
 
-const ContainerDiv = styled.div`
-    position: relative;
-`;
 
-
-const DropdownStyle = styled.div`
-    position: absolute;
-    z-index: 5;
-`;
 
 interface SearchBarProps {
     activePlayers: Player[];
@@ -58,14 +50,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
     }
 
     return (
-        <ContainerDiv ref={refTwo}>
+        <div className='container-div' ref={refTwo}>
             <div className="drop-title">
                 Find Player
             </div>
             <div>
                 <input type="text" className="input-box" value={inputText} placeholder="Find Player" onChange={inputHandler} onKeyDown={handleEnter} onClick={handleClick} />
             </div>
-            <DropdownStyle>
+            <div className='drop-down-style'>
                 {activePlayers.length > 0 && inputText.length > 0 ? (
                     <SearchList
                         refTwo={refTwo}
@@ -85,8 +77,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 ) : (
                     ''
                 )}
-            </DropdownStyle>
-        </ContainerDiv>
+            </div>
+        </div>
     );
 };
 

@@ -7,4 +7,4 @@ def test(message):
     directory = os.getcwd()
     return message + ': ' + directory
 
-test("buttholes")
+test("testing")

@@ -12,6 +12,7 @@ import PropBet from '../components/PropBet';
 import LegacyPredictions from '../components/LegacyPredictions';
 import DropDown from '../components/DropDown';
 import Head2Head from '../components/Head2Head';
+import axios from 'axios';
 
 
 
@@ -52,8 +53,8 @@ function Home() {
     useEffect(() => {
         async function getData() {
 
-            const activePlayersResponse = await fetch('api/players/active');
-            const activePlayersData = await activePlayersResponse.json();
+            const activePlayersResponse = await axios.get('api/players/active');
+            const activePlayersData = await activePlayersResponse.data;
             console.log(activePlayersData)
             setActivePlayers(activePlayersData);
 
