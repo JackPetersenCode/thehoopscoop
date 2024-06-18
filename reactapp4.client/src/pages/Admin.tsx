@@ -410,7 +410,7 @@ function Admin() {
         const season = "2023_24";
         await getGames(season);
     }
-
+    loadExpectedBySeason();
 
     return (
         <div>
