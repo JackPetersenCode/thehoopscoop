@@ -38,7 +38,7 @@ namespace ReactApp4.Server.Services
                 var gamesPlayedQuery =
 
                         $@"WITH GamesPlayed AS (
-                        SELECT COUNT(DISTINCT {tableName}.game_id) AS gp, player_id
+                        SELECT COUNT(DISTINCT {tableName}.game_id) AS gp, {tableName}.player_id, {tableName}.team_id
                         FROM {tableName}
                         JOIN league_games_{season}
                         ON {tableName}.game_id = league_games_{season}.game_id
@@ -49,13 +49,13 @@ namespace ReactApp4.Server.Services
                     gamesPlayedQuery +=
                         $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
                 }
-                gamesPlayedQuery += $@"GROUP BY player_id
+                gamesPlayedQuery += $@"GROUP BY {tableName}.player_id, {tableName}.team_id
                     )";
 
                 var offRatingQuery = $@"
                         PlayerStats AS (
                           SELECT box_score_traditional_{season}.player_id,
-					      box_score_traditional_{season}.player_name,
+					                box_score_traditional_{season}.player_name,
                           box_score_traditional_{season}.team_id,
                           box_score_traditional_{season}.team_abbreviation,
                           SUM(box_score_traditional_{season}.ast) AS ast,
@@ -81,6 +81,7 @@ namespace ReactApp4.Server.Services
                           WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' ";
                 if (selectedOpponent != "1")
                 {
+                    Console.WriteLine("*****************************************************************************************************************************************888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888");
                     offRatingQuery +=
                         $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
 
@@ -92,7 +93,7 @@ namespace ReactApp4.Server.Services
                         ),
                         PlayerStatsAdvanced AS (
                          Select box_score_advanced_{season}.player_id,
-					      box_score_advanced_{season}.player_name,
+					                box_score_advanced_{season}.player_name,
                           box_score_advanced_{season}.team_id,
                           box_score_advanced_{season}.team_abbreviation,
                           ROUND(AVG(pie) * 100, 2) as pie,
@@ -645,6 +646,7 @@ namespace ReactApp4.Server.Services
                             {tableName}
                         JOIN GamesPlayed
                             ON {tableName}.player_id = GamesPlayed.player_id
+                            AND {tableName}.team_id = GamesPlayed.team_id
                         JOIN league_games_{season}
                             ON {tableName}.game_id = league_games_{season}.game_id
                             AND {tableName}.team_id = league_games_{season}.team_id
@@ -659,7 +661,7 @@ namespace ReactApp4.Server.Services
 
                         }
                         query += $@"GROUP BY  
-                            {tableName}.player_id, player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp
+                            {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp
                         ORDER BY {sortField} {order}";
 
                         Console.WriteLine("HERE");
@@ -708,6 +710,7 @@ namespace ReactApp4.Server.Services
                             {tableName}
                         JOIN GamesPlayed
                             ON {tableName}.player_id = GamesPlayed.player_id
+                            AND {tableName}.team_id = GamesPlayed.team_id
                         JOIN league_games_{season}
                             ON {tableName}.game_id = league_games_{season}.game_id
                             AND {tableName}.team_id = league_games_{season}.team_id
@@ -782,7 +785,6 @@ namespace ReactApp4.Server.Services
                 }
                 else if (boxType == "Advanced")
                 {
-                    Console.WriteLine("shithole");
                     Console.WriteLine(selectedTeam);
                     Console.WriteLine(selectedOpponent);
 
@@ -1003,6 +1005,7 @@ namespace ReactApp4.Server.Services
                                     {tableName}
                                 JOIN GamesPlayed
                                     ON {tableName}.player_id = GamesPlayed.player_id
+                                    AND {tableName}.team_id = GamesPlayed.team_id
                                 JOIN league_games_{season}
                                     ON {tableName}.game_id = league_games_{season}.game_id
                                     AND {tableName}.team_id = league_games_{season}.team_id
@@ -1030,8 +1033,8 @@ namespace ReactApp4.Server.Services
                     query =
                         gamesPlayedQuery + ", " + offRatingQuery + 
                         $@"                       
-                        SELECT box_score_scoring_{season}.player_name, box_score_scoring_{season}.player_id,
-                        box_score_scoring_{season}.team_id, box_score_scoring_{season}.team_abbreviation,
+                        SELECT PlayerStats.player_name, PlayerStats.player_id,
+                        PlayerStats.team_id, PlayerStats.team_abbreviation,
                         PlayerStats.min / GamesPlayed.gp AS min,
                         CASE
                           WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN 0
@@ -1093,10 +1096,10 @@ namespace ReactApp4.Server.Services
                           WHEN SUM(box_score_traditional_{season}.fgm) IS NULL OR SUM(box_score_traditional_{season}.fgm) = 0 THEN 0
                           ELSE SUM(box_score_scoring_{season}.pct_uast_fgm * box_score_traditional_{season}.fgm) / SUM(box_score_traditional_{season}.fgm)
                         END AS pct_uast_fgm
-                        FROM box_score_scoring_{season}
-                        JOIN PlayerStats
-                        ON box_score_scoring_{season}.player_id = PlayerStats.player_id
-                        AND box_score_scoring_{season}.team_id = PlayerStats.team_id
+                        FROM PlayerStats
+                        JOIN box_score_scoring_{season}
+                        ON PlayerStats.player_id = box_score_scoring_{season}.player_id
+                        AND PlayerStats.team_id = box_score_scoring_{season}.team_id
                         JOIN box_score_traditional_{season}
                         ON box_score_scoring_{season}.player_id = box_score_traditional_{season}.player_id
                         AND box_score_scoring_{season}.team_id = box_score_traditional_{season}.team_id
@@ -1106,15 +1109,16 @@ namespace ReactApp4.Server.Services
                         AND box_score_scoring_{season}.team_id = league_games_{season}.team_id
                         JOIN GamesPlayed
                         ON {tableName}.player_id = GamesPlayed.player_id
-                        WHERE box_score_scoring_{season}.team_id LIKE '%{selectedTeam}%' ";
+                        AND PlayerStats.team_id = GamesPlayed.team_id
+                        WHERE PlayerStats.team_id LIKE '%{selectedTeam}%' ";
                 if (selectedOpponent != "1")
                 {
                     query +=
                         $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
 
                 }
-                     query += $@"GROUP BY box_score_scoring_{season}.player_name, box_score_scoring_{season}.player_id, box_score_scoring_{season}.team_id, box_score_scoring_{season}.team_abbreviation, PlayerStats.min, PlayerStats.fga,
-                        PlayerStats.fg3a, PlayerStats.pts, PlayerStats.fgm, PlayerStats.fg3m, PlayerStats.ftm, GamesPlayed.gp
+                     query += $@"GROUP BY PlayerStats.player_name, PlayerStats.player_id, PlayerStats.team_id, PlayerStats.team_abbreviation, PlayerStats.min, GamesPlayed.gp, PlayerStats.fga,
+                        PlayerStats.fg3a, PlayerStats.fgm, PlayerStats.fg3m, PlayerStats.pts, PlayerStats.ftm
                         HAVING SUM(box_score_scoring_{season}.min) > 0
                         ORDER BY {sortField} {order}
                     ";

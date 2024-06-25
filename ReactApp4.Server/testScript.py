@@ -1,7 +1,7 @@
 ﻿import os
 
 def sayHello():
-    return "helllloooooo"    
+    return "helllloooooo lowercase"    
 
 def test(message):
     directory = os.getcwd()
