@@ -1,5 +1,5 @@
 table tr:hover {
-    background-color: rgba(174, 194, 255, 0.5);
+    background-color: #aec2ff80;
 }
 
 .upcoming-grid {
@@ -8,7 +8,7 @@ table tr:hover {
     align-items: center;
     font-size: large;
     text-align: center;
-    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));;
+    background-image: linear-gradient(#282828, #000000);;
     max-width: 500px;
     min-width: fit-content;
     margin-bottom: 20px;
@@ -26,7 +26,7 @@ table tr:hover {
 .upcoming-headers {
     font-size: small;
     font-weight: 600;
-    color: rgb(198, 198, 198);
+    color: #c6c6c6;
     padding: 5px;
     padding-bottom: 0px;
 }
@@ -37,14 +37,14 @@ table tr:hover {
   align-items: center;
   font-size: medium;
   text-align: center;
-  background-color: rgb(238, 238, 238);
+  background-color: #eeeeee;
   margin-bottom: 10px;
 }
 
 .historical-headers {
   font-size: x-small;
   font-weight: 600;
-  color: rgb(98, 98, 98);
+  color: #626262;
 }
 
 .historical-container {
@@ -76,7 +76,7 @@ table tr:hover {
 
 
 .yellow-line {
-    background-image: linear-gradient(to right, rgb(255, 230, 0) , rgb(255, 255, 255));
+    background-image: linear-gradient(to right, #ffe600 , #ffffff);
     height: 5px;
     margin-bottom: 20px;
 }
@@ -84,8 +84,8 @@ table tr:hover {
 .statistics-title {
     font-size: xx-large;
     font-weight: 350;
-    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
-    color: whitesmoke;
+    background-image: linear-gradient(#282828, #000000);
+    color: #f5f5f5;
     padding: 5px;
     padding-left: 10px;
     text-align: left;
@@ -94,8 +94,8 @@ table tr:hover {
 .prop-results-background {
     font-size: xx-large;
     font-weight: 200;
-    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
-    color: whitesmoke;
+    background-image: linear-gradient(#282828, #000000);
+    color: #f5f5f5;
 }
 
 .expected-info {
@@ -130,8 +130,8 @@ table tr:hover {
     padding-bottom: 1%;
     padding-right: 10%;
     padding-left: 10%;
-    color: whitesmoke;
-    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
+    color: #f5f5f5;
+    background-image: linear-gradient(#282828, #000000);
 } 
 
 .inner-upcoming-flex {
@@ -142,7 +142,7 @@ table tr:hover {
 .overall-w-l {
   font-weight: 600;
   font-size: small;
-  color:rgb(98,98,98);
+  color:#626262;
   margin-right: 5px;
 }
 
@@ -159,7 +159,7 @@ table tr:hover {
 }
 
 .upcoming-scores {
-    color: yellow;
+    color: #ffff00;
 }
 
 .overall-flex {
@@ -177,13 +177,13 @@ table tr:hover {
 .light-green-block {
   width: 10px;
   height: 10px;
-  background-color: rgb(204, 255, 200);
+  background-color: #ccffc8;
 }
 
 .red-block {
   width: 10px;
   height: 10px;
-  background-color: rgb(255, 208, 208);
+  background-color: #ffd0d0;
 }
 
 .drop-flex {
@@ -215,7 +215,7 @@ table tr:hover {
 }
 
 .drop-title {
-    color: rgb(153, 153, 153);
+    color: #999999;
     font-size: x-small;
     font-weight: 600;
     text-align: left;
@@ -233,8 +233,9 @@ table tr:hover {
     font-size: smaller;
     border: solid transparent;
     border-right: 12px solid transparent;
-    background-color: rgb(238, 238, 238);
+    background-color: #eeeeee;
     border-radius: 5px;
+    color:#000000;
     width: 100%;
 }
 
@@ -244,7 +245,8 @@ table tr:hover {
     font-weight: 400;
     border: solid transparent;
     border-right: 12px solid transparent;
-    background-color: rgb(255, 230, 0);
+    color:#000000;
+    background-color: #ffe600;
     border-radius: 5px;
     width: 100%;
 }
@@ -259,8 +261,8 @@ left-justify {
 }
 
 .drop-flex-option {
-    background-color: rgb(238,238,238);
-    color: black;
+    background-color: #eeeeee;
+    color: #000000;
     padding: 10px;
 }
 
@@ -281,12 +283,12 @@ left-justify {
 
 .search-list {
     text-align: left;
-    background-color: rgb(238,238,238);
+    background-color: #eeeeee;
     overflow-y: auto;
     max-height: 300px;
     font-size: small;
     border-radius: 5px;
-    box-shadow: 3px 3px 4px rgba(0,0,0,0.2), -3px 3px 4px rgba(0,0,0,0.2);
+    box-shadow: 3px 3px 4px #00000033, -3px 3px 4px #00000033;
 }
 
 .search-list-option {
@@ -297,8 +299,8 @@ left-justify {
 }
 
 .search-list-option:hover, .search-list-option:focus {
-    background-color: gray;
-    color: white;
+    background-color: #808080;
+    color: #ffffff;
     width: 100%;
     cursor: pointer;
 }
@@ -384,8 +386,8 @@ th {
     padding: 20px;
     font-size: xx-large;
     font-weight: 200;
-    background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
-    color: whitesmoke;
+    background-image: linear-gradient(#282828, #000000);
+    color: #f5f5f5;
 }
 
 .home-container {
@@ -393,7 +395,7 @@ th {
     margin-right: 10%;
     margin-left: 10%;
     overflow: auto;
-    background-color: white;
+    background-color: #ffffff;
     border-radius: 5px;
 }
 
@@ -416,6 +418,7 @@ th {
 
 .input-box {
     border-radius: 5px;
+    color:#000000;
     background-color: rgb(255,255,255);
     padding: 5px;
     font-size: smaller;

@@ -12,6 +12,8 @@ using Microsoft.Extensions.FileSystemGlobbing;
 using System.Numerics;
 using System.Reflection.Emit;
 using ReactApp4.Server.Controllers;
+using System.Data.SqlClient;
+
 
 namespace ReactApp4.Server.Services
 {
@@ -19,13 +21,14 @@ namespace ReactApp4.Server.Services
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<IActionResult> GetBoxScores(string season, string boxType, string order, string sortField, string perMode, string selectedTeam, string selectedOpponent )
+        public async Task<IActionResult> GetBoxScores(string season, string boxType, string order, string sortField, string perMode, string selectedTeam, string selectedOpponent, string playerId )
         {
 
             
 
             try
             {
+
                 if (boxType == "Base")
                 {
                     boxType = "Traditional";
@@ -44,6 +47,12 @@ namespace ReactApp4.Server.Services
                         ON {tableName}.game_id = league_games_{season}.game_id
                         AND {tableName}.team_id = league_games_{season}.team_id
                         WHERE {tableName}.min > 0 ";
+                if (playerId != "1")
+                {
+                    Console.WriteLine("playerId is not 1");
+                    gamesPlayedQuery +=
+                        $@"AND {tableName}.player_id = @playerId ";
+                }
                 if (selectedOpponent != "1")
                 {
                     gamesPlayedQuery +=
@@ -78,13 +87,17 @@ namespace ReactApp4.Server.Services
                           JOIN league_games_{season}
                           ON box_score_traditional_{season}.game_id = league_games_{season}.game_id
                           AND box_score_traditional_{season}.team_id = league_games_{season}.team_id
-                          WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' ";
+                          WHERE box_score_traditional_{season}.team_id LIKE @selectedTeam ";
+                if (playerId != "1")
+                {
+                    offRatingQuery +=
+                        $@"AND box_score_traditional_{season}.player_id = @playerId ";
+                }
                 if (selectedOpponent != "1")
                 {
                     Console.WriteLine("*****************************************************************************************************************************************888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888");
                     offRatingQuery +=
                         $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
-
                 }
 
 
@@ -102,7 +115,12 @@ namespace ReactApp4.Server.Services
                           JOIN league_games_{season}
                           ON box_score_advanced_{season}.game_id = league_games_{season}.game_id
                           AND box_score_advanced_{season}.team_id = league_games_{season}.team_id
-                          WHERE box_score_advanced_{season}.team_id LIKE '%{selectedTeam}%' ";
+                          WHERE box_score_advanced_{season}.team_id LIKE @selectedTeam ";
+                if (playerId != "1")
+                {
+                    offRatingQuery +=
+                        $@"AND box_score_advanced_{season}.player_id = @playerId ";
+                }
                 if (selectedOpponent != "1")
                 {
                     offRatingQuery += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
@@ -134,7 +152,7 @@ namespace ReactApp4.Server.Services
                           JOIN league_games_{season}
                           ON box_score_traditional_{season}.game_id = league_games_{season}.game_id
                           AND box_score_traditional_{season}.team_id = league_games_{season}.team_id
-                          WHERE box_score_traditional_{season}.team_id LIKE '%{selectedTeam}%' ";
+                          WHERE box_score_traditional_{season}.team_id LIKE @selectedTeam ";
 
                 if (selectedOpponent != "1")
                 {
@@ -564,14 +582,39 @@ namespace ReactApp4.Server.Services
                     ";
 
 
-                //int pageSize = 100;
-
+                // int pageSize = 100;
+                // 
                 Console.WriteLine("BoxType: ==> ");
                 Console.WriteLine(boxType);
+
+                //if (boxType == "Stats")
+                //{
+                //    string[] stats = ["pts", "reb", "ast"];
+                //    // Assign box_type for each?
+                //    string[] traditional_stats = ["pts", "reb", "ast", "stl"];
+                //    
+                //    Dictionary<string, string> statTableMapping = new Dictionary<string, string>
+                //    {
+                //        { "pts", "box_score_traditional" },
+                //        { "reb", "box_score_traditional" },
+                //        { "ast", "box_score_traditional" }
+                //        // Add more mappings as needed for other stats
+                //    };
+                //    query =
+                //            $@"SELECT 
+                //                {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city, 
+                //                player_id, player_name, 
+//
+                //    if (perMode == "Totals")
+                //    {                    
+                //}
+
                 if (boxType == "Traditional")
                 {
                     if (perMode == "Totals")
                     {
+                        
+
                         query =
                             $@"SELECT 
                                 {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city, 
@@ -603,6 +646,13 @@ namespace ReactApp4.Server.Services
                             AND {tableName}.team_id = league_games_{season}.team_id
                             WHERE 
                                 {tableName}.min > 0 ";
+                        if (playerId != "1")
+                        {
+                            Console.WriteLine("player iddddd");
+                            Console.WriteLine(playerId);
+                            query +=
+                                $@"AND {tableName}.player_id = @playerId ";
+                        }
                         if (selectedOpponent != "1")
                         {
                             query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') 
@@ -610,7 +660,7 @@ namespace ReactApp4.Server.Services
 
                         }
 
-                        query += $@"AND {tableName}.team_id LIKE '%{selectedTeam}%' 
+                        query += $@"AND {tableName}.team_id LIKE @selectedTeam 
                             GROUP BY player_id, player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city 
                             ORDER BY {sortField} {order}";
                     }
@@ -653,7 +703,12 @@ namespace ReactApp4.Server.Services
                         WHERE
                             {tableName}.min > 0
                         AND 
-                            {tableName}.team_id LIKE '%{selectedTeam}%' ";
+                            {tableName}.team_id LIKE @selectedTeam ";
+                        if (playerId != "1")
+                        {
+                            query +=
+                                $@"AND {tableName}.player_id = @playerId ";
+                        }                        
                         if (selectedOpponent != "1")
                         {
                             query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') 
@@ -717,7 +772,12 @@ namespace ReactApp4.Server.Services
                         WHERE
                             {tableName}.min > 0
                         AND
-                            {tableName}.team_id LIKE '%{selectedTeam}%' ";
+                            {tableName}.team_id LIKE @selectedTeam ";
+                        if (playerId != "1")
+                        {
+                            query +=
+                                $@"AND {tableName}.player_id = @playerId ";
+                        }
                         if (selectedOpponent != "1")
                         {
                             query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') 
@@ -769,7 +829,12 @@ namespace ReactApp4.Server.Services
                         WHERE
                             {tableName}.min > 0
                         AND
-                            {tableName}.team_id LIKE '%{selectedTeam}%' ";
+                            {tableName}.team_id LIKE @selectedTeam ";
+                        if (playerId != "1")
+                        {
+                            query +=
+                                $@"AND {tableName}.player_id = @playerId ";
+                        }
                         if (selectedOpponent != "1")
                         {
                             query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') 
@@ -778,7 +843,9 @@ namespace ReactApp4.Server.Services
                         query += $@"GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, {tableName}.team_city 
                         ORDER BY {sortField} {order}";
                     }
-                    var boxScores = await _context.BoxScoreTraditionalPlayers.FromSqlRaw(query).ToListAsync();
+                    var boxScores = await _context.BoxScoreTraditionalPlayers
+                    .FromSqlRaw(query, new NpgsqlParameter("@selectedTeam", $"%{selectedTeam}%"), new NpgsqlParameter("@playerId", playerId))
+                    .ToListAsync();
                     Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
 
@@ -828,7 +895,7 @@ namespace ReactApp4.Server.Services
                         HAVING Advanced_Stats.min > 0
                     ";
                     Console.WriteLine(query);
-                    var boxScores = await _context.BoxScoreAdvancedPlayers.FromSqlRaw(query).ToListAsync();
+                    var boxScores = await _context.BoxScoreAdvancedPlayers.FromSqlRaw(query, new NpgsqlParameter("@selectedTeam", $"%{selectedTeam}%"), new NpgsqlParameter("@playerId", playerId)).ToListAsync();
                     Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
 
@@ -857,7 +924,7 @@ namespace ReactApp4.Server.Services
                         ORDER BY {sortField} {order}
                         ";
 
-                    var boxScores = await _context.BoxScoreFourFactorsPlayers.FromSqlRaw(query).ToListAsync();
+                    var boxScores = await _context.BoxScoreFourFactorsPlayers.FromSqlRaw(query, new NpgsqlParameter("@selectedTeam", $"%{selectedTeam}%"), new NpgsqlParameter("@playerId", playerId)).ToListAsync();
                     Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
                 }
@@ -891,13 +958,18 @@ namespace ReactApp4.Server.Services
                                 AND {tableName}.team_id = league_games_{season}.team_id
                                 WHERE 
                                 {tableName}.min > 0 ";
+                        if (playerId != "1")
+                        {
+                            query +=
+                                $@"AND {tableName}.player_id = @playerId ";
+                        }
                         if (selectedOpponent != "1")
                         {
                             query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
 
                         }
 
-                        query += $@"AND {tableName}.team_id LIKE '%{selectedTeam}%' 
+                        query += $@"AND {tableName}.team_id LIKE @selectedTeam  
                             GROUP BY player_id, player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city 
                             ORDER BY {sortField} {order}";
                     }
@@ -928,7 +1000,12 @@ namespace ReactApp4.Server.Services
                                 JOIN league_games_{season}
                                 ON {tableName}.game_id = league_games_{season}.game_id
                                 AND {tableName}.team_id = league_games_{season}.team_id
-                                WHERE {tableName}.team_id LIKE '%{selectedTeam}%' ";
+                                WHERE {tableName}.team_id LIKE @selectedTeam ";
+                        if (playerId != "1")
+                        {
+                            query +=
+                                $@"AND {tableName}.player_id = @playerId ";
+                        }
                         if (selectedOpponent != "1")
                         {
                             query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
@@ -972,7 +1049,12 @@ namespace ReactApp4.Server.Services
                                 JOIN league_games_{season}
                                 ON {tableName}.game_id = league_games_{season}.game_id
                                 AND {tableName}.team_id = league_games_{season}.team_id
-                                WHERE {tableName}.team_id LIKE '%{selectedTeam}%' ";
+                                WHERE {tableName}.team_id LIKE @selectedTeam ";
+                        if (playerId != "1")
+                        {
+                            query +=
+                                $@"AND {tableName}.player_id = @playerId ";
+                        }
                         if (selectedOpponent != "1")
                         {
                             query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
@@ -1012,18 +1094,22 @@ namespace ReactApp4.Server.Services
                                 WHERE
                                     {tableName}.min > 0
                                 AND 
-                                    {tableName}.team_id LIKE '%{selectedTeam}%' ";
+                                    {tableName}.team_id LIKE @selectedTeam ";
+                                if (playerId != "1")
+                                {
+                                    query +=
+                                        $@"AND {tableName}.player_id = @playerId ";
+                                }
                                 if (selectedOpponent != "1")
                                 {
-                            query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
-
+                                    query += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
                                 }
                                 query += $@"GROUP BY  
                                     {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp
                                 ORDER BY {sortField} {order}";
                     }
                     Console.WriteLine(boxType);
-                    var boxScores = await _context.BoxScoreMiscPlayers.FromSqlRaw(query).ToListAsync();
+                    var boxScores = await _context.BoxScoreMiscPlayers.FromSqlRaw(query, new NpgsqlParameter("@selectedTeam", $"%{selectedTeam}%"), new NpgsqlParameter("@playerId", playerId)).ToListAsync();
                     Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
                 }
@@ -1110,7 +1196,7 @@ namespace ReactApp4.Server.Services
                         JOIN GamesPlayed
                         ON {tableName}.player_id = GamesPlayed.player_id
                         AND PlayerStats.team_id = GamesPlayed.team_id
-                        WHERE PlayerStats.team_id LIKE '%{selectedTeam}%' ";
+                        WHERE PlayerStats.team_id LIKE @selectedTeam ";
                 if (selectedOpponent != "1")
                 {
                     query +=
@@ -1122,7 +1208,7 @@ namespace ReactApp4.Server.Services
                         HAVING SUM(box_score_scoring_{season}.min) > 0
                         ORDER BY {sortField} {order}
                     ";
-                    var boxScores = await _context.BoxScoreScoringPlayers.FromSqlRaw(query).ToListAsync();
+                    var boxScores = await _context.BoxScoreScoringPlayers.FromSqlRaw(query, new NpgsqlParameter("@selectedTeam", $"%{selectedTeam}%"), new NpgsqlParameter("@playerId", playerId)).ToListAsync();
                     Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
                 }

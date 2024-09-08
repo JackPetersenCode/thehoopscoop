@@ -30,6 +30,14 @@ const Head2Head = () => {
         getPlayers();
     }, []); // The empty dependency array ensures this effect runs once on component mount
 
+    // <div>
+    // <h1>Players:</h1>
+    //   {players.map((player: Player, index: React.Key) => (
+    //     <div key={index}>
+    //       {player.full_name}
+    //     </div>
+    //   ))}
+    // </div>
     return (
         <div>
             <br></br>
@@ -43,14 +51,6 @@ const Head2Head = () => {
             </div>
             <div className='center'>
                 <img className='steve-balmer' src="/images/UnderConstruction.jpg" />
-            </div>
-            <div>
-              <h1>Players:</h1>
-                {players.map((player: Player, index: React.Key) => (
-                  <div key={index}>
-                    {player.full_name}
-                  </div>
-                ))}
             </div>
         </div>
     )
