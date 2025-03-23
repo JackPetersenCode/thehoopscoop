@@ -47,9 +47,6 @@ interface HistoricalGridProps {
 
 const HistoricalGrid: React.FC<HistoricalGridProps> = ({game}) => {
 
-
-    console.log('historical grid')
-    console.log(game);
     let HomeLogo;
     let VisitorLogo;
 

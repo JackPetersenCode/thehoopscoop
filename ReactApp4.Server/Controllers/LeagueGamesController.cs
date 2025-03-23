@@ -43,11 +43,64 @@ namespace ReactApp4.Server.Controllers
             return await _leagueGameDataHandler.GetGamesFromFile(season);
         }
 
+        [HttpGet("BackToBack/{previousDate}/{season}")]
+        public async Task<IActionResult> GetBackToBacks(
+            [FromQuery] string game_id, 
+            [FromQuery] string home_team_id, 
+            [FromQuery] string visitor_team_id, 
+            [FromQuery] string game_date, 
+            string previousDate, 
+            string season)
+        {
+
+
+            var game = new LeagueGameWithHomeVisitor
+            {
+                GameId = game_id,
+                HomeTeamId = home_team_id,
+                VisitorTeamId = visitor_team_id,
+                GameDate = game_date
+            };
+
+            return await _leagueGameDataHandler.GetBackToBacks(game, previousDate, season);
+        }
+
+
+        public class B2BRequest
+        {
+            public string Season { get; set; }
+            public string[] TeamIds { get; set; }
+        }
+
+        
+        [HttpGet("B2B_Averages/{season}")]
+        public async Task<IActionResult> B2BAverages([FromRoute] string season, [FromQuery] string[] teamIds)
+        {
+            if (string.IsNullOrEmpty(teamIds[0]))
+            {
+                return BadRequest("Team name is required.");
+            }
+            return await _leagueGameDataHandler.B2BAverages(teamIds, season);
+        }
+
+        [HttpGet("TeamPtsAverage/{season}")]
+        public async Task<IActionResult> TeamPtsAverage([FromRoute] string season, [FromQuery] string[] teamIds)
+        {
+            if (string.IsNullOrEmpty(teamIds[0]))
+            {
+                return BadRequest("Team name is required.");
+            }
+            return await _leagueGameDataHandler.TeamPtsAverage(teamIds, season);
+        }
+
+        
         [HttpPost]
         public async Task<IActionResult> CreateLeagueGame([FromBody] object[] leagueGame)
         {
             return await _leagueGameDataHandler.CreateLeagueGame(leagueGame);
         }
     }
+
+
 }
 

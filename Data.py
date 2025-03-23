@@ -1,5 +1,6 @@
 import time
 import csv
+import aiofiles
 import schedule
 import time
 import os
@@ -56,11 +57,18 @@ from nba_api.stats.library.parameters import PerMode36, LeagueIDNullable
 import requests
 import aiocron
 from datetime import datetime, timedelta
+import aiohttp
 
 #from postFunctions import post_league_games_by_season
 # Load environment variables from .env file
 load_dotenv()
 
+
+# Ensure 'juicystats' folder exists
+JUICYSTATS_PATH = os.path.join(os.getcwd(), "juicystats")  # Gets absolute path
+
+if not os.path.exists(JUICYSTATS_PATH):
+    os.makedirs(JUICYSTATS_PATH)  # Create directory if it doesn't exist
 
 player_dict = players.get_players()
 
@@ -123,15 +131,36 @@ def assiststracker():
 	    outfile.write(jsonContent)
 
 boxScoreArray = []
-def readLeagueGames():
-    URL = 'http://localhost:5190/api/tablelength/box/box_score_advanced_2023_24'
-    response = requests.get(url = URL)
-    data = response.json()
-    count = data['count']
-    f = open('./juicystats/league_games_2023_24.json')
-	# returns JSON object as 
-	# a dictionary
-    games = json.load(f)
+async def readLeagueGames():
+    #URL = 'http://localhost:5190/api/tablelength/box/box_score_advanced_2024_25'
+    #response = requests.get(url = URL)
+    #data = response.json()
+    #count = data['count']
+    #f = open('./juicystats/league_games_2024_25.json')
+	## returns JSON object as 
+	## a dictionary
+    #games = json.load(f)
+    """Fetches table length and reads game data asynchronously."""
+    URL = 'http://localhost:5190/api/tablelength/box/box_score_advanced_2024_25'
+    count = 0
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(URL) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    count = data['count']
+                else:
+                    print(f"❌ Failed to fetch data. Status: {response.status}")
+                    return
+
+            # Read the JSON file asynchronously
+            file_path = './juicystats/league_games_2024_25.json'
+            async with aiofiles.open(file_path, mode='r', encoding='utf-8') as f:
+                games_content = await f.read()
+                games = json.loads(games_content)
+
+        except Exception as e:
+            print(f"❌ Error in readLeagueGames(): {e}")
 	# Iterating through the json
 	# list
     idList = []
@@ -146,13 +175,12 @@ def readLeagueGames():
         if games["resultSets"][0]["rowSet"][i][4] in idList:
             continue
         idList.append(games["resultSets"][0]["rowSet"][i][4])
-        box = boxscoreadvanced(games["resultSets"][0]["rowSet"][i][4])
+        box = await boxscoreadvanced(games["resultSets"][0]["rowSet"][i][4])
         boxScoreArray.append(box)
     # Closing file
     f.close()   
 
-def boxscoreadvanced(gameId):
-
+async def boxscoreadvanced(gameId):
 	response = boxscoreadvancedv2.BoxScoreAdvancedV2(
 		game_id=gameId,
 		end_period=EndPeriod.default,
@@ -169,10 +197,9 @@ def boxscoreadvanced(gameId):
 	content = json.loads(response.get_json())
 	jsonContent = json.dumps(content)
 	boxData = json.loads(jsonContent, object_hook=lambda d: SimpleNamespace(**d))
-	print(boxData.resultSets[0].headers)
 	header = boxData.resultSets[0].headers
 	try:
-		with open('./juicystats/box_score_advanced_2023_24.csv', 'a', encoding='UTF8', newline='') as f:
+		with open('./juicystats/box_score_advanced_2024_25.csv', 'a', encoding='UTF8', newline='') as f:
 			writer = csv.writer(f)
 			writer.writerow(header)
 			writer.writerows(boxData.resultSets[0].rowSet)
@@ -180,15 +207,47 @@ def boxscoreadvanced(gameId):
 	except ValueError:
 		print("VALUE ERROR?!?!?!!?!!??!?!??!??!?!!?")
 
+#import csv
+#import aiofiles
+#
+#async def boxscoreadvanced(gameId):
+#    """Fetches and processes advanced box score data asynchronously."""
+#    try:
+#        response = boxscoreadvancedv2.BoxScoreAdvancedV2(
+#		    game_id=gameId,
+#		    end_period=EndPeriod.default,
+#		    end_range=EndRange.default,
+#		    range_type=RangeType.default,
+#		    start_period=StartPeriod.default,
+#		    start_range=StartRange.default,
+#		    proxy=None,
+#		    headers=None,
+#		    timeout=30,
+#		    get_request=True
+#	    )
+#        content = json.loads(response.get_json())
+#        boxData = json.loads(json.dumps(content), object_hook=lambda d: SimpleNamespace(**d))
+#
+#        file_path = './juicystats/box_score_advanced_2024_25.csv'
+#
+#        async with aiofiles.open(file_path, 'a', encoding='UTF8', newline='') as f:
+#            writer = csv.writer(await f)
+#            await writer.writerow(boxData.resultSets[0].headers)
+#            await writer.writerows(boxData.resultSets[0].rowSet)
+#
+#        print(f"✅ Box score advanced data written for game {gameId}")
+#
+#    except Exception as e:
+#        print(f"❌ Error in boxscoreadvanced(): {e}")
 
 boxScoreScoringArray = []
-def readLeagueGamesScoring():
-    URL = 'http://localhost:5190/api/tablelength/box_score_scoring_2023_24'
+async def readLeagueGamesScoring():
+    URL = 'http://localhost:5190/api/tablelength/box_score_scoring_2024_25'
     response = requests.get(url = URL)
     data = response.json()
     count = data['count']
     
-    f = open('./juicystats/league_games_2023_24.json')
+    f = open('./juicystats/league_games_2024_25.json')
 	# returns JSON object as 
 	# a dictionary
     games = json.load(f)
@@ -200,7 +259,7 @@ def readLeagueGamesScoring():
     print(start)
     print(end)
     print(len(games["resultSets"][0]["rowSet"]))
-    for i in range (0, end):
+    for i in range (start - 1, end):
         ##print(len(games["resultSets"][0]["rowSet"]))
         ##print(games["resultSets"][0]["rowSet"][i])
         print(i)
@@ -232,7 +291,7 @@ def boxScoreScoring(gameId):
 	boxData = json.loads(jsonContent, object_hook=lambda d: SimpleNamespace(**d))
 	header = boxData.resultSets[0].headers
 	try:
-		with open('./juicystats/box_score_scoring_2023_24.csv', 'a', encoding='UTF8', newline='') as f:
+		with open('./juicystats/box_score_scoring_2024_25.csv', 'a', encoding='UTF8', newline='') as f:
 			writer = csv.writer(f)
 			writer.writerow(header)
 			writer.writerows(boxData.resultSets[0].rowSet)
@@ -257,17 +316,17 @@ def alltimers():
 	with open("./juicystats/alltimeleadersgrids2.json", "w") as outfile:
 	    outfile.write(jsonContent)
 
-def shotchartdetailfunction():
+async def shotchartdetailfunction():
 	response = shotchartdetail.ShotChartDetail(
 		team_id=0,
 		player_id=0,
 		context_measure_simple='FGA',
-		season_nullable='2023-24',
+		season_nullable='2024-25',
 		season_type_all_star='Regular Season',
 	)
 	content = json.loads(response.get_json())
 	jsonContent = json.dumps(content)
-	with open("./juicystats/shots_2023_24.json", "w") as outfile:
+	with open("./juicystats/shots_2024_25.json", "w") as outfile:
 	    outfile.write(jsonContent)
 
 def playergamelogfunction(playerId, season):
@@ -278,24 +337,24 @@ def playergamelogfunction(playerId, season):
 	with open("./juicystats/games.json", "w") as outfile:
 		outfile.write(jsonContent)
 
-def writeNBAplayers():
-	seasons = ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023','2024']
+async def writeNBAplayers():
+	seasons = ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025']
 	list = []
 	for player in player_dict:
 		print(player)
 		jsonContent = json.dumps(player)
 		list.append(player)
 		jsonList = json.dumps(list)
-	with open("./juicystats/playersNBA2024.json", "w") as outfile:
+	with open("./juicystats/playersNBA2025.json", "w") as outfile:
 		outfile.write(jsonList)
 
-def leaguegames():
+async def leaguegames():
 	response = leaguegamelog.LeagueGameLog(
 		counter=0,
         direction=Direction.default,
         league_id=LeagueID.default,
         player_or_team_abbreviation=PlayerOrTeamAbbreviation.default,
-        season="2023-24",
+        season="2024-25",
         season_type_all_star=SeasonTypeAllStar.default,
         sorter=Sorter.default,
         date_from_nullable='',
@@ -308,13 +367,13 @@ def leaguegames():
 
 	content = json.loads(response.get_json())
 	jsonContent = json.dumps(content)
-	with open("./juicystats/leaguegames2023-2024.json", "w") as outfile:
+	with open("./juicystats/league_games_2024_25.json", "w") as outfile:
 	    outfile.write(jsonContent)
 
 def leaguehustlestats():
 	response = leaguehustlestatsplayer.LeagueHustleStatsPlayer(
 		per_mode_time=PerModeTime.default,
-        season="2023-24",
+        season="2024-25",
         season_type_all_star=SeasonTypeAllStar.default,
         college_nullable='',
         conference_nullable=ConferenceNullable.default,
@@ -346,7 +405,7 @@ def leaguehustlestats():
 	content = json.loads(response.get_json())
 	jsonContent = json.dumps(content)
 
-	with open("./juicystats/leaguehustlestatsplayer2023-2024.json", "w") as outfile:
+	with open("./juicystats/leaguehustlestatsplayer2024-2025.json", "w") as outfile:
 	    outfile.write(jsonContent)
 
 
@@ -642,30 +701,45 @@ def leaguedashplayershotlocationsfunction():
 
 
 boxScoreArrayTraditional = []
-def readLeagueGamesTraditional():
-    URL = 'http://localhost:5190/api/tablelength/box/box_score_traditional_2023_24'
-    response = requests.get(url = URL)
-    data = response.json()
-    print(data)
-    count = data['count']
-    print(count)
-    f = open('./juicystats/league_games_2023_24.json')
-    games = json.load(f)
+async def readLeagueGamesTraditional():
+    """Fetches table length and reads game data asynchronously."""
+    URL = 'http://localhost:5190/api/tablelength/box/box_score_traditional_2024_25'
+    count = 0
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(URL) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    count = data['count']
+                else:
+                    print(f"❌ Failed to fetch data. Status: {response.status}")
+                    return
+
+            # Read the JSON file asynchronously
+            file_path = './juicystats/league_games_2024_25.json'
+            async with aiofiles.open(file_path, mode='r', encoding='utf-8') as f:
+                games_content = await f.read()
+                games = json.loads(games_content)
+
+        except Exception as e:
+            print(f"❌ Error in readLeagueGames(): {e}")
     idList = []
     end = len(games["resultSets"][0]["rowSet"])
     start = int(count) * 2
+    print(start)
+    print(end)
     for i in range (start - 1, end):
         print(i)
         if games["resultSets"][0]["rowSet"][i][4] in idList or games["resultSets"][0]["rowSet"][i][4] is None:
             continue
         idList.append(games["resultSets"][0]["rowSet"][i][4])
-        box = boxScoreTraditional(games["resultSets"][0]["rowSet"][i][4])
+        box = await boxScoreTraditional(games["resultSets"][0]["rowSet"][i][4])
         boxScoreArrayTraditional.append(box)
     # Closing file
     f.close()
 
 
-def boxScoreTraditional(gameId):
+async def boxScoreTraditional(gameId):
     response = boxscoretraditionalv2.BoxScoreTraditionalV2(
         game_id = gameId,
         end_period=EndPeriod.default,
@@ -684,7 +758,7 @@ def boxScoreTraditional(gameId):
     boxData = json.loads(jsonContent, object_hook=lambda d: SimpleNamespace(**d))
     header = boxData.resultSets[0].headers
     try:
-        with open('./juicystats/box_score_traditional_2023_24.csv', 'a', encoding='UTF8', newline='') as f:
+        with open('./juicystats/box_score_traditional_2024_25.csv', 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(boxData.resultSets[0].rowSet)
@@ -778,14 +852,28 @@ def playerCareerStatsFunction(playerid):
         print("VALUE ERROR?!?!?!!?!!??!?!??!??!?!!?")
 
 boxScoreSummaryArray = []
-def readBoxScoreSummary():
-    URL = 'http://localhost:5190/api/tablelength/box_score_summary_2022_23'
-    response = requests.get(url = URL)
-    data = response.json()
-    count = data['count']
-    print(count)
-    f = open('./juicystats/league_games_2022_23.json')
-    games = json.load(f)
+async def readBoxScoreSummary():
+    """Fetches table length and reads game data asynchronously."""
+    URL = 'http://localhost:5190/api/tablelength/box_score_summary_2024_25'
+    count = 0
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(URL) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    count = data['count']
+                else:
+                    print(f"❌ Failed to fetch data. Status: {response.status}")
+                    return
+
+            # Read the JSON file asynchronously
+            file_path = './juicystats/league_games_2024_25.json'
+            async with aiofiles.open(file_path, mode='r', encoding='utf-8') as f:
+                games_content = await f.read()
+                games = json.loads(games_content)
+
+        except Exception as e:
+            print(f"❌ Error in readboxscoresummary(): {e}")
     idList = []
     end = len(games["resultSets"][0]["rowSet"])
     start = int(count) * 2
@@ -794,19 +882,19 @@ def readBoxScoreSummary():
     print('end')
     print(end)
     
-    for i in range (0, end):
+    for i in range (start - 1, end):
         print(i)
         if games["resultSets"][0]["rowSet"][i][4] in idList or games["resultSets"][0]["rowSet"][i][4] is None:
             print(games["resultSets"][0]["rowSet"][i][4])
             continue
         idList.append(games["resultSets"][0]["rowSet"][i][4])
         print(games["resultSets"][0]["rowSet"][i][4])
-        box = boxScoreSummaryFunction(games["resultSets"][0]["rowSet"][i][4])
+        box = await boxScoreSummaryFunction(games["resultSets"][0]["rowSet"][i][4])
         boxScoreSummaryArray.append(box)
     # Closing file
     f.close()
 
-def boxScoreSummaryFunction(gameid):
+async def boxScoreSummaryFunction(gameid):
     response = boxscoresummaryv2.BoxScoreSummaryV2 (    
         game_id=gameid,
         proxy=None,
@@ -820,7 +908,7 @@ def boxScoreSummaryFunction(gameid):
 
     header = careerData.resultSets[0].headers
     try:
-        with open('./juicystats/box_score_summary_2022_23_FULL.csv', 'a', encoding='UTF8', newline='') as f:
+        with open('./juicystats/box_score_summary_2024_25.csv', 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(careerData.resultSets[0].rowSet)
@@ -828,7 +916,7 @@ def boxScoreSummaryFunction(gameid):
     except ValueError:
         print("VALUE ERROR?!?!?!!?!!??!?!??!??!?!!?")
 
-def getOdds():
+async def getOdds():
     URL = 'https://api.the-odds-api.com/v4/sports/basketball_nba/odds/?apiKey=f8d80068fa8107d46ae62e3a3f15092f&regions=us&markets=h2h&oddsFormat=american&bookmakers=draftkings'
     response = requests.get(url = URL)
     data = response.json()
@@ -874,7 +962,7 @@ def getOdds():
             rows.append(rowSet)
     header = ['game_id', 'commence_time', 'home_team', 'away_team', 'home_odds', 'away_odds']
     try:
-        with open('./juicystats/new_odds_2023_24.csv', 'a', encoding='UTF8', newline='') as f:
+        with open('./juicystats/new_odds_2024_25.csv', 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(rows)
@@ -883,32 +971,53 @@ def getOdds():
         print("VALUE ERROR?!?!?!!?!!??!?!??!??!?!!?")
 	
 boxScoreArrayMisc = []
-def readLeagueMisc():
+async def readLeagueMisc():
+    """Fetches table length and reads game data asynchronously."""
+    URL = 'http://localhost:5190/api/tablelength/box/box_score_misc_2024_25'
+    count = 0
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(URL) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    count = data['count']
+                else:
+                    print(f"❌ Failed to fetch data. Status: {response.status}")
+                    return
 
-    URL = 'http://localhost:5190/api/tablelength/box/box_score_misc_2023_24'
-    response = requests.get(url = URL)
-    data = response.json()
-    print(data)
-    count = data['count']
-    f = open('./juicystats/league_games_2023_24.json')
-    games = json.load(f)
+            # Read the JSON file asynchronously
+            file_path = './juicystats/league_games_2024_25.json'
+            async with aiofiles.open(file_path, mode='r', encoding='utf-8') as f:
+                games_content = await f.read()
+                games = json.loads(games_content)
+
+        except Exception as e:
+            print(f"❌ Error in readboxscoremisc(): {e}")
+    #URL = 'http://localhost:5190/api/tablelength/box/box_score_misc_2024_25'
+    #response = requests.get(url = URL)
+    #data = response.json()
+    #print(data)
+    #count = data['count']
+    #f = open('./juicystats/league_games_2024_25.json')
+    #games = json.load(f)
 
     idList = []
     end = len(games["resultSets"][0]["rowSet"])
     start = int(count) * 2
     print(start)
     print(end)
-    for i in range (0, end):
+    for i in range (start - 1, end):
         print(i)
         if games["resultSets"][0]["rowSet"][i][4] in idList or games["resultSets"][0]["rowSet"][i][4] is None:
             print(games["resultSets"][0]["rowSet"][i][4])
             continue
         idList.append(games["resultSets"][0]["rowSet"][i][4])
-        box = boxScoreMiscFunction(games["resultSets"][0]["rowSet"][i][4])
+        box = await boxScoreMiscFunction(games["resultSets"][0]["rowSet"][i][4])
         boxScoreArrayMisc.append(box)
     # Closing file
     f.close()
-def boxScoreMiscFunction(gameid):
+
+async def boxScoreMiscFunction(gameid):
     response = boxscoremiscv2.BoxScoreMiscV2(
         game_id=gameid,
         end_period=EndPeriod.default,
@@ -926,7 +1035,7 @@ def boxScoreMiscFunction(gameid):
     boxScoreMiscData = json.loads(jsonContent, object_hook=lambda d: SimpleNamespace(**d))
     header = boxScoreMiscData.resultSets[0].headers
     try:
-        with open('./juicystats/box_score_misc_2023_24.csv', 'a', encoding='UTF8', newline='') as f:
+        with open('./juicystats/box_score_misc_2024_25.csv', 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(boxScoreMiscData.resultSets[0].rowSet)
@@ -951,85 +1060,133 @@ def defenseHub():
     content = json.loads(response.get_json())
     print(content)
     jsonContent = json.dumps(content)
-    with open("./juicystats/defensehub.json", "w") as outfile:
-	    outfile.write(jsonContent)
-#async def my_function():
-#    # Your function's logic here
-#    # Access the environment variable
-#    node_env = os.environ.get("NODE_ENV")
-#    print(node_env)
-#    base_url = "/" if node_env == "production" else "http://localhost:3001/"
-#    print("Function executed!")
-#    leaguegames()
-#    login_env = os.environ.get("LOGIN")
-#    print(login_env)
-#    headers = {
-#        "Content-Type": "application/json"
-#    }
-#    session = requests.Session()
+    with open("./juicystats/defensehub.json", "w") as outfile:	    
+        outfile.write(jsonContent)
+        
 #
-#    async def get_json_response_startup(url):
-#        print(url)
-#        try:
-#            response = session.get(url=url)
-#            if response.ok:
-#                json_response = response.json()
-#                return json_response
-#        except Exception as err:
-#            print(err)
 #
-#    async def post_league_games_by_season(obj, season, base_url):
-#        print(season)
-#        url = base_url + f"api/leagueGames/{season}"
-#        try:
-#            headers = {
-#                'Content-Type': 'application/json'
-#            }
-#            response = session.post(url, headers=headers, json=obj)
-#            if response.ok:
-#                json_response = response.json()
-#                print(json_response)
-#                return json_response
-#        except Exception as error:
-#            print(error)
-#
-#    async def load_up_league_games_by_season(base_url):
-#        years = ['2022-2023']
-#        for year in years:
-#            TABLE_LENGTH_URL = base_url + f"api/tablelength/leagueGames{year}"
-#            table_length_response = await get_json_response_startup(TABLE_LENGTH_URL)
-#            table_length = table_length_response[0]['count']
-#            print(table_length)
-#            LEAGUE_GAMES_URL = base_url + f'api/leagueGames/{year}'
-#            games_array = await get_json_response_startup(LEAGUE_GAMES_URL)
-#            for result_set in games_array['resultSets']:
-#                for row in result_set['rowSet']:
-#                    print(row)
-#                    # ACTIVATE CODE IF YOU NEED TO LOAD SHOTS INTO YOUR DATABASE
-#                    await post_league_games_by_season(row, year, base_url)
-#        print('FINISHED!!!!!!!!!!!!!!!!!!!!!!1')
-#
-#    if login_env:
-#        try:
-#            my_json_obj = json.loads(login_env)
-#            post_data = json.dumps(my_json_obj)
-#            LOGIN_URL = base_url + 'api/users/login'
-#            print(LOGIN_URL)
-#            login_response = session.post(url=LOGIN_URL, data=post_data, headers=headers)
-#            print(login_response.status_code)
-#            print(login_response.text)
-#
-#            await load_up_league_games_by_season(base_url)
-# 
-#
-#        except json.JSONDecodeError:
-#            print("Error decoding JSON")
-#    
-#    await asyncio.sleep(1)
-#    return 'end of function'
-#    #URL = base_url + 'api/leagueGames/2022-2023'
-#    #response = requests.get(url = URL)
-#    #data = response.json()
+## Global configuration
+API_RETRY_DELAY = 3  # Seconds to wait before retrying on failure
+
+async def get_json_response_startup(url):
+    """Fetch JSON response with retry logic and rate limiting."""
+    async with aiohttp.ClientSession() as session:
+        for attempt in range(3):  # Retry up to 3 times
+            try:
+                async with session.get(url, timeout=10) as response:
+                    if response.status == 200:
+                        return await response.json()
+                    elif response.status == 429:  # Rate limit response
+                        print(f"Rate limit reached. Retrying in {API_RETRY_DELAY} seconds...")
+                        await asyncio.sleep(API_RETRY_DELAY)
+                    else:
+                        print(f"Request failed with status {response.status}")
+                        return None
+            except aiohttp.ClientError as e:
+                print(f"Network error: {e}. Retrying in {API_RETRY_DELAY} seconds...")
+                await asyncio.sleep(API_RETRY_DELAY)
+        return None  # Return None if all retries fail
+
+async def post_league_games_by_season(obj, season, base_url):
+    """Post game data with error handling and retry logic."""
+    url = base_url + f"api/leagueGames/{season}"
+
+    async with aiohttp.ClientSession() as session:
+        for attempt in range(3):
+            try:
+                async with session.post(url, json=obj, timeout=10) as response:
+                    if response.status == 200:
+                        json_response = await response.json()
+                        print(json_response)
+                        return json_response
+                    elif response.status == 429:
+                        print(f"Rate limit on POST request. Retrying in {API_RETRY_DELAY} seconds...")
+                        await asyncio.sleep(API_RETRY_DELAY)
+                    else:
+                        print(f"POST request failed with status {response.status}")
+                        return None
+            except aiohttp.ClientError as e:
+                print(f"Network error during POST: {e}. Retrying in {API_RETRY_DELAY} seconds...")
+                await asyncio.sleep(API_RETRY_DELAY)
+        return None  # If all retries fail
+
+async def load_up_league_games_by_season(base_url):
+    """Fetch and store NBA games with rate limit handling."""
+    years = ['2022-2023']
+    for year in years:
+        TABLE_LENGTH_URL = base_url + f"api/tablelength/leagueGames{year}"
+        table_length_response = await get_json_response_startup(TABLE_LENGTH_URL)
+
+        if table_length_response:
+            table_length = table_length_response[0].get('count', 0)
+            print(f"Table Length: {table_length}")
+
+            LEAGUE_GAMES_URL = base_url + f'api/leagueGames/{year}'
+            games_array = await get_json_response_startup(LEAGUE_GAMES_URL)
+
+            if games_array and 'resultSets' in games_array:
+                for result_set in games_array['resultSets']:
+                    for row in result_set['rowSet']:
+                        print(row)
+                        await post_league_games_by_season(row, year, base_url)
+                        await asyncio.sleep(0.5)  # Small delay to prevent rate limits
+
+    print('FINISHED!!!!!!!!!!!!!!!!!!!!!!')
+
+async def login_and_fetch_data(base_url, login_env):
+    """Handles user login and fetches data after authentication."""
+    if login_env:
+        try:
+            my_json_obj = json.loads(login_env)
+            post_data = json.dumps(my_json_obj)
+            LOGIN_URL = base_url + 'api/users/login'
+            print(f"Logging in: {LOGIN_URL}")
+
+            async with aiohttp.ClientSession() as session:
+                for attempt in range(3):
+                    try:
+                        async with session.post(LOGIN_URL, data=post_data, headers={"Content-Type": "application/json"}, timeout=10) as login_response:
+                            print(f"Login response: {login_response.status}")
+                            login_text = await login_response.text()
+                            print(login_text)
+
+                            if login_response.status == 200:
+                                await load_up_league_games_by_season(base_url)
+                                return  # Stop retrying if login succeeds
+                            elif login_response.status == 429:
+                                print(f"Rate limit on login. Retrying in {API_RETRY_DELAY} seconds...")
+                                await asyncio.sleep(API_RETRY_DELAY)
+                            else:
+                                print("Login failed!")
+                                return
+                    except aiohttp.ClientError as e:
+                        print(f"Network error during login: {e}. Retrying in {API_RETRY_DELAY} seconds...")
+                        await asyncio.sleep(API_RETRY_DELAY)
+        except json.JSONDecodeError:
+            print("Error decoding JSON")
+
+async def my_function():
+    """Main function to manage the data fetch process."""
+    node_env = os.environ.get("NODE_ENV")
+    print(f"NODE_ENV: {node_env}")
+
+    base_url = "/" if node_env == "production" else "http://localhost:3001/"
+    print(f"Base URL: {base_url}")
+
+    login_env = os.environ.get("LOGIN")
+    print(f"LOGIN: {login_env}")
+
+    await login_and_fetch_data(base_url, login_env)
+
+    await asyncio.sleep(1)
+    return 'end of function'
+
+# Run the function asynchronously
+# asyncio.run(my_function())
+
+    #URL = base_url + 'api/leagueGames/2022-2023'
+    #response = requests.get(url = URL)
+    #data = response.json()
     #print(data)
 
     ##URL2 = base_url + 'api/leagueGames/2022-2023'
@@ -1041,35 +1198,91 @@ def defenseHub():
 # Run the event loop
 #asyncio.get_event_loop().run_forever()
 
+# Number of retries for each API call
+MAX_RETRIES = 3
+RETRY_DELAY = 5  # Seconds to wait before retrying on failure
 
-##leaguegames()
-##shotchartdetailfunction()
-##allassists()
-##assiststracker()
-##playergamelogfunction('153', '0021700807')
-##readLeagueGames()
-##leaguehustlestats()
-##leaguehustlestatsleaders()
-##numPlayers = ['2','3','4','5']
-##boxTypes = ['Base', 'Advanced', 'Four Factors', 'Misc', 'Scoring', 'Opponent']
-##for num in numPlayers:
-##    for boxType in boxTypes:
-##        print(num)
-##        print(boxType)
-##        leaguedashlineupsfunction(num, boxType, '2023_24')
-##leaguedashoppptshotfunction()
-##write()
-##leaguedashplayerclutchfunction()
-##leaguedashplayerptshotfunction()
-##leaguedashplayershotlocationsfunction()
-##readLeagueGamesTraditional()
-##leagueDashPlayerStatsFunction()
-##playerCareerStatsFunction()
-##getPlayerIds()
-##readBoxScoreSummary()
-##readLeagueGamesScoring()
-##writeNBAplayers()
+async def safe_run(func, *args):
+    """Runs an async function with retries and error handling, ensuring sequential execution."""
+    for attempt in range(3):  # Retry up to 3 times
+        try:
+            await func(*args)  # Ensure the function fully completes before moving on
+            print(f"✅ {func.__name__} executed successfully.")
+            return  # Exit the function after success
+        except Exception as e:
+            print(f"❌ Error in {func.__name__}: {e}")
+            if attempt < 2:
+                print(f"Retrying {func.__name__} in 5 seconds...")
+                await asyncio.sleep(5)
+            else:
+                print(f"{func.__name__} failed after 3 retries.")
 
-getOdds()
-##readLeagueMisc()
-##defenseHub()
+
+async def run_tasks():
+    """Executes NBA API tasks sequentially with error handling and rate limiting."""
+    
+    # API calls executed one after the other
+    await safe_run(leaguegames)
+    await safe_run(shotchartdetailfunction)
+    #await safe_run(allassists)
+    #await safe_run(assiststracker)
+    #await safe_run(playergamelogfunction, '153', '0021700807')  
+    await safe_run(readLeagueGames)
+    #await safe_run(leaguehustlestats)
+#
+    #numPlayers = ['2','3','4','5']
+    #boxTypes = ['Base', 'Advanced', 'Four Factors', 'Misc', 'Scoring', 'Opponent']
+    #for num in numPlayers:
+    #    for boxType in boxTypes:
+    #        await safe_run(leaguedashlineupsfunction, num, boxType, '2024_25')
+#
+    #await safe_run(leaguedashoppptshotfunction)
+    #await safe_run(leaguedashplayerclutchfunction)
+    #await safe_run(leaguedashplayerptshotfunction)
+    #await safe_run(leaguedashplayershotlocationsfunction)
+    await safe_run(readLeagueGamesTraditional)
+    #await safe_run(leagueDashPlayerStatsFunction)
+    #await safe_run(getPlayerIds)  # Runs before player stats function
+    await safe_run(readBoxScoreSummary)
+    #await safe_run(readLeagueGamesScoring)
+    #await safe_run(writeNBAplayers)
+    await safe_run(getOdds)
+    await safe_run(readLeagueMisc)
+    #await safe_run(defenseHub)
+
+    print("✅ All tasks completed successfully!")
+
+# Run the async event loop
+if __name__ == "__main__":
+    asyncio.run(run_tasks())
+## HERE ARE THE FUNCTIONS THAT I WANT TO RUN ONE BY ONE
+#leaguegames()
+#shotchartdetailfunction()
+#allassists()
+#assiststracker()
+#playergamelogfunction('153', '0021700807')
+#readLeagueGames()
+#leaguehustlestats()
+###leaguehustlestatsleaders()
+#numPlayers = ['2','3','4','5']
+#boxTypes = ['Base', 'Advanced', 'Four Factors', 'Misc', 'Scoring', 'Opponent']
+#for num in numPlayers:
+#    for boxType in boxTypes:
+#        print(num)
+#        print(boxType)
+#        leaguedashlineupsfunction(num, boxType, '2024_25')
+#leaguedashoppptshotfunction()
+###write()
+#leaguedashplayerclutchfunction()
+#leaguedashplayerptshotfunction()
+#leaguedashplayershotlocationsfunction()
+#readLeagueGamesTraditional()
+#leagueDashPlayerStatsFunction()
+#playerCareerStatsFunction()
+#getPlayerIds()
+#readBoxScoreSummary()
+#readLeagueGamesScoring()
+#writeNBAplayers()
+#getOdds()
+#readLeagueMisc()
+#defenseHub()

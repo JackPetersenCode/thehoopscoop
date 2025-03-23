@@ -23,7 +23,8 @@ const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSe
         { season: '2020_21', display: '2020-21' },
         { season: '2021_22', display: '2021-22' },
         { season: '2022_23', display: '2022-23' },
-        { season: '2023_24', display: '2023-24' }
+        { season: '2023_24', display: '2023-24' },
+        { season: '2024_25', display: '2024-25' }
     ];
     
     const seasonsData = [
@@ -35,7 +36,8 @@ const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSe
         { season: '2020_21', display: '2020-21' },
         { season: '2021_22', display: '2021-22' },
         { season: '2022_23', display: '2022-23' },
-        { season: '2023_24', display: '2023-24' }
+        { season: '2023_24', display: '2023-24' },
+        { season: '2024_25', display: '2024-25' }
     ];
     function handleSeasonChange(event: { preventDefault: () => void; target: { value: string; }; }) {
         event.preventDefault();

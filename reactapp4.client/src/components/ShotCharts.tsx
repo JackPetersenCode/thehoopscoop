@@ -40,7 +40,7 @@ const BlueBlock = styled.div`
 `
 const ShotCharts = () => {
 
-    const [selectedSeason, setSelectedSeason] = useState('2023_24');
+    const [selectedSeason, setSelectedSeason] = useState('2024_25');
     const [selectedPlayer, setSelectedPlayer] = useState<SelectedPlayer | string>("");
     const [selectedTeam, setSelectedTeam] = useState<NBATeam | string>("");
     const [selectedGame, setSelectedGame] = useState<ShotChartsGamesData | string>("");

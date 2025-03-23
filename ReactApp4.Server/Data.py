@@ -219,14 +219,14 @@ def playergamelogfunction(playerId, season):
 		outfile.write(jsonContent)
 
 def writeNBAplayers():
-	seasons = ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023','2024']
+	seasons = ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024']
 	list = []
 	for player in player_dict:
 		print(player)
 		jsonContent = json.dumps(player)
 		list.append(player)
 		jsonList = json.dumps(list)
-	with open("./juicystats/playersNBA2024.json", "w") as outfile:
+	with open("./juicystats/playersNBA2025.json", "w") as outfile:
 		outfile.write(jsonList)
 
 def leaguegames():
@@ -997,7 +997,7 @@ def defenseHub():
 ##leagueDashPlayerStatsFunction()
 ##playerCareerStatsFunction()
 ##getPlayerIds()
-readBoxScoreSummary()
+#readBoxScoreSummary()
 ##writeNBAplayers()
 
 ##getOdds()

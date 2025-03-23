@@ -9,7 +9,7 @@ import { NBATeam } from "../interfaces/Teams";
 
 const LegacyPredictions = () => {
 
-    const [selectedSeason, setSelectedSeason] = useState('2023_24');
+    const [selectedSeason, setSelectedSeason] = useState('2024_25');
     const [selectedTeam, setSelectedTeam] = useState<NBATeam | string>("");
     /*
         useEffect(() => {

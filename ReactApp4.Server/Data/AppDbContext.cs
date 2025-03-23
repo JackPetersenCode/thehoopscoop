@@ -41,6 +41,8 @@ namespace ReactApp4.Server.Data
         public DbSet<SelectedPlayer> SelectedPlayers { get; set; }
         public DbSet<ShotChartsGame> ShotChartsGames { get; set; }
         public DbSet<Shot> Shots { get; set; }
+        public DbSet<MLBGame> MLBGames { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -55,7 +57,8 @@ namespace ReactApp4.Server.Data
                 "2020_21",
                 "2021_22",
                 "2022_23",
-                "2023_24"
+                "2023_24",
+                "2024_25"
             // Add other season identifiers...
             };
 
@@ -95,6 +98,7 @@ namespace ReactApp4.Server.Data
             modelBuilder.Entity<CountOfGamesPlayed>().HasNoKey();
             modelBuilder.Entity<SelectedPlayer>().HasNoKey();
             modelBuilder.Entity<ShotChartsGame>().HasNoKey();
+            modelBuilder.Entity<MLBGame>().HasNoKey();
 
 
         }

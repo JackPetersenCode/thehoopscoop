@@ -65,6 +65,9 @@ namespace ReactApp4.Server
 
             services.AddScoped<PythonCaller>(); // Register PythonCaller service
 
+            services.AddScoped<MLBGameDataHandler>();
+            services.AddScoped<MLBGameDatabaseHandler>();
+            services.AddScoped<MLBGameFileHandler>();
         }
     }
 }

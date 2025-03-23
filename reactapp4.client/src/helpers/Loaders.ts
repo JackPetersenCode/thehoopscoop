@@ -1,9 +1,71 @@
 import { getJsonResponseStartup } from './GetJsonResponse';
-import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason, postNewOdds, postBoxScoreSummary } from './PostFunctions';
+import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason, postNewOdds, postBoxScoreSummary, postMLBGamesBySeason } from './PostFunctions';
+
+const loadMLBGames = async () => {
+    const season = "2023"; // Adjust as needed
+    //const tablelength = await getJsonResponseStartup(`/api/tablelength/mlb_games_${season}`);
+    //console.log(tablelength.count);
+
+    const data = await getJsonResponseStartup(`/api/MLBGame/read/${season}`);
+    console.log(data);
+
+    for (let i = 0; i < data.length; i++) {
+        const mlbGame = {
+            gamePk: data[i].game_pk, // VARCHAR(50)
+            gameGuid: data[i].game_guid, // VARCHAR(50)
+            link: data[i].link, // TEXT
+            gameType: data[i].game_type, // CHARACTER(1)
+            season: data[i].season, // VARCHAR(4)
+            gameDate: data[i].game_date, // DATE (ISO String)
+            officialDate: data[i].official_date, // DATE (ISO String)
+            abstractGameState: data[i].abstract_game_state, // VARCHAR(20)
+            codedGameState: data[i].coded_game_state, // CHARACTER(1)
+            detailedState: data[i].detailed_state, // VARCHAR(50)
+            statusCode: data[i].status_code, // CHARACTER(1)
+            startTimeTbd: data[i].start_time_tbd === "True", // BOOLEAN
+            abstractGameCode: data[i].abstract_game_code, // CHARACTER(1)
+            awayTeamId: parseInt(data[i].away_team_id), // INTEGER
+            awayTeamName: data[i].away_team_name, // VARCHAR(50)
+            awayScore: data[i].away_score ? parseInt(data[i].away_score) : null, // INTEGER
+            awayWins: parseInt(data[i].away_wins), // INTEGER
+            awayLosses: parseInt(data[i].away_losses), // INTEGER
+            awayWinPct: parseFloat(data[i].away_win_pct), // NUMERIC(5,3)
+            awayIsWinner: data[i].away_is_winner === "True", // BOOLEAN
+            homeTeamId: parseInt(data[i].home_team_id), // INTEGER
+            homeTeamName: data[i].home_team_name, // VARCHAR(50)
+            homeScore: data[i].home_score ? parseInt(data[i].home_score) : null, // INTEGER
+            homeWins: parseInt(data[i].home_wins), // INTEGER
+            homeLosses: parseInt(data[i].home_losses), // INTEGER
+            homeWinPct: parseFloat(data[i].home_win_pct), // NUMERIC(5,3)
+            homeIsWinner: data[i].home_is_winner === "True", // BOOLEAN
+            venueId: parseInt(data[i].venue_id), // INTEGER
+            venueName: data[i].venue_name, // VARCHAR(100)
+            isTie: data[i].is_tie === "True", // BOOLEAN
+            gameNumber: parseInt(data[i].game_number), // INTEGER
+            doubleHeader: data[i].double_header, // CHARACTER(1)
+            dayNight: data[i].day_night, // VARCHAR(10)
+            description: data[i].description, // TEXT
+            scheduledInnings: parseInt(data[i].scheduled_innings), // INTEGER
+            gamesInSeries: parseInt(data[i].games_in_series), // INTEGER
+            seriesGameNumber: parseInt(data[i].series_game_number), // INTEGER
+            seriesDescription: data[i].series_description, // VARCHAR(50)
+            ifNecessary: data[i].if_necessary, // CHARACTER(1)
+            ifNecessaryDesc: data[i].if_necessary_desc // VARCHAR(50)
+        };
+        console.log(mlbGame)
+        if (mlbGame.homeScore === null && mlbGame.awayScore === null) {
+            console.log('RAINED OUT ################################################################');
+            continue;
+        }
+
+        await postMLBGamesBySeason(mlbGame, season);
+    }
+};
+
 
 const loadLeagueGamesBySeason = async () => {
-    const years = ['2015_16', '2016_17', '2017_18', '2018_19', '2019_20', '2020_21', '2021_22', '2022_23', '2023_24'];
-    //let years = ['2016-2017'];
+    //const years = ['2015_16', '2016_17', '2017_18', '2018_19', '2019_20', '2020_21', '2021_22', '2022_23', '2023_24'];
+    let years = ['2024_25'];
     //let tableLength = await getJsonResponseStartup(`/api/tablelength/leagueGames${years[0]}`);
     //tableLength = (tableLength[0].count)
     //console.log(tableLength)
@@ -60,12 +122,12 @@ function minutesToDecimal(minutesString: string) {
 }
 
 const loadBoxScoresTraditional = async () => {
-    const season = "2023_24";
+    const season = "2024_25";
     const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_traditional_${season}`)
     console.log(tablelength.count);
     const data = await getJsonResponseStartup(`/api/BoxScoreTraditional/read/${season}`);
     console.log(data.length);
-    for (let i = tablelength.count; i < data.length; i++) {
+    for (let i = tablelength.count - 1; i < data.length; i++) {
         if (data[i].MIN === 'MIN') {
             continue;
         }
@@ -121,10 +183,12 @@ const loadBoxScoresTraditional = async () => {
 }
 
 const loadBoxScoresAdvanced = async () => {
-    const season = "2023_24";
+    const season = "2024_25";
     const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_advanced_${season}`)
     //tablelength = tablelength[0].count
+    console.log(tablelength);
     const data = await getJsonResponseStartup(`/api/BoxScoreAdvanced/read/${season}`);
+    //REPLACE i WITH tablelength.count - 1 AFTER INITIAL LOAD
     for (let i = tablelength.count - 1; i < data.length; i++) {
         if (data[i].MIN === 'MIN') {
             continue;
@@ -180,7 +244,7 @@ const loadBoxScoresAdvanced = async () => {
 }
 
 const loadBoxScoresFourFactors = async () => {
-    const season = "2016_17";
+    const season = "2024_25";
     const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_fourfactors_${season}`)
     //tablelength = tablelength[0].count
     const data = await getJsonResponseStartup(`/api/BoxScoreFourFactors/read/${season}`);
@@ -230,11 +294,11 @@ const loadBoxScoresFourFactors = async () => {
 }
 
 const loadBoxScoresMisc = async () => {
-    const season = "2023_24";
+    const season = "2024_25";
     const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_misc_${season}`)
     //tablelength = tablelength[0].count
     const data = await getJsonResponseStartup(`/api/BoxScoreMisc/read/${season}`);
-    for (let i = tablelength.count; i < data.length; i++) {
+    for (let i = tablelength.count - 1; i < data.length; i++) {
         if (data[i].MIN === 'MIN') {
             continue;
         }
@@ -279,13 +343,14 @@ const loadBoxScoresMisc = async () => {
 }
 
 const loadBoxScoresScoring = async () => {
-    const season = ["2017_18", "2018_19", "2019_20", "2020_21", "2021_22", "2022_23", "2023_24"];
+    //const season = ["2017_18", "2018_19", "2019_20", "2020_21", "2021_22", "2022_23", "2023_24"];
+    let season = ["2024_25"];
     for (let j = 0; j < season.length; j++) {
 
         const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_scoring_${season[j]}`)
         //tablelength = tablelength[0].count
         const data = await getJsonResponseStartup(`/api/BoxScoreScoring/read/${season[j]}`);
-        for (let i = tablelength.count; i < data.length; i++) {
+        for (let i = tablelength.count - 1; i < data.length; i++) {
             if (data[i].MIN === 'MIN') {
                 continue;
             }
@@ -335,9 +400,9 @@ const loadBoxScoresScoring = async () => {
 }
 
 const loadShotsBySeason = async () => {
-    //const years = ['2015_16'];
+    const years = ['2024_25'];
 
-    let years = ['2015_16', '2016_17', '2017_18', '2018_19', '2019_20', '2020_21', '2021_22', '2022_23', '2023_24'];
+    //let years = ['2015_16', '2016_17', '2017_18', '2018_19', '2019_20', '2020_21', '2021_22', '2022_23', '2023_24'];
     
     for (let j = 0; j < years.length; j++) {   
         const tableLength = await getJsonResponseStartup(`/api/tablelength/shots_${years[j]}`);
@@ -346,7 +411,7 @@ const loadShotsBySeason = async () => {
         console.log(shotsArray.resultSets[0].rowSet.length)
 
 
-        for (let m = tableLength.count; m < shotsArray.resultSets[0].rowSet.length; m++) {
+        for (let m = tableLength.count - 1; m < shotsArray.resultSets[0].rowSet.length; m++) {
             console.log(m)
 
             const shotObject = {
@@ -396,7 +461,7 @@ const loadLeagueDashLineupsFunction = async (season: string, boxType: string, nu
 }
 
 const loadNewOddsFunction = async () => {
-    const season = "2023_24";
+    const season = "2024_25";
 
     const data = await getJsonResponseStartup(`/api/Gambling/read/newOdds/${season}`);
     for (let i = 0; i < data.length; i++) {
@@ -406,14 +471,15 @@ const loadNewOddsFunction = async () => {
 }
 
 const loadBoxScoreSummary = async () => {
-    const season = ["2019_20", "2020_21", "2021_22", "2022_23", "2023_24"];
+    //const season = ["2019_20", "2020_21", "2021_22", "2022_23", "2023_24"];
+    let season = ["2024_25"];
     for (let j = 0; j < season.length; j++) {
         const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_summary_${season[j]}`)
         //tablelength = tablelength[0].count
         const data = await getJsonResponseStartup(`/api/BoxScores/read/${season[j]}/summary/5`);
         console.log(tablelength);
         console.log(data);
-        for (let i = tablelength.count; i < data.length; i++) {
+        for (let i = tablelength.count - 1; i < data.length; i++) {
             if (data[i].GAME_ID === 'GAME_ID') {
                 continue;
             }
@@ -462,4 +528,5 @@ export {
     loadShotsBySeason,
     loadNewOddsFunction,
     loadBoxScoreSummary,
+    loadMLBGames,
 }

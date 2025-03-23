@@ -6,6 +6,7 @@ import { BoxScoreScoring } from "../interfaces/BoxScoreScoring";
 import { Player } from "../interfaces/Player";
 import { Shot } from "../interfaces/Shot";
 import { BoxScoreSummary } from "../interfaces/BoxScoreSummary";
+import { MLBGame } from "../interfaces/MLBGame";
 
 const postLeagueGamesBySeason = async (obj: [], season: string) => {
     console.log(season);
@@ -243,6 +244,30 @@ const postBoxScoreSummary = async (obj: BoxScoreSummary, season: string) => {
     }
 }
 
+
+const postMLBGamesBySeason = async (obj: MLBGame, season: string) => {
+    const url = `/api/MLBGame/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+        if (response.ok) {
+            const jsonResponse = response.json();
+            return jsonResponse;
+        } else {
+            console.log("*************************************************************");
+            console.log(obj);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export {
     postLeagueGamesBySeason,
     postPlayersNBA,
@@ -254,5 +279,6 @@ export {
     postBoxScoresScoringBySeason,
     postShotBySeason,
     postNewOdds,
-    postBoxScoreSummary
+    postBoxScoreSummary,
+    postMLBGamesBySeason,
 }

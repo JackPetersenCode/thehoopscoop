@@ -51,7 +51,7 @@ const Upcoming = () => {
 
 
     const [upcomingGames, setUpcomingGames] = useState<UpcomingPostObject[]>([]);
-    const [selectedSeason] = useState('2023_24')
+    const [selectedSeason] = useState('2024_25')
     //
     //useEffect(() => {
     //    const getUpcoming = async() => {
@@ -238,6 +238,7 @@ const Upcoming = () => {
             const getExpectedFromRoster = async (season: string, H_or_V: string, roster: RosterPlayer[], previousGameId: string, stat: string, previousSeason: string, game_date: string) => {
                 let totalMins = 0.0;
                 let totalStat = 0.0;
+                console.log(season);
                 let averageScore = await getAverageScore(season, previousGameId, previousSeason, game_date)
                 for (let i = 0; i < roster.length; i++) {
 
@@ -335,9 +336,11 @@ const Upcoming = () => {
             }
 
             const previousSeason = await getPreviousYear(selectedSeason);
+            console.log(selectedSeason)
             let results = await axios.get(`/api/Gambling/upcomingGames/${selectedSeason}`);
+            console.log(results);
             let games = results.data;
-
+            console.log(games)
             const filteredGames = games.filter((game: UpcomingGame) => {
                 const dateString: string = game.commence_time;
                 const dateParts: string[] = dateString.split("-");
@@ -348,10 +351,8 @@ const Upcoming = () => {
 
                 // Get current date and time
                 const currentDate: Date = new Date();
-
-                console.log(currentDate);
-                console.log(dateFromString);
-                return dateFromString >= currentDate;
+                //return dateFromString >= currentDate;
+                return dateFromString;
             })
 
             if (filteredGames.length <= 0) {
@@ -361,8 +362,10 @@ const Upcoming = () => {
                     obj.away_odds = "unavailable";
                     obj.game_id = "upcoming";
                 });
+                console.log(games)
             } else {
                 games = filteredGames;
+                console.log(games)
             }
 
             for (let i = 0; i < games.length; i++) {

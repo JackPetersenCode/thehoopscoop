@@ -31,10 +31,25 @@ namespace ReactApp4.Server.Services
             return await _leagueGameFileHandler.GetGamesFromFile(season);
         }
 
+        public async Task<IActionResult> GetBackToBacks(LeagueGameWithHomeVisitor game, string previousDate, string season)
+        {
+            return await _leagueGameDatabaseHandler.GetBackToBacks(game, previousDate, season);
+        }
+
         public async Task<IActionResult> CreateLeagueGame([FromBody] object[] leagueGame)
         {
             return await _leagueGameDatabaseHandler.CreateLeagueGame(leagueGame);
         }
+        
+        public async Task<IActionResult> B2BAverages(string[] team_ids, string season)
+        {
+            return await _leagueGameDatabaseHandler.B2BAverages(team_ids, season);
+        }
+        public async Task<IActionResult> TeamPtsAverage(string[] team_ids, string season)
+        {
+            return await _leagueGameDatabaseHandler.TeamPtsAverage(team_ids, season);
+        }
+        
     }
 
 }

@@ -94,4 +94,13 @@ namespace ReactApp4.Server.Data
         [Column("video_available")]
         public string Video_available { get; set; }
     }
+
+    public class LeagueGameWithHomeVisitor
+    {
+        public required string GameId { get; set; }
+        public required string HomeTeamId { get; set; }
+        public required string VisitorTeamId { get; set; }
+        public required string GameDate { get; set; }
+    }
 }
+

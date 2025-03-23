@@ -18,7 +18,7 @@ import axios from 'axios';
 
 function Home() {
 
-    const [selectedSeason, setSelectedSeason] = useState('2023_24');
+    const [selectedSeason, setSelectedSeason] = useState('2024_25');
     const [activePlayers, setActivePlayers] = useState<Player[]>([]);
     //const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
     const [inputTextBottom, setInputTextBottom] = useState('');

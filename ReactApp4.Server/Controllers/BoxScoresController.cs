@@ -5,8 +5,6 @@ using ReactApp4.Server.Services;
 using System.Reflection;
 using System;
 using System.Linq;
-using System.Reflection;
-using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 
@@ -30,7 +28,7 @@ namespace ReactApp4.Server.Controllers
         }
 
         [HttpGet("{season?}/{boxType?}/{order?}/{sortField?}/{perMode?}/{selectedTeam?}/{selectedOpponent?}/{playerId?}")]
-        public async Task<IActionResult> GetBoxScores(string season = "2023_24", string boxType = "Traditional", string order = "desc", string sortField = "id", string perMode = "Totals", string selectedTeam = "1", string selectedOpponent = "1", string playerId = "1")
+        public async Task<IActionResult> GetBoxScores(string season = "2024_25", string boxType = "Traditional", string order = "desc", string sortField = "id", string perMode = "Totals", string selectedTeam = "1", string selectedOpponent = "1", string playerId = "1")
         {
             return await _boxScoresDataHandler.GetBoxScores(season, boxType, order, sortField, perMode, selectedTeam, selectedOpponent, playerId);
         }

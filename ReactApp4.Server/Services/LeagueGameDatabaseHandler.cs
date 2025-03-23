@@ -58,6 +58,63 @@ namespace ReactApp4.Server.Services
 
             return games;
         }
+
+
+        public async Task<IActionResult> GetBackToBacks(LeagueGameWithHomeVisitor game, string previousDate, string season)
+        {
+            Console.WriteLine(season);
+            Console.WriteLine(previousDate);
+            Console.WriteLine(game);
+
+            try
+            {
+                var sql = $@"
+                    SELECT * 
+                    FROM league_games_{season}
+                    WHERE team_id IN (@homeTeamId, @visitorTeamId)
+                    AND game_date = @previousDate;
+                ";
+
+                Console.WriteLine(sql);
+
+                var connectionString = _configuration.GetConnectionString("WebApiDatabase");
+
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (var cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        // Use parameters to prevent SQL injection
+                        cmd.Parameters.AddWithValue("@homeTeamId", game.HomeTeamId);
+                        cmd.Parameters.AddWithValue("@visitorTeamId", game.VisitorTeamId);
+                        cmd.Parameters.AddWithValue("@previousDate", previousDate);
+
+                        using (var reader = await cmd.ExecuteReaderAsync())
+                        {
+                            var dataList = new List<Dictionary<string, object>>();
+                            while (await reader.ReadAsync())
+                            {
+                                var dataDict = new Dictionary<string, object>();
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    dataDict[reader.GetName(i)] = reader.GetValue(i);
+                                }
+                                dataList.Add(dataDict);
+                            }
+
+                            return Ok(dataList);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex}");
+            }
+        }
+
+
         public async Task<IActionResult> CreateLeagueGame([FromBody] object[] leagueGame)
         {
             // Implement logic to create a new league game in the database
@@ -208,6 +265,122 @@ namespace ReactApp4.Server.Services
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal Server Error: {ex}");
+            }
+        }
+
+
+        public async Task<IActionResult> B2BAverages(string[] teamIds, string season)
+        {
+            var connectionString = _configuration.GetConnectionString("WebApiDatabase");
+
+            Console.WriteLine(teamIds[0]);
+            //Console.WriteLine(teamIds[1]);
+            string formattedIds = string.Join("','", teamIds).Trim();
+            Console.WriteLine(formattedIds);
+            using (var connection = new NpgsqlConnection(connectionString)) {
+                
+                await connection.OpenAsync();
+
+                
+
+                string sql = $@"
+                WITH back_to_back_games AS (
+                    SELECT 
+                        g1.team_id, 
+                        g1.game_date AS first_game_date, 
+                        g2.game_date AS second_game_date,
+                        CASE 
+                            WHEN g1.matchup LIKE '%vs.%' THEN 'home'
+                            ELSE 'away'
+                        END AS first_game_location,
+                        CASE 
+                            WHEN g2.matchup LIKE '%vs.%' THEN 'home'
+                            ELSE 'away'
+                        END AS second_game_location,
+                        g2.pts AS second_game_points
+                    FROM league_games_{season} g1
+                    JOIN league_games_{season} g2 
+                        ON g1.team_id = g2.team_id
+                        AND CAST(g2.game_date AS DATE) = CAST(g1.game_date AS DATE) + INTERVAL '1 day'
+                    WHERE g1.team_id IN ('{formattedIds}')
+                )
+                SELECT 
+                    team_id,
+                    first_game_location,
+                    second_game_location,
+                    COUNT(*) AS game_count,
+                    AVG(second_game_points) AS avg_points
+                FROM back_to_back_games
+                GROUP BY team_id, first_game_location, second_game_location
+                ORDER BY team_id, first_game_location, second_game_location;";
+
+                Console.WriteLine(sql);
+                using (var cmd = new NpgsqlCommand(sql, connection))
+                {
+                    // Use parameters to prevent SQL injection
+                    //cmd.Parameters.AddWithValue("@TeamIds", teamIds);
+                    //cmd.Parameters.AddWithValue("@visitorTeamId", game.VisitorTeamId);
+                    //cmd.Parameters.AddWithValue("@previousDate", previousDate);
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        var dataList = new List<Dictionary<string, object>>();
+                        while (await reader.ReadAsync())
+                        {
+                            var dataDict = new Dictionary<string, object>();
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                dataDict[reader.GetName(i)] = reader.GetValue(i);
+                            }
+                            dataList.Add(dataDict);
+                        }
+                        return Ok(dataList);
+                    }
+                }              
+            }
+        }
+
+        public async Task<IActionResult> TeamPtsAverage(string[] teamIds, string season)
+        {
+            var connectionString = _configuration.GetConnectionString("WebApiDatabase");
+
+            Console.WriteLine(teamIds[0]);
+            //Console.WriteLine(teamIds[1]);
+            string formattedIds = string.Join("','", teamIds).Trim();
+            using (var connection = new NpgsqlConnection(connectionString)) {
+                
+                await connection.OpenAsync();
+
+                
+
+                string sql = $@"
+                    SELECT AVG(pts), team_id
+                    FROM league_games_{season}
+                    WHERE team_id IN ('{formattedIds}')
+                    GROUP BY team_id
+                ";
+
+                Console.WriteLine(sql);
+                using (var cmd = new NpgsqlCommand(sql, connection))
+                {
+                    // Use parameters to prevent SQL injection
+                    //cmd.Parameters.AddWithValue("@TeamIds", teamIds);
+                    //cmd.Parameters.AddWithValue("@visitorTeamId", game.VisitorTeamId);
+                    //cmd.Parameters.AddWithValue("@previousDate", previousDate);
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        var dataList = new List<Dictionary<string, object>>();
+                        while (await reader.ReadAsync())
+                        {
+                            var dataDict = new Dictionary<string, object>();
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                dataDict[reader.GetName(i)] = reader.GetValue(i);
+                            }
+                            dataList.Add(dataDict);
+                        }
+                        return Ok(dataList);
+                    }
+                }              
             }
         }
     }

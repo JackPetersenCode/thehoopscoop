@@ -36,7 +36,7 @@ namespace ReactApp4.Server.Services
                     game_id
                     from new_odds_{season}
                     WHERE commence_time != 'commence_time'
-                    order by commence_time desc limit 8    
+                    order by commence_time desc limit 25   
                 ";
 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
@@ -549,6 +549,10 @@ namespace ReactApp4.Server.Services
                     UNION ALL
                     SELECT green_red, COUNT(*)
                     FROM matchup_results_2023_24
+                    GROUP BY green_red
+                    UNION ALL
+                    SELECT green_red, COUNT(*)
+                    FROM matchup_results_2024_25
                     GROUP BY green_red
                 ";
 

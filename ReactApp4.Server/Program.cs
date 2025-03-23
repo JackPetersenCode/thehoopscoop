@@ -73,7 +73,10 @@ namespace ReactApp4.Server
 
             builder.Services.AddScoped<PythonCaller>(); // Register PythonCaller service
 
-
+            //baseball services
+            builder.Services.AddScoped<MLBGameDataHandler>();
+            builder.Services.AddScoped<MLBGameDatabaseHandler>();
+            builder.Services.AddScoped<MLBGameFileHandler>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -92,6 +95,8 @@ namespace ReactApp4.Server
             }
 
             app.UseHttpsRedirection();
+
+
 
 
             app.UseAuthorization();
