@@ -1,0 +1,32 @@
+export interface MLBActivePlayer {
+    playerId: number;
+    fullName: string;
+    firstName: string;
+    lastName: string;
+    primaryNumber: string;
+    birthDate: string | null;
+    currentAge: number | null;
+    birthCity: string;
+    birthStateProvince: string;
+    birthCountry: string;
+    height: string;
+    weight: number | null;
+    active: boolean;
+    mlbDebutDate: string | null;
+    draftYear: number | null;
+    teamId: number | null;
+    teamName: string;
+    teamLink: string;
+    primaryPositionCode: string;
+    primaryPositionName: string;
+    positionType: string;
+    batSideCode: string;
+    batSideDescription: string;
+    pitchHandCode: string;
+    pitchHandDescription: string;
+    boxscoreName: string;
+    nickName: string;
+    strikeZoneTop: number | null;
+    strikeZoneBottom: number | null;
+    nameSlug: string;
+}

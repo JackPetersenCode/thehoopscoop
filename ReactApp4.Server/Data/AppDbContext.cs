@@ -42,6 +42,10 @@ namespace ReactApp4.Server.Data
         public DbSet<ShotChartsGame> ShotChartsGames { get; set; }
         public DbSet<Shot> Shots { get; set; }
         public DbSet<MLBGame> MLBGames { get; set; }
+        public DbSet<MLBPlayerGameBatting> MLBPlayerGamesBatting { get; set; }
+        public DbSet<MLBPlayerGamePitching> MLBPlayerGamesPitching { get; set; }
+        public DbSet<MLBPlayerGameFielding> MLBPlayerGamesFielding { get; set; }
+        public DbSet<MLBActivePlayer> MLBActivePlayers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -99,6 +103,10 @@ namespace ReactApp4.Server.Data
             modelBuilder.Entity<SelectedPlayer>().HasNoKey();
             modelBuilder.Entity<ShotChartsGame>().HasNoKey();
             modelBuilder.Entity<MLBGame>().HasNoKey();
+            modelBuilder.Entity<MLBPlayerGameBatting>().HasNoKey();
+            modelBuilder.Entity<MLBPlayerGamePitching>().HasNoKey();
+            modelBuilder.Entity<MLBPlayerGameFielding>().HasNoKey();
+            modelBuilder.Entity<MLBActivePlayer>().HasNoKey();
 
 
         }

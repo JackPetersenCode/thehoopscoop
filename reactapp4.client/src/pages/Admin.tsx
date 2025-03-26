@@ -1,4 +1,4 @@
-import { loadBoxScoresTraditional, loadLeagueGamesBySeason, loadPlayers, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring, loadShotsBySeason, loadNewOddsFunction, loadBoxScoreSummary, loadMLBGames } from '../helpers/Loaders';
+import { loadBoxScoresTraditional, loadLeagueGamesBySeason, loadPlayers, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring, loadShotsBySeason, loadNewOddsFunction, loadBoxScoreSummary, loadMLBGames, loadMLBPlayerGamesByCategory, loadMLBActivePlayers } from '../helpers/Loaders';
 import { ExpectedMatchupPostObject, RosterPlayer, teamIds } from '../interfaces/Gambling';
 import axios from 'axios';
 
@@ -666,6 +666,8 @@ function Admin() {
             <button onClick={loadNewOddsFunction}>New Odds</button>
             <button onClick={loadExpectedBySeason}>Expected Matchups</button>
             <button onClick={loadMLBGames}>MLB Games</button>
+            <button onClick={() => loadMLBPlayerGamesByCategory("fielding", "2023")}>MLB Player Games</button>
+            <button onClick={() => loadMLBActivePlayers("2023")}>MLB Active Players</button>
         </div>
   );
 }

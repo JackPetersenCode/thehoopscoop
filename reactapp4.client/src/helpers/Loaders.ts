@@ -1,5 +1,6 @@
+import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
 import { getJsonResponseStartup } from './GetJsonResponse';
-import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason, postNewOdds, postBoxScoreSummary, postMLBGamesBySeason } from './PostFunctions';
+import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason, postNewOdds, postBoxScoreSummary, postMLBGamesBySeason, postMLBPlayerGamesBattingBySeason, postMLBPlayerGamesPitchingBySeason, postMLBPlayerGamesFieldingBySeason, postMLBActivePlayer } from './PostFunctions';
 
 const loadMLBGames = async () => {
     const season = "2023"; // Adjust as needed
@@ -61,6 +62,67 @@ const loadMLBGames = async () => {
         await postMLBGamesBySeason(mlbGame, season);
     }
 };
+
+const loadMLBPlayerGamesByCategory = async(category: string, season: string) => {
+    //const tablelength = await getJsonResponseStartup(`/api/tablelength/mlb_games_${season}`);
+    //console.log(tablelength.count);
+
+    const data = await getJsonResponseStartup(`/api/MLBPlayerGame/read/${season}/${category}`);
+
+    if (category === "batting") {
+        await postMLBPlayerGamesBattingBySeason(data, season);
+    } else if (category === "pitching") {
+        await postMLBPlayerGamesPitchingBySeason(data, season);
+    } else if (category === "fielding") {
+        await postMLBPlayerGamesFieldingBySeason(data, season);
+    } else {
+        console.log("bad category!!!!")
+    }
+};
+
+function normalizeMLBActivePlayer(data: any): MLBActivePlayer {
+    return {
+        playerId: parseInt(data.id),
+        fullName: data.fullName ?? "",
+        firstName: data.firstName ?? "",
+        lastName: data.lastName ?? "",
+        primaryNumber: data.primaryNumber ?? "",
+        birthDate: data.birthDate ?? null,
+        currentAge: data.currentAge ? parseInt(data.currentAge) : null,
+        birthCity: data.birthCity ?? "",
+        birthStateProvince: data.birthStateProvince ?? "",
+        birthCountry: data.birthCountry ?? "",
+        height: data.height ?? "",
+        weight: data.weight ? parseInt(data.weight) : null,
+        active: data.active?.toLowerCase?.() === "true",
+        mlbDebutDate: data.mlbDebutDate ?? null,
+        draftYear: data.draftYear ? parseInt(data.draftYear) : null,
+        teamId: data.teamId ? parseInt(data.teamId) : null,
+        teamName: data.teamName ?? "",
+        teamLink: data.teamLink ?? "",
+        primaryPositionCode: data.primaryPositionCode ?? "",
+        primaryPositionName: data.primaryPositionName ?? "",
+        positionType: data.positionType ?? "",
+        batSideCode: data.batSideCode ?? "",
+        batSideDescription: data.batSideDescription ?? "",
+        pitchHandCode: data.pitchHandCode ?? "",
+        pitchHandDescription: data.pitchHandDescription ?? "",
+        boxscoreName: data.boxscoreName ?? "",
+        nickName: data.nickName ?? "",
+        strikeZoneTop: data.strikeZoneTop ? parseFloat(data.strikeZoneTop) : null,
+        strikeZoneBottom: data.strikeZoneBottom ? parseFloat(data.strikeZoneBottom) : null,
+        nameSlug: data.nameSlug ?? "",
+    };
+}
+
+
+const loadMLBActivePlayers = async (season: string) => {
+    const rawData = await getJsonResponseStartup(`/api/MLBActivePlayer/read/${season}`);
+    const normalized: MLBActivePlayer[] = rawData.map(normalizeMLBActivePlayer);
+    return await postMLBActivePlayer(normalized, season);
+};
+
+
 
 
 const loadLeagueGamesBySeason = async () => {
@@ -529,4 +591,6 @@ export {
     loadNewOddsFunction,
     loadBoxScoreSummary,
     loadMLBGames,
+    loadMLBPlayerGamesByCategory,
+    loadMLBActivePlayers,
 }

@@ -171,18 +171,17 @@ def read_csv_file(file_path):
 #print(csv_data)  # Print the CSV data as a list of dictionaries
 
 
-
 def get_box_score_from_game_pk(gamePk, season):
     # Define the base URL dynamically using gamePk
     BASE_URL = f"http://statsapi.mlb.com/api/v1/game/{gamePk}/boxscore"
-    
+    print(gamePk)
     # Make the API request
     response = requests.get(BASE_URL)
-    
     # Check if the request was successful
     if response.status_code == 200:
         return response.json()  # Return the parsed JSON response
     else:
+        print("error: " + {gamePk})
         print(f"Error: Unable to fetch data for gamePk {gamePk} (Status Code: {response.status_code})")
         return None  # Return None if request fails
 
@@ -437,7 +436,9 @@ def get_schedule_save_box_scores(season):
     team_stats_fielding_rows = []
     player_stats_rows = []
     player_season_stats_rows = []
-    player_game_stats_rows = []
+    player_game_stats_batting = []
+    player_game_stats_pitching = []
+    player_game_stats_fielding = []
 
     for game in csv_data:
         game_pk = game["game_pk"]
@@ -450,64 +451,64 @@ def get_schedule_save_box_scores(season):
             league_record = record.get("leagueRecord", {})
 
             # ==== TEAM INFO ====
-            team_rows.append({
-                "gamePk": game_pk,
-                "teamSide": team_side,
-                "teamId": team["id"],
-                "teamName": team_name,
-                "season": team["season"],
-                "spring_league_id": team["springLeague"]["id"],
-                "spring_league_name": team["springLeague"]["name"],
-                "spring_league_abbreviation": team["springLeague"]["abbreviation"],
-                "all_star_status": team["allStarStatus"],
-                "venue_id": team["venue"]["id"],
-                "venue_name": team["venue"]["name"],
-                "team_code": team["teamCode"],
-                "file_code": team["fileCode"],
-                "abbreviation": team["abbreviation"],
-                "location_name": team["locationName"],
-                "first_year_of_play": team["firstYearOfPlay"],
-                "league_id": team["league"]["id"],
-                "league_name": team["league"]["name"],
-                "sport_id": team["sport"]["id"],
-                "sport_name": team["sport"]["name"],
-                "short_name": team["shortName"],
-                "record_games_played": record.get("gamesPlayed"),
-                "record_wild_card_games_back": record.get("wildCardGamesBack"),
-                "record_league_games_back": record.get("leagueGamesBack"),
-                "record_spring_league_games_back": record.get("springLeagueGamesBack"),
-                "record_sport_games_back": record.get("sportGamesBack"),
-                "record_division_games_back": record.get("divisionGamesBack"),
-                "record_conference_games_back": record.get("conferenceGamesBack"),
-                "record_league_record_wins": league_record.get("wins"),
-                "record_league_record_losses": league_record.get("losses"),
-                "record_league_record_ties": league_record.get("ties"),
-                "record_league_record_pct": league_record.get("pct"),
-                "record_division_leader": record.get("divisionLeader"),
-                "record_wins": record.get("wins"),
-                "record_losses": record.get("losses"),
-                "record_winning_percentage": record.get("winningPercentage"),
-                "franchise_name": team["franchiseName"],
-                "club_name": team["clubName"],
-                "active": team["active"]
-            })
+            #team_rows.append({
+            #    "gamePk": game_pk,
+            #    "teamSide": team_side,
+            #    "teamId": team["id"],
+            #    "teamName": team_name,
+            #    "season": team["season"],
+            #    "spring_league_id": team["springLeague"]["id"],
+            #    "spring_league_name": team["springLeague"]["name"],
+            #    "spring_league_abbreviation": team["springLeague"]["abbreviation"],
+            #    "all_star_status": team["allStarStatus"],
+            #    "venue_id": team["venue"]["id"],
+            #    "venue_name": team["venue"]["name"],
+            #    "team_code": team["teamCode"],
+            #    "file_code": team["fileCode"],
+            #    "abbreviation": team["abbreviation"],
+            #    "location_name": team["locationName"],
+            #    "first_year_of_play": team["firstYearOfPlay"],
+            #    "league_id": team["league"]["id"],
+            #    "league_name": team["league"]["name"],
+            #    "sport_id": team["sport"]["id"],
+            #    "sport_name": team["sport"]["name"],
+            #    "short_name": team["shortName"],
+            #    "record_games_played": record.get("gamesPlayed"),
+            #    "record_wild_card_games_back": record.get("wildCardGamesBack"),
+            #    "record_league_games_back": record.get("leagueGamesBack"),
+            #    "record_spring_league_games_back": record.get("springLeagueGamesBack"),
+            #    "record_sport_games_back": record.get("sportGamesBack"),
+            #    "record_division_games_back": record.get("divisionGamesBack"),
+            #    "record_conference_games_back": record.get("conferenceGamesBack"),
+            #    "record_league_record_wins": league_record.get("wins"),
+            #    "record_league_record_losses": league_record.get("losses"),
+            #    "record_league_record_ties": league_record.get("ties"),
+            #    "record_league_record_pct": league_record.get("pct"),
+            #    "record_division_leader": record.get("divisionLeader"),
+            #    "record_wins": record.get("wins"),
+            #    "record_losses": record.get("losses"),
+            #    "record_winning_percentage": record.get("winningPercentage"),
+            #    "franchise_name": team["franchiseName"],
+            #    "club_name": team["clubName"],
+            #    "active": team["active"]
+            #})
 
             # ==== TEAM STATS ====
-            stats_group = {
-                "batting": team_stats_batting_rows,
-                "pitching": team_stats_pitching_rows,
-                "fielding": team_stats_fielding_rows
-            }
-
-            for stat_type, target_list in stats_group.items():
-                stats = box_score_response["teams"][team_side]["teamStats"].get(stat_type, {})
-                row = {
-                    "gamePk": game_pk,
-                    "teamSide": team_side,
-                    "teamName": team_name
-                }
-                row.update(stats)
-                target_list.append(row)
+            #stats_group = {
+            #    "batting": team_stats_batting_rows,
+            #    "pitching": team_stats_pitching_rows,
+            #    "fielding": team_stats_fielding_rows
+            #}
+#
+            #for stat_type, target_list in stats_group.items():
+            #    stats = box_score_response["teams"][team_side]["teamStats"].get(stat_type, {})
+            #    row = {
+            #        "gamePk": game_pk,
+            #        "teamSide": team_side,
+            #        "teamName": team_name
+            #    }
+            #    row.update(stats)
+            #    target_list.append(row)
 
             # ==== PLAYER DATA ====
             players = box_score_response["teams"][team_side]["players"]
@@ -518,24 +519,24 @@ def get_schedule_save_box_scores(season):
                 status = player.get("status", {})
                 game_status = player.get("gameStatus", {})
 
-                player_stats_rows.append({
-                    "gamePk": game_pk,
-                    "teamSide": team_side,
-                    "teamName": team_name,
-                    "playerId": player_id,
-                    "personId": person.get("id"),
-                    "fullName": person.get("fullName"),
-                    "boxscoreName": person.get("boxscoreName"),
-                    "jerseyNumber": player.get("jerseyNumber", ""),
-                    "position": position.get("name", ""),
-                    "position_abbr": position.get("abbreviation", ""),
-                    "status_code": status.get("code", ""),
-                    "status_description": status.get("description", ""),
-                    "isCurrentBatter": game_status.get("isCurrentBatter", False),
-                    "isCurrentPitcher": game_status.get("isCurrentPitcher", False),
-                    "isOnBench": game_status.get("isOnBench", False),
-                    "isSubstitute": game_status.get("isSubstitute", False)
-                })
+                #player_stats_rows.append({
+                #    "gamePk": game_pk,
+                #    "teamSide": team_side,
+                #    "teamName": team_name,
+                #    "playerId": player_id,
+                #    "personId": person.get("id"),
+                #    "fullName": person.get("fullName"),
+                #    "boxscoreName": person.get("boxscoreName"),
+                #    "jerseyNumber": player.get("jerseyNumber", ""),
+                #    "position": position.get("name", ""),
+                #    "position_abbr": position.get("abbreviation", ""),
+                #    "status_code": status.get("code", ""),
+                #    "status_description": status.get("description", ""),
+                #    "isCurrentBatter": game_status.get("isCurrentBatter", False),
+                #    "isCurrentPitcher": game_status.get("isCurrentPitcher", False),
+                #    "isOnBench": game_status.get("isOnBench", False),
+                #    "isSubstitute": game_status.get("isSubstitute", False)
+                #})
 
                 # ==== PLAYER SEASON STATS ====
                 #season_stats = player.get("seasonStats", {})
@@ -552,6 +553,7 @@ def get_schedule_save_box_scores(season):
                 #    player_season_stats_rows.append(row)
                 #
                             # ==== PLAYER GAME STATS (BOX SCORE) ====
+                # ==== PLAYER GAME STATS (BOX SCORE) ====
                 game_stats = player.get("stats", {})
                 for category, stat_dict in game_stats.items():
                     row = {
@@ -560,10 +562,16 @@ def get_schedule_save_box_scores(season):
                         "teamName": team_name,
                         "playerId": player_id,
                         "personId": person.get("id"),
-                        "category": category
                     }
                     row.update(stat_dict)
-                    player_game_stats_rows.append(row)
+
+                    if category == "batting":
+                        player_game_stats_batting.append(row)
+                    elif category == "pitching":
+                        player_game_stats_pitching.append(row)
+                    elif category == "fielding":
+                        player_game_stats_fielding.append(row)
+
 
 
     # ==== WRITE TO CSV FILES ====
@@ -572,15 +580,84 @@ def get_schedule_save_box_scores(season):
         df.to_csv(f"./mlb_stats/{filename}_{season}.csv", index=False)
         print(f"Saved {filename}_{season}.csv with {len(df)} rows")
 
-    write_csv("team", team_rows)
-    write_csv("team_stats_batting", team_stats_batting_rows)
-    write_csv("team_stats_pitching", team_stats_pitching_rows)
-    write_csv("team_stats_fielding", team_stats_fielding_rows)
-    write_csv("player_stats", player_stats_rows)
-    write_csv("player_season_stats", player_season_stats_rows)
+    #write_csv("team", team_rows)
+    #write_csv("team_stats_batting", team_stats_batting_rows)
+    #write_csv("team_stats_pitching", team_stats_pitching_rows)
+    #write_csv("team_stats_fielding", team_stats_fielding_rows)
+    #write_csv("player_stats", player_stats_rows)
+    #write_csv("player_season_stats", player_season_stats_rows)
+    write_csv("player_game_stats_batting", player_game_stats_batting)
+    write_csv("player_game_stats_pitching", player_game_stats_pitching)
+    write_csv("player_game_stats_fielding", player_game_stats_fielding)
 
 
-get_schedule_save_box_scores("2023")
+def get_active_mlb_players_for_season(season: str, output_path: str = None):
+    url = "https://statsapi.mlb.com/api/v1/sports/1/players"
+    params = {
+        "season": season,
+        "hydrate": "team,position"
+    }
+
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+
+    data = response.json()
+    players = data.get("people", [])
+
+    result = []
+    for player in players:
+        result.append({
+            "id": player.get("id"),
+            "fullName": player.get("fullName"),
+            "firstName": player.get("firstName"),
+            "lastName": player.get("lastName"),
+            "primaryNumber": player.get("primaryNumber"),
+            "birthDate": player.get("birthDate"),
+            "currentAge": player.get("currentAge"),
+            "birthCity": player.get("birthCity"),
+            "birthStateProvince": player.get("birthStateProvince"),
+            "birthCountry": player.get("birthCountry"),
+            "height": player.get("height"),
+            "weight": player.get("weight"),
+            "active": player.get("active"),
+            "mlbDebutDate": player.get("mlbDebutDate"),
+            "draftYear": player.get("draftYear"),
+            "teamId": player.get("currentTeam", {}).get("id"),
+            "teamName": player.get("currentTeam", {}).get("name"),
+            "teamLink": player.get("currentTeam", {}).get("link"),
+            "primaryPositionCode": player.get("primaryPosition", {}).get("code"),
+            "primaryPositionName": player.get("primaryPosition", {}).get("name"),
+            "positionType": player.get("primaryPosition", {}).get("type"),
+            "batSideCode": player.get("batSide", {}).get("code"),
+            "batSideDescription": player.get("batSide", {}).get("description"),
+            "pitchHandCode": player.get("pitchHand", {}).get("code"),
+            "pitchHandDescription": player.get("pitchHand", {}).get("description"),
+            "boxscoreName": player.get("boxscoreName"),
+            "nickName": player.get("nickName"),
+            "strikeZoneTop": player.get("strikeZoneTop"),
+            "strikeZoneBottom": player.get("strikeZoneBottom"),
+            "nameSlug": player.get("nameSlug")
+        })
+
+    # Save to CSV if output_path is given
+    if not output_path:
+        output_path = f"./mlb_stats/active_mlb_players_{season}.csv"
+
+    with open(output_path, mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=result[0].keys())
+        writer.writeheader()
+        writer.writerows(result)
+
+    print(f"✅ Saved {len(result)} players to {output_path}")
+    return result
+
+
+# Example call (uncomment to run)
+players_2023 = get_active_mlb_players_for_season("2023")
+print(players_2023[:2])  # Print first 2 players as a preview
+#get_schedule_save_box_scores("2023")
+
+
 
 # Mock data for demonstration (you should replace this with actual API response)
 mock_schedule_data = {

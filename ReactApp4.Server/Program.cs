@@ -16,6 +16,12 @@ namespace ReactApp4.Server
             //Thread pythonThread = new Thread(ExecutePythonCode);
             //pythonThread.Start();
             var builder = WebApplication.CreateBuilder(args);
+            // 🔧 Increase request body limit
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.Limits.MaxRequestBodySize = 524288000; // 500 MB
+            });
+
 
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
@@ -78,6 +84,14 @@ namespace ReactApp4.Server
             builder.Services.AddScoped<MLBGameDatabaseHandler>();
             builder.Services.AddScoped<MLBGameFileHandler>();
 
+            builder.Services.AddScoped<MLBPlayerGameDataHandler>();
+            builder.Services.AddScoped<MLBPlayerGameDatabaseHandler>();
+            builder.Services.AddScoped<MLBPlayerGameFileHandler>();
+
+            builder.Services.AddScoped<MLBActivePlayerDataHandler>();
+            builder.Services.AddScoped<MLBActivePlayerDatabaseHandler>();
+            builder.Services.AddScoped<MLBActivePlayerFileHandler>();
+            
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

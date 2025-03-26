@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ReactApp4.Server.Data;
 using ReactApp4.Server.Services;
@@ -68,6 +69,21 @@ namespace ReactApp4.Server
             services.AddScoped<MLBGameDataHandler>();
             services.AddScoped<MLBGameDatabaseHandler>();
             services.AddScoped<MLBGameFileHandler>();
+            
+            services.AddScoped<MLBPlayerGameDataHandler>();
+            services.AddScoped<MLBPlayerGameDatabaseHandler>();
+            services.AddScoped<MLBPlayerGameFileHandler>();
+
+            services.AddScoped<MLBActivePlayerDataHandler>();
+            services.AddScoped<MLBActivePlayerDatabaseHandler>();
+            services.AddScoped<MLBActivePlayerFileHandler>();
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = 524288000; // 500 MB
+            });
+
+            
         }
     }
 }
