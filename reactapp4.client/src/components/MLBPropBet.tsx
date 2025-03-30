@@ -1,37 +1,35 @@
 import React, { useState } from 'react';
-import SearchBar from './SearchBar';
 import PropBetStatsDropDown from './PropBetStatsDropDown';
 import OverUnderLineInput from './OverUnderLineInput';
 import HomeOrVisitorDropDown from './HomeOrVisitorDropDown';
 import PropBetOpponentDropDown from './PropBetOpponentDropDown';
-import DragNDropRoster from './DragNDropRoster';
 import PropBetStatsDragNDrop from './PropBetStatsDragNDrop';
 import OverUnderLine from './OverUnderLine';
 import PropBetHomeOrVisitor from './PropBetHomeOrVisitor';
 import PropBetOpponent from './PropBetOpponent';
-import PropBetResults from './PropBetResults';
-import PropBetResultsTable from './PropBetResultsTable';
-import SeasonsDropDown from './SeasonsDropDown';
-import { Player } from '../interfaces/Player';
 import { PropBetStats } from '../interfaces/PropBetStats';
 import { ShotChartsGamesData } from '../interfaces/Shot';
 import { Stats } from '../interfaces/StatsTable';
 import MLBSeasonsDropDown from './MLBSeasonsDropDown';
 import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
+import MLBSearchBar from './MLBSearchBar';
+import MLBDragNDropRoster from './MLBDragNDropRoster';
+import MLBPropBetResults from './MLBPropBetResults';
+import MLBPropBetResultsTable from './MLBPropBetResultsTable';
 
 interface MLBPropBetProps {
     activePlayers: MLBActivePlayer[];
-    roster: Player[];
-    setRoster: React.Dispatch<React.SetStateAction<Player[]>>;
-    usedPlayers: Player[];
-    setUsedPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
+    roster: MLBActivePlayer[];
+    setRoster: React.Dispatch<React.SetStateAction<MLBActivePlayer[]>>;
+    usedPlayers: MLBActivePlayer[];
+    setUsedPlayers: React.Dispatch<React.SetStateAction<MLBActivePlayer[]>>;
     gameOption: string;
 }
 
 const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoster, usedPlayers, setUsedPlayers, gameOption }) => {
 
     const [inputText, setInputText] = useState('');
-    const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+    const [selectedPlayer, setSelectedPlayer] = useState<MLBActivePlayer | null>(null);
     const [propBetStats, setPropBetStats] = useState<PropBetStats[]>([]);
     const [selectedStat, setSelectedStat] = useState<PropBetStats | null>(null);
     const [overUnderLine, setOverUnderLine] = useState<number | string>(0);
@@ -46,13 +44,13 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
     const [gamesPlayed, setGamesPlayed] = useState<Stats[]>([]);
     const [careerGamesPlayed, setCareerGamesPlayed] = useState<Stats[]>([]);
 
-    const deletePlayer = (player: Player) => {
+    const deletePlayer = (player: MLBActivePlayer) => {
         const rows = [...roster];
         const newRows = rows.filter(eachPlayer =>
-            eachPlayer.player_id !== player.player_id
+            eachPlayer.playerId !== player.playerId
         )
         setRoster(newRows);
-        setUsedPlayers(usedPlayers.filter(eachPlayer => eachPlayer.player_id !== player.player_id))
+        setUsedPlayers(usedPlayers.filter(eachPlayer => eachPlayer.playerId !== player.playerId))
         setSelectedPlayer(null);
     }
 
@@ -79,7 +77,7 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
                     <MLBSeasonsDropDown selectedSeason={selectedSeasonPropBet} setSelectedSeason={setSelectedSeasonPropBet} isPredictions={false} />
                 </div>
                 <div className="drop-down">
-                    <SearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
+                    <MLBSearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
                 </div>
                 <div className="drop-down">
                     <PropBetStatsDropDown selectedStat={selectedStat} setSelectedStat={setSelectedStat} propBetStats={propBetStats} setPropBetStats={setPropBetStats} />
@@ -98,7 +96,7 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
             <div className="results-flex">
                 <div className="results-flex-item">
                     {roster.length > 0 ?
-                        <DragNDropRoster roster={roster} setRoster={setRoster} deletePlayer={deletePlayer} />
+                        <MLBDragNDropRoster roster={roster} setRoster={setRoster} deletePlayer={deletePlayer} />
                         :
                         <div className="prop-bet-placeholders">
                             Select a Player
@@ -146,10 +144,9 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
             
         </div>
         <div className="prop-bet-results-wrapper">
-            <PropBetResults careerPlayerBoxScores={careerPlayerBoxScores} setCareerPlayerBoxScores={setCareerPlayerBoxScores} gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} selectedSeason={selectedSeasonPropBet} />
+            <MLBPropBetResults careerPlayerBoxScores={careerPlayerBoxScores} setCareerPlayerBoxScores={setCareerPlayerBoxScores} gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} selectedSeason={selectedSeasonPropBet} />
         </div>
-
-            <PropBetResultsTable selectedSeason={selectedSeasonPropBet} overUnderLine={overUnderLine} selectedOpponent={selectedOpponent} roster={roster} propBetStats={propBetStats} setPlayerBoxScores={setPlayerBoxScores} playerBoxScores={playerBoxScores} gamesPlayed={gamesPlayed} setGamesPlayed={setGamesPlayed} homeOrVisitor={homeOrVisitor} />
+            <MLBPropBetResultsTable selectedSeason={selectedSeasonPropBet} overUnderLine={overUnderLine} selectedOpponent={selectedOpponent} roster={roster} propBetStats={propBetStats} setPlayerBoxScores={setPlayerBoxScores} playerBoxScores={playerBoxScores} gamesPlayed={gamesPlayed} setGamesPlayed={setGamesPlayed} homeOrVisitor={homeOrVisitor} />
     </div>
     );
 }

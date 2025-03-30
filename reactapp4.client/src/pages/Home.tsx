@@ -13,10 +13,14 @@ import LegacyPredictions from '../components/LegacyPredictions';
 import DropDown from '../components/DropDown';
 import Head2Head from '../components/Head2Head';
 import axios from 'axios';
+import SportOptionDropDown from '../components/SportOptionDropDown';
 
+interface HomeProps {
+    selectedSport: string;
+    setSelectedSport: React.Dispatch<React.SetStateAction<string>>
+}
 
-
-function Home() {
+const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
 
     const [selectedSeason, setSelectedSeason] = useState('2024_25');
     const [activePlayers, setActivePlayers] = useState<Player[]>([]);
@@ -31,6 +35,8 @@ function Home() {
     const [sortField, setSortField] = useState("min");
     //const [selectedStat, setSelectedStat] = useState<PropBetStats | null>(null);
     const [gameOption, setGameOption] = useState<string>('Prop Bet');
+    //const [selectedSport, setSelectedSport] = useState<string>('NBA');
+
     const [roster, setRoster] = useState<Player[]>([]);
     const [usedPlayers, setUsedPlayers] = useState<Player[]>([]);
     //const [overUnderLine, setOverUnderLine] = useState<number | string>(0);
@@ -72,6 +78,9 @@ function Home() {
         <div className='logo-flex'>
             <div>
                 <img src="/images/ball7.png" className="ball" alt="Home"/>
+            </div>
+            <div>
+                <SportOptionDropDown selectedSport={selectedSport} setSelectedSport={setSelectedSport} />
             </div>
             <div>
                 <GameOptionDropDown gameOption={gameOption} setGameOption={setGameOption} />

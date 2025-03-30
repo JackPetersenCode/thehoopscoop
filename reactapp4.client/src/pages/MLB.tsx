@@ -1,40 +1,39 @@
 import { useEffect, useState } from 'react';
-import { MLBPlayer, Player } from '../interfaces/Player';
 import SeasonsDropDown from '../components/SeasonsDropDown';
 import StatsTable from '../components/StatsTable';
 import GameOptionDropDown from '../components/GameOptionDropDown';
-import FindPlayerBottom from '../components/FindPlayerBottom';
-import { numPlayersOptions, lineupPlayerOptions, statOptionsLineups, statOptionsPlayers, nbaTeams, perModeOptions } from '../interfaces/DropDownOptions';
-import ShotCharts from '../components/ShotCharts';
-import LineupsPlayersSelect from '../components/LineupsPlayersSelect';
-import BoxTypeSelect from '../components/BoxTypeSelect';
-import PropBet from '../components/PropBet';
-import LegacyPredictions from '../components/LegacyPredictions';
+import { mlbLeagueOptions, mlbTeams, yearToDateOptions } from '../interfaces/MLBDropDownOptions';
+
 import DropDown from '../components/DropDown';
-import Head2Head from '../components/Head2Head';
 import axios from 'axios';
 import MLBPropBet from '../components/MLBPropBet';
 import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
+import MLBFindPlayerBottom from '../components/MLBFindPlayerBottom';
+import MLBSeasonsDropDown from '../components/MLBSeasonsDropDown';
+import MLBDropDown from '../components/MLBDropDown';
 
+interface MLBProps {
+    selectedSport: string;
+    setSelectedSport: React.Dispatch<React.SetStateAction<string>>
+}
 
+const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport }) => {
 
-const MLB = () => {
-
-    const [selectedSeason, setSelectedSeason] = useState('2024_25');
-    const [activePlayers, setActivePlayers] = useState<MLBActivePlayer[]>([]);
+    const [selectedSeason, setSelectedSeason] = useState('2023');
+    const [mlbActivePlayers, setMlbActivePlayers] = useState<MLBActivePlayer[]>([]);
     //const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
     const [inputTextBottom, setInputTextBottom] = useState('');
-    const [selectedPlayerBottom, setSelectedPlayerBottom] = useState<Player | null>(null);
+    const [selectedPlayerBottom, setSelectedPlayerBottom] = useState<MLBActivePlayer | null>(null);
     const [selectedLineupPlayer, setSelectedLineupPlayer] = useState('Players');
     const [selectedBoxType, setSelectedBoxType] = useState('Base');
     const [numPlayers, setNumPlayers] = useState('5');
     const [perMode, setPerMode] = useState('Totals');
-    const [selectedTeam, setSelectedTeam] = useState({team_id: '1', team_name: 'All Teams', team_abbreviation: '1'});
-    const [sortField, setSortField] = useState("min");
+    const [selectedTeam, setSelectedTeam] = useState({team_id: '0', team_name: 'All Teams'});
+    const [sortField, setSortField] = useState("AtBats");
     //const [selectedStat, setSelectedStat] = useState<PropBetStats | null>(null);
     const [gameOption, setGameOption] = useState<string>('Prop Bet');
-    const [roster, setRoster] = useState<Player[]>([]);
-    const [usedPlayers, setUsedPlayers] = useState<Player[]>([]);
+    const [roster, setRoster] = useState<MLBActivePlayer[]>([]);
+    const [usedPlayers, setUsedPlayers] = useState<MLBActivePlayer[]>([]);
     //const [overUnderLine, setOverUnderLine] = useState<number | string>(0);
     const [selectedOpponent, setSelectedOpponent] = useState({ team_id: '1', team_name: 'All Teams', team_abbreviation: ''});
     //const [propBetStats, setPropBetStats] = useState<PropBetStats[]>([]);
@@ -46,8 +45,10 @@ const MLB = () => {
     //const [homeOrVisitor, setHomeOrVisitor] = useState<string>("");
     //const [showOpponent, setShowOpponent] = useState(false);
     //const [showHomeOrVisitor, setShowHomeOrVisitor] = useState(false);
-
-
+    const [hittingPitching, setHittingPitching] = useState<string>("hitting");
+    const [leagueOption, setLeagueOption] = useState<string>("MLB");
+    const [yearToDateOption, setYearToDateOption] = useState<string>("Year To Date");
+    console.log(selectedSport);
 
 
 
@@ -58,7 +59,7 @@ const MLB = () => {
             const activePlayersResponse = await axios.get(`api/MLBActivePlayer/${season}`);
             const activePlayersData = await activePlayersResponse.data;
             console.log(activePlayersData)
-            setActivePlayers(activePlayersData);
+            setMlbActivePlayers(activePlayersData);
 
 
         }
@@ -66,6 +67,7 @@ const MLB = () => {
         getData();
     }, []);
 
+//<StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} selectedOpponent={selectedOpponent} />
 
     return (
         <>
@@ -82,78 +84,61 @@ const MLB = () => {
 
             {gameOption === "Prop Bet" ?
                 <div>
-                    <MLBPropBet activePlayers={activePlayers} roster={roster} setRoster={setRoster} usedPlayers={usedPlayers} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
+                    <MLBPropBet activePlayers={mlbActivePlayers} roster={roster} setRoster={setRoster} usedPlayers={usedPlayers} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
                 </div>
             :
             ""}
+            <div className="hitting-pitching-container">
+                <div onClick={()=> setHittingPitching("hitting")}>
+                    Hitting
+                </div>
+                <div onClick={() => setHittingPitching("pitching")}>
+                    Pitching
+                </div>
+            </div>
 
             <div className="display-flex">
                 <div className="drop-down">
-                    <SeasonsDropDown
+                    <MLBSeasonsDropDown
                         selectedSeason={selectedSeason}
                         setSelectedSeason={setSelectedSeason}
-                        setSelectedPlayerShotCharts={() => { }}
-                        setSelectedGame={() => { }}
-                        isShotCharts={false}
                         isPredictions={false}
                     />
                 </div>
-                {selectedBoxType === "Base" || selectedBoxType === "Misc" || selectedBoxType === "Opponent" ?
-                    <div className="drop-down">
-                    <DropDown
-                            options={perModeOptions}
-                            setPerMode={setPerMode}
-                            setNumPlayers={setNumPlayers}
-                            setSelectedTeam={setSelectedTeam}
-                            setSelectedOpponent={setSelectedOpponent}
-                            dropDownType="Per Mode"
-                    />
-                    </div>
-                    :
-                    ""}
-                {selectedLineupPlayer === "Lineups" ?
-                    <div className="drop-down">
-                    <DropDown
-                            options={numPlayersOptions}
-                            setPerMode={setPerMode}
-                            setNumPlayers={setNumPlayers}
-                            setSelectedTeam={setSelectedTeam}
-                            setSelectedOpponent={setSelectedOpponent}
-                            dropDownType="# of Players"
-                    />
-                    </div>
-                    :
-                    ""}
                 <div className="drop-down">
-                <DropDown
-                        options={nbaTeams}
-                        setPerMode={setPerMode}
-                        setNumPlayers={setNumPlayers}
+                    <MLBDropDown
+                        options={mlbLeagueOptions}
+                        setLeagueOption={setLeagueOption}
                         setSelectedTeam={setSelectedTeam}
-                        setSelectedOpponent={setSelectedOpponent}
+                        setYearToDateOption={setYearToDateOption}
+                        dropDownType="League Options"
+                    />
+                </div>
+                <div className="drop-down">
+                    <MLBDropDown
+                        options={mlbTeams}
+                        setLeagueOption={setLeagueOption}
+                        setSelectedTeam={setSelectedTeam}
+                        setYearToDateOption={setYearToDateOption}
                         dropDownType="Team"
                     />
                 </div>
                 <div className="drop-down">
-                    <FindPlayerBottom activePlayers={activePlayers} inputTextBottom={inputTextBottom} setInputTextBottom={setInputTextBottom} selectedPlayerBottom={selectedPlayerBottom} setSelectedPlayerBottom={setSelectedPlayerBottom} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
-                </div>
-                {selectedLineupPlayer === 'Players' ?
-                <div className="drop-down" style={{marginRight: "0px"}}>
-                    <DropDown
-                        options={nbaTeams}
-                        setPerMode={setPerMode}
-                        setNumPlayers={setNumPlayers}
+                    <MLBDropDown
+                        options={yearToDateOptions}
+                        setLeagueOption={setLeagueOption}
                         setSelectedTeam={setSelectedTeam}
-                        setSelectedOpponent={setSelectedOpponent}
-                        dropDownType="Opponent"
+                        setYearToDateOption={setYearToDateOption}
+                        dropDownType="Year To Date"
                     />
                 </div>
-                :
-                ""
-                }
+                <div className="drop-down">
+                    <MLBFindPlayerBottom activePlayers={mlbActivePlayers} inputTextBottom={inputTextBottom} setInputTextBottom={setInputTextBottom} selectedPlayerBottom={selectedPlayerBottom} setSelectedPlayerBottom={setSelectedPlayerBottom} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
+                </div>
             </div>
-            
-            <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} selectedOpponent={selectedOpponent} />
+            <div>
+                <MLBStatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} selectedOpponent={selectedOpponent} />
+            </div>
         </div>
         </>
     );

@@ -11,6 +11,7 @@ import { MLBPlayerGameBatting } from "../interfaces/MLBPlayerGameBatting";
 import { MLBPlayerGamePitching } from "../interfaces/MLBPlayerGamePitching";
 import { MLBPlayerGameFielding } from "../interfaces/MLBPlayerGameFielding";
 import { MLBActivePlayer } from "../interfaces/MLBActivePlayer";
+import { MLBPlayerGameInfo } from "../interfaces/MLBPlayerGameInfo";
 
 const postLeagueGamesBySeason = async (obj: [], season: string) => {
     console.log(season);
@@ -374,6 +375,32 @@ const postMLBActivePlayer = async (obj: MLBActivePlayer[], season: string) => {
     }
 }
 
+const postMLBPlayerGameInfoBySeason = async (obj: MLBPlayerGameInfo[], season: string) => {
+    const url = `/api/MLBPlayerGame/playerGameInfo/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.log(errorText);
+            console.log(obj);
+        } else {
+            const result = await response.json();
+            console.log("✅ Player game info uploaded:", result);
+        }
+
+    } catch (error) {
+        console.error("❌ Error uploading fielding stats:", error);
+    }
+}
+
 export {
     postLeagueGamesBySeason,
     postPlayersNBA,
@@ -391,4 +418,5 @@ export {
     postMLBPlayerGamesPitchingBySeason,
     postMLBPlayerGamesFieldingBySeason,
     postMLBActivePlayer,
+    postMLBPlayerGameInfoBySeason,
 }

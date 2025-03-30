@@ -35,6 +35,10 @@ namespace ReactApp4.Server.Services
         {
             return await _mLBPlayerGameFileHandler.ReadCSVPlayerGameStats(season, category);
         }
+        public async Task<IActionResult> GetMLBPlayerGameInfoFromFile(string season)
+        {
+            return await _mLBPlayerGameFileHandler.ReadCSVPlayerGameInfo(season);
+        }
 
         public async Task<IActionResult> CreateMLBPlayerGamesBatting([FromBody] List<MLBPlayerGameBatting> mLBPlayerGameBatting, string season)
         {
@@ -49,6 +53,11 @@ namespace ReactApp4.Server.Services
         public async Task<IActionResult> CreateMLBPlayerGamesFielding([FromBody] List<MLBPlayerGameFielding> mLBPlayerGameFielding, string season)
         {
             return await _mLBPlayerGameDatabaseHandler.BulkInsertPlayerGameFielding(mLBPlayerGameFielding, season);
+        }
+
+        public async Task<IActionResult> CreateMLBPlayerGameInfo([FromBody] List<MLBPlayerGameInfo> mLBPlayerGameInfo, string season)
+        {
+            return await _mLBPlayerGameDatabaseHandler.BulkInsertMLBPlayerGameInfo(mLBPlayerGameInfo, season);
         }
     }
 

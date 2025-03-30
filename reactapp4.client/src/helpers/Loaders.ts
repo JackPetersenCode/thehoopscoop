@@ -1,6 +1,6 @@
 import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
 import { getJsonResponseStartup } from './GetJsonResponse';
-import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason, postNewOdds, postBoxScoreSummary, postMLBGamesBySeason, postMLBPlayerGamesBattingBySeason, postMLBPlayerGamesPitchingBySeason, postMLBPlayerGamesFieldingBySeason, postMLBActivePlayer } from './PostFunctions';
+import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason, postNewOdds, postBoxScoreSummary, postMLBGamesBySeason, postMLBPlayerGamesBattingBySeason, postMLBPlayerGamesPitchingBySeason, postMLBPlayerGamesFieldingBySeason, postMLBActivePlayer, postMLBPlayerGameInfoBySeason } from './PostFunctions';
 
 const loadMLBGames = async () => {
     const season = "2023"; // Adjust as needed
@@ -122,7 +122,14 @@ const loadMLBActivePlayers = async (season: string) => {
     return await postMLBActivePlayer(normalized, season);
 };
 
+const loadMLBPlayerGameInfoBySeason = async(season: string) => {
+    //const tablelength = await getJsonResponseStartup(`/api/tablelength/mlb_games_${season}`);
+    //console.log(tablelength.count);
 
+    const data = await getJsonResponseStartup(`/api/MLBPlayerGame/readPlayerGameInfo/${season}`);
+    console.log(data);
+    await postMLBPlayerGameInfoBySeason(data, season);
+};
 
 
 const loadLeagueGamesBySeason = async () => {
@@ -593,4 +600,5 @@ export {
     loadMLBGames,
     loadMLBPlayerGamesByCategory,
     loadMLBActivePlayers,
+    loadMLBPlayerGameInfoBySeason,
 }

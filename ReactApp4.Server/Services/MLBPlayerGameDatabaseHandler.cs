@@ -25,6 +25,7 @@ namespace ReactApp4.Server.Services
             _context = context;
             _configuration = configuration;
         }
+
         public async Task<ActionResult<IEnumerable<MLBPlayerGameBatting>>> GetMLBPlayerGamesBattingBySeason(string season)
         {
             var tableName = $"player_game_stats_batting_{season}";
@@ -35,7 +36,6 @@ namespace ReactApp4.Server.Services
 
             return mlbPlayerGamesBattingBySeason;
         }
-
         public async Task<ActionResult<IEnumerable<MLBPlayerGamePitching>>> GetMLBPlayerGamesPitchingBySeason(string season)
         {
             var tableName = $"player_game_stats_pitching_{season}";
@@ -503,6 +503,60 @@ namespace ReactApp4.Server.Services
         //        return StatusCode(500, $"Internal Server Error: {ex}");
         //    }
         //}
+        public async Task<IActionResult> BulkInsertMLBPlayerGameInfo(List<MLBPlayerGameInfo> records, string season)
+        {
+            if (records == null || records.Count == 0)
+                return BadRequest("No records provided.");
+
+            try
+            {
+                var connectionString = _configuration.GetConnectionString("WebApiDatabase");
+                using var connection = new NpgsqlConnection(connectionString);
+                await connection.OpenAsync();
+                var tableName = $"mlb_player_game_info_{season}";
+
+                foreach (var p in records)
+                {
+                    var sql = $@"
+                        INSERT INTO {tableName} (
+                            game_pk, team_side, team_name, player_id, person_id, full_name, boxscore_name, jersey_number,
+                            position, position_abbr, status_code, status_description,
+                            is_current_batter, is_current_pitcher, is_on_bench, is_substitute
+                        ) VALUES (
+                            @game_pk, @team_side, @team_name, @player_id, @person_id, @full_name, @boxscore_name, @jersey_number,
+                            @position, @position_abbr, @status_code, @status_description,
+                            @is_current_batter, @is_current_pitcher, @is_on_bench, @is_substitute)
+                        ON CONFLICT (game_pk, player_id) DO NOTHING;";
+        
+                    using var cmd = new NpgsqlCommand(sql, connection);
+                    cmd.Parameters.AddWithValue("@game_pk", p.GamePk);
+                    cmd.Parameters.AddWithValue("@team_side", p.TeamSide ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@team_name", p.TeamName ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@player_id", p.PlayerId);
+                    cmd.Parameters.AddWithValue("@person_id", p.PersonId);
+                    cmd.Parameters.AddWithValue("@full_name", p.FullName ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@boxscore_name", p.BoxscoreName ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@jersey_number", p.JerseyNumber ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@position", p.Position ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@position_abbr", p.PositionAbbr ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@status_code", p.StatusCode ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@status_description", p.StatusDescription ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@is_current_batter", p.IsCurrentBatter);
+                    cmd.Parameters.AddWithValue("@is_current_pitcher", p.IsCurrentPitcher);
+                    cmd.Parameters.AddWithValue("@is_on_bench", p.IsOnBench);
+                    cmd.Parameters.AddWithValue("@is_substitute", p.IsSubstitute);
+
+                    await cmd.ExecuteNonQueryAsync();
+                }
+
+                return Ok(new { message = "MLB Player Game Info inserted", count = records.Count });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
     }
 
 }

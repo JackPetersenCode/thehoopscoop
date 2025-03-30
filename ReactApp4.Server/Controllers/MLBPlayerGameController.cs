@@ -27,7 +27,7 @@ namespace ReactApp4.Server.Controllers
         }
 
         [HttpGet("batting/{season}")]
-        //get player batting stats
+        //get all stats (batting, pitching, fielding)
         public async Task<ActionResult<IEnumerable<MLBPlayerGameBatting>>> GetMLBPlayerGamesBattingBySeason(string season)
         {
             return await _mLBPlayerGameDataHandler.GetMLBPlayerGamesBattingBySeason(season);
@@ -53,6 +53,12 @@ namespace ReactApp4.Server.Controllers
             return await _mLBPlayerGameDataHandler.GetMLBPlayerGamesFromFile(season, category);
         }
 
+        [HttpGet("readPlayerGameInfo/{season}")]
+        public async Task<IActionResult> GetMLBPlayerGameInfoFromFile(string season)
+        {
+            return await _mLBPlayerGameDataHandler.GetMLBPlayerGameInfoFromFile(season);
+        }
+
         [HttpPost("batting/{season}")]
         public async Task<IActionResult> CreateMLBPlayerGamesBatting([FromBody] List<MLBPlayerGameBatting> mLBPlayerGameBatting, string season)
         {
@@ -69,6 +75,12 @@ namespace ReactApp4.Server.Controllers
         public async Task<IActionResult> CreateMLBPlayerGamesFielding([FromBody] List<MLBPlayerGameFielding> mLBPlayerGameFielding, string season)
         {
             return await _mLBPlayerGameDataHandler.CreateMLBPlayerGamesFielding(mLBPlayerGameFielding, season);
+        }
+
+        [HttpPost("playerGameInfo/{season}")]
+        public async Task<IActionResult> CreateMLBPlayerGameInfo([FromBody] List<MLBPlayerGameInfo> mLBPlayerGameInfo, string season)
+        {
+            return await _mLBPlayerGameDataHandler.CreateMLBPlayerGameInfo(mLBPlayerGameInfo, season);
         }
     }
 }

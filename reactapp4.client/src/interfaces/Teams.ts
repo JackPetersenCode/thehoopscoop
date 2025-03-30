@@ -4,5 +4,10 @@ interface NBATeam {
     team_abbreviation: string;
 }
 
+interface MLBTeam {
+    team_id: string;
+    team_name: string;
+}
 
-export type { NBATeam }
+
+export type { NBATeam, MLBTeam }

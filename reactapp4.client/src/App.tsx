@@ -6,11 +6,15 @@ import Layout from './pages/Layout'
 import Admin from './pages/Admin';
 import LoadingIndicator from './components/LoadingIndicator';
 import axios from 'axios';
+import MLB from './pages/MLB';
+import SignIn from './pages/SignIn';
 
 
 function App() {
 
     const [loading, setLoading] = useState(true);
+    const [selectedSport, setSelectedSport] = useState<string>('');
+
 
     useEffect(() => {
         const checkBackend = async () => {
@@ -38,10 +42,13 @@ function App() {
             :
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<Layout />}>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/Admin" element={<Admin />} />
-                    </Route>
+                <Route path="/" element={<Layout />}>
+                  <Route path="/" element={<SignIn selectedSport={selectedSport} setSelectedSport={setSelectedSport} />} />
+                  <Route path="/MLB" element={<MLB selectedSport={selectedSport} setSelectedSport={setSelectedSport}/>} />
+                  <Route path="/NBA" element={<Home selectedSport={selectedSport} setSelectedSport={setSelectedSport} />} />
+                  <Route path="/Admin" element={<Admin />} />
+                </Route>
+
                 </Routes>
             </BrowserRouter>
         }

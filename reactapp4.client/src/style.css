@@ -699,6 +699,10 @@ th {
     white-space: nowrap;
 }
 
+.hitting-pitching-container {
+    display: flex;
+}
+
 @media screen and (max-width: 900px) {
     @media screen and (min-width: 863px) {
         .prop-bet-placeholders {
