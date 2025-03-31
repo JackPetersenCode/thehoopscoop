@@ -4,6 +4,9 @@ export interface MLBPlayerGameBatting {
     teamName: string;
     playerId: string;
     personId: number | null;
+    fullName: string
+    position: string;
+    positionAbbr: string;
     summary: string;
     gamesPlayed: number | null;
     flyOuts: number | null;

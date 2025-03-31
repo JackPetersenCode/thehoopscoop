@@ -7,8 +7,9 @@ import axios from 'axios';
 import StatsTableHeaders from "./StatsTableHeaders";
 import StatsTableBody from "./StatsTableBody";
 import { Column, Stats } from "../interfaces/StatsTable";
-import { advancedLineupColumns, advancedPlayerColumns, basePlayerColumns, fourFactorsPlayerColumns, miscPlayerColumns,scoringPlayerColumns, baseLineupColumns, fourFactorsLineupColumns, miscLineupColumns, scoringLineupColumns, opponentLineupColumns } from "../interfaces/Columns";
+import { mlbBattingColumns } from "../interfaces/Columns";
 import { MLBTeam } from "../interfaces/Teams";
+import MLBStatsTableBody from "./MLBStatsTableBody";
 
 interface MLBStatsTableProps {
     selectedSeason: string;
@@ -37,53 +38,29 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
             if (hittingPitching === 'hitting') {
 
                 try {
-                    
-                    const data = await axios.get(`/api/MLBStats/hitting/${selectedSeason}/${leagueOption}/${yearToDateOption}/${selectedTeam.team_id}/${order}/${sortField}`);
-                    setTableData(data.data);
-                    console.log(data.data);
+                    const response = await axios.get(`/api/MLBStats/batting/${selectedSeason}`, {
+                        params: {
+                            leagueOption: leagueOption,
+                            yearToDateOption: yearToDateOption,
+                            selectedTeam: selectedTeam.team_id,
+                            order: order,
+                            sortField: sortField
+                        }
+                    });
+                
+                    setTableData(response.data);
+                    setColumns(mlbBattingColumns);
+                    console.log(response.data);
                 } catch (error) {
                     console.log(error);
                 }
-            }
-            else if (selectedLineupPlayer === 'Players') {
-
-                try {
-                    console.log(selectedBoxType);
-                    console.log(perMode);
-                    console.log(selectedOpponent);
-                    const data = await axios.get(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}/${selectedOpponent.team_abbreviation}`);
-                    console.log(data.data);
-                    console.log(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/${order}/${sortField}/${perMode}/${selectedTeam.team_id}/${selectedOpponent.team_abbreviation}`);
-                    setTableData(data.data);
-                    console.log("PLAYERSSSSS")
-                    if (selectedBoxType === 'Advanced') {
-                        setColumns(advancedPlayerColumns);
-                    } else if (selectedBoxType === 'Base') {
-                        console.log('BASE');
-                        setColumns(basePlayerColumns);
-                    } else if (selectedBoxType === 'FourFactors') {
-                        setColumns(fourFactorsPlayerColumns);
-                    } else if (selectedBoxType === 'Misc') {
-                        setColumns(miscPlayerColumns);
-                    } else if (selectedBoxType === 'Scoring') {
-                        setColumns(scoringPlayerColumns);
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
+                
             }
         }
         if (selectedSeason) {
             getStats()
         }
-    }, [numPlayers, selectedLineupPlayer, selectedSeason, selectedBoxType, perMode, selectedTeam, selectedOpponent]);
-
-    /*
-    const columns = [
-        { label: "NAME", accessor: "player_name" },
-        //{ label: "TEAM", accessor: "team_abbreviation" },
-        { label: "MIN", accessor: "avg" },
-    ];*/
+    }, [ selectedSeason, leagueOption, yearToDateOption, selectedTeam, order, sortField ]);
 
 
     const handleSorting = (sortField: string, sortOrder: string) => {
@@ -93,7 +70,7 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
                 if (b[sortField] === null) return -1;
                 if (a[sortField] === null && b[sortField] === null) return 0;
 
-                const nonNumeric = ['player_id', 'player_name', 'team_id', 'team_abbreviation', 'team_city', 'group_name', 'comment', 'start_position'];
+                const nonNumeric = ["team_side", "team_name", "player_id", "summary", "note", "full_name", "boxscore_name", "jersey_number", "position", "position_abbr", "status_code", "status_description"];
 
                 if (!nonNumeric.includes(sortField)) {
                     
@@ -113,12 +90,11 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
     };
 
     const filteredData = tableData.filter((element) => {
+        console.log(element);
         //if no input the return the original
         //return the item which contains the user input
-        if (!element.player_name) {
-            return element.group_name.toString().toLowerCase().includes(inputText.toLowerCase());
-        } else {
-            return element.player_name.toString().toLowerCase().includes(inputText.toLowerCase());
+        if (element.fullName) {
+            return element.fullName.toString().toLowerCase().includes(inputText.toLowerCase());
         }
     })
 
@@ -128,7 +104,7 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
             <div className="player-box-container">
                 <table className="w-100">
                     <StatsTableHeaders sortingFunction={handleSorting} columns={columns} smallHeaders={true} sortField={sortField} setSortField={setSortField} order={order} setOrder={setOrder} />
-                    <StatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]} />
+                    <MLBStatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]} />
                 </table>
             </div>
             :
@@ -140,4 +116,4 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
     );
 });
 
-export default StatsTable;
+export default MLBStatsTable;

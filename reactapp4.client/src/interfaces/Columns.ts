@@ -390,5 +390,44 @@ const opponentLineupColumns = [
     { label: "+/- RANK", accessor: "plus_minus_rank" }
 ];
 
+const mlbBattingColumns = [
+    { label: "Team", accessor: "teamName" },
+    { label: "Player ID", accessor: "playerId" },
+    { label: "Person ID", accessor: "personId" },
+    { label: "Name", accessor: "fullName" },
+    { label: "Position", accessor: "position" },
+    { label: "Games Played", accessor: "gamesPlayed" },
+    { label: "Fly Outs", accessor: "flyOuts" },
+    { label: "Ground Outs", accessor: "groundOuts" },
+    { label: "Air Outs", accessor: "airOuts" },
+    { label: "Runs", accessor: "runs" },
+    { label: "Doubles", accessor: "doubles" },
+    { label: "Triples", accessor: "triples" },
+    { label: "Home Runs", accessor: "homeRuns" },
+    { label: "Strike Outs", accessor: "strikeOuts" },
+    { label: "Walks", accessor: "baseOnBalls" },
+    { label: "Intentional Walks", accessor: "intentionalWalks" },
+    { label: "Hits", accessor: "hits" },
+    { label: "Hit By Pitch", accessor: "hitByPitch" },
+    { label: "At Bats", accessor: "atBats" },
+    { label: "Caught Stealing", accessor: "caughtStealing" },
+    { label: "Stolen Bases", accessor: "stolenBases" },
+    { label: "SB%", accessor: "stolenBasePercentage" },
+    { label: "GIDP", accessor: "groundIntoDoublePlay" },
+    { label: "GITP", accessor: "groundIntoTriplePlay" },
+    { label: "Plate Appearances", accessor: "plateAppearances" },
+    { label: "Bases", accessor: "totalBases" },
+    { label: "RBI", accessor: "rbi" },
+    { label: "Left on Base", accessor: "leftOnBase" },
+    { label: "Sac Bunts", accessor: "sacBunts" },
+    { label: "Sac Flies", accessor: "sacFlies" },
+    { label: "Catchers Int.", accessor: "catchersInterference" },
+    { label: "Pickoffs", accessor: "pickoffs" },
+    { label: "AB per HR", accessor: "atBatsPerHomeRun" },
+    { label: "Pop Outs", accessor: "popOuts" },
+    { label: "Line Outs", accessor: "lineOuts" }
+];
 
-export { advancedPlayerColumns, basePlayerColumns, miscPlayerColumns, fourFactorsPlayerColumns, scoringPlayerColumns, advancedLineupColumns, baseLineupColumns, fourFactorsLineupColumns, miscLineupColumns, scoringLineupColumns, opponentLineupColumns, basePlayerColumnsNoName }
+
+
+export { advancedPlayerColumns, basePlayerColumns, miscPlayerColumns, fourFactorsPlayerColumns, scoringPlayerColumns, advancedLineupColumns, baseLineupColumns, fourFactorsLineupColumns, miscLineupColumns, scoringLineupColumns, opponentLineupColumns, basePlayerColumnsNoName, mlbBattingColumns }

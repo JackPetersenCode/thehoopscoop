@@ -11,6 +11,7 @@ import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
 import MLBFindPlayerBottom from '../components/MLBFindPlayerBottom';
 import MLBSeasonsDropDown from '../components/MLBSeasonsDropDown';
 import MLBDropDown from '../components/MLBDropDown';
+import MLBStatsTable from '../components/MLBStatsTable';
 
 interface MLBProps {
     selectedSport: string;
@@ -137,7 +138,9 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport }) => {
                 </div>
             </div>
             <div>
-                <MLBStatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} selectedOpponent={selectedOpponent} />
+                <MLBStatsTable selectedSeason={selectedSeason} hittingPitching={hittingPitching} leagueOption={leagueOption}
+                    yearToDateOption={yearToDateOption} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} 
+                    inputText={inputTextBottom} setInputText={setInputTextBottom} />
             </div>
         </div>
         </>

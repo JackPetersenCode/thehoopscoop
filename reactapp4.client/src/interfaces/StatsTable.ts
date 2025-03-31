@@ -6,7 +6,7 @@ type Column = {
 type SortingFunction = (sortField: string, sortOrder: string) => void;
 
 type Stats = {
-    [key: string]: number | string
+    [key: string]: number | string;
 }
 
 type LeagueDashLineupAdvanced = {

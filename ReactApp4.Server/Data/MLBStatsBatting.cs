@@ -6,6 +6,9 @@ namespace ReactApp4.Server.Data
         [Column("team_name")] public string TeamName { get; set; } = string.Empty;
         [Column("player_id")] public string PlayerId { get; set; } = string.Empty;
         [Column("person_id")] public int? PersonId { get; set; }
+        [Column("full_name")] public string FullName { get; set; } = string.Empty;
+        [Column("primary_position_name")] public string Position { get; set; } = string.Empty;
+        [Column("league_name")] public string LeagueName { get; set; } = string.Empty;
         [Column("games_played")] public double? GamesPlayed { get; set; }
         [Column("fly_outs")] public double? FlyOuts { get; set; }
         [Column("ground_outs")] public double? GroundOuts { get; set; }

@@ -33,16 +33,18 @@ namespace ReactApp4.Server.Services
             int? personId)
         {
             var tableName = $"player_game_stats_batting_{season}";
+            var activePlayersTable = $"mlb_active_players_{season}";
+            var teamInfoTable = $"mlb_team_info_{season}";
 
             var conditions = new List<string>();
 
-            if (!string.IsNullOrEmpty(leagueOption))
+            if (leagueOption == "National League" | leagueOption == "American League")
             {
-                conditions.Add($"league = '{leagueOption}'");
+                conditions.Add($"{teamInfoTable}.league_name = '{leagueOption}'");
             }
-            if (!string.IsNullOrEmpty(selectedTeam))
+            if (selectedTeam != "0")
             {
-                conditions.Add($"team_name = '{selectedTeam}'");
+                conditions.Add($"{tableName}.team_name = '{selectedTeam}'");
             }
             if (personId.HasValue)
             {
@@ -52,7 +54,10 @@ namespace ReactApp4.Server.Services
             var whereClause = conditions.Count > 0 ? $"WHERE {string.Join(" AND ", conditions)}" : string.Empty;
 
             var query = $@"
-                SELECT team_name, player_id, person_id,
+                SELECT {tableName}.team_name, {tableName}.player_id, {tableName}.person_id,
+                    {activePlayersTable}.full_name,
+                    {activePlayersTable}.primary_position_name,
+                    {teamInfoTable}.league_name,
                     SUM(games_played) AS games_played,
                     SUM(fly_outs) AS fly_outs,
                     SUM(ground_outs) AS ground_outs,
@@ -90,8 +95,15 @@ namespace ReactApp4.Server.Services
                     SUM(pop_outs) AS pop_outs,
                     SUM(line_outs) AS line_outs
                 FROM {tableName}
+                JOIN {activePlayersTable}
+                    ON {tableName}.person_id = {activePlayersTable}.player_id
+                JOIN {teamInfoTable}
+                    ON {tableName}.game_pk = {teamInfoTable}.game_pk
+                    AND {tableName}.team_name = {teamInfoTable}.team_name 
                 {whereClause}
-                GROUP BY team_name, player_id, person_id";
+                GROUP BY {tableName}.team_name, {tableName}.player_id, {tableName}.person_id, 
+                    {activePlayersTable}.full_name, {activePlayersTable}.primary_position_name,
+                    {teamInfoTable}.league_name";
 
             var result = await _context.MLBStatsBattings.FromSqlRaw(query).ToListAsync();
             return result;

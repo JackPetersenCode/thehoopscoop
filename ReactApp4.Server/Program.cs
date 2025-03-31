@@ -95,6 +95,10 @@ namespace ReactApp4.Server
             builder.Services.AddScoped<MLBStatsDataHandler>();
             builder.Services.AddScoped<MLBStatsDatabaseHandler>();
             //builder.Services.AddScoped<MLBActivePlayerFileHandler>();
+
+            builder.Services.AddScoped<MLBTeamDataHandler>();
+            builder.Services.AddScoped<MLBTeamDatabaseHandler>();
+            builder.Services.AddScoped<MLBTeamFileHandler>();
             
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -12,6 +12,7 @@ import { MLBPlayerGamePitching } from "../interfaces/MLBPlayerGamePitching";
 import { MLBPlayerGameFielding } from "../interfaces/MLBPlayerGameFielding";
 import { MLBActivePlayer } from "../interfaces/MLBActivePlayer";
 import { MLBPlayerGameInfo } from "../interfaces/MLBPlayerGameInfo";
+import { MLBTeamInfo } from "../interfaces/MLBTeamInfo";
 
 const postLeagueGamesBySeason = async (obj: [], season: string) => {
     console.log(season);
@@ -401,6 +402,21 @@ const postMLBPlayerGameInfoBySeason = async (obj: MLBPlayerGameInfo[], season: s
     }
 }
 
+const postMLBTeamInfoBySeason = async(data: MLBTeamInfo[], season: string) => {
+    const response = await fetch(`/api/MLBTeam/teamInfo/${season}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to upload team info");
+    }
+
+    return await response.json();
+}
+
+
 export {
     postLeagueGamesBySeason,
     postPlayersNBA,
@@ -419,4 +435,5 @@ export {
     postMLBPlayerGamesFieldingBySeason,
     postMLBActivePlayer,
     postMLBPlayerGameInfoBySeason,
+    postMLBTeamInfoBySeason,
 }
