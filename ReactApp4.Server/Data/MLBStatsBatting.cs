@@ -10,6 +10,7 @@ namespace ReactApp4.Server.Data
         [Column("primary_position_name")] public string Position { get; set; } = string.Empty;
         [Column("league_name")] public string LeagueName { get; set; } = string.Empty;
         [Column("games_played")] public double? GamesPlayed { get; set; }
+        [Column("average")] public double? Average { get; set; }
         [Column("fly_outs")] public double? FlyOuts { get; set; }
         [Column("ground_outs")] public double? GroundOuts { get; set; }
         [Column("air_outs")] public double? AirOuts { get; set; }

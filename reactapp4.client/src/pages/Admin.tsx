@@ -250,7 +250,6 @@ function Admin() {
             visitor_odds: visitor_odds,
             green_red: green_red
         }
-        console.log(obj);
         postExpectedMatchup(obj, season)
     }
 
@@ -469,9 +468,7 @@ function Admin() {
         for (let i = 0; i < games.length; i++) {
         //for (let i = 0; i < games.length; i++) {
             console.log(i)
-            console.log(games[i])
             let B2BObject = await isBackToBack(games[i], season)
-            console.log(B2BObject);
             const homeTeam = games[i].home_team_id;
             const visitorTeam = games[i].visitor_team_id;
             let teamIds = [homeTeam, visitorTeam];

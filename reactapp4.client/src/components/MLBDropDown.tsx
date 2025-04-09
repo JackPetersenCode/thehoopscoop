@@ -16,7 +16,7 @@ const MLBDropDown: React.FC<MLBDropDownProps> = React.memo(({ options, setLeague
 
     function handleChange(event: { preventDefault: () => void; target: { value: string | MLBTeam; }; }) {
         event.preventDefault();
-
+        console.log("HANDLE CHANGE*********************************************")
         console.log(dropDownType);
 
         if (typeof event.target.value === 'string') {
@@ -40,7 +40,7 @@ const MLBDropDown: React.FC<MLBDropDownProps> = React.memo(({ options, setLeague
 
 
         setSelectedOption(event.target.value);
-        console.log(typeof selectedOption)
+        console.log(event.target.value)
         console.log(selectedOption);
     }
 
@@ -59,9 +59,9 @@ const MLBDropDown: React.FC<MLBDropDownProps> = React.memo(({ options, setLeague
                 {dropDownType}
             </div>
             <div>
-                <select title='drop-flex-select' className="drop-flex-select" value={typeof selectedOption === 'object' ? selectedOption.team_name : selectedOption} onChange={handleChange}>
-                    <option className="drop-flex-option" value="0">Select {dropDownType}</option>
-
+                <select title='drop-flex-select' className="drop-flex-select" value={typeof selectedOption === 'string' && selectedOption.includes("team_id") ? 
+                    JSON.parse(selectedOption).team_name : selectedOption} onChange={handleChange}>
+                    
                     {options.map((option, index) => (
                         <option key={index} className="option-select" value={typeof option === 'object' ? JSON.stringify(option) : (option as string)}>
                             {typeof option === 'object' ? (option as MLBTeam).team_name : option}

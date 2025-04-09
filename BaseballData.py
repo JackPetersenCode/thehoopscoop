@@ -134,7 +134,7 @@ def save_games_to_csv(games_data, season):
 
 
 def get_schedule_save_mlb_games(season):
-    schedule_data = get_mlb_schedule(2023)
+    schedule_data = get_mlb_schedule(season)
     print(schedule_data)
     #Print sample data
     if schedule_data:
@@ -170,6 +170,17 @@ def read_csv_file(file_path):
 #csv_data = read_csv_file("./mlb_stats/mlb_games_2023.csv")
 #print(csv_data)  # Print the CSV data as a list of dictionaries
 
+def get_mlb_play_by_play_from_game_pk(gamePk, season):
+    BASE_URL = f"http://statsapi.mlb.com/api/v1/game/{gamePk}/playByPlay"
+    print(gamePk)
+    response = requests.get(BASE_URL)
+    if response.status_code == 200:
+        return response.json()  # Return the parsed JSON response
+    else:
+        print("error: " + {gamePk})
+        print(f"Error: Unable to fetch data for gamePk {gamePk} (Status Code: {response.status_code})")
+        return None  # Return None if request fails
+
 
 def get_box_score_from_game_pk(gamePk, season):
     # Define the base URL dynamically using gamePk
@@ -186,6 +197,273 @@ def get_box_score_from_game_pk(gamePk, season):
         return None  # Return None if request fails
 
 
+import requests
+import pandas as pd
+import json
+from collections.abc import MutableMapping
+
+
+#csv_path
+
+# Helper function to flatten nested JSON
+def flatten_play(play, parent_key='', sep='_'):
+    items = []
+    for k, v in play.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(flatten_play(v, new_key, sep=sep).items())
+        elif isinstance(v, list):
+            # Handle lists by converting them to a string or processing as needed
+            items.append((new_key, str(v)))
+        else:
+            items.append((new_key, v))
+    return dict(items)
+
+
+def get_schedule_save_play_by_play(season):
+    response = requests.get(f"http://localhost:5190/api/MLBGame/read/{season}")
+    #csv_data = read_csv_file(f"./mlb_stats/mlb_games_{season}.csv")
+    # Check if the request was successful
+    if response.status_code == 200:
+        csv_data = response.json()  # Return the parsed JSON response
+    else:
+        print(f"Error: (Status Code: {response.status_code})")
+        return None  # Return None if request fails
+    
+    play_rows = []
+    runners_rows = []
+    credit_rows = []
+    play_event_rows = []
+    print("games length: " + str(len(csv_data)))
+    for game in csv_data:
+        game_pk = game["game_pk"]
+        play_by_play_response = get_mlb_play_by_play_from_game_pk(game_pk, season)
+        # Sample list of gamePks for demonstration
+        # Collect all flattened play data
+        #data = play_by_play_response.json()
+        all_plays = play_by_play_response.get("allPlays", [])
+        for play in all_plays:
+            result = play.get("result", {})
+            about = play.get("about", {})
+            count = play.get("count", {})
+            matchup = play.get("matchup", {})
+            matchup_batter = matchup.get("batter", {})
+            matchup_bat_side = matchup.get("batSide", {})
+            matchup_pitcher = matchup.get("pitcher", {})
+            matchup_pitch_hand = matchup.get("pitchHand", {})
+            matchup_post_on_first = matchup.get("postOnFirst", {})
+            matchup_splits = matchup.get("splits", {})
+            pitchIndex = play.get("pitchIndex", [])
+            actionIndex = play.get("actionIndex", [])
+            runnerIndex = play.get("runnerIndex", [])
+            runners = play.get("runners", [])
+            play_end_time = play.get("playEndTime")
+            play_at_bat_index = play.get("atBatIndex")
+            play_events = play.get("playEvents", [])
+
+            for runner in runners:
+                movement = runner.get("movement", {})
+                details = runner.get("details", {})
+                credits = runner.get("credits", [])
+                details_runner = details.get("runner", {})
+
+                runners_rows.append({
+                    "game_pk": game_pk,
+                    "about_at_bat_index": about.get("atBatIndex"),
+                    "runner_movement_origin_base": movement.get("originBase"),
+                    "runner_movement_start": movement.get("start"),
+                    "runner_movement_end": movement.get("end"),
+                    "runner_movement_out_base": movement.get("outBase"),
+                    "runner_movement_is_out": movement.get("isOut"),
+                    "runner_movement_out_number": movement.get("outNumber"),
+
+                    "runner_details_event": details.get("event"),
+                    "runner_details_event_type": details.get("eventType"),
+                    "runner_details_movement_reason": details.get("movementReason"),
+                    "runner_details_player_id": details_runner.get("id"),
+                    "runner_details_player_full_name": details_runner.get("fullName"),
+                    "runner_details_responsible_pitcher_id": details.get("responsiblePitcher", {}).get("id") if details.get("responsiblePitcher") else None,
+                    "runner_details_is_scoring_event": details.get("isScoringEvent"),
+                    "runner_details_rbi": details.get("rbi"),
+                    "runner_details_earned": details.get("earned"),
+                    "runner_details_team_unearned": details.get("teamUnearned"),
+                    "runner_details_play_index": details.get("playIndex"),
+                })
+
+                for credit in credits:
+                    credit_player = credit.get("player", {})
+                    credit_position = credit.get("position", {})
+                    credit_rows.append({
+                        "game_pk": game_pk,
+                        "about_at_bat_index": about.get("atBatIndex"),
+                        "runner_credits_player_id": credit_player.get("id"),
+                        "runner_credits_position_code": credit_position.get("code"),
+                        "runner_credits_position_name": credit_position.get("name"),
+                        "runner_credits_position_type": credit_position.get("type"),
+                        "runner_credits_position_abbreviation": credit_position.get("abbreviation"),
+                        "runner_credits_credit": credit.get("credit")
+                    })
+
+            for play_event in play_events:
+                play_event_details = play_event.get("details", {})
+                play_event_details_call = play_event_details.get("call", {})
+                play_event_details_type = play_event_details.get("type", {})
+                play_event_count = play_event.get("count", {})
+                play_event_pitch_data = play_event.get("pitchData", {})
+                play_event_pitch_data_coordinates = play_event_pitch_data.get("coordinates", {})
+                play_event_pitch_data_breaks = play_event_pitch_data.get("breaks", {})
+                play_event_hit_data = play_event.get("hitData", {})
+                play_event_hit_data_coordinates = play_event_hit_data.get("coordinates", {})
+
+                play_event_rows.append({
+                    "game_pk": game_pk,
+                    "about_at_bat_index": about.get("atBatIndex"),
+                    "play_events_details_call_code": play_event_details_call.get("code"),
+                    "play_events_details_call_description": play_event_details_call.get("description"),
+                    "play_events_details_code": play_event_details.get("code"),
+                    "play_events_details_description": play_event_details.get("description"),
+                    "play_events_details_ball_color": play_event_details.get("ballColor"),
+                    "play_events_details_trail_color": play_event_details.get("trailColor"),
+                    "play_events_details_is_in_play": play_event_details.get("isInPlay"),
+                    "play_events_details_is_strike": play_event_details.get("isStrike"),
+                    "play_events_details_is_ball": play_event_details.get("isBall"),
+                    "play_events_details_type_code": play_event_details_type.get("code"),
+                    "play_events_details_type_description": play_event_details_type.get("description"),
+                    "play_events_details_is_out": play_event_details.get("isOut"),
+                    "play_events_details_has_review": play_event_details.get("hasReview"),
+                    
+                    "play_events_count_balls": play_event_count.get("balls"),
+                    "play_events_count_strikes": play_event_count.get("strikes"),
+                    "play_events_count_outs": play_event_count.get("outs"),
+                    
+                    "play_events_pitch_data_start_speed": play_event_pitch_data.get("startSpeed"),
+                    "play_events_pitch_data": play_event_pitch_data.get("endSpeed"),
+                    "play_events_pitch_data_strike_zone_top": play_event_pitch_data.get("strikeZoneTop"),
+                    "play_events_pitch_data_strike_zone_bottom": play_event_pitch_data.get("strikeZoneBottom"),
+                    "play_events_pitch_data_coordinates_aY": play_event_pitch_data_coordinates.get("aY"),
+                    "play_events_pitch_data_coordinates_aZ": play_event_pitch_data_coordinates.get("aZ"),
+                    "play_events_pitch_data_coordinates_pfxX": play_event_pitch_data_coordinates.get("pfxX"),
+                    "play_events_pitch_data_coordinates_pfxZ": play_event_pitch_data_coordinates.get("pfxZ"),
+                    "play_events_pitch_data_coordinates_pX": play_event_pitch_data_coordinates.get("pX"),
+                    "play_events_pitch_data_coordinates_pZ": play_event_pitch_data_coordinates.get("pZ"),
+                    "play_events_pitch_data_coordinates_vX0": play_event_pitch_data_coordinates.get("vX0"),
+                    "play_events_pitch_data_coordinates_vY0": play_event_pitch_data_coordinates.get("vY0"),
+                    "play_events_pitch_data_coordinates_vZ0": play_event_pitch_data_coordinates.get("vZ0"),
+                    "play_events_pitch_data_coordinates_x": play_event_pitch_data_coordinates.get("x"),
+                    "play_events_pitch_data_coordinates_y": play_event_pitch_data_coordinates.get("y"),
+                    "play_events_pitch_data_coordinates_x0": play_event_pitch_data_coordinates.get("x0"),
+                    "play_events_pitch_data_coordinates_y0": play_event_pitch_data_coordinates.get("y0"),
+                    "play_events_pitch_data_coordinates_z0": play_event_pitch_data_coordinates.get("z0"),
+                    "play_events_pitch_data_coordinates_aX": play_event_pitch_data_coordinates.get("aX"),
+                    "play_events_pitch_data_breaks_break_angle": play_event_pitch_data_breaks.get("breakAngle"),
+                    "play_events_pitch_data_breaks_break_length": play_event_pitch_data_breaks.get("breakLength"),
+                    "play_events_pitch_data_breaks_break_Y": play_event_pitch_data_breaks.get("breakY"),
+                    "play_events_pitch_data_breaks_break_vertical": play_event_pitch_data_breaks.get("breakVertical"),
+                    "play_events_pitch_data_breaks_break_vertical_induced": play_event_pitch_data_breaks.get("breakVerticalInduced"),
+                    "play_events_pitch_data_breaks_break_horizontal": play_event_pitch_data_breaks.get("breakHorizontal"),
+                    "play_events_pitch_data_breaks_break_spin_rate": play_event_pitch_data_breaks.get("spinRate"),
+                    "play_events_pitch_data_breaks_break_spin_direction": play_event_pitch_data_breaks.get("spinDirection"),
+                    "play_events_pitch_data_zone": play_event_pitch_data.get("zone"),
+                    "play_events_pitch_data_type_confidence": play_event_pitch_data.get("typeConfidence"),
+                    "play_events_pitch_data_plate_time": play_event_pitch_data.get("plateTime"),
+                    "play_events_pitch_data_extension": play_event_pitch_data.get("extension"),
+
+                    "play_events_hit_data_launch_speed": play_event_hit_data.get("launchSpeed"),
+                    "play_events_hit_data_launch_angle": play_event_hit_data.get("launchAngle"),
+                    "play_events_hit_data_total_distance": play_event_hit_data.get("totalDistance"),
+                    "play_events_hit_data_trajectory": play_event_hit_data.get("trajectory"),
+                    "play_events_hit_data_hardness": play_event_hit_data.get("hardness"),
+                    "play_events_hit_data_location": play_event_hit_data.get("location"),
+                    "play_events_hit_data_coordinates_coordX": play_event_hit_data_coordinates.get("coordX"),
+                    "play_events_hit_data_coordinates_coordY": play_event_hit_data_coordinates.get("coordY"),
+
+                    "play_events_index": play_event.get("index"),
+                    "play_events_play_id": play_event.get("playId"),
+                    "play_events_pitch_number": play_event.get("pitchNumber"),
+                    "play_events_start_time": play_event.get("startTime"),
+                    "play_events_end_time": play_event.get("endTime"),
+                    "play_events_is_pitch": play_event.get("isPitch"),
+                    "play_events_type": play_event.get("type")
+                })
+            
+
+            play_rows.append({
+                "game_pk": game_pk,
+                "result_type": result.get("type"),
+                "result_event": result.get("event"),
+                "result_event_type": result.get("eventType"),
+                "result_description": result.get("description"),
+                "result_rbi": result.get("rbi"),
+                "result_away_score": result.get("awayScore"),
+                "result_home_score": result.get("homeScore"),
+                "result_is_out": result.get("isOut"),
+                
+                "about_at_bat_index": about.get("atBatIndex"),
+                "about_half_inning": about.get("halfInning"),
+                "about_is_top_inning": about.get("isTopInning"),
+                "about_inning": about.get("inning"),
+                "about_start_time": about.get("startTime"),
+                "about_end_time": about.get("endTime"),
+                "about_is_complete": about.get("isComplete"),
+                "about_is_scoring_play": about.get("isScoringPlay"),
+                "about_has_review": about.get("hasReview"),
+                "about_has_out": about.get("hasOut"),
+                "about_captivating_index": about.get("captivatingIndex"),
+                
+                "count_balls": count.get("balls"),
+                "count_strikes": count.get("strikes"),
+                "count_outs": count.get("outs"),
+
+                "matchup_batter_id": matchup_batter.get("id"),
+                "matchup_batter_full_name": matchup_batter.get("fullName"),
+                "matchup_bat_side_code": matchup_bat_side.get("code"),
+                "matchup_bat_side_description": matchup_bat_side.get("description"),
+                "matchup_pitcher_id": matchup_pitcher.get("id"),
+                "matchup_pitcher_full_name": matchup_pitcher.get("fullName"),
+                "matchup_pitch_hand_code": matchup_pitch_hand.get("code"),
+                "matchup_pitch_hand_description": matchup_pitch_hand.get("description"),
+                "matchup_splits_batter": matchup_splits.get("batter"),
+                "matchup_splits_pitcher": matchup_splits.get("pitcher"),
+                "matchup_splits_men_on_base": matchup_splits.get("menOnBase"),
+                "matchup_post_on_first_id": matchup_post_on_first.get("id"),
+                "matchup_post_on_first_full_name": matchup_post_on_first.get("fullName"),
+                "matchup_batter_hot_cold_zones": json.dumps(matchup.get("batterHotColdZones", [])),
+                "matchup_pitcher_hot_cold_zones": json.dumps(matchup.get("pitcherHotColdZones", [])),
+
+                "pitch_index": json.dumps(pitchIndex),
+                "action_index": json.dumps(actionIndex),
+                "runner_index": json.dumps(runnerIndex),
+                #runners array
+                #playEvents array
+                "play_end_time": play_end_time,
+                "play_at_bat_index": play_at_bat_index
+            })
+        #    flat = flatten_play(play)  # Your flattening function
+        #    flattened_plays.append(flat)
+        #    all_keys.update(flat.keys())  # Collect all possible column headers
+    # ==== WRITE TO CSV FILES ====
+    def write_csv(filename, rows):
+        df = pd.DataFrame(rows)
+        df.to_csv(f"./mlb_stats/{filename}_{season}.csv", index=False)
+        print(f"Saved {filename}_{season}.csv with {len(df)} rows")
+
+    write_csv("plays", play_rows)
+    write_csv("runners", runners_rows)
+    write_csv("credits", credit_rows)
+    write_csv("play_events", play_event_rows)
+    # Convert to sorted list for consistent column order
+    #headers = sorted(all_keys)
+
+    # Write the CSV safely
+    #with open("./mlb_stats/mlb_play_by_play.csv", "w", newline='', encoding='utf-8') as f:
+    #    writer = csv.DictWriter(f, fieldnames=headers)
+    #    writer.writeheader()
+#
+    #    for row in flattened_plays:
+    #        writer.writerow(row)
+
+
+
 def get_schedule_save_box_scores(season):
 
     response = requests.get(f"http://localhost:5190/api/MLBGame/read/{season}")
@@ -196,7 +474,6 @@ def get_schedule_save_box_scores(season):
     else:
         print(f"Error: (Status Code: {response.status_code})")
         return None  # Return None if request fails
-
     #games_data = get_mlb_schedule(season)
     #print(games_data)
     #print(csv_data)
@@ -653,59 +930,8 @@ def get_active_mlb_players_for_season(season: str, output_path: str = None):
 
 
 # Example call (uncomment to run)
-players_2023 = get_active_mlb_players_for_season("2023")
-print(players_2023[:2])  # Print first 2 players as a preview
+#players_2023 = get_active_mlb_players_for_season("2023")
+#print(players_2023[:2])  # Print first 2 players as a preview
 #get_schedule_save_box_scores("2023")
-
-
-
-# Mock data for demonstration (you should replace this with actual API response)
-mock_schedule_data = {
-    "dates": [
-        {
-            "games": [
-                {
-                    "gamePk": 718780,
-                    "gameGuid": "28889d0d-b745-4054-b0d3-5fc4cfa06df9",
-                    "gameType": "R",
-                    "season": "2023",
-                    "gameDate": "2023-03-30T17:05:00Z",
-                    "officialDate": "2023-03-30",
-                    "status": {
-                        "abstractGameState": "Final",
-                        "codedGameState": "F",
-                        "detailedState": "Final",
-                        "statusCode": "F",
-                        "startTimeTBD": False
-                    },
-                    "teams": {
-                        "away": {
-                            "leagueRecord": {"wins": 1, "losses": 0, "pct": "1.000"},
-                            "score": 7,
-                            "team": {"id": 144, "name": "Atlanta Braves"},
-                            "isWinner": True
-                        },
-                        "home": {
-                            "leagueRecord": {"wins": 0, "losses": 1, "pct": ".000"},
-                            "score": 2,
-                            "team": {"id": 120, "name": "Washington Nationals"},
-                            "isWinner": False
-                        }
-                    },
-                    "venue": {"id": 3309, "name": "Nationals Park"},
-                    "isTie": False,
-                    "gameNumber": 1,
-                    "doubleHeader": "N",
-                    "dayNight": "day",
-                    "description": "Nationals home opener",
-                    "scheduledInnings": 9,
-                    "gamesInSeries": 3,
-                    "seriesGameNumber": 1,
-                    "seriesDescription": "Regular Season",
-                    "ifNecessary": "N",
-                    "ifNecessaryDescription": "Normal Game"
-                }
-            ]
-        }
-    ]
-}
+get_schedule_save_play_by_play("2023")
+#get_schedule_save_mlb_games("2023")

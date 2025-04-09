@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import '../App.css';
 import axios from 'axios';
 import StatsTableHeaders from "./StatsTableHeaders";
-import StatsTableBody from "./StatsTableBody";
 import { Column, Stats } from "../interfaces/StatsTable";
 import { mlbBattingColumns } from "../interfaces/Columns";
 import { MLBTeam } from "../interfaces/Teams";
@@ -17,6 +16,8 @@ interface MLBStatsTableProps {
     leagueOption: string;
     yearToDateOption: string;
     selectedTeam: MLBTeam;
+    setSelectedTeam: React.Dispatch<React.SetStateAction<MLBTeam>>;
+    selectedOpponent: MLBTeam;
     sortField: string;
     setSortField: React.Dispatch<React.SetStateAction<string>>;
     inputText: string;
@@ -25,7 +26,7 @@ interface MLBStatsTableProps {
 
 
 
-const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason, hittingPitching, leagueOption, yearToDateOption, selectedTeam, sortField, setSortField, inputText }) => {
+const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason, hittingPitching, leagueOption, yearToDateOption, selectedTeam, setSelectedTeam, selectedOpponent, sortField, setSortField, inputText }) => {
 
     const [order, setOrder] = useState<string>("desc");
     const [tableData, setTableData] = useState<Stats[]>([]);
@@ -33,7 +34,7 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
 
     useEffect(() => {
 
-        const getStats = async () => {
+        const getStats = async () => {          
 
             if (hittingPitching === 'hitting') {
 
@@ -43,6 +44,7 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
                             leagueOption: leagueOption,
                             yearToDateOption: yearToDateOption,
                             selectedTeam: selectedTeam.team_id,
+                            selectedOpponent: selectedOpponent.team_id,
                             order: order,
                             sortField: sortField
                         }
@@ -60,8 +62,21 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
         if (selectedSeason) {
             getStats()
         }
-    }, [ selectedSeason, leagueOption, yearToDateOption, selectedTeam, order, sortField ]);
+    }, [ selectedSeason, yearToDateOption, selectedTeam, selectedOpponent ]);
 
+    //useEffect(() => {
+    //    if (leagueOption === "American League") {
+    //        setSelectedTeam({ team_id: "1", team_name: "All American League" });    
+    //    } else if (leagueOption === "National League") {
+    //        setSelectedTeam({ team_id: "1", team_name: "All National League" });
+    //    } else if (leagueOption === "MLB") {
+    //        setSelectedTeam({ team_id: "1", team_name: "All MLB Teams" });
+    //    } else {
+    //        console.log('bad league selection')
+    //        return;
+    //    }
+    //}, [leagueOption]);
+    
 
     const handleSorting = (sortField: string, sortOrder: string) => {
         if (sortField) {
@@ -90,7 +105,6 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
     };
 
     const filteredData = tableData.filter((element) => {
-        console.log(element);
         //if no input the return the original
         //return the item which contains the user input
         if (element.fullName) {

@@ -58,6 +58,9 @@ const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = ({ columns, tableDat
                                             
                                             const temp = data[accessor] as number * 100;
                                             tData = temp.toFixed(1);
+                                        } else if (accessor === "average") {
+                                            const temp = data[accessor] as number;
+                                            tData = temp.toFixed(3).replace(/^0/, '');
                                         } else {
                                             tData = (data[accessor] as number).toFixed(1);
                                         }

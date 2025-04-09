@@ -32,12 +32,18 @@ namespace ReactApp4.Server.Controllers
             [FromQuery] string? leagueOption,
             [FromQuery] string? selectedTeam,
             [FromQuery] string? yearToDateOption,
+            [FromQuery] string? selectedOpponent,
             [FromQuery] int? personId)
         {
             return await _mLBStatsDataHandler.GetMLBStatsBattingBySeason(
-                season, leagueOption, selectedTeam, yearToDateOption, personId);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, personId);
         }
 
+        //[HttpGet("playByPlay/read/{season}/{gamePk}")]
+        //public async Task<IActionResult> GetMLBPlayerGamesFromFile(string season, string category)
+        //{
+        //    return await _mLBPlayerGameDataHandler.GetMLBPlayerGamesFromFile(season, category);
+        //}
 
         //[HttpGet("pitching/{season}")]
         ////get all stats (batting, pitching, fielding)
@@ -52,5 +58,7 @@ namespace ReactApp4.Server.Controllers
         //{
         //    return await _mLBStatsDataHandler.GetMLBStatsFieldingBySeason(season);
         //}
+
+
     }
 }

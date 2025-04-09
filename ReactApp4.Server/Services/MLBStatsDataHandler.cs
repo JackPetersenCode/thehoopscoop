@@ -22,10 +22,11 @@ namespace ReactApp4.Server.Services
             string? leagueOption,
             string? selectedTeam,
             string? yearToDateOption,
+            string? selectedOpponent,
             int? personId)
         {
             return await _mLBStatsDatabaseHandler.GetMLBStatsBattingBySeason(
-                season, leagueOption, selectedTeam, yearToDateOption, personId);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, personId);
         }
 
 

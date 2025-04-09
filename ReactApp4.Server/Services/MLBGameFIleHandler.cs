@@ -16,7 +16,8 @@ namespace ReactApp4.Server.Services
         public async Task<IActionResult> GetMLBGamesFromFile(string season)
         {
             List<object> data = new List<object>();
-
+            HashSet<string> seenGamePks = new HashSet<string>();
+        
             try
             {
                 using (var reader = new StreamReader($"../mlb_stats/mlb_games_{season}.csv"))
@@ -30,22 +31,26 @@ namespace ReactApp4.Server.Services
                     var records = csv.GetRecords<dynamic>();
                     foreach (var record in records)
                     {
-                        if (record.game_pk != "game_pk")
+                        var dict = (IDictionary<string, object>)record;
+                        string gamePk = dict["game_pk"]?.ToString() ?? "";
+        
+                        if (!string.IsNullOrEmpty(gamePk) && !seenGamePks.Contains(gamePk))
                         {
+                            seenGamePks.Add(gamePk);
                             data.Add(record);
                         }
                     }
                 }
-
-                // Log the result array
-                System.Console.WriteLine("Parsed CSV data:");
-                return new OkObjectResult(data); // Return HTTP 200 OK with data
+        
+                Console.WriteLine("Parsed CSV data (unique game_pks):");
+                return new OkObjectResult(data);
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine(ex);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError); // Return HTTP 500 Internal Server Error
+                Console.WriteLine(ex);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
+
     }
 }
