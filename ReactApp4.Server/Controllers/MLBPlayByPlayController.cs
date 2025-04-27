@@ -51,10 +51,31 @@ namespace ReactApp4.Server.Controllers
             return await _mLBPlayByPlayDataHandler.GetMLBRunnersBySeasonFromFile(season);
         }
 
-        [HttpGet("read/runnersCredits/{season}")]
+        [HttpGet("read/credits/{season}")]
         public async Task<IActionResult> GetMLBRunnersCreditsBySeasonFromFile(string season)
         {
             return await _mLBPlayByPlayDataHandler.GetMLBRunnersCreditsBySeasonFromFile(season);
         }
+        [HttpPost("plays/{season}")]
+        public async Task<IActionResult> InsertPlayAsync([FromBody] List<Play> plays, string season)
+        {
+            return await _mLBPlayByPlayDataHandler.InsertPlayAsync(plays, season);
+        }
+        [HttpPost("playEvents/{season}")]
+        public async Task<IActionResult> InsertPlayEventAsync([FromBody] List<PlayPlayEvents> playEvents, string season)
+        {
+            return await _mLBPlayByPlayDataHandler.InsertPlayEventAsync(playEvents, season);
+        }
+        [HttpPost("runners/{season}")]
+        public async Task<IActionResult> InsertPlayRunnersAsync([FromBody] List<PlayRunners> playRunners, string season)
+        {
+            return await _mLBPlayByPlayDataHandler.InsertPlayRunnersAsync(playRunners, season);
+        }
+        [HttpPost("runnerCredits/{season}")]
+        public async Task<IActionResult> InsertPlayRunnersCreditsAsync([FromBody] List<PlayRunnersCredits> playRunnersCredits, string season)
+        {
+            return await _mLBPlayByPlayDataHandler.InsertPlayRunnersCreditsAsync(playRunnersCredits, season);
+        }
+
     }
 }

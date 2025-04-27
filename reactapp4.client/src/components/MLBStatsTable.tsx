@@ -20,20 +20,22 @@ interface MLBStatsTableProps {
     selectedOpponent: MLBTeam;
     sortField: string;
     setSortField: React.Dispatch<React.SetStateAction<string>>;
+    selectedSplit: string;
     inputText: string;
     setInputText: React.Dispatch<React.SetStateAction<string>>;
 }
 
 
 
-const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason, hittingPitching, leagueOption, yearToDateOption, selectedTeam, setSelectedTeam, selectedOpponent, sortField, setSortField, inputText }) => {
+const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason, hittingPitching, leagueOption, yearToDateOption, selectedTeam, setSelectedTeam, selectedOpponent, sortField, setSortField, selectedSplit, inputText }) => {
 
+    console.log("MLB Stats Table")
     const [order, setOrder] = useState<string>("desc");
     const [tableData, setTableData] = useState<Stats[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
 
     useEffect(() => {
-
+        console.log("get stats hook")
         const getStats = async () => {          
 
             if (hittingPitching === 'hitting') {
@@ -46,11 +48,13 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
                             selectedTeam: selectedTeam.team_id,
                             selectedOpponent: selectedOpponent.team_id,
                             order: order,
-                            sortField: sortField
+                            sortField: sortField,
+                            selectedSplit: selectedSplit 
                         }
                     });
                 
                     setTableData(response.data);
+
                     setColumns(mlbBattingColumns);
                     console.log(response.data);
                 } catch (error) {
@@ -62,7 +66,7 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
         if (selectedSeason) {
             getStats()
         }
-    }, [ selectedSeason, yearToDateOption, selectedTeam, selectedOpponent ]);
+    }, [ selectedSeason, yearToDateOption, selectedTeam, selectedOpponent, order, sortField, hittingPitching, selectedSplit ]);
 
     //useEffect(() => {
     //    if (leagueOption === "American League") {

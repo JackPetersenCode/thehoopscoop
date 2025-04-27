@@ -13,6 +13,12 @@ const yearToDateOptions = [
     "Last 30 Games"
 ]
 
+const mlbSplits = [
+    "None",
+    "vs. RHP",
+    "vs. LHP"
+]
+
 const mlbTeams: MLBTeam[] = [
     { team_id: "1", team_name: "All MLB Teams" },
     { team_id: "109", team_name: "Arizona Diamondbacks" },
@@ -96,4 +102,4 @@ const americanLeagueTeamIds = [
   ];
   
 
-export { mlbLeagueOptions, yearToDateOptions, mlbTeams, nationalLeagueTeams, americanLeagueTeams, americanLeagueTeamIds, nationalLeagueTeamIds }
+export { mlbLeagueOptions, yearToDateOptions, mlbTeams, mlbSplits, nationalLeagueTeams, americanLeagueTeams, americanLeagueTeamIds, nationalLeagueTeamIds }

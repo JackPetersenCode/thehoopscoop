@@ -17,6 +17,7 @@ import MLBSelectedTeamDropDown from '../components/MLBSelectedTeamDropDown';
 import MLBYearToDateDropDown from '../components/MLBYearToDateDropDown';
 import { MLBTeam } from '../interfaces/Teams';
 import MLBOpponentDropDown from '../components/MLBOpponentDropDown';
+import MLBSplitsDropDown from '../components/MLBSplitsDropDown';
 
 interface MLBProps {
     selectedSport: string;
@@ -24,6 +25,8 @@ interface MLBProps {
 }
 
 const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport }) => {
+
+    console.log("MLB Page")
 
     const [selectedSeason, setSelectedSeason] = useState('2023');
     const [mlbActivePlayers, setMlbActivePlayers] = useState<MLBActivePlayer[]>([]);
@@ -50,12 +53,24 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport }) => {
     const [leagueOption, setLeagueOption] = useState<string>("MLB");
     const [yearToDateOption, setYearToDateOption] = useState<string>("Year To Date");
     const [selectedOpponent, setSelectedOpponent] = useState<MLBTeam>({team_id: '1', team_name: 'All MLB Teams'})
+    const [selectedSplit, setSelectedSplit] = useState<string>("None");
     console.log(selectedSport);
 
-
-
+    //useEffect(() => {
+    //    console.log("active players hook")
+    //    async function getPlayersBySeason() {
+    //        const season = "2023";
+    //        const response = await axios.get(`api/MLBPlayersBySeason/${season}`);
+    //        const data = await response.data;
+    //        console.log(data)
+    //        setMlbActivePlayers(data);
+    //    }
+//
+    //    getPlayersBySeason();
+    //}, []);
 
     useEffect(() => {
+        console.log("active players hook")
         async function getData() {
             const season = "2023";
             const activePlayersResponse = await axios.get(`api/MLBActivePlayer/${season}`);
@@ -66,7 +81,6 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport }) => {
 
         getData();
     }, []);
-
 //<StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} selectedOpponent={selectedOpponent} />
 
     return (
@@ -142,6 +156,12 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport }) => {
                     />
                 </div>
                 <div className="drop-down">
+                    <MLBSplitsDropDown
+                        selectedSplit={selectedSplit}
+                        setSelectedSplit={setSelectedSplit}
+                    />
+                </div>
+                <div className="drop-down">
                     <MLBFindPlayerBottom activePlayers={mlbActivePlayers} inputTextBottom={inputTextBottom} setInputTextBottom={setInputTextBottom} selectedPlayerBottom={selectedPlayerBottom} setSelectedPlayerBottom={setSelectedPlayerBottom} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
                 </div>
             </div>
@@ -193,7 +213,7 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport }) => {
             <div>
                 <MLBStatsTable selectedSeason={selectedSeason} hittingPitching={hittingPitching} leagueOption={leagueOption}
                     yearToDateOption={yearToDateOption} selectedTeam={selectedTeam} setSelectedTeam={setSelectedTeam} selectedOpponent={selectedOpponent} sortField={sortField} setSortField={setSortField} 
-                    inputText={inputTextBottom} setInputText={setInputTextBottom} />
+                    selectedSplit={selectedSplit} inputText={inputTextBottom} setInputText={setInputTextBottom} />
             </div>
         </div>
         </>

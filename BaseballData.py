@@ -269,25 +269,26 @@ def get_schedule_save_play_by_play(season):
 
                 runners_rows.append({
                     "game_pk": game_pk,
-                    "about_at_bat_index": about.get("atBatIndex"),
-                    "runner_movement_origin_base": movement.get("originBase"),
-                    "runner_movement_start": movement.get("start"),
-                    "runner_movement_end": movement.get("end"),
-                    "runner_movement_out_base": movement.get("outBase"),
-                    "runner_movement_is_out": movement.get("isOut"),
-                    "runner_movement_out_number": movement.get("outNumber"),
+                    "at_bat_index": about.get("atBatIndex"),
+                    "runners_movement_origin_base": movement.get("originBase"),
+                    "runners_movement_start": movement.get("start"),
+                    "runners_movement_end": movement.get("end"),
+                    "runners_movement_out_base": movement.get("outBase"),
+                    "runners_movement_is_out": movement.get("isOut"),
+                    "runners_movement_out_number": movement.get("outNumber"),
 
-                    "runner_details_event": details.get("event"),
-                    "runner_details_event_type": details.get("eventType"),
-                    "runner_details_movement_reason": details.get("movementReason"),
-                    "runner_details_player_id": details_runner.get("id"),
-                    "runner_details_player_full_name": details_runner.get("fullName"),
-                    "runner_details_responsible_pitcher_id": details.get("responsiblePitcher", {}).get("id") if details.get("responsiblePitcher") else None,
-                    "runner_details_is_scoring_event": details.get("isScoringEvent"),
-                    "runner_details_rbi": details.get("rbi"),
-                    "runner_details_earned": details.get("earned"),
-                    "runner_details_team_unearned": details.get("teamUnearned"),
-                    "runner_details_play_index": details.get("playIndex"),
+                    "runners_details_event": details.get("event"),
+                    "runners_details_event_type": details.get("eventType"),
+                    "runners_details_movement_reason": details.get("movementReason"),
+                    "runners_details_player_id": details_runner.get("id"),
+                    "runners_details_player_full_name": details_runner.get("fullName"),
+                    "runners_details_responsible_pitcher_id": details.get("responsiblePitcher", {}).get("id") if details.get("responsiblePitcher") else None,
+                    "runners_details_is_scoring_event": details.get("isScoringEvent"),
+                    "runners_details_rbi": details.get("rbi"),
+                    "runners_details_earned": details.get("earned"),
+                    "runners_details_team_unearned": details.get("teamUnearned"),
+                    "runners_details_play_index": details.get("playIndex"),
+                    "runners_credits": json.dumps(credits)
                 })
 
                 for credit in credits:
@@ -295,13 +296,15 @@ def get_schedule_save_play_by_play(season):
                     credit_position = credit.get("position", {})
                     credit_rows.append({
                         "game_pk": game_pk,
-                        "about_at_bat_index": about.get("atBatIndex"),
-                        "runner_credits_player_id": credit_player.get("id"),
-                        "runner_credits_position_code": credit_position.get("code"),
-                        "runner_credits_position_name": credit_position.get("name"),
-                        "runner_credits_position_type": credit_position.get("type"),
-                        "runner_credits_position_abbreviation": credit_position.get("abbreviation"),
-                        "runner_credits_credit": credit.get("credit")
+                        "at_bat_index": about.get("atBatIndex"),
+                        "runners_details_play_index": details.get("playIndex"),
+                        "runners_details_player_id": details_runner.get("id"),
+                        "runners_credits_player_id": credit_player.get("id"),
+                        "runners_credits_position_code": credit_position.get("code"),
+                        "runners_credits_position_name": credit_position.get("name"),
+                        "runners_credits_position_type": credit_position.get("type"),
+                        "runners_credits_position_abbreviation": credit_position.get("abbreviation"),
+                        "runners_credits_credit": credit.get("credit")
                     })
 
             for play_event in play_events:
@@ -337,7 +340,7 @@ def get_schedule_save_play_by_play(season):
                     "play_events_count_outs": play_event_count.get("outs"),
                     
                     "play_events_pitch_data_start_speed": play_event_pitch_data.get("startSpeed"),
-                    "play_events_pitch_data": play_event_pitch_data.get("endSpeed"),
+                    "play_events_pitch_data_end_speed": play_event_pitch_data.get("endSpeed"),
                     "play_events_pitch_data_strike_zone_top": play_event_pitch_data.get("strikeZoneTop"),
                     "play_events_pitch_data_strike_zone_bottom": play_event_pitch_data.get("strikeZoneBottom"),
                     "play_events_pitch_data_coordinates_aY": play_event_pitch_data_coordinates.get("aY"),
@@ -357,12 +360,12 @@ def get_schedule_save_play_by_play(season):
                     "play_events_pitch_data_coordinates_aX": play_event_pitch_data_coordinates.get("aX"),
                     "play_events_pitch_data_breaks_break_angle": play_event_pitch_data_breaks.get("breakAngle"),
                     "play_events_pitch_data_breaks_break_length": play_event_pitch_data_breaks.get("breakLength"),
-                    "play_events_pitch_data_breaks_break_Y": play_event_pitch_data_breaks.get("breakY"),
+                    "play_events_pitch_data_breaks_break_y": play_event_pitch_data_breaks.get("breakY"),
                     "play_events_pitch_data_breaks_break_vertical": play_event_pitch_data_breaks.get("breakVertical"),
                     "play_events_pitch_data_breaks_break_vertical_induced": play_event_pitch_data_breaks.get("breakVerticalInduced"),
                     "play_events_pitch_data_breaks_break_horizontal": play_event_pitch_data_breaks.get("breakHorizontal"),
-                    "play_events_pitch_data_breaks_break_spin_rate": play_event_pitch_data_breaks.get("spinRate"),
-                    "play_events_pitch_data_breaks_break_spin_direction": play_event_pitch_data_breaks.get("spinDirection"),
+                    "play_events_pitch_data_breaks_spin_rate": play_event_pitch_data_breaks.get("spinRate"),
+                    "play_events_pitch_data_breaks_spin_direction": play_event_pitch_data_breaks.get("spinDirection"),
                     "play_events_pitch_data_zone": play_event_pitch_data.get("zone"),
                     "play_events_pitch_data_type_confidence": play_event_pitch_data.get("typeConfidence"),
                     "play_events_pitch_data_plate_time": play_event_pitch_data.get("plateTime"),
@@ -447,10 +450,10 @@ def get_schedule_save_play_by_play(season):
         df.to_csv(f"./mlb_stats/{filename}_{season}.csv", index=False)
         print(f"Saved {filename}_{season}.csv with {len(df)} rows")
 
-    write_csv("plays", play_rows)
+    #write_csv("plays", play_rows)
     write_csv("runners", runners_rows)
-    write_csv("credits", credit_rows)
-    write_csv("play_events", play_event_rows)
+    #write_csv("credits", credit_rows)
+    #write_csv("play_events", play_event_rows)
     # Convert to sorted list for consistent column order
     #headers = sorted(all_keys)
 

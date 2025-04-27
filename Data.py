@@ -728,7 +728,7 @@ async def readLeagueGamesTraditional():
     start = int(count) * 2
     print(start)
     print(end)
-    for i in range (start - 1, end):
+    for i in range (1455, end):
         print(i)
         if games["resultSets"][0]["rowSet"][i][4] in idList or games["resultSets"][0]["rowSet"][i][4] is None:
             continue
@@ -1222,12 +1222,12 @@ async def run_tasks():
     """Executes NBA API tasks sequentially with error handling and rate limiting."""
     
     # API calls executed one after the other
-    await safe_run(leaguegames)
-    await safe_run(shotchartdetailfunction)
+    #await safe_run(leaguegames)
+    #await safe_run(shotchartdetailfunction)
     #await safe_run(allassists)
     #await safe_run(assiststracker)
     #await safe_run(playergamelogfunction, '153', '0021700807')  
-    await safe_run(readLeagueGames)
+    #await safe_run(readLeagueGames)
     #await safe_run(leaguehustlestats)
 #
     #numPlayers = ['2','3','4','5']
@@ -1243,11 +1243,11 @@ async def run_tasks():
     await safe_run(readLeagueGamesTraditional)
     #await safe_run(leagueDashPlayerStatsFunction)
     #await safe_run(getPlayerIds)  # Runs before player stats function
-    await safe_run(readBoxScoreSummary)
+    #await safe_run(readBoxScoreSummary)
     #await safe_run(readLeagueGamesScoring)
     #await safe_run(writeNBAplayers)
-    await safe_run(getOdds)
-    await safe_run(readLeagueMisc)
+    #await safe_run(getOdds)
+    #await safe_run(readLeagueMisc)
     #await safe_run(defenseHub)
 
     print("✅ All tasks completed successfully!")

@@ -47,6 +47,7 @@ namespace ReactApp4.Server.Data
         public DbSet<MLBPlayerGameFielding> MLBPlayerGamesFielding { get; set; }
         public DbSet<MLBActivePlayer> MLBActivePlayers { get; set; }
         public DbSet<MLBStatsBatting> MLBStatsBattings { get; set; }
+        public DbSet<MLBStatsBattingWithSplit> MLBStatsBattingWithSplits { get; set; }
         public DbSet<MLBTeamInfo> MLBTeamInfos { get; set; }
         public DbSet<Play> Plays { get; set; }
         public DbSet<PlayPlayEvents> PlayEvents { get; set; }
@@ -114,6 +115,7 @@ namespace ReactApp4.Server.Data
             modelBuilder.Entity<MLBPlayerGameFielding>().HasNoKey();
             modelBuilder.Entity<MLBActivePlayer>().HasNoKey();
             modelBuilder.Entity<MLBStatsBatting>().HasNoKey();
+            modelBuilder.Entity<MLBStatsBattingWithSplit>().HasNoKey();
             modelBuilder.Entity<MLBTeamInfo>().HasNoKey();
             modelBuilder.Entity<Play>().HasNoKey();
             modelBuilder.Entity<PlayPlayEvents>().HasNoKey();

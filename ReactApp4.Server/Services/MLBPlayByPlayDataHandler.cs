@@ -33,5 +33,24 @@ namespace ReactApp4.Server.Services
             return await _mLBPlayByPlayFileHandler.ReadCSVRunnersCreditsBySeason(season);
         }
     
+        public async Task<IActionResult> InsertPlayAsync([FromBody] List<Play> Plays, string season)
+        {
+            return await _mLBPlayByPlayDatabaseHandler.InsertPlayAsync(Plays, season);
+        }
+
+        public async Task<IActionResult> InsertPlayEventAsync([FromBody] List<PlayPlayEvents> PlayEvents, string season)
+        {
+            return await _mLBPlayByPlayDatabaseHandler.InsertPlayEventAsync(PlayEvents, season);
+        }
+
+        public async Task<IActionResult> InsertPlayRunnersAsync([FromBody] List<PlayRunners> PlayRunners, string season)
+        {
+            return await _mLBPlayByPlayDatabaseHandler.InsertPlayRunnersAsync(PlayRunners, season);
+        }
+
+        public async Task<IActionResult> InsertPlayRunnersCreditsAsync([FromBody] List<PlayRunnersCredits> PlayRunnersCredits, string season)
+        {
+            return await _mLBPlayByPlayDatabaseHandler.InsertPlayRunnersCreditsAsync(PlayRunnersCredits, season);
+        }
     }
 }

@@ -13,6 +13,7 @@ import { MLBPlayerGameFielding } from "../interfaces/MLBPlayerGameFielding";
 import { MLBActivePlayer } from "../interfaces/MLBActivePlayer";
 import { MLBPlayerGameInfo } from "../interfaces/MLBPlayerGameInfo";
 import { MLBTeamInfo } from "../interfaces/MLBTeamInfo";
+import { Play, PlayPlayEvents, PlayRunners, PlayRunnersCredits } from "../interfaces/PlayByPlay";
 
 const postLeagueGamesBySeason = async (obj: [], season: string) => {
     console.log(season);
@@ -416,6 +417,109 @@ const postMLBTeamInfoBySeason = async(data: MLBTeamInfo[], season: string) => {
     return await response.json();
 }
 
+const postMLBPlaysBySeason = async (obj: Play[], season: string) => {
+    const url = `/api/MLBPlayByPlay/plays/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.log(errorText);
+            console.log(obj);
+        } else {
+            const result = await response.json();
+            console.log("✅ Player game info uploaded:", result);
+        }
+
+    } catch (error) {
+        console.error("❌ Error uploading fielding stats:", error);
+    }
+}
+
+const postMLBPlayEventsBySeason = async (obj: PlayPlayEvents[], season: string) => {
+    const url = `/api/MLBPlayByPlay/playEvents/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.log(errorText);
+            console.log(obj);
+        } else {
+            const result = await response.json();
+            console.log("✅ Player game info uploaded:", result);
+        }
+
+    } catch (error) {
+        console.error("❌ Error uploading fielding stats:", error);
+    }
+}
+
+const postMLBPlayRunnersBySeason = async (obj: PlayRunners[], season: string) => {
+    const url = `/api/MLBPlayByPlay/runners/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.log(errorText);
+            console.log(obj);
+        } else {
+            const result = await response.json();
+            console.log("✅ Player game info uploaded:", result);
+        }
+
+    } catch (error) {
+        console.error("❌ Error uploading fielding stats:", error);
+    }
+}
+
+const postMLBPlayRunnersCreditsBySeason = async (obj: PlayRunnersCredits[], season: string) => {
+    const url = `/api/MLBPlayByPlay/credits/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.log(errorText);
+            console.log(obj);
+        } else {
+            const result = await response.json();
+            console.log("✅ Player game info uploaded:", result);
+        }
+
+    } catch (error) {
+        console.error("❌ Error uploading fielding stats:", error);
+    }
+}
 
 export {
     postLeagueGamesBySeason,
@@ -436,4 +540,8 @@ export {
     postMLBActivePlayer,
     postMLBPlayerGameInfoBySeason,
     postMLBTeamInfoBySeason,
+    postMLBPlaysBySeason,
+    postMLBPlayEventsBySeason,
+    postMLBPlayRunnersBySeason,
+    postMLBPlayRunnersCreditsBySeason,
 }

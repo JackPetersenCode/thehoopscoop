@@ -17,16 +17,19 @@ namespace ReactApp4.Server.Services
            // _mLBPlayerGameFileHandler = mLBPlayerGameFileHandler;
         }
 
-        public async Task<ActionResult<IEnumerable<MLBStatsBatting>>> GetMLBStatsBattingBySeason(
+        public async Task<ActionResult<IEnumerable<IMLBStatsBatting>>> GetMLBStatsBattingBySeason(
             string season,
             string? leagueOption,
             string? selectedTeam,
             string? yearToDateOption,
             string? selectedOpponent,
-            int? personId)
+            string? selectedSplit,
+            string? order,
+            string? sortfield,
+            int? selectedPlayer)
         {
             return await _mLBStatsDatabaseHandler.GetMLBStatsBattingBySeason(
-                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, personId);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, order, sortfield, selectedPlayer);
         }
 
 

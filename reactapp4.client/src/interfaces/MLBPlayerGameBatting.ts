@@ -39,4 +39,7 @@ export interface MLBPlayerGameBatting {
     popOuts: number | null;
     lineOuts: number | null;
     note: string;
+    obp: number | null;
+    slg: number | null;
+    ops: number | null;
 }

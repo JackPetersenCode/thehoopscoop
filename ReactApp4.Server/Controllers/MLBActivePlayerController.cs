@@ -33,6 +33,13 @@ namespace ReactApp4.Server.Controllers
             return await _mLBActivePlayerDataHandler.GetMLBActivePlayer(season);
         }
 
+        //[HttpGet("bySeason/{season}")]
+        ////get all stats (batting, pitching, fielding)
+        //public async Task<ActionResult<IEnumerable<MLBPlayerBySeason>>> GetMLBPlayersBySeason(string season)
+        //{
+        //    return await _mLBActivePlayerDataHandler.GetMLBActivePlayer(season);
+        //}
+
         [HttpGet("read/{season}")]
         public async Task<IActionResult> GetMLBActivePlayerFromFile(string season)
         {

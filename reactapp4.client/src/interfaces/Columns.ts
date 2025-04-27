@@ -398,17 +398,19 @@ const mlbBattingColumns = [
     { label: "Games Played", accessor: "gamesPlayed" },
     { label: "At Bats", accessor: "atBats" },
     { label: "Hits", accessor: "hits" },
-    { label: "Average", accessor: "average" },
     { label: "Runs", accessor: "runs" },
     { label: "Home Runs", accessor: "homeRuns" },
     { label: "RBI", accessor: "rbi" },
+    { label: "Average", accessor: "average" },
     { label: "Stolen Bases", accessor: "stolenBases" },
     { label: "Caught Stealing", accessor: "caughtStealing" },
     { label: "SB%", accessor: "stolenBasePercentage" },
     { label: "Bases", accessor: "totalBases" },
     { label: "Fly Outs", accessor: "flyOuts" },
     { label: "Ground Outs", accessor: "groundOuts" },
-    { label: "Air Outs", accessor: "airOuts" },
+    //{ label: "Air Outs", accessor: "airOuts" },
+    { label: "Pop Outs", accessor: "popOuts" },
+    { label: "Line Outs", accessor: "lineOuts" },
     { label: "Doubles", accessor: "doubles" },
     { label: "Triples", accessor: "triples" },
     { label: "Strike Outs", accessor: "strikeOuts" },
@@ -424,8 +426,9 @@ const mlbBattingColumns = [
     { label: "Catchers Int.", accessor: "catchersInterference" },
     { label: "Pickoffs", accessor: "pickoffs" },
     { label: "AB per HR", accessor: "atBatsPerHomeRun" },
-    { label: "Pop Outs", accessor: "popOuts" },
-    { label: "Line Outs", accessor: "lineOuts" }
+    { label: "OBP", accessor: "obp" },
+    { label: "SLG", accessor: "slg" },
+    { label: "OPS", accessor: "ops" }
 ];
 
 

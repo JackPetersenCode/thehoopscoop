@@ -1,0 +1,201 @@
+WITH player_runs AS (
+  SELECT 
+    r.runners_details_player_id, 
+    COUNT(*) AS runs
+  FROM mlb_runners_2023 r
+  JOIN mlb_plays_2023 p 
+    ON r.game_pk = p.game_pk AND r.at_bat_index = p.at_bat_index
+  WHERE r.runners_movement_end = 'score'
+    AND p.matchup_pitch_hand_code = 'L' -- <-- Only vs. lefties
+    AND r.runners_details_player_full_name = 'Freddie Freeman'
+  GROUP BY r.runners_details_player_id
+)
+
+SELECT 
+  p.matchup_batter_id,
+  p.matchup_batter_full_name,
+  pbs.team_name,
+  ti.league_name,
+  ap.primary_position_name,
+  COUNT(DISTINCT p.game_pk) AS games_vs_lefties,
+  COUNT(CASE 
+           WHEN p.result_type = 'atBat' 
+           THEN 1.0 
+        END) AS plate_appearances_vs_lefties,
+  COUNT(CASE 
+           WHEN p.result_type = 'atBat' 
+             AND NOT p.result_event_type ILIKE '%sac%'
+             AND NOT p.result_event_type ILIKE '%walk%'
+             AND NOT p.result_event_type ILIKE '%hit_by_pitch%'
+             AND NOT p.result_event_type ILIKE '%catcher_interf%'
+           THEN 1.0 
+        END) AS at_bats_vs_lefties,
+  COUNT(CASE 
+           WHEN p.result_event IN ('Single', 'Double', 'Triple', 'Home Run') 
+           THEN 1.0 
+        END) AS hits_vs_lefties,
+  CASE 
+    WHEN COUNT(CASE 
+                 WHEN p.result_type = 'atBat' 
+                   AND NOT p.result_event_type ILIKE '%sac%'
+                   AND NOT p.result_event_type ILIKE '%walk%'
+                   AND NOT p.result_event_type ILIKE '%hit_by_pitch%'
+                   AND NOT p.result_event_type ILIKE '%catcher_interf%'
+                 THEN 1.0 
+               END) = 0 
+    THEN NULL
+    ELSE 
+      COUNT(CASE 
+               WHEN p.result_event IN ('Single', 'Double', 'Triple', 'Home Run') 
+               THEN 1.0 
+            END)::FLOAT 
+      / 
+      COUNT(CASE 
+               WHEN p.result_type = 'atBat' 
+                 AND NOT p.result_event_type ILIKE '%sac%'
+                 AND NOT p.result_event_type ILIKE '%walk%'
+                 AND NOT p.result_event_type ILIKE '%hit_by_pitch%'
+                 AND NOT p.result_event_type ILIKE '%catcher_interf%'
+               THEN 1.0 
+            END)
+  END AS avg_vs_lefties,
+  r.runs,
+  COUNT(CASE 
+         WHEN p.result_event = 'Double' 
+         THEN 1.0 
+      END) AS doubles,
+  COUNT(CASE 
+         WHEN p.result_event = 'Triples' 
+         THEN 1.0 
+      END) AS triples,
+  COUNT(CASE 
+         WHEN p.result_event = 'Home Run' 
+         THEN 1.0 
+      END) AS home_runs,
+  SUM(p.result_rbi) as rbi,
+  COUNT(CASE 
+         WHEN p.result_event = 'Walk' 
+         THEN 1.0 
+      END) AS walks,
+  COUNT(CASE 
+         WHEN p.result_event = 'Strikeout' 
+         THEN 1.0 
+      END) AS strikeouts,
+                          SUM(intentional_walks) AS IBB,
+                          SUM(hit_by_pitch) AS HBP,
+                          SUM(ground_into_double_play) AS GIDP,
+                          SUM(ground_into_triple_play) AS GITP,
+                          SUM(left_on_base) AS left_on_base,
+                          SUM(sac_bunts) AS sac_bunts,
+                          SUM(sac_flies) AS sac_flies,
+                          SUM(catchers_interference) AS catchers_interference,
+                          SUM(pickoffs) AS pickoffs,
+                          CASE 
+                              WHEN SUM(at_bats) = 0 THEN NULL 
+                              ELSE 100 * SUM(home_runs) * 1.0 / SUM(at_bats) 
+                          END AS at_bats_per_home_run,
+                          SUM(pop_outs) AS pop_outs,
+                          SUM(line_outs) AS line_outs,
+  -- OBP Calculation (guarding against div by 0)
+  CASE 
+    WHEN 
+      (COUNT(CASE 
+         WHEN result_type = 'atBat'
+           AND result_event_type NOT IN ('walk', 'hit_by_pitch', 'sac_fly', 'sac_bunt', 'catcher_interf') 
+         THEN 1 END)
+       + COUNT(CASE WHEN result_event_type = 'walk' THEN 1 END)
+       + COUNT(CASE WHEN result_event_type = 'hit_by_pitch' THEN 1 END)
+       + COUNT(CASE WHEN result_event_type = 'sac_fly' THEN 1 END)) = 0
+    THEN NULL
+    ELSE
+      (COUNT(CASE WHEN result_event IN ('Single', 'Double', 'Triple', 'Home Run') THEN 1 END)
+       + COUNT(CASE WHEN result_event_type = 'walk' THEN 1 END)
+       + COUNT(CASE WHEN result_event_type = 'hit_by_pitch' THEN 1 END))::FLOAT
+      /
+      (COUNT(CASE 
+         WHEN result_type = 'atBat'
+           AND result_event_type NOT IN ('walk', 'hit_by_pitch', 'sac_fly', 'sac_bunt', 'catcher_interf') 
+         THEN 1 END)
+       + COUNT(CASE WHEN result_event_type = 'walk' THEN 1 END)
+       + COUNT(CASE WHEN result_event_type = 'hit_by_pitch' THEN 1 END)
+       + COUNT(CASE WHEN result_event_type = 'sac_fly' THEN 1 END))
+  END AS obp,
+  -- SLG calculation
+  CASE 
+    WHEN COUNT(CASE 
+                 WHEN result_type = 'atBat' 
+                   AND result_event_type NOT IN ('walk', 'hit_by_pitch', 'sac_fly', 'sac_bunt', 'catcher_interf') 
+                 THEN 1 
+               END) = 0 
+    THEN NULL
+    ELSE (
+      1 * COUNT(CASE WHEN result_event = 'Single' THEN 1 END) +
+      2 * COUNT(CASE WHEN result_event = 'Double' THEN 1 END) +
+      3 * COUNT(CASE WHEN result_event = 'Triple' THEN 1 END) +
+      4 * COUNT(CASE WHEN result_event = 'Home Run' THEN 1 END)
+    )::FLOAT 
+    /
+    COUNT(CASE 
+             WHEN result_type = 'atBat' 
+               AND result_event_type NOT IN ('walk', 'hit_by_pitch', 'sac_fly', 'sac_bunt', 'catcher_interf') 
+             THEN 1 
+         END)
+  END AS slg,
+  -- OPS = OBP + SLG
+  CASE 
+    WHEN 
+      COUNT(CASE WHEN result_type = 'atBat' THEN 1 
+                 WHEN result_event_type IN ('walk', 'hit_by_pitch', 'sac_fly') THEN 1 
+           END) = 0 
+      OR 
+      COUNT(CASE 
+               WHEN result_type = 'atBat' 
+                 AND result_event_type NOT IN ('walk', 'hit_by_pitch', 'sac_fly', 'sac_bunt', 'catcher_interf') 
+               THEN 1 
+           END) = 0 
+    THEN NULL
+    ELSE (
+      (
+        (
+          COUNT(CASE WHEN result_event IN ('Single', 'Double', 'Triple', 'Home Run') THEN 1 END) +
+          COUNT(CASE WHEN result_event_type = 'walk' THEN 1 END) +
+          COUNT(CASE WHEN result_event_type = 'hit_by_pitch' THEN 1 END)
+        )::FLOAT 
+        /
+        COUNT(CASE WHEN result_type = 'atBat' 
+                    THEN 1 
+                    WHEN result_event_type IN ('walk', 'hit_by_pitch', 'sac_fly') THEN 1 
+              END)
+      )
+      +
+      (
+        (
+          1 * COUNT(CASE WHEN result_event = 'Single' THEN 1 END) +
+          2 * COUNT(CASE WHEN result_event = 'Double' THEN 1 END) +
+          3 * COUNT(CASE WHEN result_event = 'Triple' THEN 1 END) +
+          4 * COUNT(CASE WHEN result_event = 'Home Run' THEN 1 END)
+        )::FLOAT 
+        /
+        COUNT(CASE 
+                 WHEN result_type = 'atBat' 
+                   AND result_event_type NOT IN ('walk', 'hit_by_pitch', 'sac_fly', 'sac_bunt', 'catcher_interf') 
+                 THEN 1 
+             END)
+      )
+    )
+  END AS ops
+FROM player_game_stats_batting_2023 pbs
+LEFT JOIN player_runs r
+  ON pbs.person_id = r.runners_details_player_id
+LEFT JOIN mlb_plays_2023 p
+  ON p.matchup_batter_id = pbs.person_id
+  AND p.game_pk = pbs.game_pk
+JOIN mlb_active_players_2023 ap
+	ON pbs.person_id = ap.player_id
+JOIN mlb_team_info_2023 ti
+	ON pbs.game_pk = ti.game_pk
+  AND pbs.team_name = ti.team_name
+WHERE p.matchup_pitch_hand_code = 'L'
+  AND p.matchup_batter_full_name = 'Freddie Freeman'
+GROUP BY p.matchup_batter_id, p.matchup_batter_full_name, r.runs, pbs.team_name, ti.league_name, ap.primary_position_name
+ORDER BY hits_vs_lefties DESC;

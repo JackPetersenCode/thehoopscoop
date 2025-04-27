@@ -15,6 +15,12 @@ namespace ReactApp4.Server.Services
 {
     public class MLBPlayByPlayFileHandler
     {
+        private readonly MLBPlayByPlayDatabaseHandler _dbHandler;
+
+        public MLBPlayByPlayFileHandler(MLBPlayByPlayDatabaseHandler dbHandler)
+        {
+            _dbHandler = dbHandler;
+        }
         public async Task<IActionResult> ReadCSVPlaysBySeason(string season)
         {
             try
@@ -31,8 +37,8 @@ namespace ReactApp4.Server.Services
                     HeaderValidated = null            // ⬅️ Disable strict header matching
                 });
                 // ✅ Register the map here
-                //csv.Context.RegisterClassMap<MLBPlayerGameInfoMap>();
-                var records = csv.GetRecords<Play>().ToList();
+                csv.Context.RegisterClassMap<PlayMap>();
+                var records = csv.GetRecords<Play>().Take(50).ToList();
                 return new OkObjectResult(records);
             }
             catch (Exception ex)
@@ -58,9 +64,10 @@ namespace ReactApp4.Server.Services
                     HeaderValidated = null            // ⬅️ Disable strict header matching
                 });
                 // ✅ Register the map here
-                //csv.Context.RegisterClassMap<MLBPlayerGameInfoMap>();
+                csv.Context.RegisterClassMap<PlayPlayEventsMap>();
                 var records = csv.GetRecords<PlayPlayEvents>().ToList();
-                return new OkObjectResult(records);
+                await _dbHandler.InsertPlayEventAsync(records, season);
+                return new OkObjectResult(new { inserted = records.Count });
             }
             catch (Exception ex)
             {
@@ -84,10 +91,15 @@ namespace ReactApp4.Server.Services
                     MissingFieldFound = null,         // ⬅️ Ignore missing fields
                     HeaderValidated = null            // ⬅️ Disable strict header matching
                 });
+
                 // ✅ Register the map here
-                //csv.Context.RegisterClassMap<MLBPlayerGameInfoMap>();
+                csv.Context.RegisterClassMap<PlayRunnersMap>();
                 var records = csv.GetRecords<PlayRunners>().ToList();
-                return new OkObjectResult(records);
+                //return new OkObjectResult(records);
+
+
+                await _dbHandler.InsertPlayRunnersAsync(records, season);
+                return new OkObjectResult(new { inserted = records.Count });
             }
             catch (Exception ex)
             {
@@ -112,9 +124,13 @@ namespace ReactApp4.Server.Services
                     HeaderValidated = null            // ⬅️ Disable strict header matching
                 });
                 // ✅ Register the map here
-                //csv.Context.RegisterClassMap<MLBPlayerGameInfoMap>();
+                csv.Context.RegisterClassMap<PlayRunnersCreditsMap>();
                 var records = csv.GetRecords<PlayRunnersCredits>().ToList();
-                return new OkObjectResult(records);
+                //return new OkObjectResult(records);
+
+
+                await _dbHandler.InsertPlayRunnersCreditsAsync(records, season);
+                return new OkObjectResult(new { inserted = records.Count });
             }
             catch (Exception ex)
             {

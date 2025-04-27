@@ -14,7 +14,7 @@ function App() {
 
     const [loading, setLoading] = useState(true);
     const [selectedSport, setSelectedSport] = useState<string>('');
-
+    console.log("App")
 
     useEffect(() => {
         const checkBackend = async () => {

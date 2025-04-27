@@ -40,5 +40,6 @@ namespace ReactApp4.Server.Data
         [Column("pop_outs")] public double? PopOuts { get; set; }
         [Column("line_outs")] public double? LineOuts { get; set; }
         [Column("note")] public string Note { get; set; } = string.Empty;
+
     }
 }

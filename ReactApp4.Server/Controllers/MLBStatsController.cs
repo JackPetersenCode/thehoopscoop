@@ -27,16 +27,19 @@ namespace ReactApp4.Server.Controllers
         }
 
         [HttpGet("batting/{season}")]
-        public async Task<ActionResult<IEnumerable<MLBStatsBatting>>> GetMLBStatsBattingBySeason(
+        public async Task<ActionResult<IEnumerable<IMLBStatsBatting>>> GetMLBStatsBattingBySeason(
             string season,
             [FromQuery] string? leagueOption,
             [FromQuery] string? selectedTeam,
             [FromQuery] string? yearToDateOption,
             [FromQuery] string? selectedOpponent,
-            [FromQuery] int? personId)
+            [FromQuery] string? selectedSplit,
+            [FromQuery] string? order,
+            [FromQuery] string? sortfield,
+            [FromQuery] int? selectedPlayer)
         {
             return await _mLBStatsDataHandler.GetMLBStatsBattingBySeason(
-                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, personId);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, order, sortfield, selectedPlayer);
         }
 
         //[HttpGet("playByPlay/read/{season}/{gamePk}")]

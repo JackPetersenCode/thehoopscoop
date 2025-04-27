@@ -1,4 +1,4 @@
-import { loadBoxScoresTraditional, loadLeagueGamesBySeason, loadPlayers, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring, loadShotsBySeason, loadNewOddsFunction, loadBoxScoreSummary, loadMLBGames, loadMLBPlayerGamesByCategory, loadMLBActivePlayers, loadMLBPlayerGameInfoBySeason, loadMLBTeamInfoBySeason } from '../helpers/Loaders';
+import { loadBoxScoresTraditional, loadLeagueGamesBySeason, loadPlayers, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring, loadShotsBySeason, loadNewOddsFunction, loadBoxScoreSummary, loadMLBGames, loadMLBPlayerGamesByCategory, loadMLBActivePlayers, loadMLBPlayerGameInfoBySeason, loadMLBTeamInfoBySeason, loadMLBPlaysBySeason, loadMLBPlayEventsBySeason, loadMLBPlayRunnersBySeason, loadMLBPlayRunnersCreditsBySeason } from '../helpers/Loaders';
 import { ExpectedMatchupPostObject, RosterPlayer, teamIds } from '../interfaces/Gambling';
 import axios from 'axios';
 
@@ -667,6 +667,10 @@ function Admin() {
             <button onClick={() => loadMLBActivePlayers("2023")}>MLB Active Players</button>
             <button onClick={() => loadMLBPlayerGameInfoBySeason("2023")}>MLB Player Game Info</button>
             <button onClick={() => loadMLBTeamInfoBySeason("2023")}>MLB Team Info</button>
+            <button onClick={() => loadMLBPlaysBySeason("2023")}>MLB Plays</button>
+            <button onClick={() => loadMLBPlayEventsBySeason("2023")}>MLB Play Events</button>
+            <button onClick={() => loadMLBPlayRunnersBySeason("2023")}>MLB Play Runners</button>
+            <button onClick={() => loadMLBPlayRunnersCreditsBySeason("2023")}>MLB Play Runners Credits</button>
 
         </div>
   );
