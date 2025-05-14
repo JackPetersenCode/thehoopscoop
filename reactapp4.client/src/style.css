@@ -314,6 +314,7 @@ left-justify {
     font-size: larger;
     font-weight: 400;
     text-align: center;
+    background-color: red;
 }
 
 .prop-bet-div {

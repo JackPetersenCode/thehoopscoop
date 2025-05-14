@@ -34,7 +34,7 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport }) => {
     const [inputTextBottom, setInputTextBottom] = useState('');
     const [selectedPlayerBottom, setSelectedPlayerBottom] = useState<MLBActivePlayer | null>(null);
     const [selectedTeam, setSelectedTeam] = useState<MLBTeam>({team_id: '1', team_name: 'All MLB Teams'});
-    const [sortField, setSortField] = useState("AtBats");
+    const [sortField, setSortField] = useState<string>("");
     //const [selectedStat, setSelectedStat] = useState<PropBetStats | null>(null);
     const [gameOption, setGameOption] = useState<string>('Prop Bet');
     const [roster, setRoster] = useState<MLBActivePlayer[]>([]);
@@ -157,6 +157,7 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport }) => {
                 </div>
                 <div className="drop-down">
                     <MLBSplitsDropDown
+                        hittingPitching=''
                         selectedSplit={selectedSplit}
                         setSelectedSplit={setSelectedSplit}
                     />
@@ -204,6 +205,13 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport }) => {
                     />
                 </div>
                 <div className="drop-down">
+                    <MLBSplitsDropDown
+                        hittingPitching={hittingPitching}
+                        selectedSplit={selectedSplit}
+                        setSelectedSplit={setSelectedSplit}
+                    />
+                </div>
+                <div className="drop-down">
                     <MLBFindPlayerBottom activePlayers={mlbActivePlayers} inputTextBottom={inputTextBottom} setInputTextBottom={setInputTextBottom} selectedPlayerBottom={selectedPlayerBottom} setSelectedPlayerBottom={setSelectedPlayerBottom} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
                 </div>
             </div>
@@ -212,8 +220,8 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport }) => {
         ""}
             <div>
                 <MLBStatsTable selectedSeason={selectedSeason} hittingPitching={hittingPitching} leagueOption={leagueOption}
-                    yearToDateOption={yearToDateOption} selectedTeam={selectedTeam} setSelectedTeam={setSelectedTeam} selectedOpponent={selectedOpponent} sortField={sortField} setSortField={setSortField} 
-                    selectedSplit={selectedSplit} inputText={inputTextBottom} setInputText={setInputTextBottom} />
+                    yearToDateOption={yearToDateOption} selectedTeam={selectedTeam} setSelectedTeam={setSelectedTeam} selectedOpponent={selectedOpponent}  
+                    selectedSplit={selectedSplit} inputText={inputTextBottom} setInputText={setInputTextBottom} sortField={sortField} setSortField={setSortField} />
             </div>
         </div>
         </>

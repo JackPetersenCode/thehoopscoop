@@ -13,10 +13,16 @@ const yearToDateOptions = [
     "Last 30 Games"
 ]
 
-const mlbSplits = [
+const mlbSplitsBatting = [
     "None",
     "vs. RHP",
     "vs. LHP"
+]
+
+const mlbSplitsPitching = [
+    "None",
+    "vs. RHB",
+    "vs. LHB"
 ]
 
 const mlbTeams: MLBTeam[] = [
@@ -102,4 +108,4 @@ const americanLeagueTeamIds = [
   ];
   
 
-export { mlbLeagueOptions, yearToDateOptions, mlbTeams, mlbSplits, nationalLeagueTeams, americanLeagueTeams, americanLeagueTeamIds, nationalLeagueTeamIds }
+export { mlbLeagueOptions, yearToDateOptions, mlbTeams, mlbSplitsBatting, mlbSplitsPitching, nationalLeagueTeams, americanLeagueTeams, americanLeagueTeamIds, nationalLeagueTeamIds }

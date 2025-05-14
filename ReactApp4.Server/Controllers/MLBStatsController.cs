@@ -30,16 +30,32 @@ namespace ReactApp4.Server.Controllers
         public async Task<ActionResult<IEnumerable<IMLBStatsBatting>>> GetMLBStatsBattingBySeason(
             string season,
             [FromQuery] string? leagueOption,
-            [FromQuery] string? selectedTeam,
             [FromQuery] string? yearToDateOption,
-            [FromQuery] string? selectedOpponent,
-            [FromQuery] string? selectedSplit,
-            [FromQuery] string? order,
-            [FromQuery] string? sortfield,
-            [FromQuery] int? selectedPlayer)
+            [FromQuery] int? selectedPlayer,
+            [FromQuery] string? selectedTeam = "0",
+            [FromQuery] string? selectedOpponent = "0",
+            [FromQuery] string? selectedSplit = "None",
+            [FromQuery] string? sortField = "at_bats",
+            [FromQuery] string? order = "DESC")
         {
             return await _mLBStatsDataHandler.GetMLBStatsBattingBySeason(
-                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, order, sortfield, selectedPlayer);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+        }
+
+        [HttpGet("pitching/{season}")]
+        public async Task<ActionResult<IEnumerable<IMLBStatsPitching>>> GetMLBStatsPitchingBySeason(
+            string season,
+            [FromQuery] string? leagueOption,
+            [FromQuery] string? yearToDateOption,
+            [FromQuery] int? selectedPlayer,
+            [FromQuery] string? selectedTeam = "0",
+            [FromQuery] string? selectedOpponent = "0",
+            [FromQuery] string? selectedSplit = "None",
+            [FromQuery] string? sortField = "innings_pitched",
+            [FromQuery] string? order = "DESC")
+        {
+            return await _mLBStatsDataHandler.GetMLBStatsPitchingBySeason(
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
         }
 
         //[HttpGet("playByPlay/read/{season}/{gamePk}")]

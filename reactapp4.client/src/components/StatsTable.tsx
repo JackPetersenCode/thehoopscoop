@@ -31,11 +31,12 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ selectedSeason, sele
     const [order, setOrder] = useState<string>("desc");
     const [tableData, setTableData] = useState<Stats[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
+    console.log('StatsTable')
 
     useEffect(() => {
 
         const getStats = async () => {
-
+            console.log('getSTats hook')
             //if (selectedBoxType === 'Advanced') {
             //    if (selectedLineupPlayer === 'Player') {
             //        setColumns(advancedPlayerColumns);

@@ -1,8 +1,8 @@
 import { Column, Stats } from "../interfaces/StatsTable";
 
 interface MLBStatsTableBodyProps {
-    columns: Column[] | string[];
-    tableData: Stats[] | string[];
+    columns: Column[];
+    tableData: Stats[];
     filteredBoxScores: Stats[];
 }
 
@@ -34,69 +34,48 @@ function isNumber(value: string | number): value is number {
 //    <button onClick={() => (deletePlayer(index))}>x</button>
 //</td>
 
-const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = ({ columns, tableData, filteredBoxScores }) => {
+const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = ({ columns, tableData }) => {
 
-
-    if (!isTableDataArray(tableData)) {
-        console.log(tableData);
-        return (
-            <tbody>
-                {tableData.length > 0 ? tableData.map((data, index) => (
-                    <tr key={index}>
-                        <td>{data}</td>
-                    </tr>
-                )) : 'Loading'}
-            </tbody>
-        );
-    } else {
-        if (isColumnArray(columns)) {
-            
-            return (
-                <tbody>
-                    {tableData.map((data, index) => {
-                        return (
-                            <tr key={index} >
-                                {columns.map(({ accessor }) => {
-                                let tData;
-
-                                const value = data[accessor];
-
-                                if (value !== null && value !== undefined) {
-                                    if (typeof value === 'number') {
-                                        if (accessor.includes("pct") && !accessor.includes("rank")) {
-                                            tData = (value * 100).toFixed(1);
-                                        } else if (["average", "obp", "slg", "ops"].includes(accessor)) {
-                                            tData = value.toFixed(3).replace(/^0/, ''); // Remove leading 0
-                                        } else if (["stolenBasePercentage", "atBatsPerHomeRun"].includes(accessor)) {
-                                            tData = value.toFixed(2);
-                                        } else {
-                                            tData = value;
-                                        }
-                                    } else if (accessor === "leagueName") {
-                                        if (value === "American League") {
-                                            tData = "AL";
-                                        } else if (value === "National League") {
-                                            tData = "NL";
-                                        } else {
-                                            tData = "MLB";
-                                        }
-                                    } else if (accessor === "position") {
-                                        tData = positionShorthandMap[value] || value;
+    return (
+        <tbody>
+            {tableData.map((data, index) => {
+                return (
+                    <tr key={index} >
+                        {columns.map(({ accessor }) => {
+                            let tData;
+                            const value = data[accessor];
+                            if (value !== null && value !== undefined) {
+                                if (typeof value === 'number') {
+                                    if (["average", "obp", "slg", "ops"].includes(accessor)) {
+                                        tData = value.toFixed(3).replace(/^0/, ''); // Remove leading 0
+                                    } else if (["stolenBasePercentage", "atBatsPerHomeRun", "whip", "era", "strikeoutsPer9", "homeRunsPer9", "runsScoredPer9", "walksPer9" ].includes(accessor)) {
+                                        tData = value.toFixed(2);
                                     } else {
-                                        tData = value.toString();
+                                        tData = value;
                                     }
+                                } else if (accessor === "leagueName") {
+                                    if (value === "American League") {
+                                        tData = "AL";
+                                    } else if (value === "National League") {
+                                        tData = "NL";
+                                    } else {
+                                        tData = "MLB";
+                                    }
+                                } else if (accessor === "position" || accessor === "primaryPositionName") {
+                                    tData = positionShorthandMap[value] || value;
                                 } else {
-                                    tData = "--";
+                                    tData = value.toString();
                                 }
-                                    return <td className={accessor === "group_name" ? "group-name p-1" : "not-group-name"} key={accessor}>{tData}</td>;
-                                })}
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            );
-        }
-    }
+                            } else {
+                                tData = "--";
+                            }
+                            return <td className={accessor === "group_name" ? "group-name p-1" : "not-group-name"} key={accessor}>{tData}</td>;
+                        })}
+                    </tr>
+                );
+            })}
+        </tbody>
+    );
 };
 
 

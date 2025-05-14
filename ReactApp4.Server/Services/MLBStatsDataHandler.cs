@@ -24,12 +24,27 @@ namespace ReactApp4.Server.Services
             string? yearToDateOption,
             string? selectedOpponent,
             string? selectedSplit,
-            string? order,
-            string? sortfield,
-            int? selectedPlayer)
+            int? selectedPlayer,
+            string? sortField,
+            string? order)
         {
             return await _mLBStatsDatabaseHandler.GetMLBStatsBattingBySeason(
-                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, order, sortfield, selectedPlayer);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+        }
+
+        public async Task<ActionResult<IEnumerable<IMLBStatsPitching>>> GetMLBStatsPitchingBySeason(
+            string season,
+            string? leagueOption,
+            string? selectedTeam,
+            string? yearToDateOption,
+            string? selectedOpponent,
+            string? selectedSplit,
+            int? selectedPlayer,
+            string? sortField,
+            string? order)
+        {
+            return await _mLBStatsDatabaseHandler.GetMLBStatsPitchingBySeason(
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
         }
 
 

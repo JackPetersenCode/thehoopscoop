@@ -78,7 +78,7 @@ namespace ReactApp4.Server.Data
         public double? NumberOfPitches { get; set; }
 
         [Column("inningsPitched")]
-        public string? InningsPitched { get; set; }
+        public double? InningsPitched { get; set; }
 
         [Column("wins")]
         public double? Wins { get; set; }

@@ -1,12 +1,13 @@
 import React from "react";
-import { mlbSplits } from "../interfaces/MLBDropDownOptions";
+import { mlbSplitsBatting, mlbSplitsPitching } from "../interfaces/MLBDropDownOptions";
 
 interface MLBSplitsDropDownProps {
+    hittingPitching: string;
     selectedSplit: string;
     setSelectedSplit: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const MLBSplitsDropDown: React.FC<MLBSplitsDropDownProps> = ({ selectedSplit, setSelectedSplit }) => {
+const MLBSplitsDropDown: React.FC<MLBSplitsDropDownProps> = ({ hittingPitching, selectedSplit, setSelectedSplit }) => {
     const handleSplitChange = (event: { preventDefault: () => void; target: { value: string; }; }) => {
         event.preventDefault();
         if (event.target.value === "0") {
@@ -19,13 +20,17 @@ const MLBSplitsDropDown: React.FC<MLBSplitsDropDownProps> = ({ selectedSplit, se
     return (
         <div className="drop-flex">
             <div className="drop-title">
-                Season
+                Splits
             </div>
             <div>
                 <select className="drop-flex-select" value={selectedSplit} onChange={handleSplitChange}>
-                    <option className="drop-flex-option" value="0">Select Season</option>
+                    <option className="drop-flex-option" value="0">Select Split</option>
 
-                    {mlbSplits.map((option, index) => (
+                    {hittingPitching === 'pitching' ? mlbSplitsPitching.map((option, index) => (
+                        <option key={index} value={option}>{option}</option>
+                    ))
+                    :
+                    mlbSplitsBatting.map((option, index) => (
                         <option key={index} value={option}>{option}</option>
                     ))}
 

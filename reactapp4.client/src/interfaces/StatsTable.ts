@@ -4,6 +4,8 @@ type Column = {
 };
 
 type SortingFunction = (sortField: string, sortOrder: string) => void;
+type MLBSortingFunction = (sortField: string, sortOrder: string) => void;
+
 
 type Stats = {
     [key: string]: number | string;
@@ -62,4 +64,4 @@ type LeagueDashLineupAdvanced = {
     pie_rank?: number;
 };
 
-export type { Column, SortingFunction, LeagueDashLineupAdvanced, Stats }
+export type { Column, SortingFunction, LeagueDashLineupAdvanced, Stats, MLBSortingFunction }
