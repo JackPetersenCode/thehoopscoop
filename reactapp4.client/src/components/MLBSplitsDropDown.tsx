@@ -1,10 +1,11 @@
-import React from "react";
+import React, { MutableRefObject } from "react";
 import { mlbSplitsBatting, mlbSplitsPitching } from "../interfaces/MLBDropDownOptions";
 
 interface MLBSplitsDropDownProps {
     hittingPitching: string;
     selectedSplit: string;
     setSelectedSplit: React.Dispatch<React.SetStateAction<string>>;
+    //loading: MutableRefObject<boolean>;
 }
 
 const MLBSplitsDropDown: React.FC<MLBSplitsDropDownProps> = ({ hittingPitching, selectedSplit, setSelectedSplit }) => {
