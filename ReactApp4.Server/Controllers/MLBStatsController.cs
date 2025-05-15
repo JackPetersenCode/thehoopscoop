@@ -42,6 +42,22 @@ namespace ReactApp4.Server.Controllers
                 season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
         }
 
+        [HttpGet("batting/splits/{season}")]
+        public async Task<ActionResult<IEnumerable<IMLBStatsBatting>>> GetMLBStatsBattingBySeasonSplits(
+            string season,
+            [FromQuery] string? leagueOption,
+            [FromQuery] string? yearToDateOption,
+            [FromQuery] int? selectedPlayer,
+            [FromQuery] string? selectedTeam = "0",
+            [FromQuery] string? selectedOpponent = "0",
+            [FromQuery] string? selectedSplit = "None",
+            [FromQuery] string? sortField = "at_bats",
+            [FromQuery] string? order = "DESC")
+        {
+            return await _mLBStatsDataHandler.GetMLBStatsBattingBySeasonSplits(
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+        }
+
         [HttpGet("pitching/{season}")]
         public async Task<ActionResult<IEnumerable<IMLBStatsPitching>>> GetMLBStatsPitchingBySeason(
             string season,
@@ -58,6 +74,21 @@ namespace ReactApp4.Server.Controllers
                 season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
         }
 
+        [HttpGet("pitching/splits/{season}")]
+        public async Task<ActionResult<IEnumerable<IMLBStatsPitching>>> GetMLBStatsPitchingBySeasonSplits(
+            string season,
+            [FromQuery] string? leagueOption,
+            [FromQuery] string? yearToDateOption,
+            [FromQuery] int? selectedPlayer,
+            [FromQuery] string? selectedTeam = "0",
+            [FromQuery] string? selectedOpponent = "0",
+            [FromQuery] string? selectedSplit = "None",
+            [FromQuery] string? sortField = "innings_pitched",
+            [FromQuery] string? order = "DESC")
+        {
+            return await _mLBStatsDataHandler.GetMLBStatsPitchingBySeasonSplits(
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+        }
         //[HttpGet("playByPlay/read/{season}/{gamePk}")]
         //public async Task<IActionResult> GetMLBPlayerGamesFromFile(string season, string category)
         //{

@@ -24,30 +24,35 @@ interface MLBStatsTableProps {
     selectedSplit: string;
     inputText: string;
     setInputText: React.Dispatch<React.SetStateAction<string>>;
+    loading: boolean;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 
 
-const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason, hittingPitching, leagueOption, yearToDateOption, selectedTeam, setSelectedTeam, selectedOpponent, selectedSplit, inputText, sortField, setSortField }) => {
+const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason, hittingPitching, leagueOption, yearToDateOption, selectedTeam, 
+    setSelectedTeam, selectedOpponent, selectedSplit, inputText, sortField, setSortField, loading, setLoading }) => {
 
-    console.log("MLB Stats Table")
     const [order, setOrder] = useState<string>("desc");
     const [tableData, setTableData] = useState<Stats[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
     //const [sortField, setSortField] = useState<string>("");
-    const [loading, setLoading] = useState<boolean>(false);
 
-    console.log(tableData)
 
     useEffect(() => {
-        console.log("get stats hook")
         const getStats = async () => {          
             //setLoading(true);
-            setTableData([]);
+            //setTableData([]);
             if (hittingPitching === 'hitting') {
 
                 try {
-                    const response = await axios.get(`/api/MLBStats/batting/${selectedSeason}`, {
+                    let url = ``;
+                    if (["vs. LHP", "vs. RHP"].includes(selectedSplit)) {
+                        url = `/api/MLBStats/batting/splits/${selectedSeason}`;
+                    } else {
+                        url = `/api/MLBStats/batting/${selectedSeason}`;
+                    }
+                    const response = await axios.get(url, {
                         params: {
                             leagueOption: leagueOption,
                             yearToDateOption: yearToDateOption,
@@ -63,14 +68,20 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
                     setTableData(response.data);
                     
                     setColumns(mlbBattingColumns);
-                    console.log(response.data);
                 } catch (error) {
                     console.log(error);
                 }
                 
             } else if (hittingPitching === 'pitching') {
                 try {
-                    const response = await axios.get(`/api/MLBStats/pitching/${selectedSeason}`, {
+
+                    let url = ``;
+                    if (["vs. LHB", "vs. RHB"].includes(selectedSplit)) {
+                        url = `/api/MLBStats/pitching/splits/${selectedSeason}`;
+                    } else {
+                        url = `/api/MLBStats/pitching/${selectedSeason}`;
+                    }
+                    const response = await axios.get(url, {
                         params: {
                             leagueOption: leagueOption,
                             yearToDateOption: yearToDateOption,
@@ -86,7 +97,6 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
                     setTableData(response.data);
                     
                     setColumns(mlbPitchingColumns);
-                    console.log(response.data);
                 } catch (error) {
                     console.log(error);
                 }
@@ -96,58 +106,7 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ selectedSeason
             getStats()
         }
     }, [ selectedSeason, yearToDateOption, selectedTeam, selectedOpponent, hittingPitching, selectedSplit ]);
-
-    //useEffect(() => {
-    //    if (leagueOption === "American League") {
-    //        setSelectedTeam({ team_id: "1", team_name: "All American League" });    
-    //    } else if (leagueOption === "National League") {
-    //        setSelectedTeam({ team_id: "1", team_name: "All National League" });
-    //    } else if (leagueOption === "MLB") {
-    //        setSelectedTeam({ team_id: "1", team_name: "All MLB Teams" });
-    //    } else {
-    //        console.log('bad league selection')
-    //        return;
-    //    }
-    //}, [leagueOption]);
     
-
-    //const handleSorting = (clickedField: string) => {
-    //    console.log("handle Sorting")
-    //    if (!clickedField) return;
-    //
-    //    let nextOrder = "desc";
-    //
-    //    // If user clicks the same column again, flip the order
-    //    if (sortField === clickedField) {
-    //        nextOrder = order === "desc" ? "asc" : "desc";
-    //    }
-    //
-    //    const sorted = [...tableData].sort((a, b) => {
-    //        if (a[clickedField] === null) return 1;
-    //        if (b[clickedField] === null) return -1;
-    //        if (a[clickedField] === null && b[clickedField] === null) return 0;
-    //
-    //        const nonNumeric = [
-    //            "teamSide", "teamName", "personId", "fullName", "leagueName",
-    //            "summary", "note", "full_name", "boxscore_name",
-    //            "jersey_number", "position", "position_abbr",
-    //            "status_code", "status_description"
-    //        ];
-    //
-    //        if (!nonNumeric.includes(clickedField)) {
-    //            return (a[clickedField] as number - (b[clickedField] as number)) * (nextOrder === 'desc' ? -1 : 1);
-    //        }
-    //
-    //        return (
-    //            a[clickedField].toString().localeCompare(b[clickedField].toString(), 'en', { numeric: true })
-    //            * (nextOrder === 'desc' ? -1 : 1)
-    //        );
-    //    });
-    //
-    //    setSortField(clickedField); // Update which field we're sorting on
-    //    setOrder(nextOrder);        // Update order
-    //    setTableData(sorted);
-    //};
     
     const handleSorting = (sortField: string, sortOrder: string) => {
         if (sortField) {

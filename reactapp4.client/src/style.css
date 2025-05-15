@@ -221,6 +221,13 @@ table tr:hover {
     text-align: left;
 }
 
+.drop-title-loading {
+    color: #999999;
+    font-size: x-small;
+    font-weight: 600;
+    text-align: left;
+    visibility: hidden;
+}
 
 .game-option-flex {
     display: flex;
@@ -237,6 +244,19 @@ table tr:hover {
     border-radius: 5px;
     color:#000000;
     width: 100%;
+}
+
+.drop-flex-loader {
+    padding: 5px;
+    font-size: smaller;
+    border: solid transparent;
+    border-right: 12px solid transparent;
+    background-color: #eeeeee;
+    border-radius: 5px;
+    color:#000000;
+    width: 100%;
+    animation: spin 1s linear infinite;
+
 }
 
 .drop-flex-select-blue {

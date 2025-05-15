@@ -12,46 +12,42 @@ import SignIn from './pages/SignIn';
 
 function App() {
 
-    const [loading, setLoading] = useState(true);
+    //const [loading, setLoading] = useState(true);
     const [selectedSport, setSelectedSport] = useState<string>('');
-    console.log("App")
+    //console.log("App")
 
-    useEffect(() => {
-        const checkBackend = async () => {
-            try {
-                const response = await axios.get('/api/boxscoretraditional/2023_24'); // Health check endpoint
-                if (response.data) {
-                    setLoading(false); // Backend is ready, stop loading
-                } else {
-                    setTimeout(checkBackend, 1000); // Retry after 1 second
-                }
-            } catch (error) {
-                console.error('Error checking backend:', error);
-                setTimeout(checkBackend, 1000); // Retry after 1 second
-            }
-        };
-
-        // Start checking the backend
-        checkBackend();
-    }, []);
+    //useEffect(() => {
+    //    const checkBackend = async () => {
+    //        try {
+    //            const response = await axios.get('/api/boxscoretraditional/2023_24'); // Health check endpoint
+    //            if (response.data) {
+    //                setLoading(false); // Backend is ready, stop loading
+    //            } else {
+    //                setTimeout(checkBackend, 1000); // Retry after 1 second
+    //            }
+    //        } catch (error) {
+    //            console.error('Error checking backend:', error);
+    //            setTimeout(checkBackend, 1000); // Retry after 1 second
+    //        }
+    //    };
+//
+    //    // Start checking the backend
+    //    checkBackend();
+    //}, []);
 
     return (
       <div>
-        {loading ? 
-            <LoadingIndicator />
-            :
             <BrowserRouter>
                 <Routes>
                 <Route path="/" element={<Layout />}>
                   <Route path="/" element={<SignIn selectedSport={selectedSport} setSelectedSport={setSelectedSport} />} />
-                  <Route path="/MLB" element={<MLB selectedSport={selectedSport} setSelectedSport={setSelectedSport}/>} />
+                  <Route path="/MLB" element={<MLB />} />
                   <Route path="/NBA" element={<Home selectedSport={selectedSport} setSelectedSport={setSelectedSport} />} />
                   <Route path="/Admin" element={<Admin />} />
                 </Route>
 
                 </Routes>
             </BrowserRouter>
-        }
       </div>
     );
 }

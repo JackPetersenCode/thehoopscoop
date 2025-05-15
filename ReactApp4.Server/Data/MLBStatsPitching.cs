@@ -50,13 +50,9 @@ namespace ReactApp4.Server.Data
         [Column("games_pitched")] public double? GamesPitched { get; set; }
         [Column("complete_games")] public double? CompleteGames { get; set; }
         [Column("shutouts")] public double? Shutouts { get; set; }
-        [Column("balls")] public double? Balls { get; set; }
-        [Column("strikes")] public double? Strikes { get; set; }
-        [Column("balks")] public double? Balks { get; set; }
-        [Column("wild_pitches")] public double? WildPitches { get; set; }
 
         //[Column("rbi")] public double? Rbi { get; set; } // Uncomment if needed
-        [Column("games_finished")] public double? GamesFinished { get; set; }
+        //[Column("games_finished")] public double? GamesFinished { get; set; }
         [Column("runs_scored_per9")] public double? RunsScoredPer9 { get; set; }
         [Column("home_runs_per9")] public double? HomeRunsPer9 { get; set; }
         [Column("strikeouts_per9")] public double? StrikeoutsPer9 { get; set; }

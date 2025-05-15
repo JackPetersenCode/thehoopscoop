@@ -20,16 +20,16 @@ const positionShorthandMap: Record<string, string> = {
   };
   
 
-const isTableDataArray = (input: Stats[] | string[]): input is Stats[] => {
-    return typeof input[0] !== 'string';
-};
-
-const isColumnArray = (input: Column[] | string[]): input is Column[] => {
-    return typeof input[0] !== 'string';
-};
-function isNumber(value: string | number): value is number {
-    return typeof value === 'number';
-}
+//const isTableDataArray = (input: Stats[] | string[]): input is Stats[] => {
+//    return typeof input[0] !== 'string';
+//};
+//
+//const isColumnArray = (input: Column[] | string[]): input is Column[] => {
+//    return typeof input[0] !== 'string';
+//};
+//function isNumber(value: string | number): value is number {
+//    return typeof value === 'number';
+//}
 //<td>
 //    <button onClick={() => (deletePlayer(index))}>x</button>
 //</td>

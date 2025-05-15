@@ -32,6 +32,21 @@ namespace ReactApp4.Server.Services
                 season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
         }
 
+        public async Task<ActionResult<IEnumerable<IMLBStatsBatting>>> GetMLBStatsBattingBySeasonSplits(
+            string season,
+            string? leagueOption,
+            string? selectedTeam,
+            string? yearToDateOption,
+            string? selectedOpponent,
+            string? selectedSplit,
+            int? selectedPlayer,
+            string? sortField,
+            string? order)
+        {
+            return await _mLBStatsDatabaseHandler.GetMLBStatsBattingBySeasonSplits(
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+        }
+
         public async Task<ActionResult<IEnumerable<IMLBStatsPitching>>> GetMLBStatsPitchingBySeason(
             string season,
             string? leagueOption,
@@ -44,6 +59,21 @@ namespace ReactApp4.Server.Services
             string? order)
         {
             return await _mLBStatsDatabaseHandler.GetMLBStatsPitchingBySeason(
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+        }
+
+        public async Task<ActionResult<IEnumerable<IMLBStatsPitching>>> GetMLBStatsPitchingBySeasonSplits(
+            string season,
+            string? leagueOption,
+            string? selectedTeam,
+            string? yearToDateOption,
+            string? selectedOpponent,
+            string? selectedSplit,
+            int? selectedPlayer,
+            string? sortField,
+            string? order)
+        {
+            return await _mLBStatsDatabaseHandler.GetMLBStatsPitchingBySeasonSplits(
                 season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
         }
 

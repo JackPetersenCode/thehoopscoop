@@ -32,6 +32,5 @@ namespace ReactApp4.Server.Data
         double? StrikeoutsPer9 { get; set; }
         double? HomeRunsPer9 { get; set; }
         double? WalksPer9 { get; set; }
-
     }
 }
