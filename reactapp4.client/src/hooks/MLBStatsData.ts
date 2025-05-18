@@ -30,6 +30,7 @@ export function MLBStatsData({
     const [statsData, setStatsData] = useState<Stats[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
     const [isFetching, setIsFetching] = useState(false);
+    const [originalData, setOriginalData] = useState<Stats[]>([]);
 
     useEffect(() => {
         const getStats = async () => {
@@ -58,8 +59,11 @@ export function MLBStatsData({
                     },
                 });
                 if (response.data) {
-                    setStatsData(response.data);
-                    setColumns(hittingPitching === 'hitting' ? mlbBattingColumns : mlbPitchingColumns);
+                    const newData = response.data;
+                    const newColumns = hittingPitching === 'hitting' ? mlbBattingColumns : mlbPitchingColumns;                          
+                    setStatsData(newData);
+                    setOriginalData(newData);
+                    setColumns(newColumns);
                 }
             } catch (error) {
                 console.error(error);
@@ -80,5 +84,5 @@ export function MLBStatsData({
         selectedSplit,
     ]);
 
-    return { statsData, columns, isFetching };
+    return { statsData, columns, isFetching, originalData };
 }   

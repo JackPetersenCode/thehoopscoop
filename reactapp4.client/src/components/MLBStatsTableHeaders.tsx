@@ -1,18 +1,17 @@
 import React from "react";
-import { MLBSortingFunction, Column } from "../interfaces/StatsTable";
+import { MLBSortingFunction, Column, Stats } from "../interfaces/StatsTable";
+import { SortOrder } from "../helpers/MLBSortingFunction";
 
 
 interface MLBStatsTableHeadersProps {
-    //sortingFunction: MLBSortingFunction;
     columns: Column[];
-    //sortField?: string;
-    //setSortField?: React.Dispatch<React.SetStateAction<string>>;
-    order: string;
-    //setOrder?: React.Dispatch<React.SetStateAction<string>>;
+    sortColumn: string | null;
+    sortOrder: SortOrder;
+    onSort: (column: string) => void; 
 }
 
 
-const MLBStatsTableHeaders: React.FC<MLBStatsTableHeadersProps> = React.memo(({ columns, order }) => {
+const MLBStatsTableHeaders: React.FC<MLBStatsTableHeadersProps> = React.memo(({ columns, sortColumn, sortOrder, onSort }) => {
 
     console.log('Headers')
     //const handleSortingChange = (accessor: string) => {
@@ -25,13 +24,14 @@ const MLBStatsTableHeaders: React.FC<MLBStatsTableHeadersProps> = React.memo(({ 
     //    }
     //    //handleSorting(accessor, sortOrder);
     //};
+
     return (
         <thead className="small-headers">
             <tr>
                 {columns.map(({ label, accessor }) => {
                     return (
                         <th key={accessor} className={label === 'NAME' ? 'header-item' : 'header-item-center'} 
-                            onClick={() => alert("do something here")}>
+                            onClick={() => onSort(accessor)}>
                             {label}
                         </th>
                     );

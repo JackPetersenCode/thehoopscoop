@@ -22,6 +22,8 @@ const positionShorthandMap: Record<string, string> = {
 
 const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = React.memo(({ columns, tableData }) => {
     console.log("Body")
+
+
     return (
         <tbody>
             {tableData.map((data, index) => {

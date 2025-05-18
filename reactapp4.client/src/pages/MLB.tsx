@@ -56,7 +56,7 @@ const MLB = ({}) => {
     const setHitting = () => setHittingPitching("hitting");
     const setPitching = () => setHittingPitching("pitching");
 
-    const {statsData, columns, isFetching} = MLBStatsData({
+    const { statsData, columns, isFetching, originalData } = MLBStatsData({
         selectedSeason, hittingPitching, leagueOption, yearToDateOption, selectedTeam, selectedOpponent, sortField, selectedSplit
     })
 
@@ -143,6 +143,7 @@ const MLB = ({}) => {
                     statsData={statsData}
                     columns={columns}
                     isFetching={isFetching}
+                    originalData={originalData}
                 />
             </div>
         </div>
