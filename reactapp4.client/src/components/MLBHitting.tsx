@@ -30,7 +30,7 @@ interface Props {
   selectedPlayerBottom: MLBActivePlayer | null;
   setSelectedPlayerBottom: React.Dispatch<React.SetStateAction<MLBActivePlayer | null>>;
   activePlayers: MLBActivePlayer[];
-  //loading: boolean;
+  isFetching: boolean;
   roster: MLBActivePlayer[];
   setRoster: React.Dispatch<React.SetStateAction<MLBActivePlayer[]>>;
   setUsedPlayers: React.Dispatch<React.SetStateAction<MLBActivePlayer[]>>;
@@ -54,7 +54,7 @@ const MLBHitting: React.FC<Props> = React.memo(({
   selectedPlayerBottom,
   setSelectedPlayerBottom,
   activePlayers,
-  //loading,
+  isFetching,
   roster,
   setRoster,
   setUsedPlayers
@@ -62,6 +62,16 @@ const MLBHitting: React.FC<Props> = React.memo(({
     console.log('MLBHitting')
     return (
       <div className="display-flex">
+      {isFetching ? (
+        <>
+          {Array.from({ length: 7 }).map((_, i) => (
+            <div className="drop-down" key={i}>
+              <LoadingSelectDropDown />
+            </div>
+          ))}
+        </>
+      ) : (
+        <>
             <div className="drop-down">
               <MLBSeasonsDropDown
                 selectedSeason={selectedSeason}
@@ -118,6 +128,7 @@ const MLBHitting: React.FC<Props> = React.memo(({
                 gameOption="Prop Bet"
               />
             </div>
+        </>)}
       </div>
     );
 });

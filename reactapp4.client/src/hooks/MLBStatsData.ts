@@ -24,16 +24,17 @@ export function MLBStatsData({
     selectedTeam,
     selectedOpponent,
     sortField,
-    selectedSplit,
+    selectedSplit
     //setLoading,
 }: Props) {
     const [statsData, setStatsData] = useState<Stats[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
+    const [isFetching, setIsFetching] = useState(false);
 
     useEffect(() => {
         const getStats = async () => {
             console.log('api call')
-            //setLoading(true);
+            setIsFetching(true);
             try {
                 let url = '';
                 if (hittingPitching === 'hitting') {
@@ -58,12 +59,12 @@ export function MLBStatsData({
                 });
                 if (response.data) {
                     setStatsData(response.data);
+                    setColumns(hittingPitching === 'hitting' ? mlbBattingColumns : mlbPitchingColumns);
                 }
-                //setColumns(hittingPitching === 'hitting' ? mlbBattingColumns : mlbPitchingColumns);
             } catch (error) {
                 console.error(error);
             } finally {
-                //setLoading(false);
+                setIsFetching(false);
             }
         };
 
@@ -79,5 +80,5 @@ export function MLBStatsData({
         selectedSplit,
     ]);
 
-    return { statsData };
+    return { statsData, columns, isFetching };
 }   
