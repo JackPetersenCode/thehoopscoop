@@ -3,7 +3,7 @@ import { MLBSortingFunction, Column } from "../interfaces/StatsTable";
 
 
 interface MLBStatsTableHeadersProps {
-    sortingFunction: MLBSortingFunction;
+    //sortingFunction: MLBSortingFunction;
     columns: Column[];
     //sortField?: string;
     //setSortField?: React.Dispatch<React.SetStateAction<string>>;
@@ -12,9 +12,9 @@ interface MLBStatsTableHeadersProps {
 }
 
 
-const MLBStatsTableHeaders: React.FC<MLBStatsTableHeadersProps> = ({ sortingFunction, columns, order }) => {
+const MLBStatsTableHeaders: React.FC<MLBStatsTableHeadersProps> = React.memo(({ columns, order }) => {
 
-
+    console.log('Headers')
     //const handleSortingChange = (accessor: string) => {
     //    if (setSortField && setOrder) {
     //        const sortOrder =
@@ -31,7 +31,7 @@ const MLBStatsTableHeaders: React.FC<MLBStatsTableHeadersProps> = ({ sortingFunc
                 {columns.map(({ label, accessor }) => {
                     return (
                         <th key={accessor} className={label === 'NAME' ? 'header-item' : 'header-item-center'} 
-                            onClick={() => sortingFunction(accessor, order)}>
+                            onClick={() => alert("do something here")}>
                             {label}
                         </th>
                     );
@@ -39,6 +39,6 @@ const MLBStatsTableHeaders: React.FC<MLBStatsTableHeadersProps> = ({ sortingFunc
             </tr>
         </thead>
     );
-};
+});
 
 export default MLBStatsTableHeaders;

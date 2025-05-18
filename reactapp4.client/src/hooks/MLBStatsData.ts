@@ -13,7 +13,7 @@ interface Props {
     selectedOpponent: MLBTeam;
     sortField: string;
     selectedSplit: string;
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    //setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function MLBStatsData({
@@ -25,15 +25,15 @@ export function MLBStatsData({
     selectedOpponent,
     sortField,
     selectedSplit,
-    setLoading,
+    //setLoading,
 }: Props) {
     const [statsData, setStatsData] = useState<Stats[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
 
     useEffect(() => {
         const getStats = async () => {
-
-            setLoading(true);
+            console.log('api call')
+            //setLoading(true);
             try {
                 let url = '';
                 if (hittingPitching === 'hitting') {
@@ -56,13 +56,14 @@ export function MLBStatsData({
                         selectedSplit,
                     },
                 });
-
-                setStatsData(response.data);
-                setColumns(hittingPitching === 'hitting' ? mlbBattingColumns : mlbPitchingColumns);
+                if (response.data) {
+                    setStatsData(response.data);
+                }
+                //setColumns(hittingPitching === 'hitting' ? mlbBattingColumns : mlbPitchingColumns);
             } catch (error) {
                 console.error(error);
             } finally {
-                setLoading(false);
+                //setLoading(false);
             }
         };
 
@@ -78,5 +79,5 @@ export function MLBStatsData({
         selectedSplit,
     ]);
 
-    return { statsData, columns };
+    return { statsData };
 }   

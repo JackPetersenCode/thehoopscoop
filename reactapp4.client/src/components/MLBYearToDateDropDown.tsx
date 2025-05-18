@@ -3,7 +3,7 @@ import React from "react";
 interface MLBYearToDateDropDownProps {
     options: string[];
     yearToDateOption: string;
-    setYearToDateOption: React.Dispatch<React.SetStateAction<string>>;
+    setYearToDateOption: (val: string) => void;
 }
 
 const MLBYearToDateDropDown: React.FC<MLBYearToDateDropDownProps> = ({ options, yearToDateOption, setYearToDateOption }) => {
@@ -29,4 +29,4 @@ const MLBYearToDateDropDown: React.FC<MLBYearToDateDropDownProps> = ({ options, 
     );
 };
 
-export default MLBYearToDateDropDown;
+export default React.memo(MLBYearToDateDropDown);

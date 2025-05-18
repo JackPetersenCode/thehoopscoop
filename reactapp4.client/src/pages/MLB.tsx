@@ -1,20 +1,14 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import GameOptionDropDown from '../components/GameOptionDropDown';
-import { americanLeagueTeams, mlbLeagueOptions, mlbTeams, nationalLeagueTeams, yearToDateOptions } from '../interfaces/MLBDropDownOptions';
 import axios from 'axios';
 import MLBPropBet from '../components/MLBPropBet';
 import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
-import MLBFindPlayerBottom from '../components/MLBFindPlayerBottom';
-import MLBSeasonsDropDown from '../components/MLBSeasonsDropDown';
 import MLBStatsTable from '../components/MLBStatsTable';
-import MLBLeagueOptionDropDown from '../components/MLBLeagueOptionDropDown';
-import MLBSelectedTeamDropDown from '../components/MLBSelectedTeamDropDown';
-import MLBYearToDateDropDown from '../components/MLBYearToDateDropDown';
 import { MLBTeam } from '../interfaces/Teams';
-import MLBOpponentDropDown from '../components/MLBOpponentDropDown';
-import MLBSplitsDropDown from '../components/MLBSplitsDropDown';
-import LoadingSelectDropDown from '../components/LoadingSelectDropDown';
 import { MLBStatsData } from '../hooks/MLBStatsData';
+import MLBPitching from '../components/MLBPitching';
+import MLBHitting from '../components/MLBHitting';
+import { mlbBattingColumns } from '../interfaces/Columns';
 
 // interface MLBProps {
     // selectedSport: string;
@@ -42,19 +36,7 @@ const MLB = ({}) => {
     const [selectedOpponent, setSelectedOpponent] = useState<MLBTeam>({team_id: '1', team_name: 'All MLB Teams'})
     const [selectedSplit, setSelectedSplit] = useState<string>("None");
     
-    const [loading, setLoading] = useState<boolean>(false);
-// Use custom hook to fetch data
-    const { statsData, columns } = MLBStatsData({
-      selectedSeason,
-      hittingPitching,
-      leagueOption,
-      yearToDateOption,
-      selectedTeam,
-      selectedOpponent,
-      sortField,
-      selectedSplit,
-      setLoading,
-    });
+    ///const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         console.log("active players hook")
@@ -69,6 +51,14 @@ const MLB = ({}) => {
         getData();
     }, []);
 //<StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} selectedOpponent={selectedOpponent} />
+
+// ...
+    const setHitting = () => setHittingPitching("hitting");
+    const setPitching = () => setHittingPitching("pitching");
+
+    const {statsData} = MLBStatsData({
+        selectedSeason, hittingPitching, leagueOption, yearToDateOption, selectedTeam, selectedOpponent, sortField, selectedSplit
+    })
 
     return (
         <>
@@ -90,181 +80,69 @@ const MLB = ({}) => {
             :
             ""}
             <div className="hitting-pitching-container">
-                <div className={`hitting-pitching ${hittingPitching === "hitting" ? "active" : ""}`} onClick={()=> setHittingPitching("hitting")}>
+                <div className={`hitting-pitching ${hittingPitching === "hitting" ? "active" : ""}`} onClick={setHitting}>
                     Hitting
                 </div>
-                <div className={`hitting-pitching ${hittingPitching === "pitching" ? "active" : ""}`} onClick={() => setHittingPitching("pitching")}>
+                <div className={`hitting-pitching ${hittingPitching === "pitching" ? "active" : ""}`} onClick={setPitching}>
                     Pitching
                 </div>
             </div>
         
-        {hittingPitching === 'pitching' ?
-            
-            <div className="display-flex">
-                {loading ?
-                    <>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                    </>
-                    :
-                    <>
-                    <div className="drop-down">
-                        <MLBSeasonsDropDown
-                            selectedSeason={selectedSeason}
-                            setSelectedSeason={setSelectedSeason}
-                            isPredictions={false}
-                        />
-                    </div>
-                    <div className="drop-down">
-                        <MLBLeagueOptionDropDown
-                            options={mlbLeagueOptions}
-                            leagueOption={leagueOption}
-                            setLeagueOption={setLeagueOption}
-                            setSelectedTeam={setSelectedTeam}
-                        />
-                    </div>
-                    <div className="drop-down">
-                        <MLBSelectedTeamDropDown
-                            options={leagueOption === "National League" ? nationalLeagueTeams :
-                                leagueOption === "American League" ? americanLeagueTeams :
-                                leagueOption === "MLB" ? mlbTeams :
-                                mlbTeams
-                            }
-                            selectedTeam={selectedTeam}
-                            setSelectedTeam={setSelectedTeam}
-                        
-                        />
-                    </div>
-                    <div className="drop-down">
-                        <MLBYearToDateDropDown
-                            options={yearToDateOptions}
-                            yearToDateOption={yearToDateOption}
-                            setYearToDateOption={setYearToDateOption}
-                        />
-                    </div>
-                    <div className="drop-down">
-                        <MLBSplitsDropDown
-                            hittingPitching={hittingPitching}
-                            selectedSplit={selectedSplit}
-                            setSelectedSplit={setSelectedSplit}
-                        />
-                    </div>
-                    <div className="drop-down">
-                        <MLBFindPlayerBottom activePlayers={mlbActivePlayers} inputTextBottom={inputTextBottom} setInputTextBottom={setInputTextBottom} selectedPlayerBottom={selectedPlayerBottom} setSelectedPlayerBottom={setSelectedPlayerBottom} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
-                    </div>
-                </>}
-            </div>
-        :
-         
+        {hittingPitching === 'hitting' ? (
+            <MLBHitting
+                selectedSeason={selectedSeason}
+                setSelectedSeason={setSelectedSeason}
+                leagueOption={leagueOption}
+                setLeagueOption={setLeagueOption}
+                selectedTeam={selectedTeam}
+                setSelectedTeam={setSelectedTeam}
+                yearToDateOption={yearToDateOption}
+                setYearToDateOption={setYearToDateOption}
+                selectedOpponent={selectedOpponent}
+                setSelectedOpponent={setSelectedOpponent}
+                selectedSplit={selectedSplit}
+                setSelectedSplit={setSelectedSplit}
+                inputTextBottom={inputTextBottom}
+                setInputTextBottom={setInputTextBottom}
+                selectedPlayerBottom={selectedPlayerBottom}
+                setSelectedPlayerBottom={setSelectedPlayerBottom}
+                activePlayers={mlbActivePlayers}
+                roster={roster}
+                setRoster={setRoster}
+                setUsedPlayers={setUsedPlayers}
+            />
+            ) : (
+            <MLBPitching
+                selectedSeason={selectedSeason}
+                setSelectedSeason={setSelectedSeason}
+                leagueOption={leagueOption}
+                setLeagueOption={setLeagueOption}
+                selectedTeam={selectedTeam}
+                setSelectedTeam={setSelectedTeam}
+                yearToDateOption={yearToDateOption}
+                setYearToDateOption={setYearToDateOption}
+                selectedOpponent={selectedOpponent}
+                setSelectedOpponent={setSelectedOpponent}
+                selectedSplit={selectedSplit}
+                setSelectedSplit={setSelectedSplit}
+                inputTextBottom={inputTextBottom}
+                setInputTextBottom={setInputTextBottom}
+                selectedPlayerBottom={selectedPlayerBottom}
+                setSelectedPlayerBottom={setSelectedPlayerBottom}
+                activePlayers={mlbActivePlayers}
+                roster={roster}
+                setRoster={setRoster}
+                setUsedPlayers={setUsedPlayers}
+            />
+            )}
 
-            <div className="display-flex">
-                {loading ?
-                <>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                    <div className="drop-down">
-                        <LoadingSelectDropDown />
-                    </div>
-                </>
-                :
-                <>
-                <div className="drop-down">
-                    <MLBSeasonsDropDown
-                        selectedSeason={selectedSeason}
-                        setSelectedSeason={setSelectedSeason}
-                        isPredictions={false}
-                    />
-                </div>
-                <div className="drop-down">
-                    <MLBLeagueOptionDropDown
-                        options={mlbLeagueOptions}
-                        leagueOption={leagueOption}
-                        setLeagueOption={setLeagueOption}
-                        setSelectedTeam={setSelectedTeam}
-                    />
-                </div>
-                <div className="drop-down">
-                    <MLBSelectedTeamDropDown
-                        options={leagueOption === "National League" ? nationalLeagueTeams :
-                            leagueOption === "American League" ? americanLeagueTeams :
-                            leagueOption === "MLB" ? mlbTeams :
-                            mlbTeams
-                        }
-                        selectedTeam={selectedTeam}
-                        setSelectedTeam={setSelectedTeam}
-
-                    />
-                </div>
-                <div className="drop-down">
-                    <MLBYearToDateDropDown
-                        options={yearToDateOptions}
-                        yearToDateOption={yearToDateOption}
-                        setYearToDateOption={setYearToDateOption}
-                    />
-                </div>
-                <div className="drop-down">
-                    <MLBOpponentDropDown
-                        options={mlbTeams}
-                        selectedOpponent={selectedOpponent}
-                        setSelectedOpponent={setSelectedOpponent}
-                    />
-                </div>
-                <div className="drop-down">
-                    <MLBSplitsDropDown
-                        hittingPitching={hittingPitching}
-                        selectedSplit={selectedSplit}
-                        setSelectedSplit={setSelectedSplit}
-                    />
-
-                </div>
-                <div className="drop-down">
-                    <MLBFindPlayerBottom activePlayers={mlbActivePlayers} inputTextBottom={inputTextBottom} setInputTextBottom={setInputTextBottom} selectedPlayerBottom={selectedPlayerBottom} setSelectedPlayerBottom={setSelectedPlayerBottom} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
-                </div>
-                </>
-                }
-            </div>
-            }
             <div>
                 <MLBStatsTable
-                  statsData={statsData}
-                  columns={columns}
-                  sortField={sortField}
-                  setSortField={setSortField}
-                  inputText={inputTextBottom}
-                  setInputText={setInputTextBottom}
+                    inputText={inputTextBottom}
+                    statsData={statsData}
+                    columns={mlbBattingColumns}
                 />
+
 
             </div>
         </div>

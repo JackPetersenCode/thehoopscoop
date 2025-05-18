@@ -8,7 +8,8 @@ interface MLBSplitsDropDownProps {
     //loading: MutableRefObject<boolean>;
 }
 
-const MLBSplitsDropDown: React.FC<MLBSplitsDropDownProps> = ({ hittingPitching, selectedSplit, setSelectedSplit }) => {
+const MLBSplitsDropDown: React.FC<MLBSplitsDropDownProps> = React.memo(({ hittingPitching, selectedSplit, setSelectedSplit }) => {
+    console.log("drop down")
     const handleSplitChange = (event: { preventDefault: () => void; target: { value: string; }; }) => {
         event.preventDefault();
         if (event.target.value === "0") {
@@ -39,5 +40,5 @@ const MLBSplitsDropDown: React.FC<MLBSplitsDropDownProps> = ({ hittingPitching, 
             </div>
         </div>
     );
-}
+})
 export default MLBSplitsDropDown;

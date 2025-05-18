@@ -1,3 +1,4 @@
+import React from "react";
 import { Column, Stats } from "../interfaces/StatsTable";
 
 interface MLBStatsTableBodyProps {
@@ -18,24 +19,9 @@ const positionShorthandMap: Record<string, string> = {
     "Pitcher": "P",
     "Two-Way Player": "2W"
   };
-  
 
-//const isTableDataArray = (input: Stats[] | string[]): input is Stats[] => {
-//    return typeof input[0] !== 'string';
-//};
-//
-//const isColumnArray = (input: Column[] | string[]): input is Column[] => {
-//    return typeof input[0] !== 'string';
-//};
-//function isNumber(value: string | number): value is number {
-//    return typeof value === 'number';
-//}
-//<td>
-//    <button onClick={() => (deletePlayer(index))}>x</button>
-//</td>
-
-const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = ({ columns, tableData }) => {
-
+const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = React.memo(({ columns, tableData }) => {
+    console.log("Body")
     return (
         <tbody>
             {tableData.map((data, index) => {
@@ -76,7 +62,7 @@ const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = ({ columns, tableDat
             })}
         </tbody>
     );
-};
+});
 
 
 

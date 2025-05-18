@@ -1093,6 +1093,7 @@ namespace ReactApp4.Server.Services
             var split = selectedSplit == "vs. RHB" ? "R" : "L";
 
             var query = $@"";
+            var mlbGamesJoinStatement = $@"";
             // if ((selectedTeam != "1" && selectedTeam != "0") || IsSpecificOpponent(selectedOpponent)) {
                 // splitJoinStatement += $@"
                     // JOIN mlb_team_info_{season} ti ON p.game_pk = ti.game_pk
@@ -1164,6 +1165,9 @@ namespace ReactApp4.Server.Services
                       END
                     ) = {selectedOpponent}        
                 ");
+                mlbGamesJoinStatement += $@"			        
+                    LEFT JOIN mlb_games_{season} g
+  			        ON pbs.game_pk = CAST(g.game_pk AS INT)";
             }
             var whereClause = conditions.Count > 0 ? $" AND {string.Join(" AND ", conditions)}" : string.Empty;
             var playerRunsWhereClause = playerRunsConditions.Count > 0 ? $" AND {string.Join(" AND ", playerRunsConditions)}" : string.Empty;
@@ -1278,6 +1282,7 @@ namespace ReactApp4.Server.Services
                         ON pbs.person_id = p.matchup_pitcher_id AND pbs.game_pk = p.game_pk
                     JOIN mlb_team_info_{season} ti 
                         ON ti.game_pk = pbs.game_pk AND ti.team_name = pbs.team_name
+			        {mlbGamesJoinStatement}
                     WHERE p.matchup_bat_side_code = '{split}'
                     {finalSplitWhereClause}
                     GROUP BY p.matchup_pitcher_id, p.matchup_pitcher_full_name, pbs.team_name
@@ -1329,6 +1334,7 @@ namespace ReactApp4.Server.Services
                         ON p.matchup_pitcher_id = pbs.person_id AND p.game_pk = pbs.game_pk
                     JOIN mlb_active_players_{season} ap ON ap.player_id = pbs.person_id
                     JOIN mlb_team_info_{season} ti ON ti.game_pk = pbs.game_pk AND ti.team_name = pbs.team_name
+			        {mlbGamesJoinStatement}
                     WHERE p.matchup_bat_side_code = '{split}'
                     {finalSplitWhereClause}
                     GROUP BY p.matchup_pitcher_id, p.matchup_pitcher_full_name, pbs.team_name, ti.league_name, ap.primary_position_name
