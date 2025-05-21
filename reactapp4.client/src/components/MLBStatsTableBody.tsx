@@ -49,8 +49,15 @@ const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = React.memo(({ column
                                     } else {
                                         tData = "MLB";
                                     }
-                                } else if (accessor === "position" || accessor === "primaryPositionName") {
-                                    tData = positionShorthandMap[value] || value;
+                                } else if (accessor === "fullName") {
+                                    tData = (
+                                      <span>
+                                        <span className="player-name">{value}</span>
+                                        {data["position"] && (
+                                          <span className="player-position"> {positionShorthandMap[data["position"]]}</span>
+                                        )}
+                                      </span>
+                                    );
                                 } else {
                                     tData = value.toString();
                                 }

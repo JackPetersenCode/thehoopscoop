@@ -7,9 +7,10 @@ interface LeagueDropDownProps {
     leagueOption: string;
     setLeagueOption: React.Dispatch<React.SetStateAction<string>>;
     setSelectedTeam: React.Dispatch<React.SetStateAction<MLBTeam>>;
+    disabled: boolean;
 }
 
-const MLBLeagueOptionDropDown: React.FC<LeagueDropDownProps> = ({ options, leagueOption, setLeagueOption, setSelectedTeam }) => {
+const MLBLeagueOptionDropDown: React.FC<LeagueDropDownProps> = ({ options, leagueOption, setLeagueOption, setSelectedTeam, disabled }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setLeagueOption(e.target.value);
@@ -33,6 +34,7 @@ const MLBLeagueOptionDropDown: React.FC<LeagueDropDownProps> = ({ options, leagu
           className="drop-flex-select"
           value={leagueOption}
           onChange={handleChange}
+          disabled={disabled}
         >
           {options.map((option, idx) => (
             <option key={idx} value={option}>

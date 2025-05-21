@@ -6,9 +6,10 @@ interface SeasonsDropDownProps {
     selectedSeason: string;
     setSelectedSeason: React.Dispatch<React.SetStateAction<string>>;
     isPredictions: boolean;
+    disabled: boolean;
 }
 
-const MLBSeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSelectedSeason, isPredictions }) => {
+const MLBSeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSelectedSeason, isPredictions, disabled }) => {
 
    
     const predictionSeasonsData = [
@@ -50,7 +51,7 @@ const MLBSeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, se
                 Season
             </div>
             <div>
-                <select className="drop-flex-select" value={selectedSeason} onChange={handleSeasonChange}>
+                <select className="drop-flex-select" value={selectedSeason} onChange={handleSeasonChange} disabled={disabled}>
                     <option className="drop-flex-option" value="0">Select Season</option>
 
                     {!isPredictions ? seasonsData.map((option, index) => (

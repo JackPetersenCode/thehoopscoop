@@ -18,7 +18,7 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ inputText, sta
     const [sortColumn, setSortColumn] = useState<string | null>(null);
     const [sortOrder, setSortOrder] = useState<SortOrder>('original');
     //const [originalData, setOriginalData] = useState<Stats[]>([]);
-
+    console.log(inputText)
     //useEffect(() => {
     //  console.log('shitfuck')
     //  setOriginalData(statsData);

@@ -1,14 +1,15 @@
-import React, { MutableRefObject } from "react";
+import React from "react";
 import { mlbSplitsBatting, mlbSplitsPitching } from "../interfaces/MLBDropDownOptions";
 
 interface MLBSplitsDropDownProps {
     hittingPitching: string;
     selectedSplit: string;
     setSelectedSplit: React.Dispatch<React.SetStateAction<string>>;
-    //loading: MutableRefObject<boolean>;
+    disabled: boolean;
+    //splitOptions: string[];
 }
 
-const MLBSplitsDropDown: React.FC<MLBSplitsDropDownProps> = React.memo(({ hittingPitching, selectedSplit, setSelectedSplit }) => {
+const MLBSplitsDropDown: React.FC<MLBSplitsDropDownProps> = React.memo(({ hittingPitching, selectedSplit, setSelectedSplit, disabled }) => {
     console.log("drop down")
     const handleSplitChange = (event: { preventDefault: () => void; target: { value: string; }; }) => {
         event.preventDefault();
@@ -19,21 +20,19 @@ const MLBSplitsDropDown: React.FC<MLBSplitsDropDownProps> = React.memo(({ hittin
         setSelectedSplit(event.target.value);
     }
     
+    const splitOptions = hittingPitching === 'pitching' ? mlbSplitsPitching : mlbSplitsBatting;
+
     return (
         <div className="drop-flex">
             <div className="drop-title">
                 Splits
             </div>
             <div>
-                <select className="drop-flex-select" value={selectedSplit} onChange={handleSplitChange}>
+                <select className="drop-flex-select" value={selectedSplit} onChange={handleSplitChange} disabled={disabled}>
                     <option className="drop-flex-option" value="0">Select Split</option>
 
-                    {hittingPitching === 'pitching' ? mlbSplitsPitching.map((option, index) => (
-                        <option key={index} value={option}>{option}</option>
-                    ))
-                    :
-                    mlbSplitsBatting.map((option, index) => (
-                        <option key={index} value={option}>{option}</option>
+                    {splitOptions.map((option, index) => (
+                        <option key={option} value={option}>{option}</option>
                     ))}
 
                 </select>

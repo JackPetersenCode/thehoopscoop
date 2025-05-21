@@ -38,6 +38,11 @@ namespace ReactApp4.Server.Services
         {
             return selectedOpponent != "1" && selectedOpponent != "0";
         }
+        
+        public bool IsSpecificPlayerOpponent(string? selectedPlayerOpponent)
+        {
+            return selectedPlayerOpponent != "1" && selectedPlayerOpponent != "0";
+        }
 
 
         public async Task<ActionResult<IEnumerable<IMLBStatsBatting>>> GetMLBStatsBattingBySeasonSplits(
@@ -49,9 +54,10 @@ namespace ReactApp4.Server.Services
             string? selectedSplit,
             int? selectedPlayer,
             string? sortField,
-            string? order)
+            string? order,
+            string? selectedPlayerOpponent)
         {
-            var tableName = IsRecentGamesOption(yearToDateOption) ? 
+            var tableName = IsRecentGamesOption(yearToDateOption) ?
                 "last_n_games_per_player" : $"player_game_stats_batting_{season}";
             var finalTableName = IsSpecificOpponent(selectedOpponent) ? "player_with_opponent" : tableName;
             var activePlayersTable = $"mlb_active_players_{season}";
@@ -64,12 +70,23 @@ namespace ReactApp4.Server.Services
             var lastNGamesConditions = new List<string>();
             var splitJoinStatement = $@"";
             var query = $@"";
+            var split = selectedSplit == "vs. RHP" ? "R" : "L";
+
             // if ((selectedTeam != "1" && selectedTeam != "0") || IsSpecificOpponent(selectedOpponent)) {
-                // splitJoinStatement += $@"
-                    // JOIN mlb_team_info_{season} ti ON p.game_pk = ti.game_pk
-                    // JOIN mlb_games_{season} g ON p.game_pk = CAST(g.game_pk AS INT)
-                // ";
+            // splitJoinStatement += $@"
+            // JOIN mlb_team_info_{season} ti ON p.game_pk = ti.game_pk
+            // JOIN mlb_games_{season} g ON p.game_pk = CAST(g.game_pk AS INT)
+            // ";
             // }
+            if (!string.IsNullOrEmpty(selectedPlayerOpponent))
+            {
+                finalSplitConditions.Add($"p.matchup_pitcher_id = CAST({selectedPlayerOpponent} AS INT)");
+            }
+            else
+            {
+                finalSplitConditions.Add($@"p.matchup_pitch_hand_code = '{split}'");
+            }
+
             if (leagueOption == "National League" | leagueOption == "American League")
             {
                 conditions.Add($"{teamInfoTable}.league_name = '{leagueOption}'");
@@ -91,7 +108,8 @@ namespace ReactApp4.Server.Services
                 leftOnBaseConditions.Add($"p.matchup_batter_id = {selectedPlayer.Value}");
                 finalSplitConditions.Add($"p.matchup_batter_id = {selectedPlayer.Value}");
             }
-            if (IsRecentGamesOption(yearToDateOption)) {
+            if (IsRecentGamesOption(yearToDateOption))
+            {
                 var rowNumber = yearToDateOption == "Last 7 Games" ? 7 : yearToDateOption == "Last 15 Games" ? 15 :
                     yearToDateOption == "Last 30 Games" ? 30 : 0;
                 conditions.Add($"rn <= {rowNumber}");
@@ -103,8 +121,10 @@ namespace ReactApp4.Server.Services
                 finalSplitConditions.Add($@"
                     last.rn <= {rowNumber}
                 ");
-            } 
-            if (IsSpecificOpponent(selectedOpponent)) {
+            }
+
+            if (IsSpecificOpponent(selectedOpponent))
+            {
                 conditions.Add($"opponent_team_id = '{selectedOpponent}'");
                 finalSplitConditions.Add($@"
                     (
@@ -199,8 +219,8 @@ namespace ReactApp4.Server.Services
                 )
             ";
 
-            var split = selectedSplit == "vs. RHP" ? "R" : "L";
-            if (IsRecentGamesOption(yearToDateOption)) {
+            if (IsRecentGamesOption(yearToDateOption))
+            {
                 query += rowNumberCTETitle;
                 query += rowNumberCTE;
                 //if (IsSpecificOpponent(selectedOpponent)) {
@@ -438,11 +458,11 @@ namespace ReactApp4.Server.Services
 			    LEFT JOIN mlb_games_{season} g
   			    ON pbs.game_pk = CAST(g.game_pk AS INT)
                 {splitJoinStatement}
-                WHERE p.matchup_pitch_hand_code = '{split}'
+                WHERE 1=1 
                 {finalSplitWhereClause}
                 GROUP BY p.matchup_batter_id, p.matchup_batter_full_name, pbs.team_name, ti.league_name, ap.primary_position_name
             ";
-            
+
             var sortableFields = new HashSet<string> { "stolen_bases", "caught_stealing", "sb_percentage", "runs" };
             if (sortField != null && !sortableFields.Contains(sortField))
             {
@@ -450,51 +470,51 @@ namespace ReactApp4.Server.Services
                     ORDER BY {sortField} {order};
                 ";
             }
-                //WITH player_runs AS (
-                //    SELECT 
-                //      r.runners_details_player_id, 
-                //      COUNT(*) AS runs,
-                //      COUNT(*) FILTER (WHERE r.runners_details_event_type ILIKE 'stolen_base%' AND NOT r.runners_movement_is_out) AS stolen_bases,
-                //      COUNT(*) FILTER (WHERE r.runners_details_event_type ILIKE 'stolen_base%' AND r.runners_movement_is_out) AS caught_stealing,
-                //      ROUND(
-                //          COUNT(*) FILTER (WHERE r.runners_details_event_type ILIKE 'stolen_base%' AND NOT r.runners_movement_is_out) * 100.0
-                //          /
-                //          NULLIF(COUNT(*) FILTER (WHERE r.runners_details_event_type ILIKE 'stolen_base%'), 0),
-                //          1
-                //      ) AS sb_percentage
-                //    FROM mlb_runners_{season} r
-                //      JOIN mlb_plays_2023 p ON r.game_pk = p.game_pk AND r.at_bat_index = p.at_bat_index
-                //      JOIN mlb_team_info_2023 team_info ON p.game_pk = team_info.game_pk
-                //      JOIN mlb_games_2023 g ON p.game_pk = CAST(g.game_pk AS INT)
-                //      {splitJoinStatement}
-                //    WHERE r.runners_movement_end = 'score'
-                //      {playerRunsWhereClause}
-                //      AND p.matchup_pitch_hand_code = '{split}'
-                //    GROUP BY r.runners_details_player_id
-                //),
-                //left_on_base_rows AS (
-                //    SELECT 
-                //        p.matchup_batter_id,
-                //        p.matchup_batter_full_name,
-                //        COUNT(*) FILTER (
-                //            WHERE r.runners_details_player_id IS NOT NULL 
-                //                AND r.runners_movement_end NOT IN ('home', 'score')  -- didn't score
-                //                AND r.runners_movement_is_out = FALSE                -- wasn't out
-                //        ) AS left_on_base
-                //    FROM mlb_plays_{season} p
-                //    JOIN mlb_runners_{season} r 
-                //        ON p.game_pk = r.game_pk 
-                //        AND p.at_bat_index = r.at_bat_index
-                //    WHERE 1 = 1
-                //        {leftOnBaseWhereClause}
-                //        AND p.matchup_pitch_hand_code = '{split}'  -- vs. LHP
-                //        AND p.result_type = 'atBat'
-                //    GROUP BY p.matchup_batter_id, p.matchup_batter_full_name
-                //)
+            //WITH player_runs AS (
+            //    SELECT 
+            //      r.runners_details_player_id, 
+            //      COUNT(*) AS runs,
+            //      COUNT(*) FILTER (WHERE r.runners_details_event_type ILIKE 'stolen_base%' AND NOT r.runners_movement_is_out) AS stolen_bases,
+            //      COUNT(*) FILTER (WHERE r.runners_details_event_type ILIKE 'stolen_base%' AND r.runners_movement_is_out) AS caught_stealing,
+            //      ROUND(
+            //          COUNT(*) FILTER (WHERE r.runners_details_event_type ILIKE 'stolen_base%' AND NOT r.runners_movement_is_out) * 100.0
+            //          /
+            //          NULLIF(COUNT(*) FILTER (WHERE r.runners_details_event_type ILIKE 'stolen_base%'), 0),
+            //          1
+            //      ) AS sb_percentage
+            //    FROM mlb_runners_{season} r
+            //      JOIN mlb_plays_2023 p ON r.game_pk = p.game_pk AND r.at_bat_index = p.at_bat_index
+            //      JOIN mlb_team_info_2023 team_info ON p.game_pk = team_info.game_pk
+            //      JOIN mlb_games_2023 g ON p.game_pk = CAST(g.game_pk AS INT)
+            //      {splitJoinStatement}
+            //    WHERE r.runners_movement_end = 'score'
+            //      {playerRunsWhereClause}
+            //      AND p.matchup_pitch_hand_code = '{split}'
+            //    GROUP BY r.runners_details_player_id
+            //),
+            //left_on_base_rows AS (
+            //    SELECT 
+            //        p.matchup_batter_id,
+            //        p.matchup_batter_full_name,
+            //        COUNT(*) FILTER (
+            //            WHERE r.runners_details_player_id IS NOT NULL 
+            //                AND r.runners_movement_end NOT IN ('home', 'score')  -- didn't score
+            //                AND r.runners_movement_is_out = FALSE                -- wasn't out
+            //        ) AS left_on_base
+            //    FROM mlb_plays_{season} p
+            //    JOIN mlb_runners_{season} r 
+            //        ON p.game_pk = r.game_pk 
+            //        AND p.at_bat_index = r.at_bat_index
+            //    WHERE 1 = 1
+            //        {leftOnBaseWhereClause}
+            //        AND p.matchup_pitch_hand_code = '{split}'  -- vs. LHP
+            //        AND p.result_type = 'atBat'
+            //    GROUP BY p.matchup_batter_id, p.matchup_batter_full_name
+            //)
             Console.WriteLine(query);
             var result = await _context.MLBStatsBattingWithSplits.FromSqlRaw(query).ToListAsync();
             return result;
-            
+
         }
 
         public async Task<ActionResult<IEnumerable<IMLBStatsBatting>>> GetMLBStatsBattingBySeason(
@@ -791,11 +811,12 @@ namespace ReactApp4.Server.Services
 
             var query = $@"";
             // if ((selectedTeam != "1" && selectedTeam != "0") || IsSpecificOpponent(selectedOpponent)) {
-                // splitJoinStatement += $@"
-                    // JOIN mlb_team_info_{season} ti ON p.game_pk = ti.game_pk
-                    // JOIN mlb_games_{season} g ON p.game_pk = CAST(g.game_pk AS INT)
-                // ";
+            // splitJoinStatement += $@"
+            // JOIN mlb_team_info_{season} ti ON p.game_pk = ti.game_pk
+            // JOIN mlb_games_{season} g ON p.game_pk = CAST(g.game_pk AS INT)
+            // ";
             // }
+
             if (leagueOption == "National League" | leagueOption == "American League")
             {
                 conditions.Add($"{teamInfoTable}.league_name = '{leagueOption}'");
@@ -1075,7 +1096,8 @@ namespace ReactApp4.Server.Services
             string? selectedSplit,
             int? selectedPlayer,
             string? sortField,
-            string? order)
+            string? order,
+            string? selectedPlayerOpponent)
         {
             var tableName = IsRecentGamesOption(yearToDateOption) ? 
                 "last_n_games_per_player" : $"player_game_stats_pitching_{season}";
@@ -1095,11 +1117,20 @@ namespace ReactApp4.Server.Services
             var query = $@"";
             var mlbGamesJoinStatement = $@"";
             // if ((selectedTeam != "1" && selectedTeam != "0") || IsSpecificOpponent(selectedOpponent)) {
-                // splitJoinStatement += $@"
-                    // JOIN mlb_team_info_{season} ti ON p.game_pk = ti.game_pk
-                    // JOIN mlb_games_{season} g ON p.game_pk = CAST(g.game_pk AS INT)
-                // ";
+            // splitJoinStatement += $@"
+            // JOIN mlb_team_info_{season} ti ON p.game_pk = ti.game_pk
+            // JOIN mlb_games_{season} g ON p.game_pk = CAST(g.game_pk AS INT)
+            // ";
             // }
+            if (!string.IsNullOrEmpty(selectedPlayerOpponent))
+            {
+                finalSplitConditions.Add($"p.matchup_batter_id = CAST({selectedPlayerOpponent} AS INT)");
+            }
+            else
+            {
+                finalSplitConditions.Add($@"p.matchup_bat_side_code = '{split}'");
+            }
+
             if (leagueOption == "National League" | leagueOption == "American League")
             {
                 conditions.Add($"{teamInfoTable}.league_name = '{leagueOption}'");
@@ -1283,7 +1314,7 @@ namespace ReactApp4.Server.Services
                     JOIN mlb_team_info_{season} ti 
                         ON ti.game_pk = pbs.game_pk AND ti.team_name = pbs.team_name
 			        {mlbGamesJoinStatement}
-                    WHERE p.matchup_bat_side_code = '{split}'
+                    WHERE 1=1
                     {finalSplitWhereClause}
                     GROUP BY p.matchup_pitcher_id, p.matchup_pitcher_full_name, pbs.team_name
                 ),
@@ -1335,13 +1366,13 @@ namespace ReactApp4.Server.Services
                     JOIN mlb_active_players_{season} ap ON ap.player_id = pbs.person_id
                     JOIN mlb_team_info_{season} ti ON ti.game_pk = pbs.game_pk AND ti.team_name = pbs.team_name
 			        {mlbGamesJoinStatement}
-                    WHERE p.matchup_bat_side_code = '{split}'
+                    WHERE 1=1
                     {finalSplitWhereClause}
                     GROUP BY p.matchup_pitcher_id, p.matchup_pitcher_full_name, pbs.team_name, ti.league_name, ap.primary_position_name
                 )
                 SELECT
                     ms.*,
-                    ROUND(ip.outs_recorded / 3.0, 1) AS innings_pitched,
+                    FLOOR(ip.outs_recorded / 3) + ((ip.outs_recorded % 3) * 0.1) AS innings_pitched,
                     CASE WHEN ip.outs_recorded = 0 THEN NULL ELSE ms.pitches_thrown::float / (ip.outs_recorded / 3.0) END AS pitches_per_inning,
                     CASE WHEN ip.outs_recorded = 0 THEN NULL ELSE ms.strike_outs * 9.0 / (ip.outs_recorded / 3.0) END AS strikeouts_per9,
                     CASE WHEN ip.outs_recorded = 0 THEN NULL ELSE ms.home_runs * 9.0 / (ip.outs_recorded / 3.0) END AS home_runs_per9,

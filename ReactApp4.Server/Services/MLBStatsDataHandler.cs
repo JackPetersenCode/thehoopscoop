@@ -29,7 +29,8 @@ namespace ReactApp4.Server.Services
             string? order)
         {
             return await _mLBStatsDatabaseHandler.GetMLBStatsBattingBySeason(
-                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent,
+                selectedSplit, selectedPlayer, sortField, order);
         }
 
         public async Task<ActionResult<IEnumerable<IMLBStatsBatting>>> GetMLBStatsBattingBySeasonSplits(
@@ -41,10 +42,12 @@ namespace ReactApp4.Server.Services
             string? selectedSplit,
             int? selectedPlayer,
             string? sortField,
-            string? order)
+            string? order, 
+            string? selectedPlayerOpponent)
         {
             return await _mLBStatsDatabaseHandler.GetMLBStatsBattingBySeasonSplits(
-                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent,
+                selectedSplit, selectedPlayer, sortField, order, selectedPlayerOpponent);
         }
 
         public async Task<ActionResult<IEnumerable<IMLBStatsPitching>>> GetMLBStatsPitchingBySeason(
@@ -59,7 +62,8 @@ namespace ReactApp4.Server.Services
             string? order)
         {
             return await _mLBStatsDatabaseHandler.GetMLBStatsPitchingBySeason(
-                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent,
+                selectedSplit, selectedPlayer, sortField, order);
         }
 
         public async Task<ActionResult<IEnumerable<IMLBStatsPitching>>> GetMLBStatsPitchingBySeasonSplits(
@@ -71,10 +75,12 @@ namespace ReactApp4.Server.Services
             string? selectedSplit,
             int? selectedPlayer,
             string? sortField,
-            string? order)
+            string? order,
+            string? selectedPlayerOpponent)
         {
             return await _mLBStatsDatabaseHandler.GetMLBStatsPitchingBySeasonSplits(
-                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent,
+                selectedSplit, selectedPlayer, sortField, order, selectedPlayerOpponent);
         }
 
 

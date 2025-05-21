@@ -6,8 +6,7 @@ namespace ReactApp4.Server.Data
         string FullName { get; set; }
         string TeamName { get; set; }
         string LeagueName { get; set; }
-        string PrimaryPositionName { get; set; }
-
+        string Position { get; set; }
         double? GamesPlayed { get; set; }
         double? InningsPitched { get; set; }
         double? Hits { get; set; }

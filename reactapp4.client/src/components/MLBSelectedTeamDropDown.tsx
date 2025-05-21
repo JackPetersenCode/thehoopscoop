@@ -6,12 +6,14 @@ interface MLBSelectedTeamDropDownProps {
   selectedTeam: MLBTeam;
   setSelectedTeam: React.Dispatch<React.SetStateAction<MLBTeam>>;
   options: MLBTeam[];
+  disabled: boolean;
 }
 
 const MLBSelectedTeamDropDown: React.FC<MLBSelectedTeamDropDownProps> = ({
   selectedTeam,
   setSelectedTeam,
   options,
+  disabled
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const parsed = JSON.parse(e.target.value) as MLBTeam;
@@ -26,6 +28,7 @@ const MLBSelectedTeamDropDown: React.FC<MLBSelectedTeamDropDownProps> = ({
           className="drop-flex-select"
           value={JSON.stringify(selectedTeam)}
           onChange={handleChange}
+          disabled={disabled}
         >
           {options.map((team, index) => (
             <option

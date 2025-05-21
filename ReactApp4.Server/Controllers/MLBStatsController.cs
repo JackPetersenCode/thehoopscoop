@@ -32,14 +32,17 @@ namespace ReactApp4.Server.Controllers
             [FromQuery] string? leagueOption,
             [FromQuery] string? yearToDateOption,
             [FromQuery] int? selectedPlayer,
+            [FromQuery] string? selectedPlayerOpponent,
             [FromQuery] string? selectedTeam = "0",
             [FromQuery] string? selectedOpponent = "0",
             [FromQuery] string? selectedSplit = "None",
             [FromQuery] string? sortField = "at_bats",
-            [FromQuery] string? order = "DESC")
+            [FromQuery] string? order = "DESC"
+            )
         {
             return await _mLBStatsDataHandler.GetMLBStatsBattingBySeason(
-                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent,
+                selectedSplit, selectedPlayer, sortField, order);
         }
 
         [HttpGet("batting/splits/{season}")]
@@ -48,6 +51,7 @@ namespace ReactApp4.Server.Controllers
             [FromQuery] string? leagueOption,
             [FromQuery] string? yearToDateOption,
             [FromQuery] int? selectedPlayer,
+            [FromQuery] string? selectedPlayerOpponent,
             [FromQuery] string? selectedTeam = "0",
             [FromQuery] string? selectedOpponent = "0",
             [FromQuery] string? selectedSplit = "None",
@@ -55,7 +59,8 @@ namespace ReactApp4.Server.Controllers
             [FromQuery] string? order = "DESC")
         {
             return await _mLBStatsDataHandler.GetMLBStatsBattingBySeasonSplits(
-                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent,
+                selectedSplit, selectedPlayer, sortField, order, selectedPlayerOpponent);
         }
 
         [HttpGet("pitching/{season}")]
@@ -71,7 +76,8 @@ namespace ReactApp4.Server.Controllers
             [FromQuery] string? order = "DESC")
         {
             return await _mLBStatsDataHandler.GetMLBStatsPitchingBySeason(
-                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent,
+                selectedSplit, selectedPlayer, sortField, order);
         }
 
         [HttpGet("pitching/splits/{season}")]
@@ -80,6 +86,7 @@ namespace ReactApp4.Server.Controllers
             [FromQuery] string? leagueOption,
             [FromQuery] string? yearToDateOption,
             [FromQuery] int? selectedPlayer,
+            [FromQuery] string? selectedPlayerOpponent,
             [FromQuery] string? selectedTeam = "0",
             [FromQuery] string? selectedOpponent = "0",
             [FromQuery] string? selectedSplit = "None",
@@ -87,7 +94,8 @@ namespace ReactApp4.Server.Controllers
             [FromQuery] string? order = "DESC")
         {
             return await _mLBStatsDataHandler.GetMLBStatsPitchingBySeasonSplits(
-                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent, selectedSplit, selectedPlayer, sortField, order);
+                season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent,
+                selectedSplit, selectedPlayer, sortField, order, selectedPlayerOpponent);
         }
         //[HttpGet("playByPlay/read/{season}/{gamePk}")]
         //public async Task<IActionResult> GetMLBPlayerGamesFromFile(string season, string category)

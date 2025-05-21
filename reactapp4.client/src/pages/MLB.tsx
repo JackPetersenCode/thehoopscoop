@@ -8,7 +8,9 @@ import { MLBTeam } from '../interfaces/Teams';
 import { MLBStatsData } from '../hooks/MLBStatsData';
 import MLBPitching from '../components/MLBPitching';
 import MLBHitting from '../components/MLBHitting';
-import { mlbBattingColumns } from '../interfaces/Columns';
+import { mlbBattingColumns, mlbPitchingColumns } from '../interfaces/Columns';
+import { Column } from '../interfaces/StatsTable';
+import { mlbSplitsBatting, mlbSplitsPitching } from '../interfaces/MLBDropDownOptions';
 
 // interface MLBProps {
     // selectedSport: string;
@@ -24,6 +26,8 @@ const MLB = ({}) => {
     //const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
     const [inputTextBottom, setInputTextBottom] = useState('');
     const [selectedPlayerBottom, setSelectedPlayerBottom] = useState<MLBActivePlayer | null>(null);
+    const [inputTextOpponent, setInputTextOpponent] = useState('');
+    const [selectedPlayerOpponent, setSelectedPlayerOpponent] = useState<MLBActivePlayer | null>(null);
     const [selectedTeam, setSelectedTeam] = useState<MLBTeam>({team_id: '1', team_name: 'All MLB Teams'});
     const [sortField, setSortField] = useState<string>("");
     const [gameOption, setGameOption] = useState<string>('Prop Bet');
@@ -35,8 +39,8 @@ const MLB = ({}) => {
     const [yearToDateOption, setYearToDateOption] = useState<string>("Year To Date");
     const [selectedOpponent, setSelectedOpponent] = useState<MLBTeam>({team_id: '1', team_name: 'All MLB Teams'})
     const [selectedSplit, setSelectedSplit] = useState<string>("None");
-    
-    ///const [loading, setLoading] = useState<boolean>(false);
+    //const [columns, setColumns] = useState<Column[]>(mlbBattingColumns);
+    //const [splitOptions, setSplitOptions] = useState<string[]>(mlbSplitsBatting);
 
     useEffect(() => {
         console.log("active players hook")
@@ -53,11 +57,21 @@ const MLB = ({}) => {
 //<StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} selectedOpponent={selectedOpponent} />
 
 // ...
-    const setHitting = () => setHittingPitching("hitting");
-    const setPitching = () => setHittingPitching("pitching");
+    const setHitting = () => {
+        setHittingPitching("hitting");
+        //setColumns(mlbBattingColumns);
+        //setSplitOptions(mlbSplitsBatting);
+    }
 
-    const { statsData, columns, isFetching, originalData } = MLBStatsData({
-        selectedSeason, hittingPitching, leagueOption, yearToDateOption, selectedTeam, selectedOpponent, sortField, selectedSplit
+    const setPitching = () => {
+        setHittingPitching("pitching");
+        //setColumns(mlbPitchingColumns);
+        //setSplitOptions(mlbSplitsPitching);
+    }
+
+    const { statsData, isFetching, columns, originalData } = MLBStatsData({
+        selectedSeason, hittingPitching, leagueOption, yearToDateOption, selectedTeam, 
+        selectedOpponent, sortField, selectedSplit, selectedPlayerOpponent
     })
 
     return (
@@ -105,11 +119,17 @@ const MLB = ({}) => {
                     setInputTextBottom={setInputTextBottom}
                     selectedPlayerBottom={selectedPlayerBottom}
                     setSelectedPlayerBottom={setSelectedPlayerBottom}
+                    inputTextOpponent={inputTextOpponent}
+                    setInputTextOpponent={setInputTextOpponent}
+                    selectedPlayerOpponent={selectedPlayerOpponent}
+                    setSelectedPlayerOpponent={setSelectedPlayerOpponent}
                     activePlayers={mlbActivePlayers}
                     roster={roster}
                     setRoster={setRoster}
                     setUsedPlayers={setUsedPlayers}
                     isFetching={isFetching}
+                    //columns={columns}
+                    //splitOptions={splitOptions}
                 />
             </div>
             <div style={{ display: hittingPitching === 'pitching' ? 'block' : 'none' }}>
@@ -130,11 +150,17 @@ const MLB = ({}) => {
                     setInputTextBottom={setInputTextBottom}
                     selectedPlayerBottom={selectedPlayerBottom}
                     setSelectedPlayerBottom={setSelectedPlayerBottom}
+                    inputTextOpponent={inputTextOpponent}
+                    setInputTextOpponent={setInputTextOpponent}
+                    selectedPlayerOpponent={selectedPlayerOpponent}
+                    setSelectedPlayerOpponent={setSelectedPlayerOpponent}
                     activePlayers={mlbActivePlayers}
                     roster={roster}
                     setRoster={setRoster}
                     setUsedPlayers={setUsedPlayers}
                     isFetching={isFetching}
+                    //columns={columns}
+                    //splitOptions={splitOptions}
                 />
             </div>
             <div>

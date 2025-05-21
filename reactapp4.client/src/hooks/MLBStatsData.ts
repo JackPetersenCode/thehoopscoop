@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Column, Stats } from '../interfaces/StatsTable';
 import { mlbBattingColumns, mlbPitchingColumns } from '../interfaces/Columns';
 import { MLBTeam } from '../interfaces/Teams';
+import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
 
 interface Props {
     selectedSeason: string;
@@ -13,7 +14,7 @@ interface Props {
     selectedOpponent: MLBTeam;
     sortField: string;
     selectedSplit: string;
-    //setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    selectedPlayerOpponent: MLBActivePlayer | null;
 }
 
 export function MLBStatsData({
@@ -24,8 +25,8 @@ export function MLBStatsData({
     selectedTeam,
     selectedOpponent,
     sortField,
-    selectedSplit
-    //setLoading,
+    selectedSplit,
+    selectedPlayerOpponent
 }: Props) {
     const [statsData, setStatsData] = useState<Stats[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
@@ -39,13 +40,21 @@ export function MLBStatsData({
             try {
                 let url = '';
                 if (hittingPitching === 'hitting') {
-                    url = ['vs. LHP', 'vs. RHP'].includes(selectedSplit)
-                        ? `/api/MLBStats/batting/splits/${selectedSeason}`
-                        : `/api/MLBStats/batting/${selectedSeason}`;
+                    if (selectedPlayerOpponent) {
+                        url = `/api/MLBStats/batting/splits/${selectedSeason}`
+                    } else {
+                        url = ['vs. LHP', 'vs. RHP'].includes(selectedSplit)
+                            ? `/api/MLBStats/batting/splits/${selectedSeason}`
+                            : `/api/MLBStats/batting/${selectedSeason}`;
+                    }
                 } else {
-                    url = ['vs. LHB', 'vs. RHB'].includes(selectedSplit)
-                        ? `/api/MLBStats/pitching/splits/${selectedSeason}`
-                        : `/api/MLBStats/pitching/${selectedSeason}`;
+                    if (selectedPlayerOpponent) {
+                        url = `/api/MLBStats/pitching/splits/${selectedSeason}`;
+                    } else {
+                        url = ['vs. LHB', 'vs. RHB'].includes(selectedSplit)
+                            ? `/api/MLBStats/pitching/splits/${selectedSeason}`
+                            : `/api/MLBStats/pitching/${selectedSeason}`;
+                    }
                 }
                 const response = await axios.get(url, {
                     params: {
@@ -56,6 +65,7 @@ export function MLBStatsData({
                         order: 'desc',
                         sortField,
                         selectedSplit,
+                        selectedPlayerOpponent: selectedPlayerOpponent?.playerId
                     },
                 });
                 if (response.data) {
@@ -82,7 +92,8 @@ export function MLBStatsData({
         selectedOpponent,
         sortField,
         selectedSplit,
+        selectedPlayerOpponent
     ]);
 
-    return { statsData, columns, isFetching, originalData };
+    return { statsData, isFetching, columns, originalData };
 }   

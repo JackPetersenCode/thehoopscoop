@@ -8,8 +8,7 @@ namespace ReactApp4.Server.Data
         [Column("full_name")] public string FullName { get; set; } = string.Empty;
         [Column("team_name")] public string TeamName { get; set; } = string.Empty;
         [Column("league_name")] public string LeagueName { get; set; } = string.Empty;
-        [Column("primary_position_name")] public string PrimaryPositionName { get; set; } = string.Empty;
-
+        [Column("primary_position_name")] public string Position { get; set; } = string.Empty;
         [Column("games_played")] public double? GamesPlayed { get; set; }
         [Column("hits")] public double? Hits { get; set; }
         [Column("doubles")] public double? Doubles { get; set; }
