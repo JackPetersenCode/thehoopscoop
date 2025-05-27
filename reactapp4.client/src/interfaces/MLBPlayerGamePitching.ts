@@ -2,6 +2,7 @@ export interface MLBPlayerGamePitching {
     gamePk: number;
     teamSide: string;
     teamName: string;
+    teamId: number;
     playerId: string;
     personId: number | null;
     note: string;

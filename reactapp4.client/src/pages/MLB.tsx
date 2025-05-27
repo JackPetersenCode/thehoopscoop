@@ -89,7 +89,9 @@ const MLB = ({}) => {
 
             {gameOption === "Prop Bet" ?
                 <div>
-                    <MLBPropBet activePlayers={mlbActivePlayers} roster={roster} setRoster={setRoster} usedPlayers={usedPlayers} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
+                    <MLBPropBet activePlayers={mlbActivePlayers} roster={roster} setRoster={setRoster} 
+                        usedPlayers={usedPlayers} setUsedPlayers={setUsedPlayers} gameOption={gameOption} 
+                     />
                 </div>
             :
             ""}

@@ -68,6 +68,47 @@ const homeAwayFilteredBoxScores = async (boxScores: Stats[], homeOrVisitor: stri
     }
 }
 
+const MLBhomeAwayFilteredBoxScores = async (boxScores: Stats[], homeOrVisitor: string) => {
+
+    let filteredBoxScores = [];
+    if (homeOrVisitor == "Home") {
+        filteredBoxScores = boxScores.filter((element: Stats) => {
+            if (element.teamSide === "home") {
+                return true;
+            } else {
+                return false;
+            }
+        })
+
+        if (filteredBoxScores) {
+            return filteredBoxScores;
+        } else {
+            return boxScores;
+        }
+    }
+    else if (homeOrVisitor == "Visitor") {
+        filteredBoxScores = boxScores.filter((element: Stats) => {
+            if (element.teamSide === "away") {
+                return true;
+            } else {
+                return false;
+            }
+        })
+
+        if (filteredBoxScores) {
+            return filteredBoxScores;
+        } else {
+            return boxScores;
+        }
+    }
+    else if (homeOrVisitor == "All Games") {
+        return boxScores;
+
+    } else {
+        return boxScores;
+    }
+}
 
 
-export { overUnderFilteredBoxScores, homeAwayFilteredBoxScores }
+
+export { overUnderFilteredBoxScores, homeAwayFilteredBoxScores, MLBhomeAwayFilteredBoxScores }

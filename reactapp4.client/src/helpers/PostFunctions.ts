@@ -325,6 +325,7 @@ const postMLBPlayerGamesPitchingBySeason = async (obj: MLBPlayerGamePitching[], 
 }
 
 const postMLBPlayerGamesFieldingBySeason = async (obj: MLBPlayerGameFielding[], season: string) => {
+    console.log(obj);
     const url = `/api/MLBPlayerGame/fielding/${season}`;
     try {
         const response = await fetch(url, {

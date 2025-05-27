@@ -76,12 +76,12 @@ namespace ReactApp4.Server.Services
                 {
                     var sql = $@"
                         INSERT INTO player_game_stats_batting_{season}
-                            (game_pk, team_side, team_name, player_id, person_id, summary, games_played, fly_outs, ground_outs, air_outs, runs, doubles, triples, 
+                            (game_pk, team_side, team_name, team_id, player_id, person_id, summary, games_played, fly_outs, ground_outs, air_outs, runs, doubles, triples, 
                              home_runs, strike_outs, base_on_balls, intentional_walks, hits, hit_by_pitch, at_bats, caught_stealing, stolen_bases, 
                              stolen_base_percentage, ground_into_double_play, ground_into_triple_play, plate_appearances, total_bases, rbi, left_on_base, 
                              sac_bunts, sac_flies, catchers_interference, pickoffs, at_bats_per_home_run, pop_outs, line_outs, note)
                         VALUES
-                            (@game_pk, @team_side, @team_name, @player_id, @person_id, @summary, @games_played, @fly_outs, @ground_outs, @air_outs, @runs, @doubles, @triples, 
+                            (@game_pk, @team_side, @team_name, @team_id, @player_id, @person_id, @summary, @games_played, @fly_outs, @ground_outs, @air_outs, @runs, @doubles, @triples, 
                              @home_runs, @strike_outs, @base_on_balls, @intentional_walks, @hits, @hit_by_pitch, @at_bats, @caught_stealing, @stolen_bases, 
                              @stolen_base_percentage, @ground_into_double_play, @ground_into_triple_play, @plate_appearances, @total_bases, @rbi, @left_on_base, 
                              @sac_bunts, @sac_flies, @catchers_interference, @pickoffs, @at_bats_per_home_run, @pop_outs, @line_outs, @note)
@@ -92,6 +92,7 @@ namespace ReactApp4.Server.Services
                     cmd.Parameters.AddWithValue("@game_pk", stat.GamePk);
                     cmd.Parameters.AddWithValue("@team_side", stat.TeamSide ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@team_name", stat.TeamName ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@team_id", stat.TeamId ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@player_id", stat.PlayerId ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@person_id", stat.PersonId ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@summary", stat.Summary ?? (object)DBNull.Value);
@@ -222,7 +223,7 @@ namespace ReactApp4.Server.Services
                 {
                     var sql = $@"
                         INSERT INTO player_game_stats_pitching_{season}
-                            (game_pk, team_side, team_name, player_id, person_id, note, summary, games_played, games_started,
+                            (game_pk, team_side, team_name, team_id, player_id, person_id, note, summary, games_played, games_started,
                              fly_outs, ground_outs, air_outs, runs, doubles, triples, home_runs, strike_outs, base_on_balls,
                              intentional_walks, hits, hit_by_pitch, at_bats, caught_stealing, stolen_bases, stolen_base_percentage,
                              number_of_pitches, innings_pitched, wins, losses, saves, save_opportunities, holds, blown_saves,
@@ -231,7 +232,7 @@ namespace ReactApp4.Server.Services
                              runs_scored_per9, home_runs_per9, inherited_runners, inherited_runners_scored, catchers_interference,
                              sac_bunts, sac_flies, passed_ball, pop_outs, line_outs)
                         VALUES
-                            (@game_pk, @team_side, @team_name, @player_id, @person_id, @note, @summary, @games_played, @games_started,
+                            (@game_pk, @team_side, @team_name, @team_id, @player_id, @person_id, @note, @summary, @games_played, @games_started,
                              @fly_outs, @ground_outs, @air_outs, @runs, @doubles, @triples, @home_runs, @strike_outs, @base_on_balls,
                              @intentional_walks, @hits, @hit_by_pitch, @at_bats, @caught_stealing, @stolen_bases, @stolen_base_percentage,
                              @number_of_pitches, @innings_pitched, @wins, @losses, @saves, @save_opportunities, @holds, @blown_saves,
@@ -246,6 +247,7 @@ namespace ReactApp4.Server.Services
                     cmd.Parameters.AddWithValue("@game_pk", stat.GamePk);
                     cmd.Parameters.AddWithValue("@team_side", stat.TeamSide ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@team_name", stat.TeamName ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@team_id", stat.TeamId ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@player_id", stat.PlayerId ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@person_id", stat.PersonId ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@note", stat.Note ?? (object)DBNull.Value);
@@ -399,12 +401,12 @@ namespace ReactApp4.Server.Services
                 {
                     var sql = $@"
                         INSERT INTO player_game_stats_fielding_{season}
-                            (game_pk, team_side, team_name, player_id, person_id,
+                            (game_pk, team_side, team_name, team_id, player_id, person_id,
                              caught_stealing, stolen_bases, stolen_base_percentage,
                              assists, put_outs, errors, chances,
                              fielding, passed_ball, pickoffs, games_started)
                         VALUES
-                            (@game_pk, @team_side, @team_name, @player_id, @person_id,
+                            (@game_pk, @team_side, @team_name, @team_id, @player_id, @person_id,
                              @caught_stealing, @stolen_bases, @stolen_base_percentage,
                              @assists, @put_outs, @errors, @chances,
                              @fielding, @passed_ball, @pickoffs, @games_started)
@@ -416,6 +418,7 @@ namespace ReactApp4.Server.Services
                     cmd.Parameters.AddWithValue("@game_pk", stat.GamePk);
                     cmd.Parameters.AddWithValue("@team_side", stat.TeamSide ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@team_name", stat.TeamName ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@team_id", stat.TeamId ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@player_id", stat.PlayerId ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@person_id", stat.PersonId ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@caught_stealing", stat.CaughtStealing ?? (object)DBNull.Value);

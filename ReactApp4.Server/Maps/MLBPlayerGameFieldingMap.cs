@@ -9,6 +9,8 @@ public sealed class MLBPlayerGameFieldingMap : ClassMap<MLBPlayerGameFielding>
         Map(m => m.GamePk).Name("gamePk");
         Map(m => m.TeamSide).Name("teamSide");
         Map(m => m.TeamName).Name("teamName");
+        Map(m => m.TeamId).Name("teamId");
+
         Map(m => m.PlayerId).Name("playerId");
         Map(m => m.PersonId).Name("personId");
 

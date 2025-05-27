@@ -2,6 +2,7 @@ export interface MLBPlayerGameFielding {
     gamePk: number;
     teamSide: string;
     teamName: string;
+    teamId: number;
     playerId: string;
     personId: number | null;
     caughtStealing: number | null;

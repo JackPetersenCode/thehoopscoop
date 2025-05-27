@@ -1,17 +1,14 @@
 import React from "react";
-import { MLBSortingFunction, Column, Stats } from "../interfaces/StatsTable";
-import { SortOrder } from "../helpers/MLBSortingFunction";
+import { Column } from "../interfaces/StatsTable";
 
 
 interface MLBStatsTableHeadersProps {
     columns: Column[];
-    sortColumn: string | null;
-    sortOrder: SortOrder;
     onSort: (column: string) => void; 
 }
 
 
-const MLBStatsTableHeaders: React.FC<MLBStatsTableHeadersProps> = React.memo(({ columns, sortColumn, sortOrder, onSort }) => {
+const MLBStatsTableHeaders: React.FC<MLBStatsTableHeadersProps> = React.memo(({ columns, onSort }) => {
 
     console.log('Headers')
     //const handleSortingChange = (accessor: string) => {

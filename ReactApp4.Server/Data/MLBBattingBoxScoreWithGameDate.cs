@@ -1,12 +1,15 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace ReactApp4.Server.Data
 {
-    public class MLBPlayerGameBatting
+    public class MLBBattingBoxScoreWithGameDate
     {
         [Column("game_pk")] public int GamePk { get; set; }
         [Column("team_side")] public string TeamSide { get; set; } = string.Empty;
         [Column("team_name")] public string TeamName { get; set; } = string.Empty;
         [Column("team_id")] public int? TeamId { get; set; }
+        [Column("home_team_id")] public int? HomeTeamId { get; set; }
+        [Column("away_team_id")] public int? AwayTeamId { get; set; }
+
         [Column("player_id")] public string PlayerId { get; set; } = string.Empty;
         [Column("person_id")] public int? PersonId { get; set; }
         [Column("summary")] public string Summary { get; set; } = string.Empty;
@@ -40,7 +43,7 @@ namespace ReactApp4.Server.Data
         [Column("at_bats_per_home_run")] public double? AtBatsPerHomeRun { get; set; }
         [Column("pop_outs")] public double? PopOuts { get; set; }
         [Column("line_outs")] public double? LineOuts { get; set; }
-        [Column("note")] public string Note { get; set; } = string.Empty;
-
+        [Column("note")] public string? Note { get; set; } = string.Empty;
+        [Column("game_date")] public DateTime? GameDate { get; set; } 
     }
 }

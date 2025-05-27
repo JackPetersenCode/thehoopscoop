@@ -7,17 +7,33 @@ interface PropBetStatsDropDownProps {
     setSelectedStat: React.Dispatch<React.SetStateAction<PropBetStats | null>>;
     propBetStats: PropBetStats[];
     setPropBetStats: React.Dispatch<React.SetStateAction<PropBetStats[]>>;
+    hittingPitching: string;
 }
 
-const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ setSelectedStat, propBetStats, setPropBetStats }) => {
+const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ setSelectedStat, propBetStats, setPropBetStats, hittingPitching }) => {
 
-    const stats: PropBetStats[] = [
-        { label: 'Points', accessor: 'pts' },
-        { label: 'Rebounds', accessor: 'reb' },
-        { label: 'Assists', accessor: 'ast' },
-        { label: 'Steals', accessor: 'stl' },
-        { label: 'Blocks', accessor: 'blk' },
-        { label: 'Turnovers', accessor: 'tov' },
+
+    const hittingStats: PropBetStats[] = [
+        { label: 'Hits', accessor: 'hits' },
+        { label: 'Total Bases', accessor: 'total_bases' },
+        { label: 'Singles', accessor: 'singles' },
+        { label: 'Doubles', accessor: 'doubles' },
+        { label: 'Triples', accessor: 'triples' },
+        { label: 'Home Runs', accessor: 'home_runs' },
+        { label: 'Strikeouts', accessor: 'strikeouts' },
+        { label: 'Walks', accessor: 'base_on_balls' },
+        { label: 'RBI', accessor: 'rbi' },
+        { label: 'Runs', accessor: 'runs' },
+        { label: 'Stolen Bases', accessor: 'stolen_bases' }
+    ];
+
+    const pitchingStats: PropBetStats[] = [
+        { label: 'Strikeouts', accessor: 'strikeouts' },
+        { label: 'Outs Recorded', accessor: 'outs' },
+        { label: 'Wins', accessor: 'wins' },
+        { label: 'Hits', accessor: 'hits' },
+        { label: 'Earned Runs', accessor: 'earned_runs' },
+        { label: 'Walks', accessor: 'walks' },
         { label: '3 Pointers Made', accessor: 'fg3m' }
     ];
     
@@ -35,6 +51,7 @@ const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ setSelected
         }
     }
 
+    const stats = hittingPitching === "pitching" ? pitchingStats : hittingStats;
 
     return (
         <div className="drop-flex">

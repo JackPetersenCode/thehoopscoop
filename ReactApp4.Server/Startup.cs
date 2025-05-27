@@ -90,6 +90,8 @@ namespace ReactApp4.Server
             services.AddScoped<MLBPlayByPlayDatabaseHandler>();
             services.AddScoped<MLBPlayByPlayFileHandler>();
 
+            services.AddScoped<MLBPlayerResultsDatabaseHandler>();
+            
             services.Configure<KestrelServerOptions>(options =>
             {
                 options.Limits.MaxRequestBodySize = 524288000; // 500 MB

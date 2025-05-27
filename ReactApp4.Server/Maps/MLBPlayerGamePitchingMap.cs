@@ -9,12 +9,11 @@ public sealed class MLBPlayerGamePitchingMap : ClassMap<MLBPlayerGamePitching>
         Map(m => m.GamePk).Name("gamePk");
         Map(m => m.TeamSide).Name("teamSide");
         Map(m => m.TeamName).Name("teamName");
+        Map(m => m.TeamId).Name("teamId");
         Map(m => m.PlayerId).Name("playerId");
         Map(m => m.PersonId).Name("personId");
-
         Map(m => m.Note).Name("note");
         Map(m => m.Summary).Name("summary");
-
         Map(m => m.GamesPlayed).Convert(args => ParseNullableDouble(args.Row, "gamesPlayed"));
         Map(m => m.GamesStarted).Convert(args => ParseNullableDouble(args.Row, "gamesStarted"));
         Map(m => m.FlyOuts).Convert(args => ParseNullableDouble(args.Row, "flyOuts"));

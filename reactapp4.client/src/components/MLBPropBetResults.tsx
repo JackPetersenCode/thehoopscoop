@@ -1,9 +1,9 @@
 import React, { SetStateAction, useEffect } from 'react';
 import axios from 'axios';
 import { PropBetStats } from '../interfaces/PropBetStats';
-import { NBATeam } from '../interfaces/Teams';
+import { MLBTeam, NBATeam } from '../interfaces/Teams';
 import { Stats } from '../interfaces/StatsTable';
-import { homeAwayFilteredBoxScores, overUnderFilteredBoxScores } from '../helpers/BoxScoreFilterFunctions';
+import { homeAwayFilteredBoxScores, MLBhomeAwayFilteredBoxScores, overUnderFilteredBoxScores } from '../helpers/BoxScoreFilterFunctions';
 import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
 
 interface MLBPropBetResultsProps {
@@ -14,7 +14,7 @@ interface MLBPropBetResultsProps {
     setCareerGamesPlayed: React.Dispatch<SetStateAction<Stats[]>>;
     overUnderLine: number | string;
     propBetStats: PropBetStats[];
-    selectedOpponent: NBATeam;
+    selectedOpponent: MLBTeam;
     roster: MLBActivePlayer[];
     playerBoxScores: Stats[];
     homeOrVisitor: string;
@@ -22,7 +22,6 @@ interface MLBPropBetResultsProps {
 }
 
 const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxScores, setCareerPlayerBoxScores, gamesPlayed, careerGamesPlayed, setCareerGamesPlayed, overUnderLine, propBetStats, selectedOpponent, roster, playerBoxScores, homeOrVisitor, selectedSeason }) => {
-
 
     useEffect(() => {
 
@@ -44,12 +43,12 @@ const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxSc
                 for (const player of roster) {
 
                     try {
-                        const results = await axios.get(`/api/PlayerResults?selectedSeason=1&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.playerId}&propBetStats=${encodedJsonPropBetStats}`);
+                        const results = await axios.get(`/api/MLBPlayerResults?selectedSeason=1&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.playerId}&propBetStats=${encodedJsonPropBetStats}`);
                         console.log(results.data);
 
                         const OUFilteredBoxScores = await overUnderFilteredBoxScores(results.data, propBetStats, overUnderLine);
-                        const homeVisitorOverUnderFilteredBoxScores = await homeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
-                        const homeVisitorFilteredBoxScores = await homeAwayFilteredBoxScores(results.data, homeOrVisitor);
+                        const homeVisitorOverUnderFilteredBoxScores = await MLBhomeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
+                        const homeVisitorFilteredBoxScores = await MLBhomeAwayFilteredBoxScores(results.data, homeOrVisitor);
 
               
                         setCareerGamesPlayed(homeVisitorFilteredBoxScores)

@@ -1,13 +1,15 @@
 import React, { SetStateAction, useEffect, useState } from 'react';
-import { NBATeam } from '../interfaces/Teams';
+import { MLBTeam } from '../interfaces/Teams';
 import { PropBetStats } from '../interfaces/PropBetStats';
 import axios from 'axios';
 import { Column, Stats } from '../interfaces/StatsTable';
 import StatsTableHeaders from './StatsTableHeaders';
 import StatsTableBody from './StatsTableBody';
-import { basePlayerColumnsNoName } from '../interfaces/Columns';
-import { homeAwayFilteredBoxScores, overUnderFilteredBoxScores } from '../helpers/BoxScoreFilterFunctions';
+import { basePlayerColumnsNoName, mlbBattingColumnsPropBet } from '../interfaces/Columns';
+import { homeAwayFilteredBoxScores, MLBhomeAwayFilteredBoxScores, overUnderFilteredBoxScores } from '../helpers/BoxScoreFilterFunctions';
 import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
+import MLBStatsTableHeaders from './MLBStatsTableHeaders';
+import MLBStatsTableBody from './MLBStatsTableBody';
 
 
 interface MLBPropBetResultsTableProps {
@@ -15,7 +17,7 @@ interface MLBPropBetResultsTableProps {
     roster: MLBActivePlayer[];
     propBetStats: PropBetStats[];
     overUnderLine: number | string;
-    selectedOpponent: NBATeam;
+    selectedOpponent: MLBTeam;
     setPlayerBoxScores: React.Dispatch<SetStateAction<Stats[]>>
     playerBoxScores: Stats[];
     gamesPlayed: Stats[];
@@ -25,7 +27,7 @@ interface MLBPropBetResultsTableProps {
 
 const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats, setPlayerBoxScores, playerBoxScores, gamesPlayed, setGamesPlayed, homeOrVisitor }) => {
 
-    const [columns] = useState<Column[]>(basePlayerColumnsNoName);
+    const [columns] = useState<Column[]>(mlbBattingColumnsPropBet);
 
     useEffect(() => {
         const getPropBetResults = async () => {
@@ -50,12 +52,12 @@ const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selecte
                 for (const player of roster) {
 
                     try {
-                        const resultsWithOpponent = await axios.get(`/api/PlayerResults?selectedSeason=${selectedSeason}&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.playerId}&propBetStats=${encodedJsonPropBetStats}`);
+                        const resultsWithOpponent = await axios.get(`/api/MLBPlayerResults?selectedSeason=${selectedSeason}&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.playerId}&propBetStats=${encodedJsonPropBetStats}`);
                         console.log(resultsWithOpponent.data);
 
                         const OUFilteredBoxScores = await overUnderFilteredBoxScores(resultsWithOpponent.data, propBetStats, overUnderLine);
-                        const homeVisitorOverUnderFilteredBoxScores = await homeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
-                        const homeVisitorFilteredBoxScores = await homeAwayFilteredBoxScores(resultsWithOpponent.data, homeOrVisitor);
+                        const homeVisitorOverUnderFilteredBoxScores = await MLBhomeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
+                        const homeVisitorFilteredBoxScores = await MLBhomeAwayFilteredBoxScores(resultsWithOpponent.data, homeOrVisitor);
 
                     
                         setGamesPlayed(homeVisitorFilteredBoxScores)
@@ -76,8 +78,8 @@ const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selecte
             {gamesPlayed.length > 0 ?
                 <div>
                     <table className="w-100">
-                        <StatsTableHeaders columns={columns} smallHeaders={true} sortingFunction={() => {}} order="desc"/>
-                        <StatsTableBody columns={columns} tableData={gamesPlayed} filteredBoxScores={playerBoxScores} />
+                        <MLBStatsTableHeaders columns={columns} onSort={() => {}} />
+                        <MLBStatsTableBody columns={columns} tableData={gamesPlayed} filteredBoxScores={playerBoxScores} />
                     </table>
                 </div>
                 :

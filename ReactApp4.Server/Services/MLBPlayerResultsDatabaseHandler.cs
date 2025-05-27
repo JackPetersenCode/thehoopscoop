@@ -1,0 +1,108 @@
+using Microsoft.AspNetCore.Mvc;
+using Npgsql;
+using ReactApp4.Server.Data;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using NpgsqlTypes;
+using static System.Net.WebRequestMethods;
+using System.Runtime.Intrinsics.X86;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using Microsoft.Extensions.FileSystemGlobbing;
+using System.Numerics;
+using System.Reflection.Emit;
+using ReactApp4.Server.Controllers;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System;
+
+namespace ReactApp4.Server.Services
+{
+    public class MLBPlayerResultsDatabaseHandler(AppDbContext context) : ControllerBase
+    {
+        private readonly AppDbContext _context = context;
+
+        public async Task<IActionResult> MLBGetPlayerResults(string selectedSeason, string selectedOpponent, int player_id, string propBetStats)
+        {
+            //percentage of games over/under the line
+            var decodedPropBetStatsJson = System.Net.WebUtility.UrlDecode(propBetStats);
+
+            // Deserialize the JSON strings into lists of objects
+            var propBetStatsList = JsonConvert.DeserializeObject<List<PropBetStats>>(decodedPropBetStatsJson);
+
+            var decodedSelectedOpponentJson = System.Net.WebUtility.UrlDecode(selectedOpponent);
+
+            // Deserialize the JSON strings into lists of objects
+            var selectedOpponentObject = JsonConvert.DeserializeObject<MLBTeam>(decodedSelectedOpponentJson);
+
+            // Now you can work with 'rosterList' and 'propBetStatsList' as lists of objects
+            Console.WriteLine(selectedSeason);
+            Console.WriteLine("selected season");
+            var query = $@"";
+            try
+            {
+                //var tableName = "player_game_stats_batting_" + selectedSeason;
+                var tableName = "player_game_stats_batting_2023";
+
+                //var mlbGamesTable = "mlb_games_" + selectedSeason;
+                var mlbGamesTable = "mlb_games_2023";
+
+                var opponentCTE = $@" with_opponent AS (
+                    SELECT 
+                        pgsb.*,
+                        mg.game_date,
+                        mg.away_team_id,
+                        mg.home_team_id,
+                    CASE 
+                        WHEN pgsb.team_side = 'home' THEN mg.away_team_id
+                        WHEN pgsb.team_side = 'away' THEN mg.home_team_id
+                    END AS opponent_team_id
+                    FROM {tableName} pgsb
+                    JOIN {mlbGamesTable} mg
+                        ON pgsb.game_pk = CAST(mg.game_pk AS INT)
+                    WHERE person_id = @person_id
+                    AND pgsb.games_played > 0
+                )";
+                if (selectedOpponentObject != null && selectedOpponentObject.Team_id != "1")
+                {
+                    query += $@"WITH ";
+                    query += opponentCTE;
+                    //query += $@",";
+                    query += $@"
+                        SELECT *
+                        FROM with_opponent
+                        WHERE opponent_team_id = {selectedOpponentObject.Team_id}
+                        ORDER BY with_opponent.id DESC";
+                }
+                else
+                {
+                    query += $@"WITH ";
+                    query += $@"
+                        Games_Played AS (
+                            SELECT *
+                            FROM {tableName}
+                            WHERE person_id = @person_id
+                            AND {tableName}.games_played > 0
+                        )
+                        SELECT Games_Played.*, {mlbGamesTable}.game_date, {mlbGamesTable}.home_team_id, {mlbGamesTable}.away_team_id
+                        FROM Games_Played 
+                        JOIN {mlbGamesTable}
+                        ON Games_Played.game_pk = CAST({mlbGamesTable}.game_pk AS INT)
+                        ORDER BY Games_Played.id DESC";
+                }
+                Console.WriteLine(query);
+                var boxScores = await _context.MLBBattingBoxScoreWithGameDates.FromSqlRaw(query,
+                        new NpgsqlParameter("@person_id", player_id))
+                    .ToListAsync();
+                Console.WriteLine(boxScores.ToString());
+                Console.WriteLine(boxScores);
+                Console.Write(boxScores);
+                return Ok(boxScores);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return StatusCode(500, $"Internal Server Error: {ex}");
+            }
+        }
+    }
+}

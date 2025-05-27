@@ -451,7 +451,7 @@ def get_schedule_save_play_by_play(season):
         print(f"Saved {filename}_{season}.csv with {len(df)} rows")
 
     #write_csv("plays", play_rows)
-    write_csv("runners", runners_rows)
+    #write_csv("runners", runners_rows)
     #write_csv("credits", credit_rows)
     #write_csv("play_events", play_event_rows)
     # Convert to sorted list for consistent column order
@@ -727,6 +727,7 @@ def get_schedule_save_box_scores(season):
         for team_side in ["away", "home"]:
             team = box_score_response["teams"][team_side]["team"]
             team_name = team["teamName"]
+            team_id = team["id"]
             record = team.get("record", {})
             league_record = record.get("leagueRecord", {})
 
@@ -840,6 +841,7 @@ def get_schedule_save_box_scores(season):
                         "gamePk": game_pk,
                         "teamSide": team_side,
                         "teamName": team_name,
+                        "teamId": team_id,
                         "playerId": player_id,
                         "personId": person.get("id"),
                     }
@@ -935,6 +937,6 @@ def get_active_mlb_players_for_season(season: str, output_path: str = None):
 # Example call (uncomment to run)
 #players_2023 = get_active_mlb_players_for_season("2023")
 #print(players_2023[:2])  # Print first 2 players as a preview
-#get_schedule_save_box_scores("2023")
-get_schedule_save_play_by_play("2023")
+get_schedule_save_box_scores("2023")
+#get_schedule_save_play_by_play("2023")
 #get_schedule_save_mlb_games("2023")

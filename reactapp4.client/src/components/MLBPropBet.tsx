@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
-import PropBetStatsDropDown from './PropBetStatsDropDown';
 import OverUnderLineInput from './OverUnderLineInput';
 import HomeOrVisitorDropDown from './HomeOrVisitorDropDown';
-import PropBetOpponentDropDown from './PropBetOpponentDropDown';
-import PropBetStatsDragNDrop from './PropBetStatsDragNDrop';
 import OverUnderLine from './OverUnderLine';
 import PropBetHomeOrVisitor from './PropBetHomeOrVisitor';
-import PropBetOpponent from './PropBetOpponent';
 import { PropBetStats } from '../interfaces/PropBetStats';
 import { ShotChartsGamesData } from '../interfaces/Shot';
 import { Stats } from '../interfaces/StatsTable';
@@ -16,6 +12,10 @@ import MLBSearchBar from './MLBSearchBar';
 import MLBDragNDropRoster from './MLBDragNDropRoster';
 import MLBPropBetResults from './MLBPropBetResults';
 import MLBPropBetResultsTable from './MLBPropBetResultsTable';
+import MLBPropBetStatsDropDown from './MLBPropBetStatsDropDown';
+import MLBPropBetOpponentDropDown from './MLBPropBetOpponentDropDown';
+import MLBPropBetStatsDragNDrop from './MLBPropBetStatsDragNDrop';
+import MLBPropBetOpponent from './MLBPropBetOpponent';
 
 interface MLBPropBetProps {
     activePlayers: MLBActivePlayer[];
@@ -26,7 +26,8 @@ interface MLBPropBetProps {
     gameOption: string;
 }
 
-const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoster, usedPlayers, setUsedPlayers, gameOption }) => {
+const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoster, usedPlayers, 
+    setUsedPlayers, gameOption }) => {
 
     const [inputText, setInputText] = useState('');
     const [selectedPlayer, setSelectedPlayer] = useState<MLBActivePlayer | null>(null);
@@ -36,13 +37,14 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
     const [homeOrVisitor, setHomeOrVisitor] = useState<string>("");
     const [showHomeOrVisitor, setShowHomeOrVisitor] = useState(false);
     const [showOpponent, setShowOpponent] = useState(false);
-    const [selectedOpponent, setSelectedOpponent] = useState({ team_id: '1', team_name: 'All Teams', team_abbreviation: '' });
+    const [selectedOpponent, setSelectedOpponent] = useState({ team_id: '1', team_name: 'All Teams' });
     const [selectedSeasonPropBet, setSelectedSeasonPropBet] = useState('2024_25');
     const [_selectedGame, setSelectedGame] = useState<ShotChartsGamesData | string>("");
     const [playerBoxScores, setPlayerBoxScores] = useState<Stats[]>([]);
     const [careerPlayerBoxScores, setCareerPlayerBoxScores] = useState<Stats[]>([]);
     const [gamesPlayed, setGamesPlayed] = useState<Stats[]>([]);
     const [careerGamesPlayed, setCareerGamesPlayed] = useState<Stats[]>([]);
+    const [hittingPitchingPropBet, setHittingPitchingPropBet] = useState<string>("hitting");
 
     const deletePlayer = (player: MLBActivePlayer) => {
         const rows = [...roster];
@@ -62,6 +64,19 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
         setPropBetStats(newRows);
     }
 
+    const setHitting = () => {
+        setHittingPitchingPropBet("hitting");
+        setRoster([]);
+        //setColumns(mlbBattingColumns);
+        //setSplitOptions(mlbSplitsBatting);
+    }
+
+    const setPitching = () => {
+        setHittingPitchingPropBet("pitching");
+        setRoster([]);
+        //setColumns(mlbPitchingColumns);
+        //setSplitOptions(mlbSplitsPitching);
+    }
 
     return (
         <div>
@@ -72,15 +87,23 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
         <div className='yellow-line'>
         </div>
         <div className="prop-bet-container">
+            <div className="hitting-pitching-container">
+                <div className={`hitting-pitching ${hittingPitchingPropBet === "hitting" ? "active" : ""}`} onClick={setHitting}>
+                    Hitting
+                </div>
+                <div className={`hitting-pitching ${hittingPitchingPropBet === "pitching" ? "active" : ""}`} onClick={setPitching}>
+                    Pitching
+                </div>
+            </div>
             <div className="flex">
                 <div className="drop-down">
-                    <MLBSeasonsDropDown selectedSeason={selectedSeasonPropBet} setSelectedSeason={setSelectedSeasonPropBet} isPredictions={false} />
+                    <MLBSeasonsDropDown selectedSeason={selectedSeasonPropBet} setSelectedSeason={setSelectedSeasonPropBet} isPredictions={false} disabled={false} />
                 </div>
                 <div className="drop-down">
                     <MLBSearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
                 </div>
                 <div className="drop-down">
-                    <PropBetStatsDropDown selectedStat={selectedStat} setSelectedStat={setSelectedStat} propBetStats={propBetStats} setPropBetStats={setPropBetStats} />
+                    <MLBPropBetStatsDropDown selectedStat={selectedStat} setSelectedStat={setSelectedStat} propBetStats={propBetStats} setPropBetStats={setPropBetStats} hittingPitching={hittingPitchingPropBet} />
                 </div>
                 <div className="drop-down">
                     <OverUnderLineInput overUnderLine={overUnderLine} setOverUnderLine={setOverUnderLine} />
@@ -89,7 +112,7 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
                     <HomeOrVisitorDropDown homeOrVisitor={homeOrVisitor} setHomeOrVisitor={setHomeOrVisitor} showHomeOrVisitor={showHomeOrVisitor} setShowHomeOrVisitor={setShowHomeOrVisitor} />
                 </div>
                 <div className="drop-down" style={{ marginRight: "0px" }}>
-                    <PropBetOpponentDropDown selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} />
+                    <MLBPropBetOpponentDropDown selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} />
                 </div>
             </div>
 
@@ -105,7 +128,7 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
                 </div>
                 <div className="results-flex-item">
                     {propBetStats.length > 0 ?
-                        <PropBetStatsDragNDrop propBetStats={propBetStats} setPropBetStats={setPropBetStats} deletePropBetStat={deletePropBetStat} />
+                        <MLBPropBetStatsDragNDrop propBetStats={propBetStats} setPropBetStats={setPropBetStats} deletePropBetStat={deletePropBetStat} />
                         :
                         <div className="prop-bet-placeholders">
                             Select Prop
@@ -136,7 +159,7 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
                             All Opponents
                         </div>
                         :
-                        <PropBetOpponent selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} />
+                        <MLBPropBetOpponent selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} />
                     }
                 </div>
 

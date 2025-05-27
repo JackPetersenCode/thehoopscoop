@@ -59,7 +59,7 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ inputText, sta
                       transition: 'opacity 0.3s ease',
                     }}
                 >
-                    <MLBStatsTableHeaders columns={columns} sortColumn={sortColumn} sortOrder={sortOrder} onSort={handleSort} />
+                    <MLBStatsTableHeaders columns={columns} onSort={handleSort} />
                     <MLBStatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]}  />
                 </table>
             ) : (

@@ -663,7 +663,7 @@ function Admin() {
             <button onClick={loadNewOddsFunction}>New Odds</button>
             <button onClick={loadExpectedBySeason}>Expected Matchups</button>
             <button onClick={loadMLBGames}>MLB Games</button>
-            <button onClick={() => loadMLBPlayerGamesByCategory("fielding", "2023")}>MLB Player Games</button>
+            <button onClick={() => loadMLBPlayerGamesByCategory("pitching", "2023")}>MLB Player Games</button>
             <button onClick={() => loadMLBActivePlayers("2023")}>MLB Active Players</button>
             <button onClick={() => loadMLBPlayerGameInfoBySeason("2023")}>MLB Player Game Info</button>
             <button onClick={() => loadMLBTeamInfoBySeason("2023")}>MLB Team Info</button>

@@ -1,5 +1,6 @@
 import React from "react";
 import { Column, Stats } from "../interfaces/StatsTable";
+import { MLBTeamIds } from "../interfaces/Teams";
 
 interface MLBStatsTableBodyProps {
     columns: Column[];
@@ -20,7 +21,7 @@ const positionShorthandMap: Record<string, string> = {
     "Two-Way Player": "2W"
   };
 
-const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = React.memo(({ columns, tableData }) => {
+const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = React.memo(({ columns, tableData, filteredBoxScores }) => {
     console.log("Body")
 
 
@@ -28,11 +29,32 @@ const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = React.memo(({ column
         <tbody>
             {tableData.map((data, index) => {
                 return (
-                    <tr key={index} >
+                    <tr key={index} className={filteredBoxScores.includes(data) ? "green" : ""}>
                         {columns.map(({ accessor }) => {
                             let tData;
                             const value = data[accessor];
-                            if (value !== null && value !== undefined) {
+
+                            if (accessor === "matchup") {
+                                console.log(data)
+                                if (data["teamId"] === data["homeTeamId"]) {
+                                    console.log('here')
+                                    console.log("homeTeamId:", data["homeTeamId"]);
+                                    console.log("teamId:", data["teamId"]);
+
+                                    tData = (
+                                        <span>{MLBTeamIds[Number(data["homeTeamId"])] + " vs. " + 
+                                            MLBTeamIds[Number(data["awayTeamId"])]}</span>
+                                    )
+                                } else if (data["teamId"] === data["awayTeamId"]) {
+                                    tData = (
+                                        <span>{MLBTeamIds[Number(data["awayTeamId"])] + " @ " + 
+                                            MLBTeamIds[Number(data["homeTeamId"])]}</span>
+                                    )
+                                } else {
+                                    tData = "--";
+                                }
+                            }
+                            else if (accessor != "matchup" && value !== null && value !== undefined) {
                                 if (typeof value === 'number') {
                                     if (["average", "obp", "slg", "ops"].includes(accessor)) {
                                         tData = value.toFixed(3).replace(/^0/, ''); // Remove leading 0
@@ -41,6 +63,9 @@ const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = React.memo(({ column
                                     } else {
                                         tData = value;
                                     }
+                                } else if (accessor === "gameDate") {
+                                    console.log(data[accessor].toString().split("T")[0])
+                                    tData = data[accessor].toString().split("T")[0];
                                 } else if (accessor === "leagueName") {
                                     if (value === "American League") {
                                         tData = "AL";
@@ -61,6 +86,7 @@ const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = React.memo(({ column
                                 } else {
                                     tData = value.toString();
                                 }
+
                             } else {
                                 tData = "--";
                             }

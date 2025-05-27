@@ -9,6 +9,7 @@ namespace ReactApp4.Server.Data
 
         [Column("team_side")] public string TeamSide { get; set; } = string.Empty;
         [Column("team_name")] public string TeamName { get; set; } = string.Empty;
+        [Column("team_id")] public int? TeamId { get; set; }
         [Column("player_id")] public string PlayerId { get; set; } = string.Empty;
 
         [Column("personId")]
