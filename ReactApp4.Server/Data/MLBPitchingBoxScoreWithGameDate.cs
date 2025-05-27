@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace ReactApp4.Server.Data
 {
-    public class MLBPlayerGamePitching
+    public class MLBPitchingBoxScoreWithGameDate
     {
         [Column("game_pk")] public int GamePk { get; set; }
         [Column("team_side")] public string TeamSide { get; set; } = string.Empty;
         [Column("team_name")] public string TeamName { get; set; } = string.Empty;
         [Column("team_id")] public int? TeamId { get; set; }
+        [Column("home_team_id")] public int? HomeTeamId { get; set; }
+        [Column("away_team_id")] public int? AwayTeamId { get; set; }
         [Column("player_id")] public string PlayerId { get; set; } = string.Empty;
 
         [Column("person_id")]
@@ -173,5 +175,9 @@ namespace ReactApp4.Server.Data
 
         [Column("line_outs")]
         public double? LineOuts { get; set; }
+        [Column("game_date")] public DateTime? GameDate { get; set; } 
+        [Column("era")] public double? Era { get; set; }
+        [Column("whip")] public double? Whip { get; set; }
+        [Column("average")] public double? Average { get; set; }
     }
 }

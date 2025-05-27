@@ -15,26 +15,25 @@ const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ setSelected
 
     const hittingStats: PropBetStats[] = [
         { label: 'Hits', accessor: 'hits' },
-        { label: 'Total Bases', accessor: 'total_bases' },
+        { label: 'Total Bases', accessor: 'totalBases' },
         { label: 'Singles', accessor: 'singles' },
         { label: 'Doubles', accessor: 'doubles' },
         { label: 'Triples', accessor: 'triples' },
-        { label: 'Home Runs', accessor: 'home_runs' },
-        { label: 'Strikeouts', accessor: 'strikeouts' },
-        { label: 'Walks', accessor: 'base_on_balls' },
+        { label: 'Home Runs', accessor: 'homeRuns' },
+        { label: 'Strikeouts', accessor: 'strikeOuts' },
+        { label: 'Walks', accessor: 'baseOnBalls' },
         { label: 'RBI', accessor: 'rbi' },
         { label: 'Runs', accessor: 'runs' },
-        { label: 'Stolen Bases', accessor: 'stolen_bases' }
+        { label: 'Stolen Bases', accessor: 'stolenBases' }
     ];
 
     const pitchingStats: PropBetStats[] = [
-        { label: 'Strikeouts', accessor: 'strikeouts' },
+        { label: 'Strikeouts', accessor: 'strikeOuts' },
         { label: 'Outs Recorded', accessor: 'outs' },
         { label: 'Wins', accessor: 'wins' },
         { label: 'Hits', accessor: 'hits' },
-        { label: 'Earned Runs', accessor: 'earned_runs' },
+        { label: 'Earned Runs', accessor: 'earnedRuns' },
         { label: 'Walks', accessor: 'walks' },
-        { label: '3 Pointers Made', accessor: 'fg3m' }
     ];
     
     const handleStatChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

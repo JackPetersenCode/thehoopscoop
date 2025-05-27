@@ -21,7 +21,7 @@ namespace ReactApp4.Server.Services
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<IActionResult> MLBGetPlayerResults(string selectedSeason, string selectedOpponent, int player_id, string propBetStats)
+        public async Task<IActionResult> MLBGetPlayerResults(string hittingPitching, string selectedSeason, string selectedOpponent, int player_id, string propBetStats)
         {
             //percentage of games over/under the line
             var decodedPropBetStatsJson = System.Net.WebUtility.UrlDecode(propBetStats);
@@ -41,7 +41,7 @@ namespace ReactApp4.Server.Services
             try
             {
                 //var tableName = "player_game_stats_batting_" + selectedSeason;
-                var tableName = "player_game_stats_batting_2023";
+                var tableName = hittingPitching == "hitting" ? "player_game_stats_batting_2023" : "player_game_stats_pitching_2023";
 
                 //var mlbGamesTable = "mlb_games_" + selectedSeason;
                 var mlbGamesTable = "mlb_games_2023";
@@ -49,18 +49,32 @@ namespace ReactApp4.Server.Services
                 var opponentCTE = $@" with_opponent AS (
                     SELECT 
                         pgsb.*,
+                        CASE 
+                          WHEN outs = 0 THEN NULL
+                          ELSE ROUND((earned_runs * 9.0) / (outs / 3.0), 2)
+                        END AS era,
+                        CASE 
+                          WHEN outs = 0 THEN NULL
+                          ELSE ROUND((base_on_balls + hits) / (outs / 3.0), 2)
+                        END AS whip,
+                        CASE
+                            WHEN at_bats = 0
+                            THEN 0
+                            ELSE CAST(hits AS FLOAT) / at_bats
+                        END AS average,
+                        
                         mg.game_date,
                         mg.away_team_id,
                         mg.home_team_id,
-                    CASE 
-                        WHEN pgsb.team_side = 'home' THEN mg.away_team_id
-                        WHEN pgsb.team_side = 'away' THEN mg.home_team_id
-                    END AS opponent_team_id
-                    FROM {tableName} pgsb
-                    JOIN {mlbGamesTable} mg
-                        ON pgsb.game_pk = CAST(mg.game_pk AS INT)
-                    WHERE person_id = @person_id
-                    AND pgsb.games_played > 0
+                        CASE 
+                            WHEN pgsb.team_side = 'home' THEN mg.away_team_id
+                            WHEN pgsb.team_side = 'away' THEN mg.home_team_id
+                        END AS opponent_team_id
+                        FROM {tableName} pgsb
+                        JOIN {mlbGamesTable} mg
+                            ON pgsb.game_pk = CAST(mg.game_pk AS INT)
+                        WHERE person_id = @person_id
+                        AND pgsb.games_played > 0
                 )";
                 if (selectedOpponentObject != null && selectedOpponentObject.Team_id != "1")
                 {
@@ -71,28 +85,71 @@ namespace ReactApp4.Server.Services
                         SELECT *
                         FROM with_opponent
                         WHERE opponent_team_id = {selectedOpponentObject.Team_id}
-                        ORDER BY with_opponent.id DESC";
+                        ORDER BY with_opponent.id DESC"; 
                 }
                 else
                 {
-                    query += $@"WITH ";
-                    query += $@"
-                        Games_Played AS (
-                            SELECT *
-                            FROM {tableName}
-                            WHERE person_id = @person_id
-                            AND {tableName}.games_played > 0
-                        )
-                        SELECT Games_Played.*, {mlbGamesTable}.game_date, {mlbGamesTable}.home_team_id, {mlbGamesTable}.away_team_id
-                        FROM Games_Played 
-                        JOIN {mlbGamesTable}
-                        ON Games_Played.game_pk = CAST({mlbGamesTable}.game_pk AS INT)
-                        ORDER BY Games_Played.id DESC";
+                    if (hittingPitching == "pitching")
+                    {
+                        query += $@"WITH ";
+                        query += $@"
+                            Games_Played AS (
+                                SELECT *,
+                                CASE 
+                                  WHEN outs = 0 THEN NULL
+                                  ELSE ROUND((earned_runs * 9.0) / (outs / 3.0), 2)
+                                END AS era,
+                                CASE 
+                                  WHEN outs = 0 THEN NULL
+                                  ELSE ROUND((base_on_balls + hits) / (outs / 3.0), 2)
+                                END AS whip,
+                                CASE
+                                    WHEN at_bats = 0
+                                    THEN 0
+                                    ELSE CAST(hits AS FLOAT) / at_bats
+                                END AS average
+                                FROM {tableName}
+                                WHERE person_id = @person_id
+                                AND {tableName}.games_played > 0
+                            )
+                            SELECT Games_Played.*, {mlbGamesTable}.game_date, {mlbGamesTable}.home_team_id, {mlbGamesTable}.away_team_id
+                            FROM Games_Played 
+                            JOIN {mlbGamesTable}
+                            ON Games_Played.game_pk = CAST({mlbGamesTable}.game_pk AS INT)
+                            ORDER BY Games_Played.id DESC";
+                    }
+                    else
+                    {
+                        query += $@"WITH ";
+                        query += $@"
+                            Games_Played AS (
+                                SELECT *
+                                FROM {tableName}
+                                WHERE person_id = @person_id
+                                AND {tableName}.games_played > 0
+                            )
+                            SELECT Games_Played.*, {mlbGamesTable}.game_date, {mlbGamesTable}.home_team_id, {mlbGamesTable}.away_team_id
+                            FROM Games_Played 
+                            JOIN {mlbGamesTable}
+                            ON Games_Played.game_pk = CAST({mlbGamesTable}.game_pk AS INT)
+                            ORDER BY Games_Played.id DESC";
+                    }
                 }
                 Console.WriteLine(query);
-                var boxScores = await _context.MLBBattingBoxScoreWithGameDates.FromSqlRaw(query,
-                        new NpgsqlParameter("@person_id", player_id))
-                    .ToListAsync();
+                List<object> boxScores;
+
+                if (hittingPitching == "pitching")
+                {
+                    boxScores = await _context.MLBPitchingBoxScoreWithGameDates
+                        .FromSqlRaw(query, new NpgsqlParameter("@person_id", player_id))
+                        .ToListAsync<object>();
+                }
+                else
+                {
+                    boxScores = await _context.MLBBattingBoxScoreWithGameDates
+                        .FromSqlRaw(query, new NpgsqlParameter("@person_id", player_id))
+                        .ToListAsync<object>();
+                }
                 Console.WriteLine(boxScores.ToString());
                 Console.WriteLine(boxScores);
                 Console.Write(boxScores);

@@ -9,7 +9,6 @@ namespace ReactApp4.Server.Data
         [Column("team_id")] public int? TeamId { get; set; }
         [Column("home_team_id")] public int? HomeTeamId { get; set; }
         [Column("away_team_id")] public int? AwayTeamId { get; set; }
-
         [Column("player_id")] public string PlayerId { get; set; } = string.Empty;
         [Column("person_id")] public int? PersonId { get; set; }
         [Column("summary")] public string Summary { get; set; } = string.Empty;
@@ -18,6 +17,7 @@ namespace ReactApp4.Server.Data
         [Column("ground_outs")] public double? GroundOuts { get; set; }
         [Column("air_outs")] public double? AirOuts { get; set; }
         [Column("runs")] public double? Runs { get; set; }
+        [Column("singles")] public double? Singles { get; set; }
         [Column("doubles")] public double? Doubles { get; set; }
         [Column("triples")] public double? Triples { get; set; }
         [Column("home_runs")] public double? HomeRuns { get; set; }

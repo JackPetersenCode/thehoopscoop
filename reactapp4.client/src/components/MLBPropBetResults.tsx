@@ -19,9 +19,10 @@ interface MLBPropBetResultsProps {
     playerBoxScores: Stats[];
     homeOrVisitor: string;
     selectedSeason: string;
+    hittingPitching: string;
 }
 
-const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxScores, setCareerPlayerBoxScores, gamesPlayed, careerGamesPlayed, setCareerGamesPlayed, overUnderLine, propBetStats, selectedOpponent, roster, playerBoxScores, homeOrVisitor, selectedSeason }) => {
+const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxScores, setCareerPlayerBoxScores, gamesPlayed, careerGamesPlayed, setCareerGamesPlayed, overUnderLine, propBetStats, selectedOpponent, roster, playerBoxScores, homeOrVisitor, selectedSeason, hittingPitching }) => {
 
     useEffect(() => {
 
@@ -43,7 +44,7 @@ const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxSc
                 for (const player of roster) {
 
                     try {
-                        const results = await axios.get(`/api/MLBPlayerResults?selectedSeason=1&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.playerId}&propBetStats=${encodedJsonPropBetStats}`);
+                        const results = await axios.get(`/api/MLBPlayerResults?hittingPitching=${hittingPitching}&selectedSeason=1&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.playerId}&propBetStats=${encodedJsonPropBetStats}`);
                         console.log(results.data);
 
                         const OUFilteredBoxScores = await overUnderFilteredBoxScores(results.data, propBetStats, overUnderLine);

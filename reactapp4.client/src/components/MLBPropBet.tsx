@@ -67,6 +67,10 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
     const setHitting = () => {
         setHittingPitchingPropBet("hitting");
         setRoster([]);
+        setPropBetStats([]);
+        setOverUnderLine(0);
+        setHomeOrVisitor("");
+        setSelectedOpponent({ team_id: '1', team_name: 'All Teams' });
         //setColumns(mlbBattingColumns);
         //setSplitOptions(mlbSplitsBatting);
     }
@@ -74,6 +78,10 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
     const setPitching = () => {
         setHittingPitchingPropBet("pitching");
         setRoster([]);
+        setPropBetStats([]);
+        setOverUnderLine(0);
+        setHomeOrVisitor("");
+        setSelectedOpponent({ team_id: '1', team_name: 'All Teams' });
         //setColumns(mlbPitchingColumns);
         //setSplitOptions(mlbSplitsPitching);
     }
@@ -167,9 +175,16 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
             
         </div>
         <div className="prop-bet-results-wrapper">
-            <MLBPropBetResults careerPlayerBoxScores={careerPlayerBoxScores} setCareerPlayerBoxScores={setCareerPlayerBoxScores} gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} selectedSeason={selectedSeasonPropBet} />
+            <MLBPropBetResults careerPlayerBoxScores={careerPlayerBoxScores} setCareerPlayerBoxScores={setCareerPlayerBoxScores} 
+                gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} 
+                overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} 
+                playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} selectedSeason={selectedSeasonPropBet} 
+                hittingPitching={hittingPitchingPropBet} />
         </div>
-            <MLBPropBetResultsTable selectedSeason={selectedSeasonPropBet} overUnderLine={overUnderLine} selectedOpponent={selectedOpponent} roster={roster} propBetStats={propBetStats} setPlayerBoxScores={setPlayerBoxScores} playerBoxScores={playerBoxScores} gamesPlayed={gamesPlayed} setGamesPlayed={setGamesPlayed} homeOrVisitor={homeOrVisitor} />
+            <MLBPropBetResultsTable selectedSeason={selectedSeasonPropBet} overUnderLine={overUnderLine} 
+                selectedOpponent={selectedOpponent} roster={roster} propBetStats={propBetStats} 
+                setPlayerBoxScores={setPlayerBoxScores} playerBoxScores={playerBoxScores} gamesPlayed={gamesPlayed} 
+                setGamesPlayed={setGamesPlayed} homeOrVisitor={homeOrVisitor} hittingPitching={hittingPitchingPropBet} />
     </div>
     );
 }

@@ -56,6 +56,7 @@ namespace ReactApp4.Server.Data
         public DbSet<PlayRunners> PlayRunners { get; set; }
         public DbSet<PlayRunnersCredits> PlayRunnersCredits { get; set; }
         public DbSet<MLBBattingBoxScoreWithGameDate> MLBBattingBoxScoreWithGameDates { get; set; }
+        public DbSet<MLBPitchingBoxScoreWithGameDate> MLBPitchingBoxScoreWithGameDates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -127,6 +128,7 @@ namespace ReactApp4.Server.Data
             modelBuilder.Entity<PlayRunners>().HasNoKey();
             modelBuilder.Entity<PlayRunnersCredits>().HasNoKey();
             modelBuilder.Entity<MLBBattingBoxScoreWithGameDate>().HasNoKey();
+            modelBuilder.Entity<MLBPitchingBoxScoreWithGameDate>().HasNoKey();
 
 
 

@@ -4,6 +4,9 @@ import { Stats } from "../interfaces/StatsTable";
 const overUnderFilteredBoxScores = async (boxScores: Stats[], propBetStats: PropBetStats[], overUnderLine: number | string) => {
 
     const filteredBoxScores = boxScores.filter((element: Stats) => {
+        console.log(boxScores)
+        console.log(element)
+        console.log(propBetStats)
         let total = 0;
         if (isNaN(overUnderLine as number)) {
             return true;
