@@ -1,9 +1,9 @@
-import React, { SetStateAction, useEffect } from 'react';
+import React, { SetStateAction, useEffect, useState } from 'react';
 import axios from 'axios';
 import { PropBetStats } from '../interfaces/PropBetStats';
 import { MLBTeam, NBATeam } from '../interfaces/Teams';
 import { Stats } from '../interfaces/StatsTable';
-import { homeAwayFilteredBoxScores, MLBhomeAwayFilteredBoxScores, overUnderFilteredBoxScores } from '../helpers/BoxScoreFilterFunctions';
+import { homeAwayFilteredBoxScores, MLBhomeAwayFilteredBoxScores, MLBLastTenFilteredBoxScores, overUnderFilteredBoxScores } from '../helpers/BoxScoreFilterFunctions';
 import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
 
 interface MLBPropBetResultsProps {
@@ -20,10 +20,13 @@ interface MLBPropBetResultsProps {
     homeOrVisitor: string;
     selectedSeason: string;
     hittingPitching: string;
+    lastTenFilteredBoxScores: Stats[];
 }
 
-const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxScores, setCareerPlayerBoxScores, gamesPlayed, careerGamesPlayed, setCareerGamesPlayed, overUnderLine, propBetStats, selectedOpponent, roster, playerBoxScores, homeOrVisitor, selectedSeason, hittingPitching }) => {
+const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxScores, setCareerPlayerBoxScores, gamesPlayed, careerGamesPlayed, setCareerGamesPlayed, overUnderLine, propBetStats, selectedOpponent, 
+    roster, playerBoxScores, homeOrVisitor, selectedSeason, hittingPitching, lastTenFilteredBoxScores }) => {
 
+    
     useEffect(() => {
 
         const getCareerPlayerResults = async() => {
@@ -51,8 +54,7 @@ const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxSc
                         const homeVisitorOverUnderFilteredBoxScores = await MLBhomeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
                         const homeVisitorFilteredBoxScores = await MLBhomeAwayFilteredBoxScores(results.data, homeOrVisitor);
 
-              
-                        setCareerGamesPlayed(homeVisitorFilteredBoxScores)
+                        setCareerGamesPlayed(homeVisitorFilteredBoxScores);
                         setCareerPlayerBoxScores(homeVisitorOverUnderFilteredBoxScores);
                     } catch (error) {
                         console.log(error);
@@ -74,17 +76,23 @@ const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxSc
                             Career Games: 
                         </div>
                         <div className="prop-results">
-                                <span className="prop-results-fraction">{careerPlayerBoxScores.length} / {careerGamesPlayed.length}</span> <span className="neon-orange">{careerGamesPlayed.length === 0 ? 0 : (100 * careerPlayerBoxScores.length / careerGamesPlayed.length).toFixed(2)}%</span>
-
+                            <span className="prop-results-fraction">{careerPlayerBoxScores.length} / {careerGamesPlayed.length}</span> <span className="neon-orange">{careerGamesPlayed.length === 0 ? 0 : (100 * careerPlayerBoxScores.length / careerGamesPlayed.length).toFixed(2)}%</span>
                         </div>
                     </div>
-                  
                     <div className="prop-results-item">
                         <div className="prop-results bold">
                             {selectedSeason.replace("_", "-")} Games:
                         </div>
-                            <div className="prop-results">
-                                <span className="prop-results-fraction">{playerBoxScores.length} / {gamesPlayed.length}</span> <span className="neon-orange">{gamesPlayed.length === 0 ? 0 : (100 * playerBoxScores.length / gamesPlayed.length).toFixed(2)}%</span>
+                        <div className="prop-results">
+                            <span className="prop-results-fraction">{playerBoxScores.length} / {gamesPlayed.length}</span> <span className="neon-orange">{gamesPlayed.length === 0 ? 0 : (100 * playerBoxScores.length / gamesPlayed.length).toFixed(2)}%</span>
+                        </div>
+                    </div>
+                    <div className="prop-results-item">
+                        <div className="prop-results bold">
+                            Last 10 Games:
+                        </div>
+                        <div className="prop-results">
+                            <span className="prop-results-fraction">{lastTenFilteredBoxScores.length} / {gamesPlayed.length < 10 ? gamesPlayed.length : "10"}</span> <span className="neon-orange">{(100 * lastTenFilteredBoxScores.length / (gamesPlayed.length < 10 ? gamesPlayed.length : 10.0)).toFixed(2)}%</span>
                         </div>
                     </div>
                 </div>

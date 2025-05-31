@@ -22,8 +22,6 @@ const positionShorthandMap: Record<string, string> = {
   };
 
 const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = React.memo(({ columns, tableData, filteredBoxScores }) => {
-    console.log("Body")
-
 
     return (
         <tbody>
@@ -35,12 +33,7 @@ const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = React.memo(({ column
                             const value = data[accessor];
 
                             if (accessor === "matchup") {
-                                console.log(data)
                                 if (data["teamId"] === data["homeTeamId"]) {
-                                    console.log('here')
-                                    console.log("homeTeamId:", data["homeTeamId"]);
-                                    console.log("teamId:", data["teamId"]);
-
                                     tData = (
                                         <span>{MLBTeamIds[Number(data["homeTeamId"])] + " vs. " + 
                                             MLBTeamIds[Number(data["awayTeamId"])]}</span>
@@ -64,7 +57,6 @@ const MLBStatsTableBody: React.FC<MLBStatsTableBodyProps> = React.memo(({ column
                                         tData = value;
                                     }
                                 } else if (accessor === "gameDate") {
-                                    console.log(data[accessor].toString().split("T")[0])
                                     tData = data[accessor].toString().split("T")[0];
                                 } else if (accessor === "leagueName") {
                                     if (value === "American League") {

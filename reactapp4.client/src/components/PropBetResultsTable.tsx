@@ -21,9 +21,11 @@ interface PropBetResultsTableProps {
     gamesPlayed: Stats[];
     setGamesPlayed: React.Dispatch<SetStateAction<Stats[]>>;
     homeOrVisitor: string;
+    setLastTenFilteredBoxScores: React.Dispatch<SetStateAction<Stats[]>>;
 }
 
-const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats, setPlayerBoxScores, playerBoxScores, gamesPlayed, setGamesPlayed, homeOrVisitor }) => {
+const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats, setPlayerBoxScores, playerBoxScores, gamesPlayed, 
+    setGamesPlayed, homeOrVisitor, setLastTenFilteredBoxScores }) => {
 
     const [columns] = useState<Column[]>(basePlayerColumnsNoName);
 
@@ -57,7 +59,10 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
                         const homeVisitorOverUnderFilteredBoxScores = await homeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
                         const homeVisitorFilteredBoxScores = await homeAwayFilteredBoxScores(resultsWithOpponent.data, homeOrVisitor);
 
-                    
+                        const lastTenFilteredBoxScores = await overUnderFilteredBoxScores(homeVisitorFilteredBoxScores.slice(0, 10), propBetStats, overUnderLine);
+              
+                        console.log(lastTenFilteredBoxScores);
+                        setLastTenFilteredBoxScores(lastTenFilteredBoxScores);                    
                         setGamesPlayed(homeVisitorFilteredBoxScores)
                         setPlayerBoxScores(homeVisitorOverUnderFilteredBoxScores);
                     } catch (error) {
@@ -76,7 +81,7 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
             {gamesPlayed.length > 0 ?
                 <div>
                     <table className="w-100">
-                        <StatsTableHeaders columns={columns} smallHeaders={true} sortingFunction={() => {}} order="desc"/>
+                        <StatsTableHeaders columns={columns} onSort={() => {}} />
                         <StatsTableBody columns={columns} tableData={gamesPlayed} filteredBoxScores={playerBoxScores} />
                     </table>
                 </div>

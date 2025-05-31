@@ -4,9 +4,6 @@ import { Stats } from "../interfaces/StatsTable";
 const overUnderFilteredBoxScores = async (boxScores: Stats[], propBetStats: PropBetStats[], overUnderLine: number | string) => {
 
     const filteredBoxScores = boxScores.filter((element: Stats) => {
-        console.log(boxScores)
-        console.log(element)
-        console.log(propBetStats)
         let total = 0;
         if (isNaN(overUnderLine as number)) {
             return true;
@@ -71,6 +68,14 @@ const homeAwayFilteredBoxScores = async (boxScores: Stats[], homeOrVisitor: stri
     }
 }
 
+const MLBLastTenFilteredBoxScores = async(boxScores: Stats[], homeOrVisitor: string) => {
+    //let filteredBoxScores = [];
+    // Filter by team side (e.g., "home" or "away")
+    // Return the last 10 games (most recent)
+    const lastTen = boxScores.slice(10); // gets last 10 elements
+    return lastTen;
+}
+
 const MLBhomeAwayFilteredBoxScores = async (boxScores: Stats[], homeOrVisitor: string) => {
 
     let filteredBoxScores = [];
@@ -114,4 +119,4 @@ const MLBhomeAwayFilteredBoxScores = async (boxScores: Stats[], homeOrVisitor: s
 
 
 
-export { overUnderFilteredBoxScores, homeAwayFilteredBoxScores, MLBhomeAwayFilteredBoxScores }
+export { overUnderFilteredBoxScores, homeAwayFilteredBoxScores, MLBhomeAwayFilteredBoxScores, MLBLastTenFilteredBoxScores }

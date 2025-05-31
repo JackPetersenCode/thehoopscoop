@@ -801,6 +801,10 @@ th {
   margin-left: 4px;
 }
 
+.margin-bottom {
+    margin-bottom: 1rem;
+}
+
 
 @media screen and (max-width: 900px) {
     @media screen and (min-width: 863px) {

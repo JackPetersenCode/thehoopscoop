@@ -19,7 +19,7 @@ namespace ReactApp4.Server.Services
 
             try
             {
-                using (var reader = new StreamReader($"../juicystats/box_score_traditional_{season}.csv"))
+                using (var reader = new StreamReader($"../juicystats/box_score_traditional_{season}_v3.csv"))
                 using (var csv = new CsvReader(reader, new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture)
                 {
                     Delimiter = ",",
@@ -30,7 +30,7 @@ namespace ReactApp4.Server.Services
                     var records = csv.GetRecords<dynamic>();
                     foreach (var record in records)
                     {
-                        if (record.MIN != "MIN")
+                        if (record.minutes != "minutes")
                         {
                             data.Add(record);
                         }

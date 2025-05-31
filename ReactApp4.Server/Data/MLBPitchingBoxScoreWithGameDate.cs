@@ -37,6 +37,7 @@ namespace ReactApp4.Server.Data
 
         [Column("runs")]
         public double? Runs { get; set; }
+        [Column("singles")] public double? Singles { get; set; }
 
         [Column("doubles")]
         public double? Doubles { get; set; }
@@ -175,9 +176,11 @@ namespace ReactApp4.Server.Data
 
         [Column("line_outs")]
         public double? LineOuts { get; set; }
-        [Column("game_date")] public DateTime? GameDate { get; set; } 
+        [Column("game_date")] public DateTime? GameDate { get; set; }
         [Column("era")] public double? Era { get; set; }
         [Column("whip")] public double? Whip { get; set; }
         [Column("average")] public double? Average { get; set; }
+        [Column("strikeouts_per9")] public double? StrikeoutsPer9 { get; set; }
+        [Column("walks_per9")] public double? WalksPer9 { get; set; }
     }
 }

@@ -3,13 +3,8 @@ import { SortingFunction, Column } from "../interfaces/StatsTable";
 
 
 interface StatsTableHeadersProps {
-    sortingFunction: SortingFunction;
     columns: Column[] | string[];
-    smallHeaders?: boolean;
-    sortField?: string;
-    setSortField?: React.Dispatch<React.SetStateAction<string>>;
-    order: string;
-    setOrder?: React.Dispatch<React.SetStateAction<string>>;
+    onSort: (column: string) => void; 
 }
 
 
@@ -19,7 +14,7 @@ const isColumnArray = (input: Column[] | string[]): input is Column[] => {
 };
 
 
-const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ sortingFunction, columns, smallHeaders, order }) => {
+const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, onSort }) => {
 
     console.log("headers")
     if (!isColumnArray(columns)) {
@@ -47,36 +42,19 @@ const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ sortingFunction, 
         //    }
         //    //handleSorting(accessor, sortOrder);
         //};
-        if (smallHeaders) {
-            return (
-                <thead className="small-headers">
-                    <tr>
-                        {columns.map(({ label, accessor }) => {
-                            return (
-
-                                <th key={accessor} className={label === 'NAME' ? 'header-item' : 'header-item-center'} onClick={() => sortingFunction(accessor, order)}>
-                                    {label}
-                                </th>
-                            );
-                        })}
-                    </tr>
-                </thead>
-            );
-        } else {
-            return (
-                <thead>
-                    <tr>
-                        {columns.map(({ label, accessor }) => {
-                            return (
-                                <th key={accessor} className={label === 'NAME' ? 'header-item' : 'header-item-center'} onClick={() => sortingFunction(accessor, order)}>
-                                    {label}
-                                </th>
-                            );
-                        })}
-                    </tr>
-                </thead>
-            );
-        }
+        return (
+            <thead className="small-headers">
+                <tr>
+                    {columns.map(({ label, accessor }) => {
+                        return (
+                            <th key={accessor} className={label === 'NAME' ? 'header-item' : 'header-item-center'} onClick={() => onSort(accessor)}>
+                                {label}
+                            </th>
+                        );
+                    })}
+                </tr>
+            </thead>
+        );
     }
 };
 

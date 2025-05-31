@@ -2,6 +2,40 @@ import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
 import { getJsonResponseStartup } from './GetJsonResponse';
 import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason, postNewOdds, postBoxScoreSummary, postMLBGamesBySeason, postMLBPlayerGamesBattingBySeason, postMLBPlayerGamesPitchingBySeason, postMLBPlayerGamesFieldingBySeason, postMLBActivePlayer, postMLBPlayerGameInfoBySeason, postMLBTeamInfoBySeason, postMLBPlaysBySeason, postMLBPlayEventsBySeason, postMLBPlayRunnersBySeason, postMLBPlayRunnersCreditsBySeason } from './PostFunctions';
 
+const teamNameToAbbreviation = new Map<string, string>([
+  ["Hawks", "ATL"],
+  ["Celtics", "BOS"],
+  ["Nets", "BKN"],
+  ["Hornets", "CHA"],
+  ["Bulls", "CHI"],
+  ["Cavaliers", "CLE"],
+  ["Mavericks", "DAL"],
+  ["Nuggets", "DEN"],
+  ["Pistons", "DET"],
+  ["Warriors", "GSW"],
+  ["Rockets", "HOU"],
+  ["Pacers", "IND"],
+  ["Clippers", "LAC"],
+  ["Lakers", "LAL"],
+  ["Grizzlies", "MEM"],
+  ["Heat", "MIA"],
+  ["Bucks", "MIL"],
+  ["Timberwolves", "MIN"],
+  ["Pelicans", "NOP"],
+  ["Knicks", "NYK"],
+  ["Thunder", "OKC"],
+  ["Magic", "ORL"],
+  ["76ers", "PHI"],
+  ["Suns", "PHX"],
+  ["Trail Blazers", "POR"],
+  ["Kings", "SAC"],
+  ["Spurs", "SAS"],
+  ["Raptors", "TOR"],
+  ["Jazz", "UTA"],
+  ["Wizards", "WAS"]
+]);
+
+
 const loadMLBGames = async () => {
     const season = "2023"; // Adjust as needed
     //const tablelength = await getJsonResponseStartup(`/api/tablelength/mlb_games_${season}`);
@@ -240,55 +274,58 @@ const loadBoxScoresTraditional = async () => {
     const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_traditional_${season}`)
     console.log(tablelength.count);
     const data = await getJsonResponseStartup(`/api/BoxScoreTraditional/read/${season}`);
-    console.log(data.length);
+    console.log(data);
     for (let i = 0; i < data.length; i++) {
-        if (data[i].MIN === 'MIN') {
+        if (data[i].minutes === 'minutes') {
             continue;
         }
-        const mins = minutesToDecimal(data[i].MIN)
-
+    
+        const mins = minutesToDecimal(data[i].minutes);
+        const teamAbbr: string = teamNameToAbbreviation.get(data[i].teamName) ?? "";
+    
         const boxScore = {
-            game_id: data[i].GAME_ID,
-            team_id: data[i].TEAM_ID,
-            team_abbreviation: data[i].TEAM_ABBREVIATION,
-            team_city: data[i].TEAM_CITY,
-            player_id: data[i].PLAYER_ID,
-            player_name: data[i].PLAYER_NAME,
-            nickname: data[i].NICKNAME,
-            start_position: data[i].START_POSITION,
-            comment: data[i].COMMENT,
+            game_id: data[i].gameId,
+            team_id: data[i].teamId,
+            team_abbreviation: teamAbbr, // Will always be string
+            team_city: data[i].teamCity,
+            player_id: data[i].personId,
+            player_name: data[i].firstName + " " + data[i].familyName,
+            nickname: data[i].playerSlug,
+            start_position: data[i].position,
+            comment: data[i].comment,
             min: parseFloat(mins),
-            fgm: parseFloat(data[i].FGM),
-            fga: parseFloat(data[i].FGA),
-            fg_pct: parseFloat(data[i].FG_PCT),
-            fg3m: parseFloat(data[i].FG3M),
-            fg3a: parseFloat(data[i].FG3A),
-            fg3_pct: parseFloat(data[i].FG3_PCT),
-            ftm: parseFloat(data[i].FTM),
-            fta: parseFloat(data[i].FTA),
-            ft_pct: parseFloat(data[i].FT_PCT),
-            oreb: parseFloat(data[i].OREB),
-            dreb: parseFloat(data[i].DREB),
-            reb: parseFloat(data[i].REB),
-            ast: parseFloat(data[i].AST),
-            stl: parseFloat(data[i].STL),
-            blk: parseFloat(data[i].BLK),
-            tov: parseFloat(data[i].TO),
-            pf: parseFloat(data[i].PF),
-            pts: parseFloat(data[i].PTS),
-            plus_minus: parseFloat(data[i].PLUS_MINUS)
-        }
-
-        for (const key in boxScore) {
-            if (Object.prototype.hasOwnProperty.call(boxScore, key)) {
-                if (boxScore[key as keyof typeof boxScore] === "") {
-                    boxScore[key as keyof typeof boxScore] = null;
-                }
-            }
-        }
-
+            fgm: parseFloat(data[i].fieldGoalsMade),
+            fga: parseFloat(data[i].fieldGoalsAttempted),
+            fg_pct: parseFloat(data[i].fieldGoalsPercentage),
+            fg3m: parseFloat(data[i].threePointersMade),
+            fg3a: parseFloat(data[i].threePointersAttempted),
+            fg3_pct: parseFloat(data[i].threePointersPercentage),
+            ftm: parseFloat(data[i].freeThrowsMade),
+            fta: parseFloat(data[i].freeThrowsAttempted),
+            ft_pct: parseFloat(data[i].freeThrowsPercentage),
+            oreb: parseFloat(data[i].reboundsOffensive),
+            dreb: parseFloat(data[i].reboundsDefensive),
+            reb: parseFloat(data[i].reboundsTotal),
+            ast: parseFloat(data[i].assists),
+            stl: parseFloat(data[i].steals),
+            blk: parseFloat(data[i].blocks),
+            tov: parseFloat(data[i].turnovers),
+            pf: parseFloat(data[i].foulsPersonal),
+            pts: parseFloat(data[i].points),
+            plus_minus: parseFloat(data[i].plusMinusPoints)
+        };
+    
+        //for (const key in boxScore) {
+        //    if (Object.prototype.hasOwnProperty.call(boxScore, key)) {
+        //        if (boxScore[key as keyof typeof boxScore] === "") {
+        //            boxScore[key as keyof typeof boxScore] = null;
+        //        }
+        //    }
+        //}
+    //
         await postBoxScoresTraditionalBySeason(boxScore, season);
     }
+
     //let data = await getJsonResponseStartup(`/boxScoresTraditional/read/${season}`);
 
     //for (let i = 0; i < data.length; i++) {

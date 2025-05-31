@@ -19,9 +19,11 @@ interface PropBetResultsProps {
     playerBoxScores: Stats[];
     homeOrVisitor: string;
     selectedSeason: string;
+    lastTenFilteredBoxScores: Stats[];
 }
 
-const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, setCareerPlayerBoxScores, gamesPlayed, careerGamesPlayed, setCareerGamesPlayed, overUnderLine, propBetStats, selectedOpponent, roster, playerBoxScores, homeOrVisitor, selectedSeason }) => {
+const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, setCareerPlayerBoxScores, gamesPlayed, careerGamesPlayed, setCareerGamesPlayed, overUnderLine, 
+    propBetStats, selectedOpponent, roster, playerBoxScores, homeOrVisitor, selectedSeason, lastTenFilteredBoxScores }) => {
 
 
     useEffect(() => {
@@ -85,6 +87,14 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, 
                         </div>
                             <div className="prop-results">
                                 <span className="prop-results-fraction">{playerBoxScores.length} / {gamesPlayed.length}</span> <span className="neon-orange">{gamesPlayed.length === 0 ? 0 : (100 * playerBoxScores.length / gamesPlayed.length).toFixed(2)}%</span>
+                        </div>
+                    </div>
+                    <div className="prop-results-item">
+                        <div className="prop-results bold">
+                            Last 10 Games:
+                        </div>
+                        <div className="prop-results">
+                            <span className="prop-results-fraction">{lastTenFilteredBoxScores.length} / {gamesPlayed.length < 10 ? gamesPlayed.length : "10"}</span> <span className="neon-orange">{(100 * lastTenFilteredBoxScores.length / (gamesPlayed.length < 10 ? gamesPlayed.length : 10.0)).toFixed(2)}%</span>
                         </div>
                     </div>
                 </div>

@@ -12,7 +12,7 @@ from types import SimpleNamespace
 from unittest import result
 from urllib import response
 from xml.etree.ElementTree import tostring
-from nba_api.stats.endpoints import boxscoremiscv2, boxscorescoringv2, boxscorescoringv3, boxscoresummaryv2, defensehub, playercareerstats, leaguedashplayerstats, boxscoretraditionalv2, leaguedashplayershotlocations, leaguedashplayerptshot, leaguedashplayerclutch, assistleaders, assisttracker, leaguegamelog, leaguehustlestatsplayer, leaguedashlineups, leaguedashoppptshot, shotchartdetail, alltimeleadersgrids, boxscoreadvancedv2, playergamelog
+from nba_api.stats.endpoints import boxscoremiscv2, boxscorescoringv2, boxscorescoringv3, boxscoresummaryv2, boxscoretraditionalv3, defensehub, playercareerstats, leaguedashplayerstats, boxscoretraditionalv2, leaguedashplayershotlocations, leaguedashplayerptshot, leaguedashplayerclutch, assistleaders, assisttracker, leaguegamelog, leaguehustlestatsplayer, leaguedashlineups, leaguedashoppptshot, shotchartdetail, alltimeleadersgrids, boxscoreadvancedv2, playergamelog
 from nba_api.stats.library.parameters import LeagueID, PerModeSimple, PlayerOrTeam, Season, SeasonType
 from nba_api.stats.library.parameters import ConferenceNullable, DivisionSimpleNullable, PlayerScope, GameScopeDetailed, GameScopeSimpleNullable, LastNGamesNullable, LeagueIDNullable, LocationNullable, MonthNullable, OutcomeNullable, PerModeSimpleNullable, PlayerExperienceNullable, PlayerPositionAbbreviationNullable, SeasonNullable, SeasonSegmentNullable, SeasonTypeAllStarNullable, StarterBenchNullable, DivisionNullable
 from nba_api.stats.library.parameters import EndPeriod, EndRange, RangeType, StartPeriod, StartRange
@@ -721,6 +721,7 @@ async def readLeagueGamesTraditional():
                 games_content = await f.read()
                 games = json.loads(games_content)
 
+
         except Exception as e:
             print(f"❌ Error in readLeagueGames(): {e}")
     idList = []
@@ -728,7 +729,7 @@ async def readLeagueGamesTraditional():
     start = int(count) * 2
     print(start)
     print(end)
-    for i in range (1455, end):
+    for i in range (0, end):
         print(i)
         if games["resultSets"][0]["rowSet"][i][4] in idList or games["resultSets"][0]["rowSet"][i][4] is None:
             continue
@@ -736,11 +737,13 @@ async def readLeagueGamesTraditional():
         box = await boxScoreTraditional(games["resultSets"][0]["rowSet"][i][4])
         boxScoreArrayTraditional.append(box)
     # Closing file
+    print(boxScoreArrayTraditional)
+    print(len(boxScoreArrayTraditional))
     f.close()
 
 
 async def boxScoreTraditional(gameId):
-    response = boxscoretraditionalv2.BoxScoreTraditionalV2(
+    response = boxscoretraditionalv3.BoxScoreTraditionalV3(
         game_id = gameId,
         end_period=EndPeriod.default,
         end_range=EndRange.default,
@@ -750,7 +753,7 @@ async def boxScoreTraditional(gameId):
         proxy=None,
         headers=None,
         timeout=30,
-        get_request=True
+        get_request=True,
     )
     
     content = json.loads(response.get_json())
@@ -758,7 +761,7 @@ async def boxScoreTraditional(gameId):
     boxData = json.loads(jsonContent, object_hook=lambda d: SimpleNamespace(**d))
     header = boxData.resultSets[0].headers
     try:
-        with open('./juicystats/box_score_traditional_2024_25.csv', 'a', encoding='UTF8', newline='') as f:
+        with open('./juicystats/box_score_traditional_2024_25_v3.csv', 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(header)
             writer.writerows(boxData.resultSets[0].rowSet)

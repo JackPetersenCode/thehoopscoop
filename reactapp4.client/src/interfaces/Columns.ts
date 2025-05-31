@@ -539,7 +539,7 @@ const mlbPitchingColumns = [
     { label: "2B", accessor: "doubles" },
     { label: "3B", accessor: "triples" },
     { label: "IBB", accessor: "intentionalWalks" },
-    { label: "Runs/9", accessor: "runsScoredPer9" },
+    { label: "R/9", accessor: "runsScoredPer9" },
     { label: "HR/9", accessor: "homeRunsPer9" },
     { label: "K/9", accessor: "strikeoutsPer9" },
     { label: "BB/9", accessor: "walksPer9" },
@@ -597,7 +597,7 @@ const mlbPitchingColumnsPropBet = [
     { label: "2B", accessor: "doubles" },
     { label: "3B", accessor: "triples" },
     { label: "IBB", accessor: "intentionalWalks" },
-    { label: "Runs/9", accessor: "runsScoredPer9" },
+    { label: "R/9", accessor: "runsScoredPer9" },
     { label: "HR/9", accessor: "homeRunsPer9" },
     { label: "K/9", accessor: "strikeoutsPer9" },
     { label: "BB/9", accessor: "walksPer9" },
@@ -622,7 +622,7 @@ const mlbPitchingColumnsPropBet = [
     { label: "CS", accessor: "caughtStealing" },
     { label: "SB", accessor: "stolenBases" },
     { label: "PK", accessor: "pickoffs" },
-    { label: "PB", accessor: "passedBalls" },
+    { label: "PB", accessor: "passedBall" },
     { label: "Outs", accessor: "outs" }
 ];
 

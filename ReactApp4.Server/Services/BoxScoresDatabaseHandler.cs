@@ -23,9 +23,6 @@ namespace ReactApp4.Server.Services
 
         public async Task<IActionResult> GetBoxScores(string season, string boxType, string order, string sortField, string perMode, string selectedTeam, string selectedOpponent, string playerId )
         {
-
-            
-
             try
             {
 
@@ -64,7 +61,7 @@ namespace ReactApp4.Server.Services
                 var offRatingQuery = $@"
                         PlayerStats AS (
                           SELECT box_score_traditional_{season}.player_id,
-					                box_score_traditional_{season}.player_name,
+					                MIN(box_score_traditional_{season}.player_name) AS player_name,
                           box_score_traditional_{season}.team_id,
                           box_score_traditional_{season}.team_abbreviation,
                           SUM(box_score_traditional_{season}.ast) AS ast,
@@ -101,12 +98,12 @@ namespace ReactApp4.Server.Services
                 }
 
 
-                offRatingQuery += $@"GROUP BY box_score_traditional_{season}.player_id, box_score_traditional_{season}.player_name, box_score_traditional_{season}.team_id, box_score_traditional_{season}.team_abbreviation 
+                offRatingQuery += $@"GROUP BY box_score_traditional_{season}.player_id, box_score_traditional_{season}.team_id, box_score_traditional_{season}.team_abbreviation 
                           HAVING SUM(box_score_traditional_{season}.min) > 0
                         ),
                         PlayerStatsAdvanced AS (
                          Select box_score_advanced_{season}.player_id,
-					                box_score_advanced_{season}.player_name,
+					                MIN(box_score_advanced_{season}.player_name) AS player_name,
                           box_score_advanced_{season}.team_id,
                           box_score_advanced_{season}.team_abbreviation,
                           ROUND(AVG(pie) * 100, 2) as pie,
@@ -126,7 +123,7 @@ namespace ReactApp4.Server.Services
                     offRatingQuery += $@"AND (league_games_{season}.matchup LIKE '%vs. {selectedOpponent}%' OR league_games_{season}.matchup LIKE '%@ {selectedOpponent}%') ";
 
                 }
-                offRatingQuery += $@"GROUP BY box_score_advanced_{season}.player_id, box_score_advanced_{season}.player_name, box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation
+                offRatingQuery += $@"GROUP BY box_score_advanced_{season}.player_id, box_score_advanced_{season}.team_id, box_score_advanced_{season}.team_abbreviation
                           HAVING SUM(box_score_advanced_{season}.min) > 0
                         ),
                         TeamStats AS(
@@ -250,7 +247,7 @@ namespace ReactApp4.Server.Services
                         PProd_FG_Part AS(
                           SELECT
                         
-                              PlayerStats.player_id,
+                            PlayerStats.player_id,
                           	PlayerStats.team_id,
                             CASE
                                 WHEN PlayerStats.fga IS NULL OR PlayerStats.fga = 0 THEN 2 * (PlayerStats.fgm + 0.5 * PlayerStats.fg3m) * (1 - 0.5 * (0) * qAST.qAST)
@@ -482,7 +479,8 @@ namespace ReactApp4.Server.Services
                           CASE
                           	WHEN (Team_Possessions.Team_Possessions * PlayerStats.min) IS NULL OR (Team_Possessions.Team_Possessions * PlayerStats.min) = 0 THEN 0
                           	ELSE (Stops.Stops * OpponentStats.Opponent_MIN) / (Team_Possessions.Team_Possessions * PlayerStats.min) 
-                          END AS Stop_PCT  FROM PlayerStats
+                          END AS Stop_PCT  
+                          FROM PlayerStats
                           JOIN Stops
                           ON PlayerStats.player_id = Stops.player_id AND PlayerStats.team_id = Stops.team_id
                           JOIN OpponentStats

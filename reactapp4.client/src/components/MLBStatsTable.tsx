@@ -14,7 +14,6 @@ interface MLBStatsTableProps {
 }
 
 const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ inputText, statsData, columns, isFetching, originalData }) => {
-    const [order, setOrder] = useState<'asc' | 'desc'>('desc');
     const [sortColumn, setSortColumn] = useState<string | null>(null);
     const [sortOrder, setSortOrder] = useState<SortOrder>('original');
     //const [originalData, setOriginalData] = useState<Stats[]>([]);

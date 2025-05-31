@@ -3,10 +3,8 @@ import { MLBTeam } from '../interfaces/Teams';
 import { PropBetStats } from '../interfaces/PropBetStats';
 import axios from 'axios';
 import { Column, Stats } from '../interfaces/StatsTable';
-import StatsTableHeaders from './StatsTableHeaders';
-import StatsTableBody from './StatsTableBody';
-import { basePlayerColumnsNoName, mlbBattingColumnsPropBet, mlbPitchingColumns, mlbPitchingColumnsPropBet } from '../interfaces/Columns';
-import { homeAwayFilteredBoxScores, MLBhomeAwayFilteredBoxScores, overUnderFilteredBoxScores } from '../helpers/BoxScoreFilterFunctions';
+import { mlbBattingColumnsPropBet, mlbPitchingColumnsPropBet } from '../interfaces/Columns';
+import { MLBhomeAwayFilteredBoxScores, overUnderFilteredBoxScores } from '../helpers/BoxScoreFilterFunctions';
 import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
 import MLBStatsTableHeaders from './MLBStatsTableHeaders';
 import MLBStatsTableBody from './MLBStatsTableBody';
@@ -24,9 +22,11 @@ interface MLBPropBetResultsTableProps {
     setGamesPlayed: React.Dispatch<SetStateAction<Stats[]>>;
     homeOrVisitor: string;
     hittingPitching: string;
+    setLastTenFilteredBoxScores: React.Dispatch<SetStateAction<Stats[]>>;
 }
 
-const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats, setPlayerBoxScores, playerBoxScores, gamesPlayed, setGamesPlayed, homeOrVisitor, hittingPitching }) => {
+const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats, 
+    setPlayerBoxScores, playerBoxScores, gamesPlayed, setGamesPlayed, homeOrVisitor, hittingPitching, setLastTenFilteredBoxScores }) => {
 
     const columns: Column[] =
       hittingPitching === "hitting"
@@ -63,7 +63,10 @@ const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selecte
                         const homeVisitorOverUnderFilteredBoxScores = await MLBhomeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
                         const homeVisitorFilteredBoxScores = await MLBhomeAwayFilteredBoxScores(resultsWithOpponent.data, homeOrVisitor);
 
-                    
+                        const lastTenFilteredBoxScores = await overUnderFilteredBoxScores(homeVisitorFilteredBoxScores.slice(0, 10), propBetStats, overUnderLine);
+              
+                        console.log(lastTenFilteredBoxScores);
+                        setLastTenFilteredBoxScores(lastTenFilteredBoxScores);
                         setGamesPlayed(homeVisitorFilteredBoxScores)
                         setPlayerBoxScores(homeVisitorOverUnderFilteredBoxScores);
                     } catch (error) {
@@ -78,17 +81,19 @@ const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selecte
 
 
     return (
-        <div className="player-box-container">
+        <>
             {gamesPlayed.length > 0 ?
-                <div>
-                    <table className="w-100">
-                        <MLBStatsTableHeaders columns={columns} onSort={() => {}} />
-                        <MLBStatsTableBody columns={columns} tableData={gamesPlayed} filteredBoxScores={playerBoxScores} />
-                    </table>
+                <div className="player-box-container margin-bottom" >
+                    <div>
+                        <table className="w-100">
+                            <MLBStatsTableHeaders columns={columns} onSort={() => {}} />
+                            <MLBStatsTableBody columns={columns} tableData={gamesPlayed} filteredBoxScores={playerBoxScores} />
+                        </table>
+                    </div>
                 </div>
                 :
                 ""}
-        </div>
+        </>
     );
 }
 

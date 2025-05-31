@@ -43,6 +43,7 @@ const PropBet: React.FC<PropBetProps> = ({ activePlayers, roster, setRoster, use
     const [careerPlayerBoxScores, setCareerPlayerBoxScores] = useState<Stats[]>([]);
     const [gamesPlayed, setGamesPlayed] = useState<Stats[]>([]);
     const [careerGamesPlayed, setCareerGamesPlayed] = useState<Stats[]>([]);
+    const [lastTenFilteredBoxScores, setLastTenFilteredBoxScores] = useState<Stats[]>([]);
 
     const deletePlayer = (player: Player) => {
         const rows = [...roster];
@@ -74,10 +75,10 @@ const PropBet: React.FC<PropBetProps> = ({ activePlayers, roster, setRoster, use
         <div className="prop-bet-container">
             <div className="flex">
                 <div className="drop-down">
-                    <SeasonsDropDown selectedSeason={selectedSeasonPropBet} setSelectedSeason={setSelectedSeasonPropBet} setSelectedPlayerShotCharts={() => { }} setSelectedGame={setSelectedGame} isShotCharts={false} isPredictions={false} />
+                    <SearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
                 </div>
                 <div className="drop-down">
-                    <SearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
+                    <SeasonsDropDown selectedSeason={selectedSeasonPropBet} setSelectedSeason={setSelectedSeasonPropBet} setSelectedPlayerShotCharts={() => { }} setSelectedGame={setSelectedGame} isShotCharts={false} isPredictions={false} />
                 </div>
                 <div className="drop-down">
                     <PropBetStatsDropDown selectedStat={selectedStat} setSelectedStat={setSelectedStat} propBetStats={propBetStats} setPropBetStats={setPropBetStats} />
@@ -144,10 +145,14 @@ const PropBet: React.FC<PropBetProps> = ({ activePlayers, roster, setRoster, use
             
         </div>
         <div className="prop-bet-results-wrapper">
-            <PropBetResults careerPlayerBoxScores={careerPlayerBoxScores} setCareerPlayerBoxScores={setCareerPlayerBoxScores} gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} selectedSeason={selectedSeasonPropBet} />
+            <PropBetResults careerPlayerBoxScores={careerPlayerBoxScores} setCareerPlayerBoxScores={setCareerPlayerBoxScores} gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} 
+                overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} 
+                playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} selectedSeason={selectedSeasonPropBet} lastTenFilteredBoxScores={lastTenFilteredBoxScores}/>
         </div>
 
-            <PropBetResultsTable selectedSeason={selectedSeasonPropBet} overUnderLine={overUnderLine} selectedOpponent={selectedOpponent} roster={roster} propBetStats={propBetStats} setPlayerBoxScores={setPlayerBoxScores} playerBoxScores={playerBoxScores} gamesPlayed={gamesPlayed} setGamesPlayed={setGamesPlayed} homeOrVisitor={homeOrVisitor} />
+            <PropBetResultsTable selectedSeason={selectedSeasonPropBet} overUnderLine={overUnderLine} selectedOpponent={selectedOpponent} 
+                roster={roster} propBetStats={propBetStats} setPlayerBoxScores={setPlayerBoxScores} playerBoxScores={playerBoxScores} 
+                gamesPlayed={gamesPlayed} setGamesPlayed={setGamesPlayed} homeOrVisitor={homeOrVisitor} setLastTenFilteredBoxScores={setLastTenFilteredBoxScores}/>
     </div>
     );
 }

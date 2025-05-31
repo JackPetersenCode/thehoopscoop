@@ -14,6 +14,7 @@ import DropDown from '../components/DropDown';
 import Head2Head from '../components/Head2Head';
 import axios from 'axios';
 import SportOptionDropDown from '../components/SportOptionDropDown';
+import { NBAStatsData } from '../hooks/NBAStatsData';
 
 interface HomeProps {
     selectedSport: string;
@@ -73,6 +74,16 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
         getData();
     }, []);
 
+    const { statsData, isFetching, columns, originalData } = NBAStatsData({
+        selectedSeason,
+        selectedLineupPlayer,
+        selectedBoxType,
+        numPlayers,
+        perMode,
+        selectedTeam,
+        sortField,
+        selectedOpponent
+    })
 
     return (
         <>
@@ -121,6 +132,9 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
             </div>
             <div className="display-flex">
                 <div className="drop-down">
+                    <FindPlayerBottom activePlayers={activePlayers} inputTextBottom={inputTextBottom} setInputTextBottom={setInputTextBottom} selectedPlayerBottom={selectedPlayerBottom} setSelectedPlayerBottom={setSelectedPlayerBottom} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
+                </div>
+                <div className="drop-down">
                     <SeasonsDropDown
                         selectedSeason={selectedSeason}
                         setSelectedSeason={setSelectedSeason}
@@ -166,9 +180,6 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
                         dropDownType="Team"
                     />
                 </div>
-                <div className="drop-down">
-                    <FindPlayerBottom activePlayers={activePlayers} inputTextBottom={inputTextBottom} setInputTextBottom={setInputTextBottom} selectedPlayerBottom={selectedPlayerBottom} setSelectedPlayerBottom={setSelectedPlayerBottom} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
-                </div>
                 {selectedLineupPlayer === 'Players' ?
                 <div className="drop-down" style={{marginRight: "0px"}}>
                     <DropDown
@@ -185,7 +196,7 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
                 }
             </div>
             
-            <StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} selectedOpponent={selectedOpponent} />
+            <StatsTable inputText={inputTextBottom} statsData={statsData} columns={columns} isFetching={isFetching} originalData={originalData} />
         </div>
         </>
     );
