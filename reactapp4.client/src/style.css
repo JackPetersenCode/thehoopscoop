@@ -191,6 +191,16 @@ table tr:hover {
     flex-direction: column;
 }
 
+.flex-100vh {
+    display: flex;
+    flex-direction: column;
+}
+
+.sport-game-flex {
+    display: flex;
+    gap: 1rem;
+}
+
 .container-div {
     position: relative;
 }
@@ -696,7 +706,6 @@ th {
 
 .footer {
     background-image: linear-gradient(rgb(40,40,40), rgb(0, 0, 0));
-    padding-bottom: 20px;
     padding-top: 20px;
     width: 100%;
     margin-top: 20px;
@@ -706,6 +715,13 @@ th {
     font-weight: 700;
     
 
+}
+
+.layout-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .link {
@@ -822,7 +838,6 @@ th {
     white-space: nowrap;
     justify-content: space-between;
     max-width: 50%;
-    margin-top: 50px;
 }
 
 @media screen and (max-width: 768px) {

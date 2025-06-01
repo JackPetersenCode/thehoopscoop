@@ -77,7 +77,7 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
 
 
     return (
-        <div className="player-box-container">
+        <div className="player-box-container margin-bottom">
             {gamesPlayed.length > 0 ?
                 <div>
                     <table className="w-100">

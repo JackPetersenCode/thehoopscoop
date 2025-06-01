@@ -15,7 +15,7 @@ import Head2Head from '../components/Head2Head';
 import axios from 'axios';
 import SportOptionDropDown from '../components/SportOptionDropDown';
 import { NBAStatsData } from '../hooks/NBAStatsData';
-
+import Header from '../components/Header';
 interface HomeProps {
     selectedSport: string;
     setSelectedSport: React.Dispatch<React.SetStateAction<string>>
@@ -87,17 +87,7 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
 
     return (
         <>
-        <div className='logo-flex'>
-            <div>
-                <img src="/images/ball7.png" className="ball" alt="Home"/>
-            </div>
-            <div>
-                <SportOptionDropDown selectedSport={selectedSport} setSelectedSport={setSelectedSport} />
-            </div>
-            <div>
-                <GameOptionDropDown gameOption={gameOption} setGameOption={setGameOption} />
-            </div>
-        </div>
+        <Header selectedSport={selectedSport} setSelectedSport={setSelectedSport} gameOption={gameOption} setGameOption={setGameOption} />
 
         <div className="home-container">
 

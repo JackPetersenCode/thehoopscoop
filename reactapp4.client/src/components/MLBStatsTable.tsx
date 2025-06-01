@@ -17,11 +17,13 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ inputText, sta
     const [sortColumn, setSortColumn] = useState<string | null>(null);
     const [sortOrder, setSortOrder] = useState<SortOrder>('original');
     //const [originalData, setOriginalData] = useState<Stats[]>([]);
-    console.log(inputText)
-    //useEffect(() => {
-    //  console.log('shitfuck')
-    //  setOriginalData(statsData);
-    //}, [statsData]);
+    const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+
+    useEffect(() => {
+      if (!isFetching) {
+        setHasLoadedOnce(true);
+      }
+    }, [isFetching]);
 
     const sortedData = useMemo(() => {
       if (!sortColumn || sortOrder === 'original') return [...originalData];
@@ -50,26 +52,27 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ inputText, sta
 
     return (
         <div className="player-box-container" style={{ position: 'relative' }}>
-            {statsData.length > 0 || isFetching ? (
-                <table
-                    className="w-100"
-                    style={{
-                      opacity: isFetching ? 0.5 : 1,
-                      transition: 'opacity 0.3s ease',
-                    }}
-                >
-                    <MLBStatsTableHeaders columns={columns} onSort={handleSort} />
-                    <MLBStatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]}  />
-                </table>
-            ) : (
-                <div className="no-stats-exist">NO STATS EXIST</div>
-            )}
+          {filteredData.length > 0 ? (
+          	<table
+          		className="w-100"
+          		style={{
+          			opacity: isFetching ? 0.5 : 1,
+          			transition: 'opacity 0.3s ease',
+          		}}
+          	>
+          		<MLBStatsTableHeaders columns={columns} onSort={handleSort} />
+          		<MLBStatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]} />
+          	</table>
+          ) : (
+          	<div className="no-stats-exist">NO STATS EXIST</div>
+          )}
 
-            {isFetching && (
-                <div className="table-loading-overlay">
-                    <div className="spinner">Loading...</div>
-                </div>
-            )}
+    		  {isFetching && (
+    		  	<div className="table-loading-overlay">
+    		  		<div className="spinner">Loading...</div>
+    		  	</div>
+    		  )}
+
         </div>
     );
 });

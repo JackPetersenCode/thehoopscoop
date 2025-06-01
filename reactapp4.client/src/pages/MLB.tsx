@@ -8,16 +8,15 @@ import { MLBTeam } from '../interfaces/Teams';
 import { MLBStatsData } from '../hooks/MLBStatsData';
 import MLBPitching from '../components/MLBPitching';
 import MLBHitting from '../components/MLBHitting';
-import { mlbBattingColumns, mlbPitchingColumns } from '../interfaces/Columns';
-import { Column } from '../interfaces/StatsTable';
-import { mlbSplitsBatting, mlbSplitsPitching } from '../interfaces/MLBDropDownOptions';
+import SportOptionDropDown from '../components/SportOptionDropDown';
+import Header from '../components/Header';
 
-// interface MLBProps {
-    // selectedSport: string;
-    // setSelectedSport: React.Dispatch<React.SetStateAction<string>>
-// }
+interface MLBProps {
+    selectedSport: string;
+    setSelectedSport: React.Dispatch<React.SetStateAction<string>>
+}
 
-const MLB = ({}) => {
+const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport}) => {
 
     console.log("MLB Page")
 
@@ -76,14 +75,7 @@ const MLB = ({}) => {
 
     return (
         <>
-        <div className='logo-flex'>
-            <div>
-                <img src="/images/ball7.png" className="ball" alt="Home"/>
-            </div>
-            <div>
-                <GameOptionDropDown gameOption={gameOption} setGameOption={setGameOption} />
-            </div>
-        </div>
+        <Header selectedSport={selectedSport} setSelectedSport={setSelectedSport} gameOption={gameOption} setGameOption={setGameOption} />
 
         <div className="home-container">
 

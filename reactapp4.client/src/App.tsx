@@ -8,12 +8,16 @@ import LoadingIndicator from './components/LoadingIndicator';
 import axios from 'axios';
 import MLB from './pages/MLB';
 import SignIn from './pages/SignIn';
+import { AuthProvider } from './auth/AuthContext';
+import AdminLogin from './pages/AdminLogin';
+import RequireAuth from './auth/RequireAuth';
 
 
 function App() {
 
     //const [loading, setLoading] = useState(true);
-    const [selectedSport, setSelectedSport] = useState<string>('');
+    const [selectedSport, setSelectedSport] = useState<string>("");
+    const [gameOption, selectedGameOption] = useState<string>("Prop Bet")
     //console.log("App")
 
     //useEffect(() => {
@@ -37,17 +41,23 @@ function App() {
 
     return (
       <div>
+          <AuthProvider>
             <BrowserRouter>
                 <Routes>
-                <Route path="/" element={<Layout />}>
-                  <Route path="/" element={<SignIn selectedSport={selectedSport} setSelectedSport={setSelectedSport} />} />
-                  <Route path="/MLB" element={<MLB />} />
-                  <Route path="/NBA" element={<Home selectedSport={selectedSport} setSelectedSport={setSelectedSport} />} />
-                  <Route path="/Admin" element={<Admin />} />
-                </Route>
-
+                  <Route path="/" element={<Layout />}>
+                    <Route path="/" element={<MLB selectedSport={selectedSport} setSelectedSport={setSelectedSport} />} />
+                    <Route path="/MLB" element={<MLB selectedSport={selectedSport} setSelectedSport={setSelectedSport} />} />
+                    <Route path="/NBA" element={<Home selectedSport={selectedSport} setSelectedSport={setSelectedSport} />} />
+                    <Route path="/Admin" element={
+                      <RequireAuth>
+                        <Admin />
+                      </RequireAuth>
+                    } />                    
+                    <Route path="/admin-login" element={<AdminLogin />} />
+                  </Route>
                 </Routes>
             </BrowserRouter>
+          </AuthProvider>
       </div>
     );
 }

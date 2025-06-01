@@ -24,6 +24,14 @@ interface StatsTableProps {
 const StatsTable: React.FC<StatsTableProps> = React.memo(({ inputText, statsData, columns, isFetching, originalData }) => {
     const [sortColumn, setSortColumn] = useState<string | null>(null);
     const [sortOrder, setSortOrder] = useState<SortOrder>('original');
+    const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+
+    useEffect(() => {
+    	if (!isFetching) {
+    		setHasLoadedOnce(true);
+    	}
+    }, [isFetching]);
+
 
     const sortedData = useMemo(() => {
       if (!sortColumn || sortOrder === 'original') return [...originalData];
@@ -52,30 +60,37 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ inputText, statsData
         }
     })
     console.log(filteredData);
-    return (
-        <div className="player-box-container" style={{ position: 'relative' }}>
-            {statsData.length > 0 || isFetching ? (
-                <table
-                    className="w-100"
-                    style={{
-                      opacity: isFetching ? 0.5 : 1,
-                      transition: 'opacity 0.3s ease',
-                    }}
-                >
-                    <StatsTableHeaders columns={columns} onSort={handleSort} />
-                    <StatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]}  />
-                </table>
-            ) : (
-                <div className="no-stats-exist">NO STATS EXIST</div>
-            )}
 
-            {isFetching && (
-                <div className="table-loading-overlay">
-                    <div className="spinner">Loading...</div>
-                </div>
-            )}
-        </div>
+    //if isFetching, show opaque table
+    //if isFetching and statsData.length > 0, show opaque table
+    //if !isFetching and statsData.length > 0, show table not opaque
+    //if !isFetching and statsData.length < 0, show no stats 
+    return (
+    	<div className="player-box-container" style={{ position: 'relative' }}>
+            {filteredData.length > 0 ? (
+            	<table
+            		className="w-100"
+            		style={{
+            			opacity: isFetching ? 0.5 : 1,
+            			transition: 'opacity 0.3s ease',
+            		}}
+            	>
+            		<StatsTableHeaders columns={columns} onSort={handleSort} />
+            		<StatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]} />
+            	</table>
+            ) : 
+            	<div className="no-stats-exist">NO STATS EXIST</div>
+            }
+
+    
+    		{isFetching && (
+    			<div className="table-loading-overlay">
+    				<div className="spinner">Loading...</div>
+    			</div>
+    		)}
+    	</div>
     );
+
 });
 
 export default StatsTable;

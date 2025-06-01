@@ -43,8 +43,14 @@ const StatsTableBody: React.FC<StatsTableBodyProps> = ({ columns, tableData, fil
                             <tr key={index} className={filteredBoxScores.includes(data) ? "green" : ""} >
                                 {columns.map(({ accessor }) => {
                                     let tData;
-                                   
-                                    if (typeof data === 'object' && accessor in data) {
+                                    const value = data[accessor];
+
+                                    if (accessor === "player_name") {
+                                        tData = (
+                                            <span className="player-name">{value}</span>
+                                        );
+                                    }
+                                    else if (typeof data === 'object' && accessor in data) {
                                         tData = data[accessor] !== null && data[accessor] !== undefined
                                             ? data[accessor].toString()
                                             : "--";

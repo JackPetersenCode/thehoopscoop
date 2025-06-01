@@ -232,7 +232,7 @@ namespace ReactApp4.Server.Services
             query += $@"
                 SELECT 
                     p.matchup_batter_id AS person_id,
-                    p.matchup_batter_full_name AS full_name,
+                    MIN(p.matchup_batter_full_name) AS full_name,
                     pbs.team_name,
                     ti.league_name,
                     ap.primary_position_name,
@@ -460,7 +460,7 @@ namespace ReactApp4.Server.Services
                 {splitJoinStatement}
                 WHERE 1=1 
                 {finalSplitWhereClause}
-                GROUP BY p.matchup_batter_id, p.matchup_batter_full_name, pbs.team_name, ti.league_name, ap.primary_position_name
+                GROUP BY p.matchup_batter_id, pbs.team_name, ti.league_name, ap.primary_position_name
             ";
 
             var sortableFields = new HashSet<string> { "stolen_bases", "caught_stealing", "sb_percentage", "runs" };
@@ -693,7 +693,7 @@ namespace ReactApp4.Server.Services
             query += $@"
                 SELECT 
                     {finalTableName}.person_id,
-                    {activePlayersTable}.full_name,
+                    MIN({activePlayersTable}.full_name) AS full_name,
                     {finalTableName}.team_name,
                     {teamInfoTable}.league_name,
                     {activePlayersTable}.primary_position_name,
@@ -774,8 +774,7 @@ namespace ReactApp4.Server.Services
                     AND {finalTableName}.team_name = {teamInfoTable}.team_name 
                 WHERE games_played > 0
                 {whereClause}
-                GROUP BY {finalTableName}.team_name, {finalTableName}.person_id, 
-                    {activePlayersTable}.full_name, {activePlayersTable}.primary_position_name,
+                GROUP BY {finalTableName}.person_id, {activePlayersTable}.primary_position_name, {finalTableName}.team_name,
                     {teamInfoTable}.league_name
                 ORDER BY {sortField} {order}";
             Console.WriteLine(query);
@@ -987,7 +986,7 @@ namespace ReactApp4.Server.Services
             query += $@"
                 SELECT 
                     {finalTableName}.person_id,
-                    {activePlayersTable}.full_name,
+                    MIN({activePlayersTable}.full_name) AS full_name,
                     {finalTableName}.team_name,
                     {teamInfoTable}.league_name,
                     {activePlayersTable}.primary_position_name,
@@ -1078,8 +1077,7 @@ namespace ReactApp4.Server.Services
                     AND {finalTableName}.team_name = {teamInfoTable}.team_name 
                 WHERE games_played > 0
                 {whereClause}
-                GROUP BY {finalTableName}.team_name, {finalTableName}.person_id, 
-                    {activePlayersTable}.full_name, {activePlayersTable}.primary_position_name,
+                GROUP BY {finalTableName}.person_id, {activePlayersTable}.primary_position_name, {finalTableName}.team_name,
                     {teamInfoTable}.league_name
                 ORDER BY {sortField} {order}";
             Console.WriteLine(query);
@@ -1303,7 +1301,7 @@ namespace ReactApp4.Server.Services
                 innings_pitched AS (
                     SELECT
                         p.matchup_pitcher_id,
-                        p.matchup_pitcher_full_name,
+                        MIN(p.matchup_pitcher_full_name) AS matchup_pitcher_full_name,
                         pbs.team_name,
                         SUM(CASE WHEN r.runners_movement_is_out THEN 1 ELSE 0 END) AS outs_recorded
                     FROM mlb_runners_{season} r
@@ -1316,12 +1314,12 @@ namespace ReactApp4.Server.Services
 			        {mlbGamesJoinStatement}
                     WHERE 1=1
                     {finalSplitWhereClause}
-                    GROUP BY p.matchup_pitcher_id, p.matchup_pitcher_full_name, pbs.team_name
+                    GROUP BY p.matchup_pitcher_id, pbs.team_name
                 ),
                 main_stats AS (
                     SELECT
                         p.matchup_pitcher_id AS person_id,
-                        p.matchup_pitcher_full_name AS full_name,
+                        MIN(p.matchup_pitcher_full_name) AS full_name,
                         pbs.team_name,
                         ti.league_name,
                         ap.primary_position_name,
@@ -1368,7 +1366,7 @@ namespace ReactApp4.Server.Services
 			        {mlbGamesJoinStatement}
                     WHERE 1=1
                     {finalSplitWhereClause}
-                    GROUP BY p.matchup_pitcher_id, p.matchup_pitcher_full_name, pbs.team_name, ti.league_name, ap.primary_position_name
+                    GROUP BY p.matchup_pitcher_id, pbs.team_name, ti.league_name, ap.primary_position_name
                 )
                 SELECT
                     ms.*,

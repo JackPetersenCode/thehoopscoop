@@ -18,13 +18,17 @@ const SportOptionDropDown: React.FC<SportOptionDropDownProps> = ({ selectedSport
     };
 
     return (
-        <div>
-            <h2>Select a Sport</h2>
-            <select value={selectedSport} onChange={handleChange}>
-                <option value="">-- Choose a sport --</option>
-                <option value="NBA">NBA</option>
-                <option value="MLB">MLB</option>
-            </select>
+        <div className="game-option-flex">
+            <div className="drop-title">
+                Select a Sport
+            </div>
+            <div>
+                <select className="drop-flex-select-blue" value={selectedSport} onChange={handleChange}>
+                    <option className="drop-flex-option" value="">-- Choose a sport --</option>
+                    <option className="drop-flex-option" value="NBA">NBA</option>
+                    <option className="drop-flex-option" value="MLB">MLB</option>
+                </select>
+            </div>
         </div>
     );
 };

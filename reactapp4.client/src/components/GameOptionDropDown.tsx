@@ -4,12 +4,17 @@ import '../style.css';
 interface GameOptionDropDownProps {
     gameOption: string;
     setGameOption: React.Dispatch<React.SetStateAction<string>>;
+    isMLB: boolean;
 }
 
-const SeasonsDropDown: React.FC<GameOptionDropDownProps> = ({ gameOption, setGameOption }) => {
+const GameOptionDropDown: React.FC<GameOptionDropDownProps> = ({ gameOption, setGameOption, isMLB }) => {
 
 
-    const options = [
+    const options = isMLB ? [
+        "Prop Bet"
+    ]
+    :
+    [
         "Prop Bet",
         "Head 2 Head",
         "Shot Charts",
@@ -44,4 +49,4 @@ const SeasonsDropDown: React.FC<GameOptionDropDownProps> = ({ gameOption, setGam
 
 };
 
-export default SeasonsDropDown;
+export default GameOptionDropDown;
