@@ -222,7 +222,7 @@ namespace ReactApp4.Server.Services
                 foreach (var stat in playerStats)
                 {
                     var sql = $@"
-                        INSERT INTO player_game_stats_pitching_{season}
+                        INSERT INTO player_game_stats_pitching_{season}_old
                             (game_pk, team_side, team_name, team_id, player_id, person_id, note, summary, games_played, games_started,
                              fly_outs, ground_outs, air_outs, runs, doubles, triples, home_runs, strike_outs, base_on_balls,
                              intentional_walks, hits, hit_by_pitch, at_bats, caught_stealing, stolen_bases, stolen_base_percentage,

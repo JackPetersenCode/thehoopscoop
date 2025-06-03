@@ -12,6 +12,8 @@ using Npgsql;
 using NpgsqlTypes;
 using ReactApp4.Server.Services;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Authorization;
+using ReactApp4.Server.Helpers;
 
 namespace ReactApp4.Server.Controllers
 {
@@ -36,44 +38,76 @@ namespace ReactApp4.Server.Controllers
         [HttpGet("read/plays/{season}")]
         public async Task<IActionResult> GetMLBPlaysBySeasonFromFile(string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
             return await _mLBPlayByPlayDataHandler.GetMLBPlaysBySeasonFromFile(season);
         }
 
         [HttpGet("read/playEvents/{season}")]
         public async Task<IActionResult> GetMLBPlayEventsBySeasonFromFile(string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
             return await _mLBPlayByPlayDataHandler.GetMLBPlayEventsBySeasonFromFile(season);
         }
 
         [HttpGet("read/runners/{season}")]
         public async Task<IActionResult> GetMLBRunnersBySeasonFromFile(string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
             return await _mLBPlayByPlayDataHandler.GetMLBRunnersBySeasonFromFile(season);
         }
 
         [HttpGet("read/credits/{season}")]
         public async Task<IActionResult> GetMLBRunnersCreditsBySeasonFromFile(string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
             return await _mLBPlayByPlayDataHandler.GetMLBRunnersCreditsBySeasonFromFile(season);
         }
+ 
+        [Authorize]
         [HttpPost("plays/{season}")]
         public async Task<IActionResult> InsertPlayAsync([FromBody] List<Play> plays, string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
+            if (plays == null)
+                return BadRequest("Invalid plays data");
             return await _mLBPlayByPlayDataHandler.InsertPlayAsync(plays, season);
         }
+
+        [Authorize]
         [HttpPost("playEvents/{season}")]
         public async Task<IActionResult> InsertPlayEventAsync([FromBody] List<PlayPlayEvents> playEvents, string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
+            if (playEvents == null)
+                return BadRequest("Invalid play events data");
             return await _mLBPlayByPlayDataHandler.InsertPlayEventAsync(playEvents, season);
         }
+
+        [Authorize]
         [HttpPost("runners/{season}")]
         public async Task<IActionResult> InsertPlayRunnersAsync([FromBody] List<PlayRunners> playRunners, string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
+            if (playRunners == null)
+                return BadRequest("Invalid play runners data");
             return await _mLBPlayByPlayDataHandler.InsertPlayRunnersAsync(playRunners, season);
         }
+
+        [Authorize]
         [HttpPost("runnerCredits/{season}")]
         public async Task<IActionResult> InsertPlayRunnersCreditsAsync([FromBody] List<PlayRunnersCredits> playRunnersCredits, string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
+            if (playRunnersCredits == null)
+                return BadRequest("Invalid runners credits data");
             return await _mLBPlayByPlayDataHandler.InsertPlayRunnersCreditsAsync(playRunnersCredits, season);
         }
 

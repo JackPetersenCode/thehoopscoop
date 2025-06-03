@@ -48,11 +48,14 @@ namespace ReactApp4.Server.Services
                         FROM league_games_{season}
                         INNER JOIN shots_{season}
                         ON league_games_{season}.game_id = shots_{season}.game_id
-                        WHERE shots_{season}.player_id = '{playerId}'
+                        WHERE shots_{season}.player_id = @playerId
                         AND matchup LIKE '%vs.%'
                         ORDER BY league_games_{season}.game_date";
 
-            var games = await _context.ShotChartsGames.FromSqlRaw(query).ToListAsync();
+            var games = await _context.ShotChartsGames
+            .FromSqlRaw(query,
+                new NpgsqlParameter("@playerId", playerId)
+            ).ToListAsync();
 
             Console.WriteLine(games);
 
@@ -268,59 +271,61 @@ namespace ReactApp4.Server.Services
             }
         }
 
-
         public async Task<IActionResult> B2BAverages(string[] teamIds, string season)
         {
             var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
-            Console.WriteLine(teamIds[0]);
-            //Console.WriteLine(teamIds[1]);
-            string formattedIds = string.Join("','", teamIds).Trim();
-            Console.WriteLine(formattedIds);
-            using (var connection = new NpgsqlConnection(connectionString)) {
-                
+            if (teamIds == null || teamIds.Length == 0)
+                return BadRequest("teamIds are required.");
+
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
                 await connection.OpenAsync();
 
-                
+                // Dynamically build parameter placeholders: @team0, @team1, ...
+                var parameterNames = teamIds.Select((id, index) => $"@team{index}").ToList();
+                var inClause = string.Join(", ", parameterNames);
 
                 string sql = $@"
-                WITH back_to_back_games AS (
+                    WITH back_to_back_games AS (
+                        SELECT 
+                            g1.team_id, 
+                            g1.game_date AS first_game_date, 
+                            g2.game_date AS second_game_date,
+                            CASE 
+                                WHEN g1.matchup LIKE '%vs.%' THEN 'home'
+                                ELSE 'away'
+                            END AS first_game_location,
+                            CASE 
+                                WHEN g2.matchup LIKE '%vs.%' THEN 'home'
+                                ELSE 'away'
+                            END AS second_game_location,
+                            g2.pts AS second_game_points
+                        FROM league_games_{season} g1
+                        JOIN league_games_{season} g2 
+                            ON g1.team_id = g2.team_id
+                            AND CAST(g2.game_date AS DATE) = CAST(g1.game_date AS DATE) + INTERVAL '1 day'
+                        WHERE g1.team_id IN ({inClause})
+                    )
                     SELECT 
-                        g1.team_id, 
-                        g1.game_date AS first_game_date, 
-                        g2.game_date AS second_game_date,
-                        CASE 
-                            WHEN g1.matchup LIKE '%vs.%' THEN 'home'
-                            ELSE 'away'
-                        END AS first_game_location,
-                        CASE 
-                            WHEN g2.matchup LIKE '%vs.%' THEN 'home'
-                            ELSE 'away'
-                        END AS second_game_location,
-                        g2.pts AS second_game_points
-                    FROM league_games_{season} g1
-                    JOIN league_games_{season} g2 
-                        ON g1.team_id = g2.team_id
-                        AND CAST(g2.game_date AS DATE) = CAST(g1.game_date AS DATE) + INTERVAL '1 day'
-                    WHERE g1.team_id IN ('{formattedIds}')
-                )
-                SELECT 
-                    team_id,
-                    first_game_location,
-                    second_game_location,
-                    COUNT(*) AS game_count,
-                    AVG(second_game_points) AS avg_points
-                FROM back_to_back_games
-                GROUP BY team_id, first_game_location, second_game_location
-                ORDER BY team_id, first_game_location, second_game_location;";
+                        team_id,
+                        first_game_location,
+                        second_game_location,
+                        COUNT(*) AS game_count,
+                        AVG(second_game_points) AS avg_points
+                    FROM back_to_back_games
+                    GROUP BY team_id, first_game_location, second_game_location
+                    ORDER BY team_id, first_game_location, second_game_location;
+                ";
 
-                Console.WriteLine(sql);
                 using (var cmd = new NpgsqlCommand(sql, connection))
                 {
-                    // Use parameters to prevent SQL injection
-                    //cmd.Parameters.AddWithValue("@TeamIds", teamIds);
-                    //cmd.Parameters.AddWithValue("@visitorTeamId", game.VisitorTeamId);
-                    //cmd.Parameters.AddWithValue("@previousDate", previousDate);
+                    // Add each teamId as a parameter
+                    for (int i = 0; i < teamIds.Length; i++)
+                    {
+                        cmd.Parameters.AddWithValue($"@team{i}", teamIds[i]);
+                    }
+
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         var dataList = new List<Dictionary<string, object>>();
@@ -335,37 +340,42 @@ namespace ReactApp4.Server.Services
                         }
                         return Ok(dataList);
                     }
-                }              
+                }
             }
         }
+
 
         public async Task<IActionResult> TeamPtsAverage(string[] teamIds, string season)
         {
             var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
-            Console.WriteLine(teamIds[0]);
-            //Console.WriteLine(teamIds[1]);
-            string formattedIds = string.Join("','", teamIds).Trim();
-            using (var connection = new NpgsqlConnection(connectionString)) {
-                
+            if (teamIds == null || teamIds.Length == 0)
+            {
+                return BadRequest("No team IDs provided.");
+            }
+
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
                 await connection.OpenAsync();
 
-                
+                // Dynamically build placeholders like @id0, @id1, ...
+                var parameterNames = teamIds.Select((id, index) => $"@id{index}").ToArray();
+                var inClause = string.Join(", ", parameterNames);
 
                 string sql = $@"
                     SELECT AVG(pts), team_id
                     FROM league_games_{season}
-                    WHERE team_id IN ('{formattedIds}')
+                    WHERE team_id IN ({inClause})
                     GROUP BY team_id
                 ";
 
-                Console.WriteLine(sql);
                 using (var cmd = new NpgsqlCommand(sql, connection))
                 {
-                    // Use parameters to prevent SQL injection
-                    //cmd.Parameters.AddWithValue("@TeamIds", teamIds);
-                    //cmd.Parameters.AddWithValue("@visitorTeamId", game.VisitorTeamId);
-                    //cmd.Parameters.AddWithValue("@previousDate", previousDate);
+                    for (int i = 0; i < teamIds.Length; i++)
+                    {
+                        cmd.Parameters.AddWithValue($"@id{i}", teamIds[i]);
+                    }
+
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         var dataList = new List<Dictionary<string, object>>();
@@ -378,11 +388,13 @@ namespace ReactApp4.Server.Services
                             }
                             dataList.Add(dataDict);
                         }
+
                         return Ok(dataList);
                     }
-                }              
+                }
             }
         }
+
     }
 
 }

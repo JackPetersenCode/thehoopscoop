@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 using Npgsql;
 using NpgsqlTypes;
 using ReactApp4.Server.Services;
+using Microsoft.AspNetCore.Authorization;
+using ReactApp4.Server.Helpers;
 
 namespace ReactApp4.Server.Controllers
 {
@@ -28,18 +30,24 @@ namespace ReactApp4.Server.Controllers
         [HttpGet("{season}")]
         public async Task<ActionResult<IEnumerable<LeagueGame>>> GetGamesBySeason(string season)
         {
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
             return await _leagueGameDataHandler.GetGamesBySeason(season);
         }
 
         [HttpGet("shotChartsGames/{playerId}/{season}")]
         public async Task<ActionResult<IEnumerable<ShotChartsGame>>> GetShotChartsGames(string playerId, string season)
         {
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
             return await _leagueGameDataHandler.GetShotChartsGames(playerId, season);
         }
 
         [HttpGet("read/{season}")]
         public async Task<IActionResult> GetGamesFromFile(string season)
         {
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
             return await _leagueGameDataHandler.GetGamesFromFile(season);
         }
 
@@ -53,7 +61,8 @@ namespace ReactApp4.Server.Controllers
             string season)
         {
 
-
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
             var game = new LeagueGameWithHomeVisitor
             {
                 GameId = game_id,
@@ -80,6 +89,8 @@ namespace ReactApp4.Server.Controllers
             {
                 return BadRequest("Team name is required.");
             }
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
             return await _leagueGameDataHandler.B2BAverages(teamIds, season);
         }
 
@@ -90,13 +101,18 @@ namespace ReactApp4.Server.Controllers
             {
                 return BadRequest("Team name is required.");
             }
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
             return await _leagueGameDataHandler.TeamPtsAverage(teamIds, season);
         }
 
-        
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateLeagueGame([FromBody] object[] leagueGame)
         {
+            if (leagueGame == null)
+                return BadRequest("Invalid boxScoreAdvanced data");
+
             return await _leagueGameDataHandler.CreateLeagueGame(leagueGame);
         }
     }

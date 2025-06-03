@@ -15,6 +15,8 @@ import { MLBPlayerGameInfo } from "../interfaces/MLBPlayerGameInfo";
 import { MLBTeamInfo } from "../interfaces/MLBTeamInfo";
 import { Play, PlayPlayEvents, PlayRunners, PlayRunnersCredits } from "../interfaces/PlayByPlay";
 
+const token = localStorage.getItem('token');
+
 const postLeagueGamesBySeason = async (obj: [], season: string) => {
     console.log(season);
     const url = `/api/leagueGames`;
@@ -22,10 +24,12 @@ const postLeagueGamesBySeason = async (obj: [], season: string) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
+
         })
         if (response.ok) {
             const jsonResponse = response.json();
@@ -44,7 +48,8 @@ const postPlayersNBA = async (obj: Player) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj)
@@ -65,7 +70,8 @@ const postBoxScoresTraditionalBySeason = async (obj: BoxScoreTraditional, season
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -86,7 +92,8 @@ const postBoxScoresAdvancedBySeason = async (obj: BoxScoreAdvanced, season: stri
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -107,7 +114,8 @@ const postBoxScoresFourFactorsBySeason = async (obj: BoxScoreFourFactors, season
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -128,7 +136,8 @@ const postBoxScoresMiscBySeason = async (obj: BoxScoreMisc, season: string) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -149,7 +158,8 @@ const postBoxScoresScoringBySeason = async (obj: BoxScoreScoring, season: string
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -170,7 +180,8 @@ const postLeagueDashLineups = async (obj: Record<string, unknown>, season: strin
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -193,7 +204,8 @@ const postShotBySeason = async (obj: Shot, season: string) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -214,7 +226,8 @@ const postNewOdds = async (odds: object, season: string) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(odds),
@@ -236,7 +249,8 @@ const postBoxScoreSummary = async (obj: BoxScoreSummary, season: string) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -258,7 +272,8 @@ const postMLBGamesBySeason = async (obj: MLBGame, season: string) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -281,7 +296,8 @@ const postMLBPlayerGamesBattingBySeason = async (obj: MLBPlayerGameBatting[], se
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -304,12 +320,14 @@ const postMLBPlayerGamesBattingBySeason = async (obj: MLBPlayerGameBatting[], se
 
 const postMLBPlayerGamesPitchingBySeason = async (obj: MLBPlayerGamePitching[], season: string) => {
     console.log(obj);
+    console.log(token);
     const url = `/api/MLBPlayerGame/pitching/${season}`;
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -331,7 +349,8 @@ const postMLBPlayerGamesFieldingBySeason = async (obj: MLBPlayerGameFielding[], 
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -357,7 +376,8 @@ const postMLBActivePlayer = async (obj: MLBActivePlayer[], season: string) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -384,7 +404,8 @@ const postMLBPlayerGameInfoBySeason = async (obj: MLBPlayerGameInfo[], season: s
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -424,7 +445,8 @@ const postMLBPlaysBySeason = async (obj: Play[], season: string) => {
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -450,7 +472,8 @@ const postMLBPlayEventsBySeason = async (obj: PlayPlayEvents[], season: string) 
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -476,7 +499,8 @@ const postMLBPlayRunnersBySeason = async (obj: PlayRunners[], season: string) =>
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),
@@ -502,7 +526,8 @@ const postMLBPlayRunnersCreditsBySeason = async (obj: PlayRunnersCredits[], seas
         const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             mode: 'cors',
             body: JSON.stringify(obj),

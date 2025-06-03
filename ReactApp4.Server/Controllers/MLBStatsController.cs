@@ -12,6 +12,7 @@ using Npgsql;
 using NpgsqlTypes;
 using ReactApp4.Server.Services;
 using Newtonsoft.Json.Linq;
+using ReactApp4.Server.Helpers;
 
 namespace ReactApp4.Server.Controllers
 {
@@ -40,6 +41,8 @@ namespace ReactApp4.Server.Controllers
             [FromQuery] string? order = "DESC"
             )
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
             return await _mLBStatsDataHandler.GetMLBStatsBattingBySeason(
                 season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent,
                 selectedSplit, selectedPlayer, sortField, order);
@@ -58,6 +61,8 @@ namespace ReactApp4.Server.Controllers
             [FromQuery] string? sortField = "at_bats",
             [FromQuery] string? order = "DESC")
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
             return await _mLBStatsDataHandler.GetMLBStatsBattingBySeasonSplits(
                 season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent,
                 selectedSplit, selectedPlayer, sortField, order, selectedPlayerOpponent);
@@ -75,6 +80,8 @@ namespace ReactApp4.Server.Controllers
             [FromQuery] string? sortField = "innings_pitched",
             [FromQuery] string? order = "DESC")
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
             return await _mLBStatsDataHandler.GetMLBStatsPitchingBySeason(
                 season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent,
                 selectedSplit, selectedPlayer, sortField, order);
@@ -93,6 +100,8 @@ namespace ReactApp4.Server.Controllers
             [FromQuery] string? sortField = "innings_pitched",
             [FromQuery] string? order = "DESC")
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
             return await _mLBStatsDataHandler.GetMLBStatsPitchingBySeasonSplits(
                 season, leagueOption, selectedTeam, yearToDateOption, selectedOpponent,
                 selectedSplit, selectedPlayer, sortField, order, selectedPlayerOpponent);

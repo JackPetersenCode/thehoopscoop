@@ -12,6 +12,8 @@ using Npgsql;
 using NpgsqlTypes;
 using ReactApp4.Server.Services;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Authorization;
+using ReactApp4.Server.Helpers;
 
 namespace ReactApp4.Server.Controllers
 {
@@ -30,6 +32,8 @@ namespace ReactApp4.Server.Controllers
         //get all stats (batting, pitching, fielding)
         public async Task<ActionResult<IEnumerable<MLBActivePlayer>>> GetMLBActivePlayer(string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
             return await _mLBActivePlayerDataHandler.GetMLBActivePlayer(season);
         }
 
@@ -43,12 +47,20 @@ namespace ReactApp4.Server.Controllers
         [HttpGet("read/{season}")]
         public async Task<IActionResult> GetMLBActivePlayerFromFile(string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
             return await _mLBActivePlayerDataHandler.GetMLBActivePlayerFromFile(season);
         }
 
+        [Authorize]
         [HttpPost("{season}")]
         public async Task<IActionResult> CreateMLBActivePlayer([FromBody] List<MLBActivePlayer> mLBActivePlayer, string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
+            if (mLBActivePlayer == null)
+                return BadRequest("Invalid active player data");
+
             return await _mLBActivePlayerDataHandler.CreateMLBActivePlayer(mLBActivePlayer, season);
         }
     }

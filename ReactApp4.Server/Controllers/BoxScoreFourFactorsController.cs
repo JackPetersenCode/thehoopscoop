@@ -12,6 +12,8 @@ using Npgsql;
 using NpgsqlTypes;
 using ReactApp4.Server.Services;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Authorization;
+using ReactApp4.Server.Helpers;
 
 namespace ReactApp4.Server.Controllers
 {
@@ -30,6 +32,8 @@ namespace ReactApp4.Server.Controllers
         public async Task<ActionResult<IEnumerable<BoxScoreFourFactors>>> GetBoxScoreFourFactorsBySeason(string season)
         {
             //System.Diagnostics.Debug.WriteLine("ahahahah");
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
 
             return await _boxScoreFourFactorsDataHandler.GetBoxScoreFourFactorsBySeason(season);
         }
@@ -37,12 +41,22 @@ namespace ReactApp4.Server.Controllers
         [HttpGet("read/{season}")]
         public async Task<IActionResult> GetBoxScoreFourFactorsFromFile(string season)
         {
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
+
             return await _boxScoreFourFactorsDataHandler.GetBoxScoreFourFactorsFromFile(season);
         }
 
+        [Authorize]
         [HttpPost("{season}")]
         public async Task<IActionResult> CreateBoxScoreFourFactors([FromBody] BoxScoreFourFactors boxScoreFourFactors, string season)
         {
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
+            if (boxScoreFourFactors == null)
+                return BadRequest("Invalid boxScoreAdvanced data");
+
+
             return await _boxScoreFourFactorsDataHandler.CreateBoxScoreFourFactors(boxScoreFourFactors, season);
         }
     }

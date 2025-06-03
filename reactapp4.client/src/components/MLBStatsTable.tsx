@@ -50,31 +50,43 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ inputText, sta
         }
     })
 
+    const isInitialLoad = isFetching && statsData.length === 0;
+    const showNoStats = !isFetching && statsData.length > 0 && filteredData.length === 0;
+
+
     return (
-        <div className="player-box-container" style={{ position: 'relative' }}>
-          {filteredData.length > 0 ? (
-          	<table
-          		className="w-100"
-          		style={{
-          			opacity: isFetching ? 0.5 : 1,
-          			transition: 'opacity 0.3s ease',
-          		}}
-          	>
-          		<MLBStatsTableHeaders columns={columns} onSort={handleSort} />
-          		<MLBStatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]} />
-          	</table>
-          ) : (
-          	<div className="no-stats-exist">NO STATS EXIST</div>
-          )}
+    	<div className="player-box-container" style={{ position: 'relative' }}>
+    		{isInitialLoad && (
+    			<div className="initial-load">
+    				<div className="spinner">Loading...</div>
+    			</div>
+    		)}
 
-    		  {isFetching && (
-    		  	<div className="table-loading-overlay">
-    		  		<div className="spinner">Loading...</div>
-    		  	</div>
-    		  )}
-
-        </div>
+    		{showNoStats ? (
+    			<div className="no-stats-available">NO STATS AVAILABLE</div>
+    		) : (
+    			<>
+    				<table
+    					className="w-100"
+    					style={{
+    						opacity: isFetching ? 0.5 : 1,
+    						transition: 'opacity 0.3s ease',
+    					}}
+    				>
+    					<MLBStatsTableHeaders columns={columns} onSort={handleSort} />
+    					<MLBStatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]} />
+    				</table>
+            
+    				{isFetching && statsData.length > 0 && (
+    					<div className="table-loading-overlay">
+    						<div className="spinner">Loading...</div>
+    					</div>
+    				)}
+    			</>
+    		)}
+    	</div>
     );
+
 });
 
 export default MLBStatsTable;

@@ -8,6 +8,8 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using ReactApp4.Server.Helpers;
 
 
 namespace ReactApp4.Server.Controllers
@@ -26,24 +28,36 @@ namespace ReactApp4.Server.Controllers
         [HttpGet("read/{season}/{boxType}/{numPlayers}")]
         public async Task<IActionResult> GetLeagueDashLineupsFromFile(string season, string boxType, string numPlayers)
         {
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
             return await _leagueDashLineupsDataHandler.GetLeagueDashLineupsFromFile(season, boxType, numPlayers);
         }
 
         [HttpGet("{season?}/{boxType?}/{numPlayers?}/{order?}/{sortField?}/{perMode?}/{selectedTeam?}")]
         public async Task<IActionResult> GetLeagueDashLineups(string season = "2023_24", string boxType = "Traditional", string numPlayers = "5", string order = "desc", string sortField = "id", string perMode = "Totals", string selectedTeam = "1")
         {
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
             return await _leagueDashLineupsDataHandler.GetLeagueDashLineups(season, boxType, numPlayers, order, sortField, perMode, selectedTeam);
         }
 
+        [Authorize]
         [HttpPost("{season}/{boxType}/{numPlayers}")]
         public async Task<IActionResult> CreateLeagueDashLineup([FromBody] object[] leagueDashLineup, string season, string boxType, string numPlayers)
         {
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
+            if (leagueDashLineup == null)
+                return BadRequest("Invalid boxScoreAdvanced data");
+
             return await _leagueDashLineupsDataHandler.CreateLeagueDashLineup(leagueDashLineup, season, boxType, numPlayers);
         }
 
         [HttpDelete("{season}/{boxType}/{numPlayers}")]
         public async Task<IActionResult> DeleteLeagueDashLineup(string season, string boxType, string numPlayers)
         {
+            if (!SeasonConstants.IsValidNBASeason(season))
+            	return BadRequest("Invalid NBA season.");
             return await _leagueDashLineupsDataHandler.DeleteLeagueDashLineup(season, boxType, numPlayers);
         }
 

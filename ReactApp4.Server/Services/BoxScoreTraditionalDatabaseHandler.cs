@@ -42,10 +42,12 @@ namespace ReactApp4.Server.Services
             var tableName = $"box_score_traditional_{season}";
 
             var query = $@"SELECT DISTINCT(player_id), player_name, team_id, team_abbreviation FROM {tableName} 
-                        WHERE team_id LIKE '%{teamId}%'";
+                        WHERE team_id LIKE @selectedTeamPattern";
 
-            var roster = await _context.SelectedPlayers.FromSqlRaw(query).ToListAsync();
-
+            var roster = await _context.SelectedPlayers
+            .FromSqlRaw(query,
+              new NpgsqlParameter("@selectedTeamPattern", $"%{teamId}%")
+            ).ToListAsync();
             return roster;
         }
 
@@ -81,47 +83,43 @@ namespace ReactApp4.Server.Services
                     FROM box_score_traditional_{season}
                     inner join box_score_summary_{season}
                     on box_score_traditional_{season}.game_id = box_score_summary_{season}.game_id
-                    WHERE player_id = '{playerId}'
+                    WHERE player_id = @playerId
                     AND box_score_traditional_{season}.team_id = box_score_summary_{season}.{H_or_V}_team_id
                     AND game_date_est != 'GAME_DATE_EST' ";
 
-                if (gameDate is not null)
+                if (!string.IsNullOrWhiteSpace(gameDate))
                 {
-                    sql += $@"AND (CAST(SUBSTRING(game_date_est, 0, 11) AS DATE) < '{gameDate}') ";
+                    sql += " AND (CAST(SUBSTRING(game_date_est, 0, 11) AS DATE) < @gameDate)";
                 }
-                    sql += $@"GROUP BY player_id, player_name, team_id, team_abbreviation
-                ";
+                sql += $@"GROUP BY player_id, player_name, team_id, team_abbreviation";
                 
                 Console.WriteLine(sql);
 
-                // Ensure your connection string is correct
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
+                using (var cmd = new NpgsqlCommand(sql, connection))
                 {
+                    cmd.Parameters.AddWithValue("@playerId", playerId);
+                    if (!string.IsNullOrWhiteSpace(gameDate))
+                        cmd.Parameters.AddWithValue("@gameDate", DateTime.Parse(gameDate));
+
                     await connection.OpenAsync();
 
-                    using (var cmd = new NpgsqlCommand(sql, connection))
+                    using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        using (var reader = await cmd.ExecuteReaderAsync())
+                        var dataList = new List<Dictionary<string, object>>();
+                        while (await reader.ReadAsync())
                         {
-                            var dataList = new List<Dictionary<string, object>>();
-                            while (await reader.ReadAsync())
+                            var dataDict = new Dictionary<string, object>();
+                            for (int i = 0; i < reader.FieldCount; i++)
                             {
-                                var dataDict = new Dictionary<string, object>();
-                                for (int i = 0; i < reader.FieldCount; i++)
-                                {
-                                    dataDict[reader.GetName(i)] = reader.GetValue(i);
-                                }
-                                dataList.Add(dataDict);
+                                dataDict[reader.GetName(i)] = reader.GetValue(i);
                             }
-
-                            // Convert the list of dictionaries to JSON
-
-                            // Return the JSON data
-                            return Ok(dataList);
-
+                            dataList.Add(dataDict);
                         }
+
+                        return Ok(dataList);
                     }
                 }
             }

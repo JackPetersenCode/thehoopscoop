@@ -81,7 +81,7 @@ namespace ReactApp4.Server.Services
                         query += $@"
                             SELECT *
                             FROM with_opponent
-                            WHERE opponent_team_id = {selectedOpponentObject.Team_id}
+                            WHERE CAST(opponent_team_id AS TEXT) = @selectedOpponent
                             ORDER BY with_opponent.id DESC";
                     }
                     else
@@ -102,7 +102,10 @@ namespace ReactApp4.Server.Services
                             ORDER BY Games_Played.id DESC";
                     }
                     boxScores = await _context.MLBBattingBoxScoreWithGameDates
-                        .FromSqlRaw(query, new NpgsqlParameter("@person_id", player_id))
+                        .FromSqlRaw(query,
+                            new NpgsqlParameter("@person_id", player_id),
+                            new NpgsqlParameter("@selectedOpponent", selectedOpponentObject?.Team_id)
+                        )
                         .ToListAsync<object>();
                 }
 
@@ -154,7 +157,7 @@ namespace ReactApp4.Server.Services
                         query += $@"
                             SELECT *
                             FROM with_opponent
-                            WHERE opponent_team_id = {selectedOpponentObject.Team_id}
+                            WHERE opponent_team_id = CAST(@selectedOpponent AS INT)
                             ORDER BY with_opponent.id DESC";
                     }
                     else
@@ -196,7 +199,10 @@ namespace ReactApp4.Server.Services
                             ORDER BY Games_Played.id DESC";
                     }
                     boxScores = await _context.MLBPitchingBoxScoreWithGameDates
-                        .FromSqlRaw(query, new NpgsqlParameter("@person_id", player_id))
+                        .FromSqlRaw(query,
+                            new NpgsqlParameter("@person_id", player_id),
+                            new NpgsqlParameter("@selectedOpponent", selectedOpponentObject?.Team_id)
+                        )
                         .ToListAsync<object>();
                 }
                 Console.WriteLine(query);

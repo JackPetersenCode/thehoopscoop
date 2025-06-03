@@ -78,35 +78,42 @@ namespace ReactApp4.Server.Services
             // JOIN mlb_games_{season} g ON p.game_pk = CAST(g.game_pk AS INT)
             // ";
             // }
+            var parameters = new List<NpgsqlParameter>();
+
             if (!string.IsNullOrEmpty(selectedPlayerOpponent))
             {
-                finalSplitConditions.Add($"p.matchup_pitcher_id = CAST({selectedPlayerOpponent} AS INT)");
+                finalSplitConditions.Add($"p.matchup_pitcher_id = CAST(@selectedPlayerOpponent AS INT)");
+                parameters.Add(new NpgsqlParameter("@selectedPlayerOpponent", selectedPlayerOpponent));
             }
             else
             {
-                finalSplitConditions.Add($@"p.matchup_pitch_hand_code = '{split}'");
+                finalSplitConditions.Add($@"p.matchup_pitch_hand_code = @split");
+                parameters.Add(new NpgsqlParameter("@split", split));
             }
 
             if (leagueOption == "National League" | leagueOption == "American League")
             {
-                conditions.Add($"{teamInfoTable}.league_name = '{leagueOption}'");
-                finalSplitConditions.Add($"ti.league_name = '{leagueOption}'");
-                playerRunsConditions.Add($"team_info.league_name = '{leagueOption}'");
+                conditions.Add($"{teamInfoTable}.league_name = @leagueOption");
+                finalSplitConditions.Add($"ti.league_name = @leagueOption");
+                playerRunsConditions.Add($"team_info.league_name = @leagueOption");
+                parameters.Add(new NpgsqlParameter("@leagueOption", leagueOption));
             }
             if (selectedTeam != "1" && selectedTeam != "0")
             {
-                conditions.Add($@"{teamInfoTable}.team_id = {selectedTeam}");
+                conditions.Add($@"{teamInfoTable}.team_id = CAST(@selectedTeam AS INT)");
                 finalSplitConditions.Add($@"
-                    ti.team_id = {selectedTeam}
+                    ti.team_id = CAST(@selectedTeam AS INT)
                 ");
-                playerRunsConditions.Add($@"team_info.team_id = {selectedTeam}");
+                playerRunsConditions.Add($@"team_info.team_id = CAST(@selectedTeam AS INT)");
+                parameters.Add(new NpgsqlParameter("@selectedTeam", selectedTeam));
             }
             if (selectedPlayer.HasValue)
             {
-                conditions.Add($"player_id = {selectedPlayer.Value}");
-                playerRunsConditions.Add($"r.runners_details_player_id = {selectedPlayer.Value}");
-                leftOnBaseConditions.Add($"p.matchup_batter_id = {selectedPlayer.Value}");
-                finalSplitConditions.Add($"p.matchup_batter_id = {selectedPlayer.Value}");
+                conditions.Add($"player_id = @selectedPlayer");
+                playerRunsConditions.Add($"r.runners_details_player_id = @selectedPlayer");
+                leftOnBaseConditions.Add($"p.matchup_batter_id = @selectedPlayer");
+                finalSplitConditions.Add($"p.matchup_batter_id = @selectedPlayer");
+                parameters.Add(new NpgsqlParameter("@selectedPlayer", selectedPlayer.Value));
             }
             if (IsRecentGamesOption(yearToDateOption))
             {
@@ -125,14 +132,14 @@ namespace ReactApp4.Server.Services
 
             if (IsSpecificOpponent(selectedOpponent))
             {
-                conditions.Add($"opponent_team_id = '{selectedOpponent}'");
+                conditions.Add($"opponent_team_id = CAST(@selectedOpponent AS INT) ");
                 finalSplitConditions.Add($@"
                     (
                       CASE
                         WHEN ti.team_id = g.home_team_id THEN g.away_team_id
                         WHEN ti.team_id = g.away_team_id THEN g.home_team_id
                       END
-                    ) = {selectedOpponent}
+                    ) = CAST(@selectedOpponent AS INT) 
                 ");
                 playerRunsConditions.Add($@"
                     (
@@ -140,7 +147,7 @@ namespace ReactApp4.Server.Services
                         WHEN team_info.team_id = g.home_team_id THEN g.away_team_id
                         WHEN team_info.team_id = g.away_team_id THEN g.home_team_id
                       END
-                    ) = {selectedOpponent}
+                    ) = CAST(@selectedOpponent AS INT) 
                 ");
                 lastNGamesConditions.Add($@"
                     (               
@@ -148,8 +155,9 @@ namespace ReactApp4.Server.Services
                         WHEN player_game_stats_batting_{season}.team_side = 'home' THEN mlb_games_{season}.away_team_id
                         WHEN player_game_stats_batting_{season}.team_side = 'away' THEN mlb_games_{season}.home_team_id
                       END
-                    ) = {selectedOpponent}        
+                    ) = CAST(@selectedOpponent AS INT)       
                 ");
+                parameters.Add(new NpgsqlParameter("@selectedOpponent", selectedOpponent));
             }
             var whereClause = conditions.Count > 0 ? $" AND {string.Join(" AND ", conditions)}" : string.Empty;
             var playerRunsWhereClause = playerRunsConditions.Count > 0 ? $" AND {string.Join(" AND ", playerRunsConditions)}" : string.Empty;
@@ -512,8 +520,13 @@ namespace ReactApp4.Server.Services
             //    GROUP BY p.matchup_batter_id, p.matchup_batter_full_name
             //)
             Console.WriteLine(query);
-            var result = await _context.MLBStatsBattingWithSplits.FromSqlRaw(query).ToListAsync();
+            var result = await _context.MLBStatsBattingWithSplits
+            .FromSqlRaw(query,
+                parameters.ToArray()
+            ).ToListAsync();
             return result;
+
+
 
         }
 
@@ -541,32 +554,37 @@ namespace ReactApp4.Server.Services
             var lastNGamesConditions = new List<string>();
             var splitJoinStatement = $@"";
             var query = $@"";
+            var parameters = new List<NpgsqlParameter>();
+
             // if ((selectedTeam != "1" && selectedTeam != "0") || IsSpecificOpponent(selectedOpponent)) {
-                // splitJoinStatement += $@"
-                    // JOIN mlb_team_info_{season} ti ON p.game_pk = ti.game_pk
-                    // JOIN mlb_games_{season} g ON p.game_pk = CAST(g.game_pk AS INT)
-                // ";
+            // splitJoinStatement += $@"
+            // JOIN mlb_team_info_{season} ti ON p.game_pk = ti.game_pk
+            // JOIN mlb_games_{season} g ON p.game_pk = CAST(g.game_pk AS INT)
+            // ";
             // }
             if (leagueOption == "National League" | leagueOption == "American League")
             {
-                conditions.Add($"{teamInfoTable}.league_name = '{leagueOption}'");
-                finalSplitConditions.Add($"ti.league_name = '{leagueOption}'");
-                playerRunsConditions.Add($"team_info.league_name = '{leagueOption}'");
+                conditions.Add($"{teamInfoTable}.league_name = @leagueOption");
+                finalSplitConditions.Add($"ti.league_name = @leagueOption");
+                playerRunsConditions.Add($"team_info.league_name = @leagueOption");
+                parameters.Add(new NpgsqlParameter("@leagueOption", leagueOption));
             }
             if (selectedTeam != "1" && selectedTeam != "0")
             {
-                conditions.Add($@"{teamInfoTable}.team_id = {selectedTeam}");
+                conditions.Add($@"{teamInfoTable}.team_id = CAST(@selectedTeam AS INT)");
                 finalSplitConditions.Add($@"
-                    ti.team_id = {selectedTeam}
+                    ti.team_id = CAST(@selectedTeam AS INT)
                 ");
-                playerRunsConditions.Add($@"team_info.team_id = {selectedTeam}");
+                playerRunsConditions.Add($@"team_info.team_id = CAST(@selectedTeam AS INT)");
+                parameters.Add(new NpgsqlParameter("@selectedTeam", selectedTeam));
             }
             if (selectedPlayer.HasValue)
             {
-                conditions.Add($"player_id = {selectedPlayer.Value}");
-                playerRunsConditions.Add($"r.runners_details_player_id = {selectedPlayer.Value}");
-                leftOnBaseConditions.Add($"p.matchup_batter_id = {selectedPlayer.Value}");
-                finalSplitConditions.Add($"p.matchup_batter_id = {selectedPlayer.Value}");
+                conditions.Add($"player_id = @selectedPlayer");
+                playerRunsConditions.Add($"r.runners_details_player_id = @selectedPlayer");
+                leftOnBaseConditions.Add($"p.matchup_batter_id = @selectedPlayer");
+                finalSplitConditions.Add($"p.matchup_batter_id = @selectedPlayer");
+                parameters.Add(new NpgsqlParameter("@selectedPlayer", selectedPlayer.Value));
             }
             if (IsRecentGamesOption(yearToDateOption)) {
                 var rowNumber = yearToDateOption == "Last 7 Games" ? 7 : yearToDateOption == "Last 15 Games" ? 15 :
@@ -580,16 +598,17 @@ namespace ReactApp4.Server.Services
                 finalSplitConditions.Add($@"
                     last.rn <= {rowNumber}
                 ");
-            } 
-            if (IsSpecificOpponent(selectedOpponent)) {
-                conditions.Add($"opponent_team_id = '{selectedOpponent}'");
+            }
+            if (IsSpecificOpponent(selectedOpponent))
+            {
+                conditions.Add($"opponent_team_id = CAST(@selectedOpponent AS INT)");
                 finalSplitConditions.Add($@"
                     (
                       CASE
                         WHEN ti.team_id = g.home_team_id THEN g.away_team_id
                         WHEN ti.team_id = g.away_team_id THEN g.home_team_id
                       END
-                    ) = {selectedOpponent}
+                    ) = CAST(@selectedOpponent AS INT)
                 ");
                 playerRunsConditions.Add($@"
                     (
@@ -597,7 +616,7 @@ namespace ReactApp4.Server.Services
                         WHEN team_info.team_id = g.home_team_id THEN g.away_team_id
                         WHEN team_info.team_id = g.away_team_id THEN g.home_team_id
                       END
-                    ) = {selectedOpponent}
+                    ) = CAST(@selectedOpponent AS INT)
                 ");
                 lastNGamesConditions.Add($@"
                     (               
@@ -605,8 +624,9 @@ namespace ReactApp4.Server.Services
                         WHEN player_game_stats_batting_{season}.team_side = 'home' THEN mlb_games_{season}.away_team_id
                         WHEN player_game_stats_batting_{season}.team_side = 'away' THEN mlb_games_{season}.home_team_id
                       END
-                    ) = {selectedOpponent}        
+                    ) = CAST(@selectedOpponent AS INT)
                 ");
+                parameters.Add(new NpgsqlParameter("@selectedOpponent", selectedOpponent));
             }
             var whereClause = conditions.Count > 0 ? $" AND {string.Join(" AND ", conditions)}" : string.Empty;
             var playerRunsWhereClause = playerRunsConditions.Count > 0 ? $" AND {string.Join(" AND ", playerRunsConditions)}" : string.Empty;
@@ -778,7 +798,7 @@ namespace ReactApp4.Server.Services
                     {teamInfoTable}.league_name
                 ORDER BY {sortField} {order}";
             Console.WriteLine(query);
-            var result = await _context.MLBStatsBattings.FromSqlRaw(query).ToListAsync();
+            var result = await _context.MLBStatsBattings.FromSqlRaw(query, parameters.ToArray()).ToListAsync();
             return result;            
         }
 
@@ -805,6 +825,7 @@ namespace ReactApp4.Server.Services
             var finalSplitConditions = new List<string>();
             var lastNGamesConditions = new List<string>();
             var splitJoinStatement = $@"";
+            var parameters = new List<NpgsqlParameter>();
 
             //var split = selectedSplit == "vs. RHB" ? "R" : "L";
 
@@ -818,26 +839,29 @@ namespace ReactApp4.Server.Services
 
             if (leagueOption == "National League" | leagueOption == "American League")
             {
-                conditions.Add($"{teamInfoTable}.league_name = '{leagueOption}'");
-                finalSplitConditions.Add($"ti.league_name = '{leagueOption}'");
-                playerRunsConditions.Add($"team_info.league_name = '{leagueOption}'");
+                conditions.Add($"{teamInfoTable}.league_name = @leagueOption");
+                finalSplitConditions.Add($"ti.league_name = @leagueOption");
+                playerRunsConditions.Add($"team_info.league_name = @leagueOption");
+                parameters.Add(new NpgsqlParameter("@leagueOption", leagueOption));
             }
             if (selectedTeam != "1" && selectedTeam != "0")
             {
                 Console.WriteLine("selected Team");
                 Console.WriteLine(selectedTeam);
-                conditions.Add($@"{teamInfoTable}.team_id = {selectedTeam}");
+                conditions.Add($@"{teamInfoTable}.team_id = CAST(@selectedTeam AS INT)");
                 finalSplitConditions.Add($@"
-                    ti.team_id = {selectedTeam}
+                    ti.team_id = CAST(@selectedTeam AS INT)
                 ");
-                playerRunsConditions.Add($@"team_info.team_id = {selectedTeam}");
+                playerRunsConditions.Add($@"team_info.team_id = CAST(@selectedTeam AS INT)");
+                parameters.Add(new NpgsqlParameter("@selectedTeam", selectedTeam));
             }
             if (selectedPlayer.HasValue)
             {
-                conditions.Add($"player_id = {selectedPlayer.Value}");
-                playerRunsConditions.Add($"r.runners_details_player_id = {selectedPlayer.Value}");
-                leftOnBaseConditions.Add($"p.matchup_pitcher_id = {selectedPlayer.Value}");
-                finalSplitConditions.Add($"p.matchup_pitcher_id = {selectedPlayer.Value}");
+                conditions.Add($"player_id = @selectedPlayer");
+                playerRunsConditions.Add($"r.runners_details_player_id = @selectedPlayer");
+                leftOnBaseConditions.Add($"p.matchup_pitcher_id = @selectedPlayer");
+                finalSplitConditions.Add($"p.matchup_pitcher_id = @selectedPlayer");
+                parameters.Add(new NpgsqlParameter("@selectedPlayer", selectedPlayer.Value));
             }
             if (IsRecentGamesOption(yearToDateOption)) {
                 Console.WriteLine(yearToDateOption);
@@ -852,18 +876,19 @@ namespace ReactApp4.Server.Services
                 finalSplitConditions.Add($@"
                     last.rn <= {rowNumber}
                 ");
-            } 
-            if (IsSpecificOpponent(selectedOpponent)) {
+            }
+            if (IsSpecificOpponent(selectedOpponent))
+            {
                 Console.WriteLine("is specific opponent");
                 Console.WriteLine(selectedOpponent);
-                conditions.Add($"opponent_team_id = '{selectedOpponent}'");
+                conditions.Add($"opponent_team_id = CAST(@selectedOpponent AS INT)");
                 finalSplitConditions.Add($@"
                     (
                       CASE
                         WHEN ti.team_id = g.home_team_id THEN g.away_team_id
                         WHEN ti.team_id = g.away_team_id THEN g.home_team_id
                       END
-                    ) = {selectedOpponent}
+                    ) = CAST(@selectedOpponent AS INT)
                 ");
                 playerRunsConditions.Add($@"
                     (
@@ -871,7 +896,7 @@ namespace ReactApp4.Server.Services
                         WHEN team_info.team_id = g.home_team_id THEN g.away_team_id
                         WHEN team_info.team_id = g.away_team_id THEN g.home_team_id
                       END
-                    ) = {selectedOpponent}
+                    ) = CAST(@selectedOpponent AS INT)
                 ");
                 lastNGamesConditions.Add($@"
                     (               
@@ -879,8 +904,9 @@ namespace ReactApp4.Server.Services
                         WHEN player_game_stats_pitching_{season}.team_side = 'home' THEN mlb_games_{season}.away_team_id
                         WHEN player_game_stats_pitching_{season}.team_side = 'away' THEN mlb_games_{season}.home_team_id
                       END
-                    ) = {selectedOpponent}        
+                    ) = CAST(@selectedOpponent AS INT)        
                 ");
+                parameters.Add(new NpgsqlParameter("@selectedOpponent", selectedOpponent));
             }
             var whereClause = conditions.Count > 0 ? $" AND {string.Join(" AND ", conditions)}" : string.Empty;
             var playerRunsWhereClause = playerRunsConditions.Count > 0 ? $" AND {string.Join(" AND ", playerRunsConditions)}" : string.Empty;
@@ -1081,7 +1107,7 @@ namespace ReactApp4.Server.Services
                     {teamInfoTable}.league_name
                 ORDER BY {sortField} {order}";
             Console.WriteLine(query);
-            var result = await _context.MLBStatsPitchings.FromSqlRaw(query).ToListAsync();
+            var result = await _context.MLBStatsPitchings.FromSqlRaw(query, parameters.ToArray()).ToListAsync();
             return result;
         }
 
@@ -1114,6 +1140,8 @@ namespace ReactApp4.Server.Services
 
             var query = $@"";
             var mlbGamesJoinStatement = $@"";
+            var parameters = new List<NpgsqlParameter>();
+
             // if ((selectedTeam != "1" && selectedTeam != "0") || IsSpecificOpponent(selectedOpponent)) {
             // splitJoinStatement += $@"
             // JOIN mlb_team_info_{season} ti ON p.game_pk = ti.game_pk
@@ -1122,35 +1150,40 @@ namespace ReactApp4.Server.Services
             // }
             if (!string.IsNullOrEmpty(selectedPlayerOpponent))
             {
-                finalSplitConditions.Add($"p.matchup_batter_id = CAST({selectedPlayerOpponent} AS INT)");
+                finalSplitConditions.Add($"p.matchup_batter_id = CAST(@selectedPlayerOpponent AS INT)");
+                parameters.Add(new NpgsqlParameter("@selectedPlayerOpponent", selectedPlayerOpponent));
             }
             else
             {
-                finalSplitConditions.Add($@"p.matchup_bat_side_code = '{split}'");
+                finalSplitConditions.Add($@"p.matchup_bat_side_code = @split");
+                parameters.Add(new NpgsqlParameter("@split", split));
             }
 
             if (leagueOption == "National League" | leagueOption == "American League")
             {
-                conditions.Add($"{teamInfoTable}.league_name = '{leagueOption}'");
-                finalSplitConditions.Add($"ti.league_name = '{leagueOption}'");
-                playerRunsConditions.Add($"team_info.league_name = '{leagueOption}'");
+                conditions.Add($"{teamInfoTable}.league_name = @leagueOption");
+                finalSplitConditions.Add($"ti.league_name = @leagueOption");
+                playerRunsConditions.Add($"team_info.league_name = @leagueOption");
+                parameters.Add(new NpgsqlParameter("@leagueOption", leagueOption));
             }
             if (selectedTeam != "1" && selectedTeam != "0")
             {
                 Console.WriteLine("selected Team");
                 Console.WriteLine(selectedTeam);
-                conditions.Add($@"{teamInfoTable}.team_id = {selectedTeam}");
+                conditions.Add($@"{teamInfoTable}.team_id = CAST(@selectedTeam AS INT)");
                 finalSplitConditions.Add($@"
-                    ti.team_id = {selectedTeam}
+                    ti.team_id = CAST(@selectedTeam AS INT)
                 ");
-                playerRunsConditions.Add($@"team_info.team_id = {selectedTeam}");
+                playerRunsConditions.Add($@"team_info.team_id = CAST(@selectedTeam AS INT)");
+                parameters.Add(new NpgsqlParameter("@selectedTeam", selectedTeam));
             }
             if (selectedPlayer.HasValue)
             {
-                conditions.Add($"player_id = {selectedPlayer.Value}");
-                playerRunsConditions.Add($"r.runners_details_player_id = {selectedPlayer.Value}");
-                leftOnBaseConditions.Add($"p.matchup_pitcher_id = {selectedPlayer.Value}");
-                finalSplitConditions.Add($"p.matchup_pitcher_id = {selectedPlayer.Value}");
+                conditions.Add($"player_id = @selectedPlayer");
+                playerRunsConditions.Add($"r.runners_details_player_id = @selectedPlayer");
+                leftOnBaseConditions.Add($"p.matchup_pitcher_id = @selectedPlayer");
+                finalSplitConditions.Add($"p.matchup_pitcher_id = @selectedPlayer");
+                parameters.Add(new NpgsqlParameter("@selectedPlayer", selectedPlayer.Value));
             }
             if (IsRecentGamesOption(yearToDateOption)) {
                 Console.WriteLine(yearToDateOption);
@@ -1165,18 +1198,19 @@ namespace ReactApp4.Server.Services
                 finalSplitConditions.Add($@"
                     pbs.rn <= {rowNumber}
                 ");
-            } 
-            if (IsSpecificOpponent(selectedOpponent)) {
+            }
+            if (IsSpecificOpponent(selectedOpponent))
+            {
                 Console.WriteLine("is specific opponent");
                 Console.WriteLine(selectedOpponent);
-                conditions.Add($"opponent_team_id = '{selectedOpponent}'");
+                conditions.Add($"opponent_team_id = CAST(@selectedOpponent AS INT)");
                 finalSplitConditions.Add($@"
                     (
                       CASE
                         WHEN ti.team_id = g.home_team_id THEN g.away_team_id
                         WHEN ti.team_id = g.away_team_id THEN g.home_team_id
                       END
-                    ) = {selectedOpponent}
+                    ) = CAST(@selectedOpponent AS INT)
                 ");
                 playerRunsConditions.Add($@"
                     (
@@ -1184,7 +1218,7 @@ namespace ReactApp4.Server.Services
                         WHEN team_info.team_id = g.home_team_id THEN g.away_team_id
                         WHEN team_info.team_id = g.away_team_id THEN g.home_team_id
                       END
-                    ) = {selectedOpponent}
+                    ) = CAST(@selectedOpponent AS INT)
                 ");
                 lastNGamesConditions.Add($@"
                     (               
@@ -1192,11 +1226,12 @@ namespace ReactApp4.Server.Services
                         WHEN player_game_stats_pitching_{season}.team_side = 'home' THEN mlb_games_{season}.away_team_id
                         WHEN player_game_stats_pitching_{season}.team_side = 'away' THEN mlb_games_{season}.home_team_id
                       END
-                    ) = {selectedOpponent}        
+                    ) = CAST(@selectedOpponent AS INT)        
                 ");
                 mlbGamesJoinStatement += $@"			        
                     LEFT JOIN mlb_games_{season} g
   			        ON pbs.game_pk = CAST(g.game_pk AS INT)";
+                parameters.Add(new NpgsqlParameter("@selectedOpponent", selectedOpponent));
             }
             var whereClause = conditions.Count > 0 ? $" AND {string.Join(" AND ", conditions)}" : string.Empty;
             var playerRunsWhereClause = playerRunsConditions.Count > 0 ? $" AND {string.Join(" AND ", playerRunsConditions)}" : string.Empty;
@@ -1398,7 +1433,7 @@ namespace ReactApp4.Server.Services
             }
 
             Console.WriteLine(query);
-            var result = await _context.MLBStatsPitchingSplitss.FromSqlRaw(query).ToListAsync();
+            var result = await _context.MLBStatsPitchingSplitss.FromSqlRaw(query, parameters.ToArray()).ToListAsync();
             return result;
         }
     }

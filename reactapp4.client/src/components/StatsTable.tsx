@@ -61,32 +61,39 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ inputText, statsData
     })
     console.log(filteredData);
 
-    //if isFetching, show opaque table
-    //if isFetching and statsData.length > 0, show opaque table
-    //if !isFetching and statsData.length > 0, show table not opaque
-    //if !isFetching and statsData.length < 0, show no stats 
+    const isInitialLoad = isFetching && statsData.length === 0;
+    const showNoStats = !isFetching && statsData.length > 0 && filteredData.length === 0;
+
+
     return (
     	<div className="player-box-container" style={{ position: 'relative' }}>
-            {filteredData.length > 0 ? (
-            	<table
-            		className="w-100"
-            		style={{
-            			opacity: isFetching ? 0.5 : 1,
-            			transition: 'opacity 0.3s ease',
-            		}}
-            	>
-            		<StatsTableHeaders columns={columns} onSort={handleSort} />
-            		<StatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]} />
-            	</table>
-            ) : 
-            	<div className="no-stats-exist">NO STATS EXIST</div>
-            }
-
-    
-    		{isFetching && (
-    			<div className="table-loading-overlay">
+    		{isInitialLoad && (
+    			<div className="initial-load">
     				<div className="spinner">Loading...</div>
     			</div>
+    		)}
+
+    		{showNoStats ? (
+    			<div className="no-stats-available">NO STATS AVAILABLE</div>
+    		) : (
+    			<>
+    				<table
+    					className="w-100"
+    					style={{
+    						opacity: isFetching ? 0.5 : 1,
+    						transition: 'opacity 0.3s ease',
+    					}}
+    				>
+    					<StatsTableHeaders columns={columns} onSort={handleSort} />
+    					<StatsTableBody columns={columns} tableData={filteredData} filteredBoxScores={[]} />
+    				</table>
+            
+    				{isFetching && statsData.length > 0 && (
+    					<div className="table-loading-overlay">
+    						<div className="spinner">Loading...</div>
+    					</div>
+    				)}
+    			</>
     		)}
     	</div>
     );

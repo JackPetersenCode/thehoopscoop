@@ -12,6 +12,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Numerics;
 using Newtonsoft.Json.Linq;
+using ReactApp4.Server.Helpers;
+
 
 namespace ReactApp4.Server.Services
 {
@@ -25,41 +27,43 @@ namespace ReactApp4.Server.Services
             _context = context;
             _configuration = configuration;
         }
+
         public async Task<ActionResult<IEnumerable<BoxScoreAdvanced>>> GetBoxScoreAdvancedBySeason(string season)
         {
-            var tableName = $"box_score_advanced_{season}";
+            // Whitelist validation to prevent SQL injection
+            if (!SeasonConstants.NBAAllowedSeasons.Contains(season))
+            {
+                return BadRequest("Invalid season format.");
+            }
 
+            var tableName = $"box_score_advanced_{season}";
             var query = $"SELECT * FROM {tableName}";
 
-            var boxScoreAdvancedBySeason = await _context.BoxScoreAdvanceds.FromSqlRaw(query).ToListAsync();
+            // Execute safe raw SQL query
+            var boxScoreAdvancedBySeason = await _context.BoxScoreAdvanceds
+                .FromSqlRaw(query)
+                .ToListAsync();
 
             return boxScoreAdvancedBySeason;
         }
 
+
         public async Task<IActionResult> CreateBoxScoreAdvanced([FromBody] BoxScoreAdvanced boxScoreAdvanced, string season)
         {
             // Implement logic to create a new league game in the database
-
-
             try
             {
-                if (boxScoreAdvanced == null)
-                {
-                    return BadRequest("Invalid boxScoreAdvanced data");
-                }
 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-
-                    var sql = $"INSERT INTO box_score_advanced_{season} (game_id, team_id, team_abbreviation, team_city, player_id, player_name, nickname, start_position, comment, min, e_off_rating, off_rating, e_def_rating, def_rating, e_net_rating, net_rating, ast_pct, ast_tov, ast_ratio, oreb_pct, dreb_pct, reb_pct, tm_tov_pct, efg_pct, ts_pct, usg_pct, e_usg_pct, e_pace, pace, pace_per40, poss, pie ) VALUES (@game_id, @team_id, @team_abbreviation, @team_city, @player_id, @player_name, @nickname, @start_position, @comment, @min, @e_off_rating, @off_rating, @e_def_rating, @def_rating, @e_net_rating, @net_rating, @ast_pct, @ast_tov, @ast_ratio, @oreb_pct, @dreb_pct, @reb_pct, @tm_tov_pct, @efg_pct, @ts_pct, @usg_pct, @e_usg_pct, @e_pace, @pace, @pace_per40, @poss, @pie);";
+            		var tableName = $"box_score_advanced_{season}";
+                    var sql = $"INSERT INTO {tableName} (game_id, team_id, team_abbreviation, team_city, player_id, player_name, nickname, start_position, comment, min, e_off_rating, off_rating, e_def_rating, def_rating, e_net_rating, net_rating, ast_pct, ast_tov, ast_ratio, oreb_pct, dreb_pct, reb_pct, tm_tov_pct, efg_pct, ts_pct, usg_pct, e_usg_pct, e_pace, pace, pace_per40, poss, pie ) VALUES (@game_id, @team_id, @team_abbreviation, @team_city, @player_id, @player_name, @nickname, @start_position, @comment, @min, @e_off_rating, @off_rating, @e_def_rating, @def_rating, @e_net_rating, @net_rating, @ast_pct, @ast_tov, @ast_ratio, @oreb_pct, @dreb_pct, @reb_pct, @tm_tov_pct, @efg_pct, @ts_pct, @usg_pct, @e_usg_pct, @e_pace, @pace, @pace_per40, @poss, @pie);";
 
                     //var fgaValue = string.IsNullOrEmpty(boxScoreAdvanced.Fga) ? null : boxScoreAdvanced.Fga;
                     //boxScoreAdvanced.CheckAndReplace();
-
-
 
                     using (var cmd = new NpgsqlCommand(sql, connection))
                     {

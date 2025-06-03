@@ -12,6 +12,8 @@ using Npgsql;
 using NpgsqlTypes;
 using ReactApp4.Server.Services;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Authorization;
+using ReactApp4.Server.Helpers;
 
 namespace ReactApp4.Server.Controllers
 {
@@ -29,18 +31,27 @@ namespace ReactApp4.Server.Controllers
         [HttpGet("{season}")]
         public async Task<ActionResult<IEnumerable<MLBGame>>> GetMLBGamesBySeason(string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
             return await _mLBGameDataHandler.GetMLBGamesBySeason(season);
         }
 
         [HttpGet("read/{season}")]
         public async Task<IActionResult> GetMLBGamesFromFile(string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
             return await _mLBGameDataHandler.GetMLBGamesFromFile(season);
         }
 
+        [Authorize]
         [HttpPost("{season}")]
         public async Task<IActionResult> CreateMLBGames([FromBody] MLBGame mLBGame, string season)
         {
+            if (!SeasonConstants.IsValidMLBSeason(season))
+            	return BadRequest("Invalid MLB season.");
+            if (mLBGame == null)
+                return BadRequest("Invalid active player data");
             return await _mLBGameDataHandler.CreateMLBGames(mLBGame, season);
         }
     }

@@ -40,7 +40,7 @@ async def readLeagueGamesTraditional():
     start = int(count) * 2
     print(start)
     print(end)
-    for i in range (255, end):
+    for i in range (367, end):
         print(i)
         if games["resultSets"][0]["rowSet"][i][4] in idList or games["resultSets"][0]["rowSet"][i][4] is None:
             continue

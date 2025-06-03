@@ -7,6 +7,7 @@ using System.Reflection;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ReactApp4.Server.Helpers;
 
 namespace ReactApp4.Server.Controllers
 {
@@ -24,6 +25,8 @@ namespace ReactApp4.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> MLBGetPlayerResults(string hittingPitching, string selectedSeason, string selectedOpponent, int player_id, string propBetStats)
         {
+            if (!SeasonConstants.IsValidMLBSeason(selectedSeason))
+            	return BadRequest("Invalid MLB season.");
             return await _mlbPlayerResultsDatabaseHandler.MLBGetPlayerResults(hittingPitching, selectedSeason, selectedOpponent, player_id, propBetStats);
         }
 

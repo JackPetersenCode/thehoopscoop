@@ -126,11 +126,10 @@ namespace ReactApp4.Server.Services
         {
             try
             {
-
-                var sql = $@"
-                    SELECT DISTINCT team_name FROM league_games_2022_23
-                    WHERE team_id = '{teamId}'    
-                ";
+                var sql = @"
+                    SELECT DISTINCT team_name 
+                    FROM league_games_2022_23
+                    WHERE team_id = @teamId";
 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
@@ -140,6 +139,9 @@ namespace ReactApp4.Server.Services
 
                     using (var cmd = new NpgsqlCommand(sql, connection))
                     {
+                        // Safely add the parameter
+                        cmd.Parameters.AddWithValue("@teamId", teamId);
+
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             var dataList = new List<Dictionary<string, object>>();
@@ -153,11 +155,7 @@ namespace ReactApp4.Server.Services
                                 dataList.Add(dataDict);
                             }
 
-                            // Convert the list of dictionaries to JSON
-
-                            // Return the JSON data
                             return Ok(dataList);
-
                         }
                     }
                 }
@@ -167,25 +165,29 @@ namespace ReactApp4.Server.Services
                 return StatusCode(500, $"Internal Server Error: {ex}");
             }
         }
+
 
         public async Task<IActionResult> GetMoneyline(string season, string teamName, string gameDate)
         {
             try
             {
-
                 var sql = $@"
-                    SELECT ml FROM odds_{season}
-                    WHERE team = '{teamName}' AND date = '{gameDate}'
-                ";
-
+                    SELECT ml 
+                    FROM odds_{season}
+                    WHERE team = @teamName AND date = @gameDate";
+        
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
-
+        
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-
+        
                     using (var cmd = new NpgsqlCommand(sql, connection))
                     {
+                        // Safely parameterize input values
+                        cmd.Parameters.AddWithValue("@teamName", teamName);
+                        cmd.Parameters.AddWithValue("@gameDate", DateTime.Parse(gameDate)); // optionally parse to DateTime
+        
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             var dataList = new List<Dictionary<string, object>>();
@@ -198,12 +200,8 @@ namespace ReactApp4.Server.Services
                                 }
                                 dataList.Add(dataDict);
                             }
-
-                            // Convert the list of dictionaries to JSON
-
-                            // Return the JSON data
+        
                             return Ok(dataList);
-
                         }
                     }
                 }
@@ -213,6 +211,7 @@ namespace ReactApp4.Server.Services
                 return StatusCode(500, $"Internal Server Error: {ex}");
             }
         }
+
 
         public async Task<IActionResult> GetNewOdds(string season, string teamName, string gameDate, string H_or_V)
         {
@@ -221,8 +220,8 @@ namespace ReactApp4.Server.Services
 
                 var sql = $@"
                     SELECT {H_or_V}_odds FROM new_odds_{season}
-                    WHERE {H_or_V}_team = '{teamName}'
-                    AND SUBSTRING(commence_time, 1, 10) = '{gameDate}'
+                    WHERE {H_or_V}_team = @teamName
+                    AND SUBSTRING(commence_time, 1, 10) = @gameDate
                 ";
 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
@@ -233,6 +232,9 @@ namespace ReactApp4.Server.Services
 
                     using (var cmd = new NpgsqlCommand(sql, connection))
                     {
+                        // Safely parameterize input values
+                        cmd.Parameters.AddWithValue("@teamName", teamName);
+                        cmd.Parameters.AddWithValue("@gameDate", gameDate); // optionally parse to DateTime
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             var dataList = new List<Dictionary<string, object>>();
@@ -263,7 +265,7 @@ namespace ReactApp4.Server.Services
 
         public async Task<IActionResult> GetPreviousGameId(string season, string teamId, string gameDate)
         {
-            var realDate = gameDate.Substring(0,10);
+            var realDate = DateTime.Parse(gameDate.Substring(0,10));
             try
             {
 
@@ -271,8 +273,8 @@ namespace ReactApp4.Server.Services
                     SELECT game_id, game_date_est 
                     FROM box_score_summary_{season}
                     WHERE game_date_est != 'GAME_DATE_EST'
-                    AND CAST(SUBSTRING(game_date_est, 0, 11) AS DATE) < '{realDate}'
-                    AND (home_team_id = '{teamId}' OR visitor_team_id = '{teamId}')
+                    AND CAST(SUBSTRING(game_date_est, 0, 11) AS DATE) < @gameDate
+                    AND (home_team_id = @teamId OR visitor_team_id = @teamId)
                     ORDER BY game_date_est DESC LIMIT 1   
                 ";
                 Console.WriteLine(sql);
@@ -285,6 +287,9 @@ namespace ReactApp4.Server.Services
 
                     using (var cmd = new NpgsqlCommand(sql, connection))
                     {
+                        // Safely parameterize input values
+                        cmd.Parameters.AddWithValue("@teamId", teamId);
+                        cmd.Parameters.AddWithValue("@gameDate", realDate); // optionally parse to DateTime
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             var dataList = new List<Dictionary<string, object>>();
@@ -319,11 +324,11 @@ namespace ReactApp4.Server.Services
             {
 
                 var sql = $@"
-                    SELECT DISTINCT player_id, player_name FROM box_score_traditional_{season} WHERE team_id = '{teamId}'
+                    SELECT DISTINCT player_id, player_name FROM box_score_traditional_{season} WHERE team_id = @teamId
                 ";
-                if (gameId is not null)
+                if (!string.IsNullOrEmpty(gameId))
                 {
-                    sql += $@"AND game_id = '{gameId}'";
+                    sql += $@"AND game_id = @gameId";
                 }
                 Console.WriteLine(sql);
 
@@ -335,6 +340,11 @@ namespace ReactApp4.Server.Services
 
                     using (var cmd = new NpgsqlCommand(sql, connection))
                     {
+                        cmd.Parameters.AddWithValue("@teamId", teamId);
+                        if (!string.IsNullOrEmpty(gameId))
+                        {
+                            cmd.Parameters.AddWithValue("@gameId", gameId); // optionally parse to DateTime
+                        }
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             var dataList = new List<Dictionary<string, object>>();
@@ -367,13 +377,12 @@ namespace ReactApp4.Server.Services
         {
             try
             {
-
                 var sql = $@"
-                    SELECT DISTINCT player_id, player_name FROM box_score_advanced_{season} WHERE team_id = '{teamId}'
+                    SELECT DISTINCT player_id, player_name FROM box_score_advanced_{season} WHERE team_id = @teamId
                 ";
-                if (gameId is not null)
+                if (!string.IsNullOrEmpty(gameId))
                 {
-                    sql += $@"AND game_id = '{gameId}'";
+                    sql += $@"AND game_id = @gameId";
                 }
                 Console.WriteLine(sql);
 
@@ -385,6 +394,11 @@ namespace ReactApp4.Server.Services
 
                     using (var cmd = new NpgsqlCommand(sql, connection))
                     {
+                        cmd.Parameters.AddWithValue("@teamId", teamId);
+                        if (!string.IsNullOrEmpty(gameId))
+                        {
+                            cmd.Parameters.AddWithValue("@gameId", gameId); // optionally parse to DateTime
+                        }
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             var dataList = new List<Dictionary<string, object>>();
@@ -464,14 +478,15 @@ namespace ReactApp4.Server.Services
 
         public async Task<IActionResult> GetWinPctBySeasonByTeam(string season, string team)
         {
+            Console.WriteLine(team);
             try
             {
 
                 var sql = $@"
                     SELECT green_red, COUNT(*)
                     FROM matchup_results_{season}
-                    WHERE home_team = '{team}'
-                    OR visitor_team = '{team}'
+                    WHERE home_team = @team
+                    OR visitor_team = @team
                     GROUP BY green_red
                 ";
 
@@ -485,6 +500,7 @@ namespace ReactApp4.Server.Services
 
                     using (var cmd = new NpgsqlCommand(sql, connection))
                     {
+                        cmd.Parameters.AddWithValue("@team", team);
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             var dataList = new List<Dictionary<string, object>>();
@@ -609,9 +625,9 @@ namespace ReactApp4.Server.Services
                     ON box_score_summary_{season}.game_id = league_games_{season}.game_id
                     WHERE game_date_est != 'GAME_DATE_EST'
                 ";
-                if (gameDate is not null)
+                if (!string.IsNullOrEmpty(gameDate))
                 {
-                    sql += $@"AND (CAST(SUBSTRING(game_date_est, 0, 11) AS DATE) < '{gameDate}') ";               
+                    sql += $@"AND (CAST(SUBSTRING(game_date_est, 0, 11) AS DATE) < @gameDate) ";               
 
                 }
                 
@@ -625,6 +641,10 @@ namespace ReactApp4.Server.Services
 
                     using (var cmd = new NpgsqlCommand(sql, connection))
                     {
+                        if (!string.IsNullOrEmpty(gameDate))
+                        {
+                            cmd.Parameters.AddWithValue("@gameDate", DateTime.Parse(gameDate));
+                        }
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             var dataList = new List<Dictionary<string, object>>();
@@ -664,10 +684,11 @@ namespace ReactApp4.Server.Services
                 var sql = $@"
                     SELECT * FROM matchup_results_{season}
                 ";
-                if (teamName is not null)
+                if (!string.IsNullOrEmpty(teamName))
                 {
-                    sql += $@"WHERE home_team = '{teamName}' OR visitor_team = '{teamName}' ";
+                    sql += $@"WHERE home_team = @teamName OR visitor_team = @teamName ";
                 }
+
                 sql += $@"ORDER BY id DESC";
                 
                 Console.WriteLine(sql);
@@ -680,6 +701,10 @@ namespace ReactApp4.Server.Services
 
                     using (var cmd = new NpgsqlCommand(sql, connection))
                     {
+                        if (!string.IsNullOrEmpty(teamName))
+                        {
+                            cmd.Parameters.AddWithValue("@teamName", teamName);
+                        }
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             var dataList = new List<Dictionary<string, object>>();

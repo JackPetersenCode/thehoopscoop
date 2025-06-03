@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Npgsql;
 using ReactApp4.Server.Data;
+using ReactApp4.Server.Helpers;
 using ReactApp4.Server.Services;
 
 namespace ReactApp4.Server.Controllers
@@ -42,9 +44,12 @@ namespace ReactApp4.Server.Controllers
             return await _playerDataHandler.GetPlayersFromFile();
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreatePlayer([FromBody] Player player)
         {
+            if (player == null)
+                return BadRequest("Invalid active player data");
             return await _playerDataHandler.CreatePlayer(player);
         }
     }

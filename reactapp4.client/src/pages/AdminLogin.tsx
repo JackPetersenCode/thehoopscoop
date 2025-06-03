@@ -8,14 +8,28 @@ export default function AdminLogin() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (login(username, password)) {
+    try {
+      const res = await fetch('/api/Auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!res.ok) throw new Error('Login failed');
+
+      const data = await res.json();
+      console.log(data)
+      localStorage.setItem('token', data.token); // Save JWT
+      login(username, password); // Optional
       navigate('/admin');
-    } else {
+    } catch (err) {
+      console.log(err)
       alert('Invalid credentials');
     }
   };
+
 
   return (
     <form onSubmit={handleSubmit}>

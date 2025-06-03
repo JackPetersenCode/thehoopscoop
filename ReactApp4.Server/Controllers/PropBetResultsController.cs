@@ -7,6 +7,7 @@ using System.Reflection;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ReactApp4.Server.Helpers;
 
 namespace ReactApp4.Server.Controllers
 {
@@ -24,6 +25,8 @@ namespace ReactApp4.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPropBetResults(string selectedSeason, decimal overUnderLine, string selectedOpponent, string roster, string propBetStats)
         {
+            if (!SeasonConstants.IsValidNBASeason(selectedSeason))
+            	return BadRequest("Invalid NBA season.");
             return await _propBetResultsDatabaseHandler.GetPropBetResults(selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats);
         }
 
