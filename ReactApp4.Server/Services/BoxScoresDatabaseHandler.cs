@@ -894,6 +894,7 @@ namespace ReactApp4.Server.Services
                         Advanced_Stats.Oreb_Pct, Advanced_Stats.Dreb_Pct, Advanced_Stats.Reb_Pct, Advanced_Stats.Tov_Pct, Advanced_Stats.Efg_Pct, Advanced_Stats.Ts_Pct,
                         Advanced_Stats.Usg_Pct, PlayerStatsAdvanced.Pie, PlayerStatsAdvanced.Poss
                         HAVING Advanced_Stats.min > 0
+                        ORDER BY {sortField} {order}
                     ";
                     Console.WriteLine(query);
                     var boxScores = await _context.BoxScoreAdvancedPlayers

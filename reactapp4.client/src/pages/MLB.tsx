@@ -83,7 +83,6 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport}) => {
                 <div>
                     <MLBPropBet activePlayers={mlbActivePlayers} roster={roster} setRoster={setRoster} 
                         usedPlayers={usedPlayers} setUsedPlayers={setUsedPlayers} gameOption={gameOption}
-                        isFetching={isFetching} 
                      />
                 </div>
             :

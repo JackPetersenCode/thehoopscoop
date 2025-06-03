@@ -50,9 +50,10 @@ namespace ReactApp4.Server.Services
                                 ON box_score_traditional_2015_16.game_id = league_games_2015_16.game_id
                                 AND box_score_traditional_2015_16.team_id = league_games_2015_16.team_id
                                 WHERE player_id = @player_id AND box_score_traditional_2015_16.min > 0 ";
-                    if (selectedOpponentObject != null)
+                    if (selectedOpponentObject?.Team_id != "1")
                     {
-                        query += $@"AND league_games_2015_16.matchup LIKE '%{selectedOpponentObject.Team_abbreviation}%' ";
+                        query += $@"AND (league_games_2015_16.matchup LIKE @selectedOpponentHome OR league_games_2015_16.matchup LIKE @selectedOpponentAway) 
+                                    AND box_score_traditional_2015_16.team_abbreviation != @selectedOpponent ";
                     }
 
                     query += $@"ORDER BY box_score_traditional_2015_16.id
@@ -65,9 +66,10 @@ namespace ReactApp4.Server.Services
                                 ON box_score_traditional_2016_17.game_id = league_games_2016_17.game_id
                                 AND box_score_traditional_2016_17.team_id = league_games_2016_17.team_id
                                 WHERE player_id = @player_id AND box_score_traditional_2016_17.min > 0 ";
-                    if (selectedOpponentObject != null)
+                    if (selectedOpponentObject?.Team_id != "1")
                     {
-                        query += $@"AND league_games_2016_17.matchup LIKE '%{selectedOpponentObject.Team_abbreviation}%' ";
+                        query += $@"AND (league_games_2016_17.matchup LIKE @selectedOpponentHome OR league_games_2016_17.matchup LIKE @selectedOpponentAway) 
+                                    AND box_score_traditional_2016_17.team_abbreviation != @selectedOpponent ";
                     }
 
                     query += $@"ORDER BY box_score_traditional_2016_17.id
@@ -80,9 +82,10 @@ namespace ReactApp4.Server.Services
                                 ON box_score_traditional_2017_18.game_id = league_games_2017_18.game_id
                                 AND box_score_traditional_2017_18.team_id = league_games_2017_18.team_id
                                 WHERE player_id = @player_id AND box_score_traditional_2017_18.min > 0 ";
-                    if (selectedOpponentObject != null)
+                    if (selectedOpponentObject?.Team_id != "1")
                     {
-                        query += $@"AND league_games_2017_18.matchup LIKE '%{selectedOpponentObject.Team_abbreviation}%' ";
+                        query += $@"AND (league_games_2017_18.matchup LIKE @selectedOpponentHome OR league_games_2017_18.matchup LIKE @selectedOpponentAway) 
+                                    AND box_score_traditional_2017_18.team_abbreviation != @selectedOpponent ";
                     }
 
                     query += $@"ORDER BY box_score_traditional_2017_18.id
@@ -95,9 +98,10 @@ namespace ReactApp4.Server.Services
                                 ON box_score_traditional_2018_19.game_id = league_games_2018_19.game_id
                                 AND box_score_traditional_2018_19.team_id = league_games_2018_19.team_id
                                 WHERE player_id = @player_id AND box_score_traditional_2018_19.min > 0 ";
-                    if (selectedOpponentObject != null)
+                    if (selectedOpponentObject?.Team_id != "1")
                     {
-                        query += $@"AND league_games_2018_19.matchup LIKE '%{selectedOpponentObject.Team_abbreviation}%' ";
+                        query += $@"AND (league_games_2018_19.matchup LIKE @selectedOpponentHome OR league_games_2018_19.matchup LIKE @selectedOpponentAway) 
+                                    AND box_score_traditional_2018_19.team_abbreviation != @selectedOpponent ";
                     }
 
                     query += $@"ORDER BY box_score_traditional_2018_19.id
@@ -110,9 +114,10 @@ namespace ReactApp4.Server.Services
                                 ON box_score_traditional_2019_20.game_id = league_games_2019_20.game_id
                                 AND box_score_traditional_2019_20.team_id = league_games_2019_20.team_id
                                 WHERE player_id = @player_id AND box_score_traditional_2019_20.min > 0 ";
-                    if (selectedOpponentObject != null)
+                    if (selectedOpponentObject?.Team_id != "1")
                     {
-                        query += $@"AND league_games_2019_20.matchup LIKE '%{selectedOpponentObject.Team_abbreviation}%' ";
+                        query += $@"AND (league_games_2019_20.matchup LIKE @selectedOpponentHome OR league_games_2019_20.matchup LIKE @selectedOpponentAway) 
+                                    AND box_score_traditional_2019_20.team_abbreviation != @selectedOpponent ";
                     }
 
                     query += $@"ORDER BY box_score_traditional_2019_20.id
@@ -125,9 +130,10 @@ namespace ReactApp4.Server.Services
                                 ON box_score_traditional_2020_21.game_id = league_games_2020_21.game_id
                                 AND box_score_traditional_2020_21.team_id = league_games_2020_21.team_id
                                 WHERE player_id = @player_id AND box_score_traditional_2020_21.min > 0 ";
-                    if (selectedOpponentObject != null)
+                    if (selectedOpponentObject?.Team_id != "1")
                     {
-                        query += $@"AND league_games_2020_21.matchup LIKE '%{selectedOpponentObject.Team_abbreviation}%' ";
+                        query += $@"AND (league_games_2020_21.matchup LIKE @selectedOpponentHome OR league_games_2020_21.matchup LIKE @selectedOpponentAway) 
+                                    AND box_score_traditional_2020_21.team_abbreviation != @selectedOpponent ";
                     }
 
                     query += $@"ORDER BY box_score_traditional_2020_21.id
@@ -140,9 +146,10 @@ namespace ReactApp4.Server.Services
                                 ON box_score_traditional_2021_22.game_id = league_games_2021_22.game_id
                                 AND box_score_traditional_2021_22.team_id = league_games_2021_22.team_id
                                 WHERE player_id = @player_id AND box_score_traditional_2021_22.min > 0 ";
-                    if (selectedOpponentObject != null)
+                    if (selectedOpponentObject?.Team_id != "1")
                     {
-                        query += $@"AND league_games_2021_22.matchup LIKE '%{selectedOpponentObject.Team_abbreviation}%' ";
+                        query += $@"AND (league_games_2021_22.matchup LIKE @selectedOpponentHome OR league_games_2021_22.matchup LIKE @selectedOpponentAway) 
+                                    AND box_score_traditional_2021_22.team_abbreviation != @selectedOpponent ";
                     }
 
                     query += $@"ORDER BY box_score_traditional_2021_22.id
@@ -155,9 +162,10 @@ namespace ReactApp4.Server.Services
                                 ON box_score_traditional_2022_23.game_id = league_games_2022_23.game_id
                                 AND box_score_traditional_2022_23.team_id = league_games_2022_23.team_id
                                 WHERE player_id = @player_id AND box_score_traditional_2022_23.min > 0 ";
-                    if (selectedOpponentObject != null)
+                    if (selectedOpponentObject?.Team_id != "1")
                     {
-                        query += $@"AND league_games_2022_23.matchup LIKE '%{selectedOpponentObject.Team_abbreviation}%' ";
+                        query += $@"AND (league_games_2022_23.matchup LIKE @selectedOpponentHome OR league_games_2022_23.matchup LIKE @selectedOpponentAway) 
+                                    AND box_score_traditional_2022_23.team_abbreviation != @selectedOpponent ";
                     }
 
                     query += $@"ORDER BY box_score_traditional_2022_23.id
@@ -171,14 +179,31 @@ namespace ReactApp4.Server.Services
                                 AND box_score_traditional_2023_24.team_id = league_games_2023_24.team_id
                                 WHERE player_id = @player_id AND box_score_traditional_2023_24.min > 0 ";
 
-                    if (selectedOpponentObject != null)
+                    if (selectedOpponentObject?.Team_id != "1")
                     {
-                        query += $@"AND league_games_2023_24.matchup LIKE '%{selectedOpponentObject.Team_abbreviation}%' ";
+                        query += $@"AND (league_games_2023_24.matchup LIKE @selectedOpponentHome OR league_games_2023_24.matchup LIKE @selectedOpponentAway) 
+                                    AND box_score_traditional_2023_24.team_abbreviation != @selectedOpponent ";
                     }
 
                     query += $@"ORDER BY box_score_traditional_2023_24.id
-                            )";
+                            )
+                                UNION ALL
+                            (    
+                                SELECT box_score_traditional_2024_25.*, league_games_2024_25.game_date, league_games_2024_25.matchup
+                                FROM box_score_traditional_2024_25
+                                JOIN league_games_2024_25
+                                ON box_score_traditional_2024_25.game_id = league_games_2024_25.game_id
+                                AND box_score_traditional_2024_25.team_id = league_games_2024_25.team_id
+                                WHERE player_id = @player_id AND box_score_traditional_2024_25.min > 0 ";
 
+                    if (selectedOpponentObject?.Team_id != "1")
+                    {
+                        query += $@" AND (league_games_2024_25.matchup LIKE @selectedOpponentHome OR league_games_2024_25.matchup LIKE @selectedOpponentAway) 
+                                    AND box_score_traditional_2024_25.team_abbreviation != @selectedOpponent ";
+                    }
+
+                    query += $@"ORDER BY box_score_traditional_2024_25.id
+                            )";
 
 
                     //if (selectedOpponentObject != null)
@@ -190,8 +215,13 @@ namespace ReactApp4.Server.Services
                     Console.WriteLine(query);
 
                     var boxScores = await _context.BoxScoreWithGameDates.FromSqlRaw(query,
-                            new NpgsqlParameter("@player_id", player_id))
-                        .ToListAsync();
+                        new NpgsqlParameter("@player_id", player_id),
+                        new NpgsqlParameter("@selectedOpponentHome", $"%vs. {selectedOpponentObject?.Team_abbreviation}%"),
+                        new NpgsqlParameter("@selectedOpponentAway", $"%@ {selectedOpponentObject?.Team_abbreviation}%"),
+                        new NpgsqlParameter("@selectedOpponent", selectedOpponentObject?.Team_abbreviation)
+
+                    )
+                    .ToListAsync();
 
                     Console.WriteLine(boxScores.ToString());
                     Console.WriteLine(boxScores);
@@ -231,18 +261,23 @@ namespace ReactApp4.Server.Services
                             FROM Games_Played 
                             JOIN {leagueGamesTable}
                             ON Games_Played.game_id = {leagueGamesTable}.game_id
-                            AND Games_Played.team_id = {leagueGamesTable}.team_id";
-                    if (selectedOpponentObject != null)
+                            AND Games_Played.team_id = {leagueGamesTable}.team_id ";
+                    if (selectedOpponentObject?.Team_id != "1")
                     {
-                        query += $@" WHERE {leagueGamesTable}.matchup LIKE '%{selectedOpponentObject.Team_abbreviation}%'";
+                        query += $@"AND ({leagueGamesTable}.matchup LIKE @selectedOpponentHome OR {leagueGamesTable}.matchup LIKE @selectedOpponentAway) 
+                                    AND Games_Played.team_abbreviation != @selectedOpponent ";
                     }
                     query += $@" ORDER BY Games_Played.id DESC";
 
                     Console.WriteLine(query);
 
                     var boxScores = await _context.BoxScoreWithGameDates.FromSqlRaw(query,
-                            new NpgsqlParameter("@player_id", player_id))
-                        .ToListAsync();
+                        new NpgsqlParameter("@player_id", player_id),
+                        new NpgsqlParameter("@selectedOpponentHome", $"%vs. {selectedOpponentObject?.Team_abbreviation}%"),
+                        new NpgsqlParameter("@selectedOpponentAway", $"%@ {selectedOpponentObject?.Team_abbreviation}%"),
+                        new NpgsqlParameter("@selectedOpponent", selectedOpponentObject?.Team_abbreviation)
+                    )
+                    .ToListAsync();
 
                     Console.WriteLine(boxScores.ToString());
                     Console.WriteLine(boxScores);

@@ -132,6 +132,7 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
                         setSelectedGame={() => { }}
                         isShotCharts={false}
                         isPredictions={false}
+                        disabled={isFetching}
                     />
                 </div>
                 {selectedBoxType === "Base" || selectedBoxType === "Misc" || selectedBoxType === "Opponent" ?
@@ -143,6 +144,7 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
                             setSelectedTeam={setSelectedTeam}
                             setSelectedOpponent={setSelectedOpponent}
                             dropDownType="Per Mode"
+                            disabled={isFetching}
                     />
                     </div>
                     :
@@ -156,6 +158,7 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
                             setSelectedTeam={setSelectedTeam}
                             setSelectedOpponent={setSelectedOpponent}
                             dropDownType="# of Players"
+                            disabled={isFetching}
                     />
                     </div>
                     :
@@ -168,6 +171,7 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
                         setSelectedTeam={setSelectedTeam}
                         setSelectedOpponent={setSelectedOpponent}
                         dropDownType="Team"
+                        disabled={isFetching}
                     />
                 </div>
                 {selectedLineupPlayer === 'Players' ?
@@ -179,6 +183,7 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
                         setSelectedTeam={setSelectedTeam}
                         setSelectedOpponent={setSelectedOpponent}
                         dropDownType="Opponent"
+                        disabled={isFetching}
                     />
                 </div>
                 :

@@ -21,16 +21,17 @@ interface MLBPropBetResultsProps {
     selectedSeason: string;
     hittingPitching: string;
     lastTenFilteredBoxScores: Stats[];
+    setIsFetching: React.Dispatch<SetStateAction<boolean>>;
 }
 
 const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxScores, setCareerPlayerBoxScores, gamesPlayed, careerGamesPlayed, setCareerGamesPlayed, overUnderLine, propBetStats, selectedOpponent, 
-    roster, playerBoxScores, homeOrVisitor, selectedSeason, hittingPitching, lastTenFilteredBoxScores }) => {
+    roster, playerBoxScores, homeOrVisitor, selectedSeason, hittingPitching, lastTenFilteredBoxScores, setIsFetching }) => {
 
     
     useEffect(() => {
 
         const getCareerPlayerResults = async() => {
-
+            setIsFetching(true);
             const jsonPropBetStats = JSON.stringify(propBetStats);
 
             // Encode the JSON string for inclusion in the URL
@@ -43,6 +44,7 @@ const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxSc
 
             if (roster.length == 0) {
                 setCareerPlayerBoxScores([]);
+                setIsFetching(false);
             } else {
                 for (const player of roster) {
 
@@ -58,6 +60,8 @@ const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxSc
                         setCareerPlayerBoxScores(homeVisitorOverUnderFilteredBoxScores);
                     } catch (error) {
                         console.log(error);
+                    } finally {
+                        setIsFetching(false);
                     }
                 }
             }

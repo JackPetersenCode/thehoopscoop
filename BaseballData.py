@@ -935,6 +935,6 @@ def get_active_mlb_players_for_season(season: str, output_path: str = None):
 # Example call (uncomment to run)
 #get_active_mlb_players_for_season("2025")
 #print(players_2023[:2])  # Print first 2 players as a preview
-get_schedule_save_box_scores("2018")
+get_schedule_save_box_scores("2022")
 #get_schedule_save_play_by_play("2025")
 #get_schedule_save_mlb_games("2025")

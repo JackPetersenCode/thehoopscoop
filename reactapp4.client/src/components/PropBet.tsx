@@ -44,6 +44,7 @@ const PropBet: React.FC<PropBetProps> = ({ activePlayers, roster, setRoster, use
     const [gamesPlayed, setGamesPlayed] = useState<Stats[]>([]);
     const [careerGamesPlayed, setCareerGamesPlayed] = useState<Stats[]>([]);
     const [lastTenFilteredBoxScores, setLastTenFilteredBoxScores] = useState<Stats[]>([]);
+    const [isFetching, setIsFetching] = useState<boolean>(false);
 
     const deletePlayer = (player: Player) => {
         const rows = [...roster];
@@ -78,19 +79,19 @@ const PropBet: React.FC<PropBetProps> = ({ activePlayers, roster, setRoster, use
                     <SearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
                 </div>
                 <div className="drop-down">
-                    <SeasonsDropDown selectedSeason={selectedSeasonPropBet} setSelectedSeason={setSelectedSeasonPropBet} setSelectedPlayerShotCharts={() => { }} setSelectedGame={setSelectedGame} isShotCharts={false} isPredictions={false} />
+                    <SeasonsDropDown selectedSeason={selectedSeasonPropBet} setSelectedSeason={setSelectedSeasonPropBet} setSelectedPlayerShotCharts={() => { }} setSelectedGame={setSelectedGame} isShotCharts={false} isPredictions={false} disabled={isFetching} />
                 </div>
                 <div className="drop-down">
-                    <PropBetStatsDropDown selectedStat={selectedStat} setSelectedStat={setSelectedStat} propBetStats={propBetStats} setPropBetStats={setPropBetStats} />
+                    <PropBetStatsDropDown selectedStat={selectedStat} setSelectedStat={setSelectedStat} propBetStats={propBetStats} setPropBetStats={setPropBetStats} disabled={isFetching} />
                 </div>
                 <div className="drop-down">
                     <OverUnderLineInput overUnderLine={overUnderLine} setOverUnderLine={setOverUnderLine} />
                 </div>
                 <div className="drop-down">
-                    <HomeOrVisitorDropDown homeOrVisitor={homeOrVisitor} setHomeOrVisitor={setHomeOrVisitor} showHomeOrVisitor={showHomeOrVisitor} setShowHomeOrVisitor={setShowHomeOrVisitor} />
+                    <HomeOrVisitorDropDown homeOrVisitor={homeOrVisitor} setHomeOrVisitor={setHomeOrVisitor} showHomeOrVisitor={showHomeOrVisitor} setShowHomeOrVisitor={setShowHomeOrVisitor} disabled={isFetching} />
                 </div>
                 <div className="drop-down" style={{ marginRight: "0px" }}>
-                    <PropBetOpponentDropDown selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} />
+                    <PropBetOpponentDropDown selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} disabled={isFetching} />
                 </div>
             </div>
 
@@ -147,12 +148,12 @@ const PropBet: React.FC<PropBetProps> = ({ activePlayers, roster, setRoster, use
         <div className="prop-bet-results-wrapper">
             <PropBetResults careerPlayerBoxScores={careerPlayerBoxScores} setCareerPlayerBoxScores={setCareerPlayerBoxScores} gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} 
                 overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} 
-                playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} selectedSeason={selectedSeasonPropBet} lastTenFilteredBoxScores={lastTenFilteredBoxScores}/>
+                playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} selectedSeason={selectedSeasonPropBet} lastTenFilteredBoxScores={lastTenFilteredBoxScores} setIsFetching={setIsFetching} />
         </div>
 
             <PropBetResultsTable selectedSeason={selectedSeasonPropBet} overUnderLine={overUnderLine} selectedOpponent={selectedOpponent} 
                 roster={roster} propBetStats={propBetStats} setPlayerBoxScores={setPlayerBoxScores} playerBoxScores={playerBoxScores} 
-                gamesPlayed={gamesPlayed} setGamesPlayed={setGamesPlayed} homeOrVisitor={homeOrVisitor} setLastTenFilteredBoxScores={setLastTenFilteredBoxScores}/>
+                gamesPlayed={gamesPlayed} setGamesPlayed={setGamesPlayed} homeOrVisitor={homeOrVisitor} setLastTenFilteredBoxScores={setLastTenFilteredBoxScores} setIsFetching={setIsFetching} />
     </div>
     );
 }

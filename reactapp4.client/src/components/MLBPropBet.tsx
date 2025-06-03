@@ -24,11 +24,10 @@ interface MLBPropBetProps {
     usedPlayers: MLBActivePlayer[];
     setUsedPlayers: React.Dispatch<React.SetStateAction<MLBActivePlayer[]>>;
     gameOption: string;
-    isFetching: boolean;
 }
 
 const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoster, usedPlayers, 
-    setUsedPlayers, gameOption, isFetching }) => {
+    setUsedPlayers, gameOption }) => {
 
     const [inputText, setInputText] = useState('');
     const [selectedPlayer, setSelectedPlayer] = useState<MLBActivePlayer | null>(null);
@@ -47,6 +46,7 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
     const [careerGamesPlayed, setCareerGamesPlayed] = useState<Stats[]>([]);
     const [hittingPitchingPropBet, setHittingPitchingPropBet] = useState<string>("hitting");
     const [lastTenFilteredBoxScores, setLastTenFilteredBoxScores] = useState<Stats[]>([]);
+    const [isFetching, setIsFetching] = useState<boolean>(false);
 
     const deletePlayer = (player: MLBActivePlayer) => {
         const rows = [...roster];
@@ -117,16 +117,16 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
                 </div>
                 <div className="drop-down">
                     <MLBPropBetStatsDropDown selectedStat={selectedStat} setSelectedStat={setSelectedStat} propBetStats={propBetStats} 
-                        setPropBetStats={setPropBetStats} hittingPitching={hittingPitchingPropBet} />
+                        setPropBetStats={setPropBetStats} hittingPitching={hittingPitchingPropBet} disabled={isFetching} />
                 </div>
                 <div className="drop-down">
                     <OverUnderLineInput overUnderLine={overUnderLine} setOverUnderLine={setOverUnderLine} />
                 </div>
                 <div className="drop-down">
-                    <HomeOrVisitorDropDown homeOrVisitor={homeOrVisitor} setHomeOrVisitor={setHomeOrVisitor} showHomeOrVisitor={showHomeOrVisitor} setShowHomeOrVisitor={setShowHomeOrVisitor} />
+                    <HomeOrVisitorDropDown homeOrVisitor={homeOrVisitor} setHomeOrVisitor={setHomeOrVisitor} showHomeOrVisitor={showHomeOrVisitor} setShowHomeOrVisitor={setShowHomeOrVisitor} disabled={isFetching} />
                 </div>
                 <div className="drop-down" style={{ marginRight: "0px" }}>
-                    <MLBPropBetOpponentDropDown selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} />
+                    <MLBPropBetOpponentDropDown selectedOpponent={selectedOpponent} setSelectedOpponent={setSelectedOpponent} showOpponent={showOpponent} setShowOpponent={setShowOpponent} disabled={isFetching} />
                 </div>
             </div>
 
@@ -186,13 +186,13 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
                 gamesPlayed={gamesPlayed} careerGamesPlayed={careerGamesPlayed} setCareerGamesPlayed={setCareerGamesPlayed} 
                 overUnderLine={overUnderLine} propBetStats={propBetStats} selectedOpponent={selectedOpponent} roster={roster} 
                 playerBoxScores={playerBoxScores} homeOrVisitor={homeOrVisitor} selectedSeason={selectedSeasonPropBet} 
-                hittingPitching={hittingPitchingPropBet} lastTenFilteredBoxScores={lastTenFilteredBoxScores}/>
+                hittingPitching={hittingPitchingPropBet} lastTenFilteredBoxScores={lastTenFilteredBoxScores} setIsFetching={setIsFetching}/>
         </div>
             <MLBPropBetResultsTable selectedSeason={selectedSeasonPropBet} overUnderLine={overUnderLine} 
                 selectedOpponent={selectedOpponent} roster={roster} propBetStats={propBetStats} 
                 setPlayerBoxScores={setPlayerBoxScores} playerBoxScores={playerBoxScores} gamesPlayed={gamesPlayed} 
                 setGamesPlayed={setGamesPlayed} homeOrVisitor={homeOrVisitor} hittingPitching={hittingPitchingPropBet} 
-                setLastTenFilteredBoxScores={setLastTenFilteredBoxScores} />
+                setLastTenFilteredBoxScores={setLastTenFilteredBoxScores} setIsFetching={setIsFetching} />
     </div>
     );
 }

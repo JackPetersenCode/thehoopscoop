@@ -23,10 +23,11 @@ interface MLBPropBetResultsTableProps {
     homeOrVisitor: string;
     hittingPitching: string;
     setLastTenFilteredBoxScores: React.Dispatch<SetStateAction<Stats[]>>;
+    setIsFetching: React.Dispatch<SetStateAction<boolean>>;
 }
 
 const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats, 
-    setPlayerBoxScores, playerBoxScores, gamesPlayed, setGamesPlayed, homeOrVisitor, hittingPitching, setLastTenFilteredBoxScores }) => {
+    setPlayerBoxScores, playerBoxScores, gamesPlayed, setGamesPlayed, homeOrVisitor, hittingPitching, setLastTenFilteredBoxScores, setIsFetching }) => {
 
     const columns: Column[] =
       hittingPitching === "hitting"
@@ -35,7 +36,7 @@ const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selecte
 
     useEffect(() => {
         const getPropBetResults = async () => {
-
+            setIsFetching(true);
             const jsonPropBetStats = JSON.stringify(propBetStats);
 
             // Encode the JSON string for inclusion in the URL
@@ -52,6 +53,7 @@ const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selecte
             if (roster.length == 0) {
                 setPlayerBoxScores([]);
                 setGamesPlayed([]);
+                setIsFetching(false);
             } else {
                 for (const player of roster) {
 
@@ -71,6 +73,8 @@ const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selecte
                         setPlayerBoxScores(homeVisitorOverUnderFilteredBoxScores);
                     } catch (error) {
                         console.log(error);
+                    } finally {
+                        setIsFetching(false);
                     }
                 }
             }

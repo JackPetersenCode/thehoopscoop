@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect } from 'react';
+import React, { SetStateAction, useEffect, useState } from 'react';
 import axios from 'axios';
 import { PropBetStats } from '../interfaces/PropBetStats';
 import { NBATeam } from '../interfaces/Teams';
@@ -20,16 +20,17 @@ interface PropBetResultsProps {
     homeOrVisitor: string;
     selectedSeason: string;
     lastTenFilteredBoxScores: Stats[];
+    setIsFetching: React.Dispatch<SetStateAction<boolean>>;
 }
 
 const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, setCareerPlayerBoxScores, gamesPlayed, careerGamesPlayed, setCareerGamesPlayed, overUnderLine, 
-    propBetStats, selectedOpponent, roster, playerBoxScores, homeOrVisitor, selectedSeason, lastTenFilteredBoxScores }) => {
-
+    propBetStats, selectedOpponent, roster, playerBoxScores, homeOrVisitor, selectedSeason, lastTenFilteredBoxScores, setIsFetching }) => {
+    //const [isFetching, setIsFetching] = useState<boolean>(false);
 
     useEffect(() => {
 
         const getCareerPlayerResults = async() => {
-
+            setIsFetching(true);
             const jsonPropBetStats = JSON.stringify(propBetStats);
 
             // Encode the JSON string for inclusion in the URL
@@ -42,6 +43,7 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, 
 
             if (roster.length == 0) {
                 setCareerPlayerBoxScores([]);
+                setIsFetching(false);
             } else {
                 for (const player of roster) {
 
@@ -58,6 +60,8 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, 
                         setCareerPlayerBoxScores(homeVisitorOverUnderFilteredBoxScores);
                     } catch (error) {
                         console.log(error);
+                    } finally {
+                        setIsFetching(false);
                     }
                 }
             }

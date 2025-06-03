@@ -7,9 +7,10 @@ interface PropBetOpponentDropDownProps {
     setSelectedOpponent: React.Dispatch<SetStateAction<NBATeam>>;
     showOpponent: boolean;
     setShowOpponent: React.Dispatch<SetStateAction<boolean>>;
+    disabled: boolean;
 }
 
-const PropBetOpponentDropDown: React.FC<PropBetOpponentDropDownProps> = ({ selectedOpponent, setSelectedOpponent, setShowOpponent }) => {
+const PropBetOpponentDropDown: React.FC<PropBetOpponentDropDownProps> = ({ selectedOpponent, setSelectedOpponent, setShowOpponent, disabled }) => {
 
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         const selectedValue = JSON.parse(event.target.value);
@@ -27,7 +28,7 @@ const PropBetOpponentDropDown: React.FC<PropBetOpponentDropDownProps> = ({ selec
                 Opponent
             </div>
             
-            <select className="drop-flex-select" value={JSON.stringify(selectedOpponent)} onChange={handleChange}>
+            <select className="drop-flex-select" value={JSON.stringify(selectedOpponent)} onChange={handleChange} disabled={disabled} >
                 <option className="drop-flex-option" value="0">Opponent</option>
 
                 {nbaTeams.map((option, index) => (

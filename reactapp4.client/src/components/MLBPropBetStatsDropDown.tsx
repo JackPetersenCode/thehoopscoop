@@ -8,9 +8,10 @@ interface PropBetStatsDropDownProps {
     propBetStats: PropBetStats[];
     setPropBetStats: React.Dispatch<React.SetStateAction<PropBetStats[]>>;
     hittingPitching: string;
+    disabled: boolean;
 }
 
-const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ setSelectedStat, propBetStats, setPropBetStats, hittingPitching }) => {
+const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ setSelectedStat, propBetStats, setPropBetStats, hittingPitching, disabled }) => {
 
 
     const hittingStats: PropBetStats[] = [
@@ -57,7 +58,7 @@ const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ setSelected
             <div className="drop-title">
                 Prop Bet Stats
             </div>
-            <select className="drop-flex-select" value={"0"} onChange={handleStatChange}>
+            <select className="drop-flex-select" value={"0"} onChange={handleStatChange} disabled={disabled} >
                     <option className="drop-flex-option" value="0">Prop Bet Stats</option>
 
                 {stats.map((option: PropBetStats, index: number) => (

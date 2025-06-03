@@ -24,14 +24,6 @@ interface StatsTableProps {
 const StatsTable: React.FC<StatsTableProps> = React.memo(({ inputText, statsData, columns, isFetching, originalData }) => {
     const [sortColumn, setSortColumn] = useState<string | null>(null);
     const [sortOrder, setSortOrder] = useState<SortOrder>('original');
-    const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
-
-    useEffect(() => {
-    	if (!isFetching) {
-    		setHasLoadedOnce(true);
-    	}
-    }, [isFetching]);
-
 
     const sortedData = useMemo(() => {
       if (!sortColumn || sortOrder === 'original') return [...originalData];

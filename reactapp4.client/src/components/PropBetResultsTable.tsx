@@ -22,16 +22,17 @@ interface PropBetResultsTableProps {
     setGamesPlayed: React.Dispatch<SetStateAction<Stats[]>>;
     homeOrVisitor: string;
     setLastTenFilteredBoxScores: React.Dispatch<SetStateAction<Stats[]>>;
+    setIsFetching: React.Dispatch<SetStateAction<boolean>>;
 }
 
 const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeason, overUnderLine, selectedOpponent, roster, propBetStats, setPlayerBoxScores, playerBoxScores, gamesPlayed, 
-    setGamesPlayed, homeOrVisitor, setLastTenFilteredBoxScores }) => {
+    setGamesPlayed, homeOrVisitor, setLastTenFilteredBoxScores, setIsFetching }) => {
 
     const [columns] = useState<Column[]>(basePlayerColumnsNoName);
 
     useEffect(() => {
         const getPropBetResults = async () => {
-
+            setIsFetching(true);
             const jsonPropBetStats = JSON.stringify(propBetStats);
 
             // Encode the JSON string for inclusion in the URL
@@ -48,6 +49,7 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
             if (roster.length == 0) {
                 setPlayerBoxScores([]);
                 setGamesPlayed([]);
+                setIsFetching(false);
             } else {
                 for (const player of roster) {
 
@@ -67,6 +69,8 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
                         setPlayerBoxScores(homeVisitorOverUnderFilteredBoxScores);
                     } catch (error) {
                         console.log(error);
+                    } finally {
+                        setIsFetching(false);
                     }
                 }
             }
