@@ -20,7 +20,7 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport}) => {
 
     console.log("MLB Page")
 
-    const [selectedSeason, setSelectedSeason] = useState('2023');
+    const [selectedSeason, setSelectedSeason] = useState('2025');
     const [mlbActivePlayers, setMlbActivePlayers] = useState<MLBActivePlayer[]>([]);
     //const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
     const [inputTextBottom, setInputTextBottom] = useState('');
@@ -44,15 +44,14 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport}) => {
     useEffect(() => {
         console.log("active players hook")
         async function getData() {
-            const season = "2023";
-            const activePlayersResponse = await axios.get(`api/MLBActivePlayer/${season}`);
+            const activePlayersResponse = await axios.get(`api/MLBActivePlayer/${selectedSeason}`);
             const activePlayersData = await activePlayersResponse.data;
             console.log(activePlayersData)
             setMlbActivePlayers(activePlayersData);
         }
 
         getData();
-    }, []);
+    }, [selectedSeason]);
 //<StatsTable selectedSeason={selectedSeason} selectedLineupPlayer={selectedLineupPlayer} selectedBoxType={selectedBoxType} numPlayers={numPlayers} perMode={perMode} selectedTeam={selectedTeam} sortField={sortField} setSortField={setSortField} inputText={inputTextBottom} setInputText={setInputTextBottom} selectedOpponent={selectedOpponent} />
 
 // ...
@@ -81,90 +80,92 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport}) => {
 
             {gameOption === "Prop Bet" ?
                 <div>
-                    <MLBPropBet activePlayers={mlbActivePlayers} roster={roster} setRoster={setRoster} 
+                    <MLBPropBet roster={roster} setRoster={setRoster} 
                         usedPlayers={usedPlayers} setUsedPlayers={setUsedPlayers} gameOption={gameOption}
                      />
                 </div>
             :
             ""}
-            <div className="hitting-pitching-container">
-                <div className={`hitting-pitching ${hittingPitching === "hitting" ? "active" : ""}`} onClick={setHitting}>
-                    Hitting
+            <div className="margin-top">
+                <div className="hitting-pitching-container">
+                    <div className={`hitting-pitching ${hittingPitching === "hitting" ? "active" : ""}`} onClick={setHitting}>
+                        Hitting
+                    </div>
+                    <div className={`hitting-pitching ${hittingPitching === "pitching" ? "active" : ""}`} onClick={setPitching}>
+                        Pitching
+                    </div>
                 </div>
-                <div className={`hitting-pitching ${hittingPitching === "pitching" ? "active" : ""}`} onClick={setPitching}>
-                    Pitching
+                <div style={{ display: hittingPitching === 'hitting' ? 'block' : 'none' }}>
+                    <MLBHitting
+                        selectedSeason={selectedSeason}
+                        setSelectedSeason={setSelectedSeason}
+                        leagueOption={leagueOption}
+                        setLeagueOption={setLeagueOption}
+                        selectedTeam={selectedTeam}
+                        setSelectedTeam={setSelectedTeam}
+                        yearToDateOption={yearToDateOption}
+                        setYearToDateOption={setYearToDateOption}
+                        selectedOpponent={selectedOpponent}
+                        setSelectedOpponent={setSelectedOpponent}
+                        selectedSplit={selectedSplit}
+                        setSelectedSplit={setSelectedSplit}
+                        inputTextBottom={inputTextBottom}
+                        setInputTextBottom={setInputTextBottom}
+                        selectedPlayerBottom={selectedPlayerBottom}
+                        setSelectedPlayerBottom={setSelectedPlayerBottom}
+                        inputTextOpponent={inputTextOpponent}
+                        setInputTextOpponent={setInputTextOpponent}
+                        selectedPlayerOpponent={selectedPlayerOpponent}
+                        setSelectedPlayerOpponent={setSelectedPlayerOpponent}
+                        activePlayers={mlbActivePlayers}
+                        roster={roster}
+                        setRoster={setRoster}
+                        setUsedPlayers={setUsedPlayers}
+                        isFetching={isFetching}
+                        //columns={columns}
+                        //splitOptions={splitOptions}
+                    />
                 </div>
-            </div>
-            <div style={{ display: hittingPitching === 'hitting' ? 'block' : 'none' }}>
-                <MLBHitting
-                    selectedSeason={selectedSeason}
-                    setSelectedSeason={setSelectedSeason}
-                    leagueOption={leagueOption}
-                    setLeagueOption={setLeagueOption}
-                    selectedTeam={selectedTeam}
-                    setSelectedTeam={setSelectedTeam}
-                    yearToDateOption={yearToDateOption}
-                    setYearToDateOption={setYearToDateOption}
-                    selectedOpponent={selectedOpponent}
-                    setSelectedOpponent={setSelectedOpponent}
-                    selectedSplit={selectedSplit}
-                    setSelectedSplit={setSelectedSplit}
-                    inputTextBottom={inputTextBottom}
-                    setInputTextBottom={setInputTextBottom}
-                    selectedPlayerBottom={selectedPlayerBottom}
-                    setSelectedPlayerBottom={setSelectedPlayerBottom}
-                    inputTextOpponent={inputTextOpponent}
-                    setInputTextOpponent={setInputTextOpponent}
-                    selectedPlayerOpponent={selectedPlayerOpponent}
-                    setSelectedPlayerOpponent={setSelectedPlayerOpponent}
-                    activePlayers={mlbActivePlayers}
-                    roster={roster}
-                    setRoster={setRoster}
-                    setUsedPlayers={setUsedPlayers}
-                    isFetching={isFetching}
-                    //columns={columns}
-                    //splitOptions={splitOptions}
-                />
-            </div>
-            <div style={{ display: hittingPitching === 'pitching' ? 'block' : 'none' }}>
-                <MLBPitching
-                    selectedSeason={selectedSeason}
-                    setSelectedSeason={setSelectedSeason}
-                    leagueOption={leagueOption}
-                    setLeagueOption={setLeagueOption}
-                    selectedTeam={selectedTeam}
-                    setSelectedTeam={setSelectedTeam}
-                    yearToDateOption={yearToDateOption}
-                    setYearToDateOption={setYearToDateOption}
-                    selectedOpponent={selectedOpponent}
-                    setSelectedOpponent={setSelectedOpponent}
-                    selectedSplit={selectedSplit}
-                    setSelectedSplit={setSelectedSplit}
-                    inputTextBottom={inputTextBottom}
-                    setInputTextBottom={setInputTextBottom}
-                    selectedPlayerBottom={selectedPlayerBottom}
-                    setSelectedPlayerBottom={setSelectedPlayerBottom}
-                    inputTextOpponent={inputTextOpponent}
-                    setInputTextOpponent={setInputTextOpponent}
-                    selectedPlayerOpponent={selectedPlayerOpponent}
-                    setSelectedPlayerOpponent={setSelectedPlayerOpponent}
-                    activePlayers={mlbActivePlayers}
-                    roster={roster}
-                    setRoster={setRoster}
-                    setUsedPlayers={setUsedPlayers}
-                    isFetching={isFetching}
-                    //columns={columns}
-                    //splitOptions={splitOptions}
-                />
-            </div>
-            <div>
-                <MLBStatsTable
-                    inputText={inputTextBottom}
-                    statsData={statsData}
-                    columns={columns}
-                    isFetching={isFetching}
-                    originalData={originalData}
-                />
+                <div style={{ display: hittingPitching === 'pitching' ? 'block' : 'none' }}>
+                    <MLBPitching
+                        selectedSeason={selectedSeason}
+                        setSelectedSeason={setSelectedSeason}
+                        leagueOption={leagueOption}
+                        setLeagueOption={setLeagueOption}
+                        selectedTeam={selectedTeam}
+                        setSelectedTeam={setSelectedTeam}
+                        yearToDateOption={yearToDateOption}
+                        setYearToDateOption={setYearToDateOption}
+                        selectedOpponent={selectedOpponent}
+                        setSelectedOpponent={setSelectedOpponent}
+                        selectedSplit={selectedSplit}
+                        setSelectedSplit={setSelectedSplit}
+                        inputTextBottom={inputTextBottom}
+                        setInputTextBottom={setInputTextBottom}
+                        selectedPlayerBottom={selectedPlayerBottom}
+                        setSelectedPlayerBottom={setSelectedPlayerBottom}
+                        inputTextOpponent={inputTextOpponent}
+                        setInputTextOpponent={setInputTextOpponent}
+                        selectedPlayerOpponent={selectedPlayerOpponent}
+                        setSelectedPlayerOpponent={setSelectedPlayerOpponent}
+                        activePlayers={mlbActivePlayers}
+                        roster={roster}
+                        setRoster={setRoster}
+                        setUsedPlayers={setUsedPlayers}
+                        isFetching={isFetching}
+                        //columns={columns}
+                        //splitOptions={splitOptions}
+                    />
+                </div>
+                <div>
+                    <MLBStatsTable
+                        inputText={inputTextBottom}
+                        statsData={statsData}
+                        columns={columns}
+                        isFetching={isFetching}
+                        originalData={originalData}
+                    />
+                </div>
             </div>
         </div>
         </>

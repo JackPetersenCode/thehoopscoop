@@ -244,7 +244,7 @@ namespace ReactApp4.Server.Services
 
                     var tableName = "box_score_traditional_" + selectedSeason;
                     var leagueGamesTable = "league_games_" + selectedSeason;
-
+            
                     var query = $@"
                             WITH Box_Scores AS (
                                 SELECT *

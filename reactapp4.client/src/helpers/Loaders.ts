@@ -36,8 +36,8 @@ const teamNameToAbbreviation = new Map<string, string>([
 ]);
 
 
-const loadMLBGames = async () => {
-    const season = "2023"; // Adjust as needed
+const loadMLBGames = async(season: string) => {
+    //const season = "2023"; // Adjust as needed
     //const tablelength = await getJsonResponseStartup(`/api/tablelength/mlb_games_${season}`);
     //console.log(tablelength.count);
 
@@ -129,7 +129,7 @@ function normalizeMLBActivePlayer(data: any): MLBActivePlayer {
         height: data.height ?? "",
         weight: data.weight ? parseInt(data.weight) : null,
         active: data.active?.toLowerCase?.() === "true",
-        mlbDebutDate: data.mlbDebutDate ?? null,
+        mlbDebutDate: data.mlbDebutDate?.trim() ? data.mlbDebutDate : null,
         draftYear: data.draftYear ? parseInt(data.draftYear) : null,
         teamId: data.teamId ? parseInt(data.teamId) : null,
         teamName: data.teamName ?? "",

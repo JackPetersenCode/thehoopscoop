@@ -103,8 +103,13 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, 
                     </div>
                 </div>
                 :
-
-                ""
+                <div className='text-center'>
+                { roster.length > 0 ?
+                    "NO STATS EXIST"
+                    :
+                    ""
+                }
+                </div>
             }
         </>
     );

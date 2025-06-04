@@ -10,10 +10,19 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ selectedSport, setSelectedSport, gameOption, setGameOption }) => {
+    let headerImage = selectedSport === "NBA" ? "/images/khlogo_nba_2.png" : "/images/khlogo_mlb_2.png"; 
     return (
             <div className='logo-flex'>
-                <div>
-                    <img src="/images/ball7.png" className="ball" alt="Home"/>
+                <div className="image-div">
+                    <img src={headerImage} alt="Home"/>
+                </div>
+                <div className="hide-title">
+                    <div className="image-div">
+                        <img src={"/images/knucklehead.png"} alt="KNUCKLEHEAD" />
+                    </div>
+                    <div className="image-div">
+                        <img src={"/images/stats.png"} alt="STATS" />
+                    </div>
                 </div>
                 <div className="sport-game-flex">
                     <SportOptionDropDown selectedSport={selectedSport} setSelectedSport={setSelectedSport} />

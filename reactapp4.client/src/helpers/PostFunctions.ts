@@ -279,7 +279,9 @@ const postMLBGamesBySeason = async (obj: MLBGame, season: string) => {
             body: JSON.stringify(obj),
         })
         if (response.ok) {
-            const jsonResponse = response.json();
+            const jsonResponse = await response.json();
+            //console.log("✅ Batting stats uploaded:", jsonResponse);
+
             return jsonResponse;
         } else {
             console.log("*************************************************************");
@@ -334,7 +336,9 @@ const postMLBPlayerGamesPitchingBySeason = async (obj: MLBPlayerGamePitching[], 
         })
 
         if (response.ok) {
-            const jsonResponse = response.json();
+            const jsonResponse = await response.json();
+            console.log("✅ Batting stats uploaded:", jsonResponse);
+
             return jsonResponse;
         }
     } catch (error) {
@@ -372,6 +376,7 @@ const postMLBPlayerGamesFieldingBySeason = async (obj: MLBPlayerGameFielding[], 
 
 const postMLBActivePlayer = async (obj: MLBActivePlayer[], season: string) => {
     const url = `/api/MLBActivePlayer/${season}`;
+    console.log(obj)
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -390,6 +395,7 @@ const postMLBActivePlayer = async (obj: MLBActivePlayer[], season: string) => {
             console.log(obj);
             //throw new Error(`Upload failed: ${response.status} - ${errorText}`);
         } else {
+            console.log(obj)
             const result = await response.json();
             console.log("✅ Active player stats uploaded:", result);
         }
@@ -428,7 +434,10 @@ const postMLBPlayerGameInfoBySeason = async (obj: MLBPlayerGameInfo[], season: s
 const postMLBTeamInfoBySeason = async(data: MLBTeamInfo[], season: string) => {
     const response = await fetch(`/api/MLBTeam/teamInfo/${season}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(data)
     });
 

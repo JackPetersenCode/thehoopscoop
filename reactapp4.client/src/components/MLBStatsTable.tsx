@@ -17,13 +17,6 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ inputText, sta
     const [sortColumn, setSortColumn] = useState<string | null>(null);
     const [sortOrder, setSortOrder] = useState<SortOrder>('original');
     //const [originalData, setOriginalData] = useState<Stats[]>([]);
-    const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
-
-    useEffect(() => {
-      if (!isFetching) {
-        setHasLoadedOnce(true);
-      }
-    }, [isFetching]);
 
     const sortedData = useMemo(() => {
       if (!sortColumn || sortOrder === 'original') return [...originalData];
@@ -52,7 +45,7 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ inputText, sta
 
     const isInitialLoad = isFetching && statsData.length === 0;
     const showNoStats = !isFetching && statsData.length > 0 && filteredData.length === 0;
-
+    const noStatsData = !isFetching && statsData.length === 0 && !isInitialLoad;
 
     return (
     	<div className="player-box-container" style={{ position: 'relative' }}>
@@ -62,9 +55,11 @@ const MLBStatsTable: React.FC<MLBStatsTableProps> = React.memo(({ inputText, sta
     			</div>
     		)}
 
-    		{showNoStats ? (
-    			<div className="no-stats-available">NO STATS AVAILABLE</div>
-    		) : (
+		    {showNoStats ? (
+		    	<div className="no-stats-available">NO STATS EXIST</div>
+		    ) : noStatsData ? (
+		    	<div className="no-stats-available">NO STATS EXIST</div>
+		    ) : (
     			<>
     				<table
     					className="w-100"

@@ -55,7 +55,7 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ inputText, statsData
 
     const isInitialLoad = isFetching && statsData.length === 0;
     const showNoStats = !isFetching && statsData.length > 0 && filteredData.length === 0;
-
+    
 
     return (
     	<div className="player-box-container" style={{ position: 'relative' }}>

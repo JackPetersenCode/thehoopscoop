@@ -38,7 +38,7 @@ namespace ReactApp4.Server.Services
                 });
                 // ✅ Register the map here
                 csv.Context.RegisterClassMap<PlayMap>();
-                var records = csv.GetRecords<Play>().Take(50).ToList();
+                var records = csv.GetRecords<Play>().ToList();
                 return new OkObjectResult(records);
             }
             catch (Exception ex)

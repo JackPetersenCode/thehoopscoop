@@ -87,7 +87,7 @@ const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selecte
     return (
         <>
             {gamesPlayed.length > 0 ?
-                <div className="player-box-container margin-bottom" >
+                <div className="player-box-container" >
                     <div>
                         <table className="w-100">
                             <MLBStatsTableHeaders columns={columns} onSort={() => {}} />

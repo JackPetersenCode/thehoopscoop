@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import OverUnderLineInput from './OverUnderLineInput';
 import HomeOrVisitorDropDown from './HomeOrVisitorDropDown';
 import OverUnderLine from './OverUnderLine';
@@ -16,9 +16,10 @@ import MLBPropBetStatsDropDown from './MLBPropBetStatsDropDown';
 import MLBPropBetOpponentDropDown from './MLBPropBetOpponentDropDown';
 import MLBPropBetStatsDragNDrop from './MLBPropBetStatsDragNDrop';
 import MLBPropBetOpponent from './MLBPropBetOpponent';
+import axios from 'axios';
 
 interface MLBPropBetProps {
-    activePlayers: MLBActivePlayer[];
+    //activePlayers: MLBActivePlayer[];
     roster: MLBActivePlayer[];
     setRoster: React.Dispatch<React.SetStateAction<MLBActivePlayer[]>>;
     usedPlayers: MLBActivePlayer[];
@@ -26,7 +27,7 @@ interface MLBPropBetProps {
     gameOption: string;
 }
 
-const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoster, usedPlayers, 
+const MLBPropBet: React.FC<MLBPropBetProps> = ({ roster, setRoster, usedPlayers, 
     setUsedPlayers, gameOption }) => {
 
     const [inputText, setInputText] = useState('');
@@ -38,7 +39,7 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
     const [showHomeOrVisitor, setShowHomeOrVisitor] = useState(false);
     const [showOpponent, setShowOpponent] = useState(false);
     const [selectedOpponent, setSelectedOpponent] = useState({ team_id: '1', team_name: 'All Teams' });
-    const [selectedSeasonPropBet, setSelectedSeasonPropBet] = useState('2023');
+    const [selectedSeasonPropBet, setSelectedSeasonPropBet] = useState('2025');
     const [_selectedGame, setSelectedGame] = useState<ShotChartsGamesData | string>("");
     const [playerBoxScores, setPlayerBoxScores] = useState<Stats[]>([]);
     const [careerPlayerBoxScores, setCareerPlayerBoxScores] = useState<Stats[]>([]);
@@ -47,6 +48,19 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
     const [hittingPitchingPropBet, setHittingPitchingPropBet] = useState<string>("hitting");
     const [lastTenFilteredBoxScores, setLastTenFilteredBoxScores] = useState<Stats[]>([]);
     const [isFetching, setIsFetching] = useState<boolean>(false);
+    const [mlbActivePlayers, setMlbActivePlayers] = useState<MLBActivePlayer[]>([]);
+
+    useEffect(() => {
+        console.log("active players hook")
+        async function getData() {
+            const activePlayersResponse = await axios.get(`api/MLBActivePlayer/${selectedSeasonPropBet}`);
+            const activePlayersData = await activePlayersResponse.data;
+            console.log(activePlayersData)
+            setMlbActivePlayers(activePlayersData);
+        }
+
+        getData();
+    }, [selectedSeasonPropBet]);
 
     const deletePlayer = (player: MLBActivePlayer) => {
         const rows = [...roster];
@@ -88,6 +102,7 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
         //setSplitOptions(mlbSplitsPitching);
     }
 
+    console.log(selectedSeasonPropBet)
     return (
         <div>
         <br></br>
@@ -96,18 +111,18 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ activePlayers, roster, setRoste
         </div>
         <div className='yellow-line'>
         </div>
-        <div className="prop-bet-container">
-            <div className="hitting-pitching-container">
-                <div className={`hitting-pitching ${hittingPitchingPropBet === "hitting" ? "active" : ""}`} onClick={setHitting}>
-                    Hitting
-                </div>
-                <div className={`hitting-pitching ${hittingPitchingPropBet === "pitching" ? "active" : ""}`} onClick={setPitching}>
-                    Pitching
-                </div>
+        <div className="hitting-pitching-container">
+            <div className={`hitting-pitching ${hittingPitchingPropBet === "hitting" ? "active" : ""}`} onClick={setHitting}>
+                Hitting
             </div>
+            <div className={`hitting-pitching ${hittingPitchingPropBet === "pitching" ? "active" : ""}`} onClick={setPitching}>
+                Pitching
+            </div>
+        </div>
+        <div className="prop-bet-container">
             <div className="flex">
                 <div className="drop-down">
-                    <MLBSearchBar activePlayers={activePlayers} inputText={inputText} setInputText={setInputText} 
+                    <MLBSearchBar activePlayers={mlbActivePlayers} inputText={inputText} setInputText={setInputText} 
                         selectedPlayer={selectedPlayer} setSelectedPlayer={setSelectedPlayer} roster={roster} 
                         setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
                 </div>

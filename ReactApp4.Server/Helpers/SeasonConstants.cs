@@ -40,6 +40,22 @@ namespace ReactApp4.Server.Helpers
 			// Add future seasons here
 		};
 
+		public static readonly HashSet<string> MLBAllowedSeasonsNoDefaults = new()
+		{
+			"2015",
+			"2016",
+			"2017",
+			"2018",
+			"2019",
+			"2020",
+			"2021",
+			"2022",
+			"2023",
+			"2024",
+			"2025"
+			// Add future seasons here
+		};
+
 		// Whitelist box types
 		public static readonly HashSet<string> AllowedBoxTypes = new()
 		{

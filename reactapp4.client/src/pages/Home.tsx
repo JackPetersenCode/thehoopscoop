@@ -110,87 +110,88 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
             </div>
             :
             ""}
-            <div className='lineup-player-boxtype-dropdown-container'>
-
-                <div className="drop-down">
-                    <LineupsPlayersSelect options={lineupPlayerOptions} selectedLineupPlayer={selectedLineupPlayer} setSelectedLineupPlayer={setSelectedLineupPlayer} setSelectedBoxType={setSelectedBoxType} setSortField={setSortField} />
+            <div className="margin-top">
+                <div className='lineup-player-boxtype-dropdown-container'>
+                
+                    <div className="drop-down">
+                        <LineupsPlayersSelect options={lineupPlayerOptions} selectedLineupPlayer={selectedLineupPlayer} setSelectedLineupPlayer={setSelectedLineupPlayer} setSelectedBoxType={setSelectedBoxType} setSortField={setSortField} />
+                    </div>
+                    <div className="drop-down">
+                        <BoxTypeSelect options={selectedLineupPlayer === 'Players' ? statOptionsPlayers : statOptionsLineups} selectedBoxType={selectedBoxType} setSelectedBoxType={setSelectedBoxType} setSortField={setSortField} />
+                    </div>
+                
                 </div>
-                <div className="drop-down">
-                    <BoxTypeSelect options={selectedLineupPlayer === 'Players' ? statOptionsPlayers : statOptionsLineups} selectedBoxType={selectedBoxType} setSelectedBoxType={setSelectedBoxType} setSortField={setSortField} />
-                </div>
-
-            </div>
-            <div className="display-flex">
-                <div className="drop-down">
-                    <FindPlayerBottom activePlayers={activePlayers} inputTextBottom={inputTextBottom} setInputTextBottom={setInputTextBottom} selectedPlayerBottom={selectedPlayerBottom} setSelectedPlayerBottom={setSelectedPlayerBottom} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
-                </div>
-                <div className="drop-down">
-                    <SeasonsDropDown
-                        selectedSeason={selectedSeason}
-                        setSelectedSeason={setSelectedSeason}
-                        setSelectedPlayerShotCharts={() => { }}
-                        setSelectedGame={() => { }}
-                        isShotCharts={false}
-                        isPredictions={false}
-                        disabled={isFetching}
-                    />
-                </div>
-                {selectedBoxType === "Base" || selectedBoxType === "Misc" || selectedBoxType === "Opponent" ?
+                <div className="display-flex">
+                    <div className="drop-down">
+                        <FindPlayerBottom activePlayers={activePlayers} inputTextBottom={inputTextBottom} setInputTextBottom={setInputTextBottom} selectedPlayerBottom={selectedPlayerBottom} setSelectedPlayerBottom={setSelectedPlayerBottom} roster={roster} setRoster={setRoster} setUsedPlayers={setUsedPlayers} gameOption={gameOption} />
+                    </div>
+                    <div className="drop-down">
+                        <SeasonsDropDown
+                            selectedSeason={selectedSeason}
+                            setSelectedSeason={setSelectedSeason}
+                            setSelectedPlayerShotCharts={() => { }}
+                            setSelectedGame={() => { }}
+                            isShotCharts={false}
+                            isPredictions={false}
+                            disabled={isFetching}
+                        />
+                    </div>
+                    {selectedBoxType === "Base" || selectedBoxType === "Misc" || selectedBoxType === "Opponent" ?
+                        <div className="drop-down">
+                        <DropDown
+                                options={perModeOptions}
+                                setPerMode={setPerMode}
+                                setNumPlayers={setNumPlayers}
+                                setSelectedTeam={setSelectedTeam}
+                                setSelectedOpponent={setSelectedOpponent}
+                                dropDownType="Per Mode"
+                                disabled={isFetching}
+                        />
+                        </div>
+                        :
+                        ""}
+                    {selectedLineupPlayer === "Lineups" ?
+                        <div className="drop-down">
+                        <DropDown
+                                options={numPlayersOptions}
+                                setPerMode={setPerMode}
+                                setNumPlayers={setNumPlayers}
+                                setSelectedTeam={setSelectedTeam}
+                                setSelectedOpponent={setSelectedOpponent}
+                                dropDownType="# of Players"
+                                disabled={isFetching}
+                        />
+                        </div>
+                        :
+                        ""}
                     <div className="drop-down">
                     <DropDown
-                            options={perModeOptions}
+                            options={nbaTeams}
                             setPerMode={setPerMode}
                             setNumPlayers={setNumPlayers}
                             setSelectedTeam={setSelectedTeam}
                             setSelectedOpponent={setSelectedOpponent}
-                            dropDownType="Per Mode"
+                            dropDownType="Team"
                             disabled={isFetching}
-                    />
+                        />
                     </div>
-                    :
-                    ""}
-                {selectedLineupPlayer === "Lineups" ?
-                    <div className="drop-down">
-                    <DropDown
-                            options={numPlayersOptions}
+                    {selectedLineupPlayer === 'Players' ?
+                    <div className="drop-down" style={{marginRight: "0px"}}>
+                        <DropDown
+                            options={nbaTeams}
                             setPerMode={setPerMode}
                             setNumPlayers={setNumPlayers}
                             setSelectedTeam={setSelectedTeam}
                             setSelectedOpponent={setSelectedOpponent}
-                            dropDownType="# of Players"
+                            dropDownType="Opponent"
                             disabled={isFetching}
-                    />
+                        />
                     </div>
                     :
-                    ""}
-                <div className="drop-down">
-                <DropDown
-                        options={nbaTeams}
-                        setPerMode={setPerMode}
-                        setNumPlayers={setNumPlayers}
-                        setSelectedTeam={setSelectedTeam}
-                        setSelectedOpponent={setSelectedOpponent}
-                        dropDownType="Team"
-                        disabled={isFetching}
-                    />
+                    ""
+                    }
                 </div>
-                {selectedLineupPlayer === 'Players' ?
-                <div className="drop-down" style={{marginRight: "0px"}}>
-                    <DropDown
-                        options={nbaTeams}
-                        setPerMode={setPerMode}
-                        setNumPlayers={setNumPlayers}
-                        setSelectedTeam={setSelectedTeam}
-                        setSelectedOpponent={setSelectedOpponent}
-                        dropDownType="Opponent"
-                        disabled={isFetching}
-                    />
-                </div>
-                :
-                ""
-                }
             </div>
-            
             <StatsTable inputText={inputTextBottom} statsData={statsData} columns={columns} isFetching={isFetching} originalData={originalData} />
         </div>
         </>

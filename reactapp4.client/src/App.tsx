@@ -16,7 +16,7 @@ import RequireAuth from './auth/RequireAuth';
 function App() {
 
     //const [loading, setLoading] = useState(true);
-    const [selectedSport, setSelectedSport] = useState<string>("");
+    const [selectedSport, setSelectedSport] = useState<string>("MLB");
     const [gameOption, selectedGameOption] = useState<string>("Prop Bet")
     //console.log("App")
 
@@ -45,9 +45,9 @@ function App() {
             <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Layout />}>
-                    <Route path="/" element={<MLB selectedSport={selectedSport} setSelectedSport={setSelectedSport} />} />
-                    <Route path="/MLB" element={<MLB selectedSport={selectedSport} setSelectedSport={setSelectedSport} />} />
-                    <Route path="/NBA" element={<Home selectedSport={selectedSport} setSelectedSport={setSelectedSport} />} />
+                    <Route path="/" element={<MLB selectedSport={"MLB"} setSelectedSport={setSelectedSport} />} />
+                    <Route path="/MLB" element={<MLB selectedSport={"MLB"} setSelectedSport={setSelectedSport} />} />
+                    <Route path="/NBA" element={<Home selectedSport={"NBA"} setSelectedSport={setSelectedSport} />} />
                     <Route path="/Admin" element={
                       <RequireAuth>
                         <Admin />

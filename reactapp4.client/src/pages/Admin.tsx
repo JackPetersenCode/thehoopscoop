@@ -662,16 +662,15 @@ function Admin() {
             <button onClick={loadLineupsLoop}>League Dash Lineups</button>
             <button onClick={loadNewOddsFunction}>New Odds</button>
             <button onClick={loadExpectedBySeason}>Expected Matchups</button>
-            <button onClick={loadMLBGames}>MLB Games</button>
-            <button onClick={() => loadMLBPlayerGamesByCategory("pitching", "2023")}>MLB Player Games</button>
-            <button onClick={() => loadMLBActivePlayers("2023")}>MLB Active Players</button>
-            <button onClick={() => loadMLBPlayerGameInfoBySeason("2023")}>MLB Player Game Info</button>
-            <button onClick={() => loadMLBTeamInfoBySeason("2023")}>MLB Team Info</button>
-            <button onClick={() => loadMLBPlaysBySeason("2023")}>MLB Plays</button>
-            <button onClick={() => loadMLBPlayEventsBySeason("2023")}>MLB Play Events</button>
-            <button onClick={() => loadMLBPlayRunnersBySeason("2023")}>MLB Play Runners</button>
-            <button onClick={() => loadMLBPlayRunnersCreditsBySeason("2023")}>MLB Play Runners Credits</button>
-
+            <button onClick={() => loadMLBGames("2025")}>MLB Games</button>
+            <button onClick={() => loadMLBPlayerGamesByCategory("batting", "2025")}>MLB Player Games</button>
+            <button onClick={() => loadMLBActivePlayers("2025")}>MLB Active Players</button>
+            <button onClick={() => loadMLBPlayerGameInfoBySeason("2025")}>MLB Player Game Info</button>
+            <button onClick={() => loadMLBTeamInfoBySeason("2025")}>MLB Team Info</button>
+            <button onClick={() => loadMLBPlaysBySeason("2025")}>MLB Plays</button>
+            <button onClick={() => loadMLBPlayEventsBySeason("2025")}>MLB Play Events</button>
+            <button onClick={() => loadMLBPlayRunnersBySeason("2025")}>MLB Play Runners</button>
+            <button onClick={() => loadMLBPlayRunnersCreditsBySeason("2025")}>MLB Play Runners Credits</button>
         </div>
   );
 }

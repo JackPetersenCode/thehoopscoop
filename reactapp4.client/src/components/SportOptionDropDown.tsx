@@ -24,7 +24,6 @@ const SportOptionDropDown: React.FC<SportOptionDropDownProps> = ({ selectedSport
             </div>
             <div>
                 <select className="drop-flex-select-blue" value={selectedSport} onChange={handleChange}>
-                    <option className="drop-flex-option" value="">-- Choose a sport --</option>
                     <option className="drop-flex-option" value="NBA">NBA</option>
                     <option className="drop-flex-option" value="MLB">MLB</option>
                 </select>

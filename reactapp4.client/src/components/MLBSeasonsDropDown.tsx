@@ -21,7 +21,8 @@ const MLBSeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, se
         { season: '2021', display: '2021' },
         { season: '2022', display: '2022' },
         { season: '2023', display: '2023' },
-        { season: '2024', display: '2024' }
+        { season: '2024', display: '2024' },
+        { season: '2025', display: '2025' }
     ];
     
     const seasonsData = [
@@ -34,7 +35,8 @@ const MLBSeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, se
         { season: '2021', display: '2021' },
         { season: '2022', display: '2022' },
         { season: '2023', display: '2023' },
-        { season: '2024', display: '2024' }
+        { season: '2024', display: '2024' },
+        { season: '2025', display: '2025' }
     ];
     function handleSeasonChange(event: { preventDefault: () => void; target: { value: string; }; }) {
         event.preventDefault();
