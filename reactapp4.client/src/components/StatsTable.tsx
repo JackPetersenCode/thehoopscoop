@@ -55,7 +55,7 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ inputText, statsData
 
     const isInitialLoad = isFetching && statsData.length === 0;
     const showNoStats = !isFetching && statsData.length > 0 && filteredData.length === 0;
-    
+    const noStatsData = !isFetching && statsData.length === 0 && !isInitialLoad;    
 
     return (
     	<div className="player-box-container" style={{ position: 'relative' }}>
@@ -65,9 +65,11 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ inputText, statsData
     			</div>
     		)}
 
-    		{showNoStats ? (
-    			<div className="no-stats-available">NO STATS AVAILABLE</div>
-    		) : (
+		    {showNoStats ? (
+		    	<div className="no-stats-available">NO STATS EXIST</div>
+		    ) : noStatsData ? (
+		    	<div className="no-stats-available">NO STATS EXIST</div>
+		    ) : (
     			<>
     				<table
     					className="w-100"

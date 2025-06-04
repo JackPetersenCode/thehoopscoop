@@ -98,7 +98,14 @@ const PropBetResults: React.FC<PropBetResultsProps> = ({ careerPlayerBoxScores, 
                             Last 10 Games:
                         </div>
                         <div className="prop-results">
-                            <span className="prop-results-fraction">{lastTenFilteredBoxScores.length} / {gamesPlayed.length < 10 ? gamesPlayed.length : "10"}</span> <span className="neon-orange">{(100 * lastTenFilteredBoxScores.length / (gamesPlayed.length < 10 ? gamesPlayed.length : 10.0)).toFixed(2)}%</span>
+                            <span className="prop-results-fraction">{lastTenFilteredBoxScores.length} / {gamesPlayed.length < 10 ? gamesPlayed.length : "10"}</span> 
+                            <span className="neon-orange">
+                              {
+                                (gamesPlayed.length === 0
+                                  ? 0
+                                  : (100 * lastTenFilteredBoxScores.length / (gamesPlayed.length < 10 ? gamesPlayed.length : 10.0))
+                                ).toFixed(2)}%
+                            </span>                        
                         </div>
                     </div>
                 </div>

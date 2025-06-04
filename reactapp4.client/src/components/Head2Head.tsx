@@ -12,32 +12,6 @@ interface Player {
 
 const Head2Head = () => {
 
-    const [players, setPlayers] = useState([]);
-
-    useEffect(() => {
-      // Make a GET request to the Flask API endpoint
-        const getPlayers = async() => {
-            try {
-                console.log('hello guy')
-                let response = await axios.get('http://localhost:5000/api/players')
-                console.log(response.data);
-                setPlayers(response.data);
-            } catch (error) {
-              // Handle errors here
-              console.error('Error fetching data:', error);
-            }
-        }
-        getPlayers();
-    }, []); // The empty dependency array ensures this effect runs once on component mount
-
-    // <div>
-    // <h1>Players:</h1>
-    //   {players.map((player: Player, index: React.Key) => (
-    //     <div key={index}>
-    //       {player.full_name}
-    //     </div>
-    //   ))}
-    // </div>
     return (
         <div>
             <br></br>

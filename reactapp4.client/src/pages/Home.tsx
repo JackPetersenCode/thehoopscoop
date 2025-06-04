@@ -85,6 +85,10 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
         selectedOpponent
     })
 
+    //<div className="drop-down">
+    //    <LineupsPlayersSelect options={lineupPlayerOptions} selectedLineupPlayer={selectedLineupPlayer} setSelectedLineupPlayer={setSelectedLineupPlayer} setSelectedBoxType={setSelectedBoxType} setSortField={setSortField} />
+    //</div>
+
     return (
         <>
         <Header selectedSport={selectedSport} setSelectedSport={setSelectedSport} gameOption={gameOption} setGameOption={setGameOption} />
@@ -112,11 +116,7 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
             ""}
             <div className="margin-top">
                 <div className='lineup-player-boxtype-dropdown-container'>
-                
-                    <div className="drop-down">
-                        <LineupsPlayersSelect options={lineupPlayerOptions} selectedLineupPlayer={selectedLineupPlayer} setSelectedLineupPlayer={setSelectedLineupPlayer} setSelectedBoxType={setSelectedBoxType} setSortField={setSortField} />
-                    </div>
-                    <div className="drop-down">
+                    <div className="drop-down no-margin-right">
                         <BoxTypeSelect options={selectedLineupPlayer === 'Players' ? statOptionsPlayers : statOptionsLineups} selectedBoxType={selectedBoxType} setSelectedBoxType={setSelectedBoxType} setSortField={setSortField} />
                     </div>
                 
