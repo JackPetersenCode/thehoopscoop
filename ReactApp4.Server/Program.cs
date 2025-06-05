@@ -15,6 +15,13 @@ namespace ReactApp4.Server
             //Thread pythonThread = new Thread(ExecutePythonCode);
             //pythonThread.Start();
             var builder = WebApplication.CreateBuilder(args);
+
+            // Add environment and production JSON config support
+            builder.Configuration
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables();
             // 🔧 Increase request body limit
             builder.WebHost.ConfigureKestrel(serverOptions =>
             {
@@ -114,10 +121,12 @@ namespace ReactApp4.Server
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
                         )

@@ -34,13 +34,15 @@ namespace ReactApp4.Server.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            // Replace this with your actual credential check
-            if (request.Username == "admin" && request.Password == "password123")
+            var adminUsername = _configuration["AdminCredentials:Username"];
+            var adminPassword = _configuration["AdminCredentials:Password"];
+
+            if (request.Username == adminUsername && request.Password == adminPassword)
             {
                 var token = GenerateJwtToken(request.Username);
                 return Ok(new { token });
             }
-
+    
             return Unauthorized();
         }
 
