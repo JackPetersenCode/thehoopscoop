@@ -41,7 +41,6 @@ namespace ReactApp4.Server.Services
                         WHERE {tableName}.min > 0 ";
                 if (playerId != "1")
                 {
-                    Console.WriteLine("playerId is not 1");
                     gamesPlayedQuery +=
                         $@"AND {tableName}.player_id = @playerId ";
                 }
@@ -87,7 +86,6 @@ namespace ReactApp4.Server.Services
                 }
                 if (selectedOpponent != "1")
                 {
-                    Console.WriteLine("*****************************************************************************************************************************************888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888");
                     offRatingQuery +=
                         $@"AND (league_games_{season}.matchup LIKE @selectedOpponentHome OR league_games_{season}.matchup LIKE @selectedOpponentAway) ";
                 }
@@ -577,8 +575,6 @@ namespace ReactApp4.Server.Services
 
                 // int pageSize = 100;
                 // 
-                Console.WriteLine("BoxType: ==> ");
-                Console.WriteLine(boxType);
 
                 //if (boxType == "Stats")
                 //{
@@ -641,8 +637,6 @@ namespace ReactApp4.Server.Services
                                 {tableName}.min > 0 ";
                         if (playerId != "1")
                         {
-                            Console.WriteLine("player iddddd");
-                            Console.WriteLine(playerId);
                             query +=
                                 $@"AND {tableName}.player_id = @playerId ";
                         }
@@ -712,9 +706,6 @@ namespace ReactApp4.Server.Services
                             {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp
                         ORDER BY {sortField} {order}";
 
-                        Console.WriteLine("HERE");
-                        Console.WriteLine(query);
-
                     }
                     else if (perMode == "Per Minute" || perMode == "Per 12 Minutes" || perMode == "Per 24 Minutes")
                     {
@@ -778,7 +769,6 @@ namespace ReactApp4.Server.Services
                         }
                         query += $@"GROUP BY {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp 
                         ORDER BY {sortField} {order}";
-                        Console.WriteLine(query);
 
                     }
                     else if (perMode == "Per 100 Poss")
@@ -847,15 +837,11 @@ namespace ReactApp4.Server.Services
                       new NpgsqlParameter("@selectedOpponentAwayReverse", $"%{selectedOpponent} @ %")
                     )
                     .ToListAsync();
-                    Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
 
                 }
                 else if (boxType == "advanced")
                 {
-                    Console.WriteLine(selectedTeam);
-                    Console.WriteLine(selectedOpponent);
-
                     if (sortField == "min")
                     {
                         sortField = "min";
@@ -896,7 +882,6 @@ namespace ReactApp4.Server.Services
                         HAVING Advanced_Stats.min > 0
                         ORDER BY {sortField} {order}
                     ";
-                    Console.WriteLine(query);
                     var boxScores = await _context.BoxScoreAdvancedPlayers
                     .FromSqlRaw(query,
                       new NpgsqlParameter("@selectedTeamPattern", $"%{selectedTeam}%"),
@@ -908,7 +893,6 @@ namespace ReactApp4.Server.Services
                       new NpgsqlParameter("@selectedOpponentAwayReverse", $"%{selectedOpponent} @ %")
                     ).ToListAsync();
 
-                    Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
 
                 }
@@ -946,7 +930,6 @@ namespace ReactApp4.Server.Services
                       new NpgsqlParameter("@selectedOpponentHomeReverse", $"%{selectedOpponent} vs. %"),
                       new NpgsqlParameter("@selectedOpponentAwayReverse", $"%{selectedOpponent} @ %")
                     ).ToListAsync();
-                    Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
                 }
                 else if (boxType == "misc")
@@ -1129,7 +1112,6 @@ namespace ReactApp4.Server.Services
                                     {tableName}.player_id, {tableName}.player_name, {tableName}.team_id, {tableName}.team_abbreviation, team_city, GamesPlayed.gp
                                 ORDER BY {sortField} {order}";
                     }
-                    Console.WriteLine(boxType);
                     var boxScores = await _context.BoxScoreMiscPlayers
                     .FromSqlRaw(query,
                       new NpgsqlParameter("@selectedTeamPattern", $"%{selectedTeam}%"),
@@ -1140,12 +1122,10 @@ namespace ReactApp4.Server.Services
                       new NpgsqlParameter("@selectedOpponentHomeReverse", $"%{selectedOpponent} vs. %"),
                       new NpgsqlParameter("@selectedOpponentAwayReverse", $"%{selectedOpponent} @ %")
                     ).ToListAsync();
-                    Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
                 }
                 else if (boxType == "scoring")
                 {
-                    Console.WriteLine("Scoring!");
                     query =
                         gamesPlayedQuery + ", " + offRatingQuery + 
                         $@"                       
@@ -1248,7 +1228,6 @@ namespace ReactApp4.Server.Services
                       new NpgsqlParameter("@selectedOpponentHomeReverse", $"%{selectedOpponent} vs. %"),
                       new NpgsqlParameter("@selectedOpponentAwayReverse", $"%{selectedOpponent} @ %")
                     ).ToListAsync();
-                    Console.WriteLine(boxScores.Count);
                     return Ok(boxScores);
                 }
                 //else if (boxType == "Opponent")
@@ -1328,7 +1307,6 @@ namespace ReactApp4.Server.Services
                 //                $"ORDER BY {sortField} {order}";
                 //    }
                 //    var leagueDashLineups = await _context.LeagueDashLineupOpponents.FromSqlRaw(query).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-                //    Console.WriteLine(leagueDashLineups.Count);
                 //    return Ok(leagueDashLineups);
 
                 {

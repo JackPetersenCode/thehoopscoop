@@ -130,8 +130,6 @@ namespace ReactApp4.Server.Services
 
         public async Task<IActionResult> InsertPlayEventAsync(List<PlayPlayEvents> playEvents, string season)
         {
-            Console.WriteLine("PlayEvents Count:");
-            Console.WriteLine(playEvents.Count);
             if (playEvents == null || playEvents.Count == 0)
                 return BadRequest("No records provided.");
 
@@ -305,9 +303,6 @@ namespace ReactApp4.Server.Services
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
                 using var connection = new NpgsqlConnection(connectionString);
                 await connection.OpenAsync();
-
-                Console.WriteLine("play runners count:");
-                Console.WriteLine(playRunners.Count);
 
                 foreach (var playRunner in playRunners)
                 {           

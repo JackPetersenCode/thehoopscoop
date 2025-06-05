@@ -39,8 +39,6 @@ namespace ReactApp4.Server.Services
         public async Task<IActionResult> CreateBoxScoreSummary([FromBody] BoxScoreSummary boxScoreSummary, string season)
         {
             // Implement logic to create a new league game in the database
-            Console.WriteLine(boxScoreSummary);
-
             try
             {
                 if (boxScoreSummary == null)

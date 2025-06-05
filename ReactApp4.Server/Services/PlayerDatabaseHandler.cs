@@ -20,13 +20,10 @@ namespace ReactApp4.Server.Services
         public async Task<ActionResult<IEnumerable<Player>>> GetAllPlayers()
         {
             var tableName = $"players";
-            Console.WriteLine(tableName);
 
             var query = $"SELECT * FROM {tableName}";
 
             var players = await _context.Players.FromSqlRaw(query).ToListAsync();
-
-            Console.WriteLine(players);
 
             return players;
         }
@@ -39,8 +36,6 @@ namespace ReactApp4.Server.Services
 
             var players = await _context.Players.FromSqlRaw(query).ToListAsync();
 
-            Console.WriteLine(players);
-
             return players;
         }
 
@@ -51,8 +46,6 @@ namespace ReactApp4.Server.Services
             var query = $"SELECT * FROM {tableName} WHERE is_active = FALSE";
 
             var players = await _context.Players.FromSqlRaw(query).ToListAsync();
-
-            Console.WriteLine(players);
 
             return players;
         }

@@ -519,7 +519,6 @@ namespace ReactApp4.Server.Services
             //        AND p.result_type = 'atBat'
             //    GROUP BY p.matchup_batter_id, p.matchup_batter_full_name
             //)
-            Console.WriteLine(query);
             var result = await _context.MLBStatsBattingWithSplits
             .FromSqlRaw(query,
                 parameters.ToArray()
@@ -797,7 +796,6 @@ namespace ReactApp4.Server.Services
                 GROUP BY {finalTableName}.person_id, {activePlayersTable}.primary_position_name, {finalTableName}.team_name,
                     {teamInfoTable}.league_name
                 ORDER BY {sortField} {order}";
-            Console.WriteLine(query);
             var result = await _context.MLBStatsBattings.FromSqlRaw(query, parameters.ToArray()).ToListAsync();
             return result;            
         }
@@ -846,8 +844,6 @@ namespace ReactApp4.Server.Services
             }
             if (selectedTeam != "1" && selectedTeam != "0")
             {
-                Console.WriteLine("selected Team");
-                Console.WriteLine(selectedTeam);
                 conditions.Add($@"{teamInfoTable}.team_id = CAST(@selectedTeam AS INT)");
                 finalSplitConditions.Add($@"
                     ti.team_id = CAST(@selectedTeam AS INT)
@@ -864,7 +860,6 @@ namespace ReactApp4.Server.Services
                 parameters.Add(new NpgsqlParameter("@selectedPlayer", selectedPlayer.Value));
             }
             if (IsRecentGamesOption(yearToDateOption)) {
-                Console.WriteLine(yearToDateOption);
                 var rowNumber = yearToDateOption == "Last 7 Games" ? 7 : yearToDateOption == "Last 15 Games" ? 15 :
                     yearToDateOption == "Last 30 Games" ? 30 : 0;
                 conditions.Add($"rn <= {rowNumber}");
@@ -879,8 +874,6 @@ namespace ReactApp4.Server.Services
             }
             if (IsSpecificOpponent(selectedOpponent))
             {
-                Console.WriteLine("is specific opponent");
-                Console.WriteLine(selectedOpponent);
                 conditions.Add($"opponent_team_id = CAST(@selectedOpponent AS INT)");
                 finalSplitConditions.Add($@"
                     (
@@ -1106,7 +1099,6 @@ namespace ReactApp4.Server.Services
                 GROUP BY {finalTableName}.person_id, {activePlayersTable}.primary_position_name, {finalTableName}.team_name,
                     {teamInfoTable}.league_name
                 ORDER BY {sortField} {order}";
-            Console.WriteLine(query);
             var result = await _context.MLBStatsPitchings.FromSqlRaw(query, parameters.ToArray()).ToListAsync();
             return result;
         }
@@ -1168,8 +1160,6 @@ namespace ReactApp4.Server.Services
             }
             if (selectedTeam != "1" && selectedTeam != "0")
             {
-                Console.WriteLine("selected Team");
-                Console.WriteLine(selectedTeam);
                 conditions.Add($@"{teamInfoTable}.team_id = CAST(@selectedTeam AS INT)");
                 finalSplitConditions.Add($@"
                     ti.team_id = CAST(@selectedTeam AS INT)
@@ -1186,7 +1176,6 @@ namespace ReactApp4.Server.Services
                 parameters.Add(new NpgsqlParameter("@selectedPlayer", selectedPlayer.Value));
             }
             if (IsRecentGamesOption(yearToDateOption)) {
-                Console.WriteLine(yearToDateOption);
                 var rowNumber = yearToDateOption == "Last 7 Games" ? 7 : yearToDateOption == "Last 15 Games" ? 15 :
                     yearToDateOption == "Last 30 Games" ? 30 : 0;
                 conditions.Add($"rn <= {rowNumber}");
@@ -1201,8 +1190,6 @@ namespace ReactApp4.Server.Services
             }
             if (IsSpecificOpponent(selectedOpponent))
             {
-                Console.WriteLine("is specific opponent");
-                Console.WriteLine(selectedOpponent);
                 conditions.Add($"opponent_team_id = CAST(@selectedOpponent AS INT)");
                 finalSplitConditions.Add($@"
                     (
@@ -1432,7 +1419,6 @@ namespace ReactApp4.Server.Services
                 ";
             }
 
-            Console.WriteLine(query);
             var result = await _context.MLBStatsPitchingSplitss.FromSqlRaw(query, parameters.ToArray()).ToListAsync();
             return result;
         }

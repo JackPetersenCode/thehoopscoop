@@ -49,7 +49,6 @@ namespace ReactApp4.Server.Services
         {
             try
             {
-                Console.WriteLine(selectedTeam);
                 var tableName = $"league_dash_lineups_{boxType.ToLower()}_{numPlayers}man_{season}";
 
                 var query = $"SELECT * FROM {tableName} WHERE team_id LIKE '%{selectedTeam}%' ORDER BY {sortField} {order}";
@@ -59,7 +58,6 @@ namespace ReactApp4.Server.Services
                 if (boxType == "Advanced")
                 {
                     var leagueDashLineups = await _context.LeagueDashLineupAdvanceds.FromSqlRaw(query).ToListAsync();
-                    Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups); // Wrap the result in OkObjectResult
                 } else if (boxType == "Base")
                 {
@@ -69,7 +67,6 @@ namespace ReactApp4.Server.Services
                     }
                     else if (perMode == "Per Game")
                     {
-                        Console.WriteLine("HERE");
                         query = $"SELECT id, group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min / gp AS min, " +
                                 $"fgm / gp AS fgm, fga / gp AS fga, fg_pct, fg3m / gp AS fg3m, fg3a / gp AS fg3a, fg3_pct, " +
                                 $"ftm / gp AS ftm, fta / gp AS fta, ft_pct, oreb / gp AS oreb, dreb / gp AS dreb, reb / gp AS reb, " +
@@ -81,8 +78,6 @@ namespace ReactApp4.Server.Services
                                 $"WHERE team_id LIKE '%{selectedTeam}%' " +
                                 $"ORDER BY {sortField} {order} ";
                                 
-                        Console.WriteLine(query);
-
                     }
                     else if (perMode == "Per Minute")
                     {
@@ -96,7 +91,6 @@ namespace ReactApp4.Server.Services
                                 $"FROM {tableName} " +
                                 $"WHERE team_id LIKE '%{selectedTeam}%' " +
                                 $"ORDER BY {sortField} {order}";
-                        Console.WriteLine(query);
 
                     } else if (perMode == "Per 100 Poss")
                     {
@@ -116,13 +110,11 @@ namespace ReactApp4.Server.Services
                                 $"ORDER BY {sortField} {order}";
                     }
                     var leagueDashLineups = await _context.LeagueDashLineupBases.FromSqlRaw(query).ToListAsync();
-                    Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
             
                 } else if (boxType == "FourFactors")
                 {
                     var leagueDashLineups = await _context.LeagueDashLineupFourFactors.FromSqlRaw(query).ToListAsync();
-                    Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
                 } else if (boxType == "Misc")
                 {
@@ -176,14 +168,11 @@ namespace ReactApp4.Server.Services
                                 $"WHERE team_id LIKE '%{selectedTeam}%' " +
                                 $"ORDER BY {sortField} {order}";
                     }
-                    Console.WriteLine(boxType);
                     var leagueDashLineups = await _context.LeagueDashLineupMiscs.FromSqlRaw(query).ToListAsync();
-                    Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
                 } else if (boxType == "Scoring")
                 {
                     var leagueDashLineups = await _context.LeagueDashLineupScorings.FromSqlRaw(query).ToListAsync();
-                    Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
                 } else if (boxType == "Opponent")
                 {
@@ -262,7 +251,6 @@ namespace ReactApp4.Server.Services
                                 $"ORDER BY {sortField} {order}";
                     }
                     var leagueDashLineups = await _context.LeagueDashLineupOpponents.FromSqlRaw(query).ToListAsync();
-                    Console.WriteLine(leagueDashLineups.Count);
                     return Ok(leagueDashLineups);
                 }
             {
@@ -330,9 +318,6 @@ namespace ReactApp4.Server.Services
 
                         case "Base":
                             sql = $"INSERT INTO league_dash_lineups_base_{numPlayers}man_{season} (group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, reb, ast, tov, stl, blk, blka, pf, pfd, pts, plus_minus, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, fgm_rank, fga_rank, fg_pct_rank, fg3m_rank, fg3a_rank, fg3_pct_rank, ftm_rank, fta_rank, ft_pct_rank, oreb_rank, dreb_rank, reb_rank, ast_rank, tov_rank, stl_rank, blk_rank, blka_rank, pf_rank, pfd_rank, pts_rank, plus_minus_rank) VALUES (@group_set, @group_id, @group_name, @team_id, @team_abbreviation, @gp, @w, @l, @w_pct, @min, @fgm, @fga, @fg_pct, @fg3m, @fg3a, @fg3_pct, @ftm, @fta, @ft_pct, @oreb, @dreb, @reb, @ast, @tov, @stl, @blk, @blka, @pf, @pfd, @pts, @plus_minus, @gp_rank, @w_rank, @l_rank, @w_pct_rank, @min_rank, @fgm_rank, @fga_rank, @fg_pct_rank, @fg3m_rank, @fg3a_rank, @fg3_pct_rank, @ftm_rank, @fta_rank, @ft_pct_rank, @oreb_rank, @dreb_rank, @reb_rank, @ast_rank, @tov_rank, @stl_rank, @blk_rank, @blka_rank, @pf_rank, @pfd_rank, @pts_rank, @plus_minus_rank);";
-
-                            Console.WriteLine(leagueDashLineup.Length);
-                            Console.WriteLine(leagueDashLineup);
 
                             string? fgm_string = leagueDashLineup[10]?.ToString();
                             decimal? fgm = !string.IsNullOrEmpty(fgm_string) ? JsonConvert.DeserializeObject<decimal>(fgm_string) : (decimal?)null;
@@ -541,9 +526,6 @@ namespace ReactApp4.Server.Services
                         
                         case "Advanced":
                             sql = $"INSERT INTO league_dash_lineups_advanced_{numPlayers}man_{season} (group_set, group_id, group_name, team_id, team_abbreviation, gp, w, l, w_pct, min, e_off_rating, off_rating, e_def_rating, def_rating, e_net_rating, net_rating, ast_pct, ast_to, ast_ratio, oreb_pct, dreb_pct, reb_pct, tm_tov_pct, efg_pct, ts_pct, e_pace, pace, pace_per40, poss, pie, gp_rank, w_rank, l_rank, w_pct_rank, min_rank, off_rating_rank, def_rating_rank, net_rating_rank, ast_pct_rank, ast_to_rank, ast_ratio_rank, oreb_pct_rank, dreb_pct_rank, reb_pct_rank, tm_tov_pct_rank, efg_pct_rank, ts_pct_rank, pace_rank, pie_rank) VALUES (@group_set, @group_id, @group_name, @team_id, @team_abbreviation, @gp, @w, @l, @w_pct, @min, @e_off_rating, @off_rating, @e_def_rating, @def_rating, @e_net_rating, @net_rating, @ast_pct, @ast_to, @ast_ratio, @oreb_pct, @dreb_pct, @reb_pct, @tm_tov_pct, @efg_pct, @ts_pct, @e_pace, @pace, @pace_per40, @poss, @pie, @gp_rank, @w_rank, @l_rank, @w_pct_rank, @min_rank, @off_rating_rank, @def_rating_rank, @net_rating_rank, @ast_pct_rank, @ast_to_rank, @ast_ratio_rank, @oreb_pct_rank, @dreb_pct_rank, @reb_pct_rank, @tm_tov_pct_rank, @efg_pct_rank, @ts_pct_rank, @pace_rank, @pie_rank);";
-
-                            Console.WriteLine(leagueDashLineup.Length);
-                            Console.WriteLine(leagueDashLineup);
 
                             string? e_off_rating_string = leagueDashLineup[10]?.ToString();
                             decimal? e_off_rating = !string.IsNullOrEmpty(e_off_rating_string) ? JsonConvert.DeserializeObject<decimal>(e_off_rating_string) : (decimal?)null;

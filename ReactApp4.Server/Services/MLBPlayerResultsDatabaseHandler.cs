@@ -36,8 +36,6 @@ namespace ReactApp4.Server.Services
             var selectedOpponentObject = JsonConvert.DeserializeObject<MLBTeam>(decodedSelectedOpponentJson);
 
             // Now you can work with 'rosterList' and 'propBetStatsList' as lists of objects
-            Console.WriteLine(selectedSeason);
-            Console.WriteLine("selected season");
             var query = $@"";
 
             //var tableName = "player_game_stats_batting_" + selectedSeason;
@@ -205,7 +203,6 @@ namespace ReactApp4.Server.Services
                         }
                         careerArray.Add(localCareerQuery);
 
-                        Console.WriteLine(query);
                     }
                     if (hittingPitching == "pitching")
                     {
@@ -240,7 +237,7 @@ namespace ReactApp4.Server.Services
                     //var mlbGamesTable = "mlb_games_" + selectedSeason;
                     var mlbGamesTable = $"mlb_games_{selectedSeason}";
                     var opponentCTE = $@"";
-                    
+
                     if (hittingPitching == "hitting")
                     {
                         if (selectedOpponentObject != null && selectedOpponentObject.Team_id != "1")
@@ -397,7 +394,6 @@ namespace ReactApp4.Server.Services
                             )
                             .ToListAsync<object>();
                     }
-                    Console.WriteLine(query);
 
                     return Ok(boxScores);
                 }
@@ -405,7 +401,6 @@ namespace ReactApp4.Server.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
                 return StatusCode(500, $"Internal Server Error: {ex}");
             }
         }

@@ -37,8 +37,6 @@ namespace ReactApp4.Server.Services
         }
         public async Task<ActionResult<IEnumerable<SelectedPlayer>>> GetRosterBySeasonByTeam(string season, string teamId)
         {
-            Console.WriteLine(season);
-            Console.WriteLine(teamId);
             var tableName = $"box_score_traditional_{season}";
 
             var query = $@"SELECT DISTINCT(player_id), player_name, team_id, team_abbreviation FROM {tableName} 
@@ -53,7 +51,6 @@ namespace ReactApp4.Server.Services
 
         public async Task<IActionResult> Get82GameAverages(string playerId, string season, string H_or_V, string gameDate)
         {
-            Console.WriteLine(gameDate);
             try
             {
 
@@ -92,8 +89,6 @@ namespace ReactApp4.Server.Services
                     sql += " AND (CAST(SUBSTRING(game_date_est, 0, 11) AS DATE) < @gameDate)";
                 }
                 sql += $@"GROUP BY player_id, player_name, team_id, team_abbreviation";
-                
-                Console.WriteLine(sql);
 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 

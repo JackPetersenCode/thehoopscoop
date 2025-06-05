@@ -26,13 +26,10 @@ namespace ReactApp4.Server.Services
         public async Task<ActionResult<IEnumerable<LeagueGame>>> GetGamesBySeason(string season)
         {
             var tableName = $"league_games_{season}";
-            Console.WriteLine(tableName);
 
             var query = $"SELECT * FROM {tableName}";
 
             var gamesBySeason = await _context.LeagueGames.FromSqlRaw(query).ToListAsync();
-
-            Console.WriteLine(gamesBySeason);
 
             return gamesBySeason;
         }
@@ -40,8 +37,6 @@ namespace ReactApp4.Server.Services
         public async Task<ActionResult<IEnumerable<ShotChartsGame>>> GetShotChartsGames(string playerId, string season)
         {
             var tableName = $"league_games_{season}";
-            Console.WriteLine(tableName);
-
             var query = $@"SELECT DISTINCT(league_games_{season}.game_id), 
                         league_games_{season}.game_date, 
                         matchup 
@@ -57,18 +52,12 @@ namespace ReactApp4.Server.Services
                 new NpgsqlParameter("@playerId", playerId)
             ).ToListAsync();
 
-            Console.WriteLine(games);
-
             return games;
         }
 
 
         public async Task<IActionResult> GetBackToBacks(LeagueGameWithHomeVisitor game, string previousDate, string season)
         {
-            Console.WriteLine(season);
-            Console.WriteLine(previousDate);
-            Console.WriteLine(game);
-
             try
             {
                 var sql = $@"
@@ -77,8 +66,6 @@ namespace ReactApp4.Server.Services
                     WHERE team_id IN (@homeTeamId, @visitorTeamId)
                     AND game_date = @previousDate;
                 ";
-
-                Console.WriteLine(sql);
 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
@@ -137,17 +124,12 @@ namespace ReactApp4.Server.Services
 
                 var season = $"{sub}_{(seasonId + 1).ToString().Substring(2)}";
 
-                Console.WriteLine(season);
-
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-
-                    Console.WriteLine(season);
                     var sql = $"INSERT INTO league_games_{season} (season_id, team_id, team_abbreviation, team_name, game_id, game_date, matchup, wl, min, fgm, fga, fg_pct, fg3m, fg3a, fg3_pct, ftm, fta, ft_pct, oreb, dreb, reb, ast, stl, blk, tov, pf, pts, plus_minus, video_available) VALUES (@season_id, @team_id, @team_abbreviation, @team_name, @game_id, @game_date, @matchup, @wl, @min, @fgm, @fga, @fg_pct, @fg3m, @fg3a, @fg3_pct, @ftm, @fta, @ft_pct, @oreb, @dreb, @reb, @ast, @stl, @blk, @tov, @pf, @pts, @plus_minus, @video_available);";
-                    Console.WriteLine(sql);
                     string? seasonIdString = leagueGame[0]?.ToString();
                     NpgsqlParameter seasonIdParam = new NpgsqlParameter("@season_id", NpgsqlDbType.Text);
                     seasonIdParam.Value = seasonIdString;

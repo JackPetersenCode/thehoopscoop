@@ -277,7 +277,6 @@ namespace ReactApp4.Server.Services
                     AND (home_team_id = @teamId OR visitor_team_id = @teamId)
                     ORDER BY game_date_est DESC LIMIT 1   
                 ";
-                Console.WriteLine(sql);
 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
@@ -330,7 +329,6 @@ namespace ReactApp4.Server.Services
                 {
                     sql += $@"AND game_id = @gameId";
                 }
-                Console.WriteLine(sql);
 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
@@ -384,7 +382,6 @@ namespace ReactApp4.Server.Services
                 {
                     sql += $@"AND game_id = @gameId";
                 }
-                Console.WriteLine(sql);
 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
@@ -438,8 +435,6 @@ namespace ReactApp4.Server.Services
                     GROUP BY green_red
                 ";
 
-                Console.WriteLine(sql);
-
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
@@ -478,7 +473,6 @@ namespace ReactApp4.Server.Services
 
         public async Task<IActionResult> GetWinPctBySeasonByTeam(string season, string team)
         {
-            Console.WriteLine(team);
             try
             {
 
@@ -489,8 +483,6 @@ namespace ReactApp4.Server.Services
                     OR visitor_team = @team
                     GROUP BY green_red
                 ";
-
-                Console.WriteLine(sql);
 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
@@ -572,8 +564,6 @@ namespace ReactApp4.Server.Services
                     GROUP BY green_red
                 ";
 
-                Console.WriteLine(sql);
-
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
@@ -612,7 +602,6 @@ namespace ReactApp4.Server.Services
 
         public async Task<IActionResult> GetAverageScore(string season, string gameDate)
         {
-            Console.WriteLine(gameDate);
             //var realDate = gameDate.Substring(0, 10);
             //Console.WriteLine(realDate);
             try
@@ -631,8 +620,6 @@ namespace ReactApp4.Server.Services
 
                 }
                 
-                Console.WriteLine(sql);
-
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
@@ -675,7 +662,6 @@ namespace ReactApp4.Server.Services
 
         public async Task<IActionResult> GetHistoricalResults(string season, string teamName)
         {
-            Console.WriteLine(teamName);
             //var realDate = gameDate.Substring(0, 10);
             //Console.WriteLine(realDate);
             try
@@ -691,8 +677,6 @@ namespace ReactApp4.Server.Services
 
                 sql += $@"ORDER BY id DESC";
                 
-                Console.WriteLine(sql);
-
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
@@ -747,8 +731,6 @@ namespace ReactApp4.Server.Services
                     WHERE matchup LIKE '%vs.%'
                 ";
                 
-                Console.WriteLine(sql);
-
                 // Ensure your connection string is correct
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 

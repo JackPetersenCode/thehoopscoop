@@ -26,29 +26,23 @@ namespace ReactApp4.Server.Services
         public async Task<ActionResult<IEnumerable<Shot>>> GetShotsBySeason(string playerId, string season)
         {
             var tableName = $"shots_{season}";
-            Console.WriteLine(tableName);
 
             var query = $@"SELECT * FROM {tableName}
                         WHERE player_id = '{playerId}'";
 
             var shotsBySeason = await _context.Shots.FromSqlRaw(query).ToListAsync();
 
-            Console.WriteLine(shotsBySeason);
-
             return shotsBySeason;
         }
         public async Task<ActionResult<IEnumerable<Shot>>> GetShotsByGame(string playerId, string season, string gameId)
         {
             var tableName = $"shots_{season}";
-            Console.WriteLine(tableName);
 
             var query = $@"SELECT * FROM {tableName}
                         WHERE player_id = '{playerId}'
                         AND game_id = '{gameId}'";
 
             var shotsByGame = await _context.Shots.FromSqlRaw(query).ToListAsync();
-
-            Console.WriteLine(shotsByGame);
 
             return shotsByGame;
         }

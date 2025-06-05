@@ -35,11 +35,8 @@ namespace ReactApp4.Server.Services
             var selectedOpponentObject = JsonConvert.DeserializeObject<NBATeam>(decodedSelectedOpponentJson);
 
             // Now you can work with 'rosterList' and 'propBetStatsList' as lists of objects
-            Console.WriteLine(selectedSeason);
-            Console.WriteLine("selected season");
             if (selectedSeason == "1")
             {
-                Console.WriteLine("season is 1");
                 try
                 {
                     var query = $@"
@@ -212,8 +209,6 @@ namespace ReactApp4.Server.Services
                     //}
                     //query += $@"ORDER BY Games_Played.id DESC";
 
-                    Console.WriteLine(query);
-
                     var boxScores = await _context.BoxScoreWithGameDates.FromSqlRaw(query,
                         new NpgsqlParameter("@player_id", player_id),
                         new NpgsqlParameter("@selectedOpponentHome", $"%vs. {selectedOpponentObject?.Team_abbreviation}%"),
@@ -223,15 +218,11 @@ namespace ReactApp4.Server.Services
                     )
                     .ToListAsync();
 
-                    Console.WriteLine(boxScores.ToString());
-                    Console.WriteLine(boxScores);
-                    Console.Write(boxScores);
                     return Ok(boxScores);
 
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
                     return StatusCode(500, $"Internal Server Error: {ex}");
                 }
 
@@ -269,8 +260,6 @@ namespace ReactApp4.Server.Services
                     }
                     query += $@" ORDER BY Games_Played.id DESC";
 
-                    Console.WriteLine(query);
-
                     var boxScores = await _context.BoxScoreWithGameDates.FromSqlRaw(query,
                         new NpgsqlParameter("@player_id", player_id),
                         new NpgsqlParameter("@selectedOpponentHome", $"%vs. {selectedOpponentObject?.Team_abbreviation}%"),
@@ -279,15 +268,11 @@ namespace ReactApp4.Server.Services
                     )
                     .ToListAsync();
 
-                    Console.WriteLine(boxScores.ToString());
-                    Console.WriteLine(boxScores);
-                    Console.Write(boxScores);
                     return Ok(boxScores);
 
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
                     return StatusCode(500, $"Internal Server Error: {ex}");
                 }
             }
