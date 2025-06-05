@@ -528,7 +528,16 @@ th {
 }
 
 .prop-results {
-    white-space: nowrap;
+    display: flex;
+    text-align: center;
+    width: 100%;
+    font-size: x-large;
+    color: #eeeeee;
+}
+
+.prop-results-text {
+    display: flex;
+    justify-content: center;
     text-align: center;
     width: 100%;
     font-size: x-large;
@@ -537,6 +546,7 @@ th {
 
 .prop-results-fraction {
     margin-right: 15px;
+    white-space: nowrap;
 }
 
 .lineup-player-dropdown {
@@ -890,7 +900,7 @@ th {
     max-width: 25%;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 862px) {
     .display-flex {
         flex-direction: column;
     }
@@ -932,6 +942,9 @@ th {
     }
     .logo-flex {
         justify-content: space-between;
+    }
+    .prop-results {
+        flex-direction: column;
     }
 
 }

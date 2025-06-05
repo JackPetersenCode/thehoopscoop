@@ -41,6 +41,8 @@ interface LeagueGameWithHomeVisitor {
 
 function Admin() {
 
+    const token = localStorage.getItem('token');
+    
     const loadLineupsLoop = async() => {
         //const seasons = ['2015_16', '2016_17', '2017_18', '2018_19', '2019_20', '2020_21', '2021_22', '2022_23', '2023_24'];
         const seasons = ['2024_25'];
@@ -123,7 +125,8 @@ function Admin() {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 mode: 'cors',
                 body: JSON.stringify(obj),
@@ -224,8 +227,10 @@ function Admin() {
 
         const newHome = await fixTheName(home_team[0].team_name);
         const newVisitor = await fixTheName(visitor_team[0].team_name);
-
+        console.log(game.game_date);
         let game_date = await fixTheGameDate(game.game_date);
+
+        console.log(game_date)
 
         let home_odds = await getOdds(season, newHome, home_team[0].team_name, game_date, game.game_date, 'home')
 

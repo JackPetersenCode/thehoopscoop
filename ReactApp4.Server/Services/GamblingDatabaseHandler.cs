@@ -26,17 +26,22 @@ namespace ReactApp4.Server.Services
 
                 var sql = $@"
                     SELECT
-                    DISTINCT ON(commence_time, home_team) 
-                    id,
-                    commence_time,
-                    home_team,
-                    away_team, 
-                    home_odds, 
-                    away_odds, 
-                    game_id
-                    from new_odds_{season}
+                    DISTINCT ON(n.commence_time, n.home_team) 
+                    n.commence_time,
+                    n.home_team,
+                    n.away_team, 
+                    n.home_odds, 
+                    n.away_odds, 
+                    n.game_id
+                    from new_odds_{season} n
+                    LEFT JOIN matchup_results_{season} mr
+                    ON mr.game_date = n.commence_time
                     WHERE commence_time != 'commence_time'
-                    order by commence_time desc limit 25   
+                    AND CAST(n.commence_time AS DATE) > (
+                        SELECT MAX(CAST(mrB.game_date AS DATE))
+                        FROM matchup_results_{season} mrB
+                    )
+                    order by commence_time desc limit 20   
                 ";
 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
@@ -186,7 +191,7 @@ namespace ReactApp4.Server.Services
                     {
                         // Safely parameterize input values
                         cmd.Parameters.AddWithValue("@teamName", teamName);
-                        cmd.Parameters.AddWithValue("@gameDate", DateTime.Parse(gameDate)); // optionally parse to DateTime
+                        cmd.Parameters.AddWithValue("@gameDate", gameDate); // optionally parse to DateTime
         
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
@@ -675,7 +680,7 @@ namespace ReactApp4.Server.Services
                     sql += $@"WHERE home_team = @teamName OR visitor_team = @teamName ";
                 }
 
-                sql += $@"ORDER BY id DESC";
+                sql += $@"ORDER BY game_date DESC";
                 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 

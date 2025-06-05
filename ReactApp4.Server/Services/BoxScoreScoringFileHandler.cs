@@ -8,7 +8,6 @@ namespace ReactApp4.Server.Services
     {
         public async Task<IActionResult> GetBoxScoreScoringFromFile(string season)
         {
-            Console.WriteLine(season);
             List<object> data = new List<object>();
 
             try

@@ -30,7 +30,6 @@ namespace ReactApp4.Server.Services
                     var records = csv.GetRecords<dynamic>();
                     foreach (var record in records)
                     {
-                        Console.WriteLine(record);
                         if (record.GAME_ID != "GAME_ID")
                         {
                             data.Add(record);

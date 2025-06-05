@@ -8,7 +8,6 @@ namespace ReactApp4.Server.Services
     {
         public async Task<IActionResult> GetBoxScoreFourFactorsFromFile(string season)
         {
-            Console.WriteLine(season);
             List<object> data = new List<object>();
 
             try
@@ -32,12 +31,10 @@ namespace ReactApp4.Server.Services
                 }
 
                 // Log the result array
-                System.Console.WriteLine("Parsed CSV data:");
                 return new OkObjectResult(data); // Return HTTP 200 OK with data
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine(ex);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError); // Return HTTP 500 Internal Server Error
             }
         }

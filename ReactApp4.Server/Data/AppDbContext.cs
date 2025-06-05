@@ -17,6 +17,7 @@ namespace ReactApp4.Server.Data
         {
             // connect to postgres with connection string from app settings
             options.UseNpgsql(Configuration.GetConnectionString("WebApiDatabase")).LogTo(Console.WriteLine, LogLevel.Information);
+            //options.UseNpgsql(Configuration.GetConnectionString("WebApiDatabase"));
         }
 
         public DbSet<Baller> Ballers { get; set; }

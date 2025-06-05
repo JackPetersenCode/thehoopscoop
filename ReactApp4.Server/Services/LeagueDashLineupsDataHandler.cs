@@ -20,8 +20,6 @@ namespace ReactApp4.Server.Services
 
         public async Task<IActionResult> GetLeagueDashLineupsFromFile(string season, string boxType, string numPlayers)
         {
-            Console.WriteLine(season, boxType, numPlayers);
-            Console.WriteLine("PARAMETERS");
             return await _leagueDashLineupsFileHandler.GetLeagueDashLineupsFromFile(season, boxType, numPlayers);
         }
 

@@ -18,8 +18,6 @@ interface MLBProps {
 
 const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport}) => {
 
-    console.log("MLB Page")
-
     const [selectedSeason, setSelectedSeason] = useState('2025');
     const [mlbActivePlayers, setMlbActivePlayers] = useState<MLBActivePlayer[]>([]);
     //const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -42,11 +40,9 @@ const MLB: React.FC<MLBProps> = ({ selectedSport, setSelectedSport}) => {
     //const [splitOptions, setSplitOptions] = useState<string[]>(mlbSplitsBatting);
 
     useEffect(() => {
-        console.log("active players hook")
         async function getData() {
             const activePlayersResponse = await axios.get(`api/MLBActivePlayer/${selectedSeason}`);
             const activePlayersData = await activePlayersResponse.data;
-            console.log(activePlayersData)
             setMlbActivePlayers(activePlayersData);
         }
 

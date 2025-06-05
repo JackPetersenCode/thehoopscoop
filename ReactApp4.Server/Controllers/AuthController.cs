@@ -50,7 +50,6 @@ namespace ReactApp4.Server.Controllers
             {
                 new Claim(ClaimTypes.Name, username),
             };
-            Console.WriteLine("Key: " + _configuration["Jwt:Key"]);
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

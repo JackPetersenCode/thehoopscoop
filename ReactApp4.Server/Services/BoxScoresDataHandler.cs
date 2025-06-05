@@ -20,8 +20,6 @@ namespace ReactApp4.Server.Services
 
         public async Task<IActionResult> GetBoxScoresFromFile(string season, string boxType, string numPlayers)
         {
-            Console.WriteLine(season, boxType, numPlayers);
-            Console.WriteLine("PARAMETERS");
             return await _boxScoresFileHandler.GetBoxScoresFromFile(season, boxType, numPlayers);
         }
 

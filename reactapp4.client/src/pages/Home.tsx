@@ -23,7 +23,6 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
 
-    console.log("NBA page")
     const [selectedSeason, setSelectedSeason] = useState('2024_25');
     const [activePlayers, setActivePlayers] = useState<Player[]>([]);
     //const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -63,10 +62,7 @@ const Home: React.FC<HomeProps> = ({ selectedSport, setSelectedSport }) => {
 
             const activePlayersResponse = await axios.get('api/players/active');
             const activePlayersData = await activePlayersResponse.data;
-            console.log(activePlayersData)
             setActivePlayers(activePlayersData);
-
-
         }
 
         //populateWeatherData();
