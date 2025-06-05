@@ -21,8 +21,6 @@ const TeamsDropDown: React.FC<TeamsDropDownProps> = ({ selectedTeam, setSelected
             return;
         }
         const selectedValue = JSON.parse(event.target.value);
-        console.log(event.target.value);
-        console.log(selectedValue)
         setSelectedTeam(selectedValue);
         setSeasonShotsData([]);
         setGameShotsData([]);

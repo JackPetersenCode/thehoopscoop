@@ -28,8 +28,6 @@ export function NBAStatsData({ selectedSeason, selectedLineupPlayer, selectedBox
     const [isFetching, setIsFetching] = useState(false);
     const [originalData, setOriginalData] = useState<Stats[]>([]);
 
-    console.log('StatsTable')
-
     useEffect(() => {
 
         const getStats = async () => {
@@ -47,16 +45,13 @@ export function NBAStatsData({ selectedSeason, selectedLineupPlayer, selectedBox
                 try {
                     
                     const data = await axios.get(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/desc/${sortField}/${perMode}/${selectedTeam.team_id}`);
-                    console.log(`/api/LeagueDashLineups/${selectedSeason}/${selectedBoxType}/${numPlayers}/desc/${sortField}/${perMode}/${selectedTeam.team_id}/`);
                     const newData = data.data;
 
                     setStatsData(newData);
                     setOriginalData(newData);
-                    console.log(newData);
                     if (selectedBoxType === 'Advanced') {
                         setColumns(advancedLineupColumns);
                     } else if (selectedBoxType === 'Base') {
-                        console.log('BASE');
                         setColumns(baseLineupColumns);
                     } else if (selectedBoxType === 'FourFactors') {
                         setColumns(fourFactorsLineupColumns);
@@ -77,17 +72,14 @@ export function NBAStatsData({ selectedSeason, selectedLineupPlayer, selectedBox
 
                 try {
                     const data = await axios.get(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/desc/${sortField}/${perMode}/${selectedTeam.team_id}/${selectedOpponent.team_abbreviation}`);
-                    console.log(`/api/BoxScores/${selectedSeason}/${selectedBoxType}/desc/${sortField}/${perMode}/${selectedTeam.team_id}/${selectedOpponent.team_abbreviation}`);
                     const newData = data.data;
                     
                     setStatsData(newData);
                     setOriginalData(newData);
 
-                    console.log("PLAYERSSSSS")
                     if (selectedBoxType === 'Advanced') {
                         setColumns(advancedPlayerColumns);
                     } else if (selectedBoxType === 'Base') {
-                        console.log('BASE');
                         setColumns(basePlayerColumns);
                     } else if (selectedBoxType === 'FourFactors') {
                         setColumns(fourFactorsPlayerColumns);

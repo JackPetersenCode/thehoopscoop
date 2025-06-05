@@ -50,9 +50,13 @@ namespace ReactApp4.Server.Controllers
         public async Task<IActionResult> CreateBoxScoreScoring([FromBody] BoxScoreScoring boxScoreScoring, string season)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
+            {
             	return BadRequest("Invalid NBA season.");
+            }
             if (boxScoreScoring == null)
+            {
                 return BadRequest("Invalid boxScoreAdvanced data");
+            }
 
             return await _boxScoreScoringDataHandler.CreateBoxScoreScoring(boxScoreScoring, season);
         }

@@ -40,7 +40,6 @@ const SearchList: React.FC<SearchListProps> = ({
                 !refOne.current.contains(event.target as Node) &&
                 !refTwo.current?.contains(event.target as Node)
             ) {
-                console.log('inside the if statement')
                 setOpenSearchList(false);
             }
         }
@@ -69,7 +68,6 @@ const SearchList: React.FC<SearchListProps> = ({
             }
         }
         setUsedPlayers(usedPlayers => [...usedPlayers, item]);
-        console.log(selectedPlayer);
         setInputText(item.full_name);
         setOpenSearchList(false);
     };

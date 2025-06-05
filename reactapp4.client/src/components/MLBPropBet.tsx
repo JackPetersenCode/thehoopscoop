@@ -51,11 +51,9 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ roster, setRoster, usedPlayers,
     const [mlbActivePlayers, setMlbActivePlayers] = useState<MLBActivePlayer[]>([]);
 
     useEffect(() => {
-        console.log("active players hook")
         async function getData() {
             const activePlayersResponse = await axios.get(`api/MLBActivePlayer/${selectedSeasonPropBet}`);
             const activePlayersData = await activePlayersResponse.data;
-            console.log(activePlayersData)
             setMlbActivePlayers(activePlayersData);
         }
 
@@ -102,7 +100,6 @@ const MLBPropBet: React.FC<MLBPropBetProps> = ({ roster, setRoster, usedPlayers,
         //setSplitOptions(mlbSplitsPitching);
     }
 
-    console.log(selectedSeasonPropBet)
     return (
         <div>
         <br></br>

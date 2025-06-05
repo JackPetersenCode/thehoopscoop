@@ -43,7 +43,6 @@ const MLBSeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, se
         if (event.target.value === "0") {
             return;
         }
-        console.log(event.target.value);
         setSelectedSeason(event.target.value);
     }
 

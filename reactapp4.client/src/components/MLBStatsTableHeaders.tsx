@@ -10,7 +10,6 @@ interface MLBStatsTableHeadersProps {
 
 const MLBStatsTableHeaders: React.FC<MLBStatsTableHeadersProps> = React.memo(({ columns, onSort }) => {
 
-    console.log('Headers')
     //const handleSortingChange = (accessor: string) => {
     //    if (setSortField && setOrder) {
     //        const sortOrder =

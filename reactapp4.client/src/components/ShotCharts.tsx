@@ -50,7 +50,6 @@ const ShotCharts = () => {
 
 
     useEffect(() => {
-        console.log('getSeasonShots');
         const getSeasonShots = async () => {
 
             if (typeof selectedPlayer === 'string') {
@@ -58,7 +57,6 @@ const ShotCharts = () => {
                 return;
             }
             const results = await axios.get(`/api/Shot/${selectedPlayer.player_id}/${selectedSeason}`);
-            console.log(results.data);
             setSeasonShotsData(results.data);
         }
         
@@ -67,7 +65,6 @@ const ShotCharts = () => {
     }, [selectedPlayer, selectedSeason]);
 
     useEffect(() => {
-        console.log('useEffect getGameShots')
         const getGameShots = async () => {
 
             if (typeof selectedGame === 'string' || typeof selectedPlayer === 'string') {
@@ -96,6 +93,7 @@ const ShotCharts = () => {
                         setSelectedGame={setSelectedGame}
                         isShotCharts={true}
                         isPredictions={false}
+                        disabled={false}
                     />
                 </DropDownWrapper>  
                 <DropDownWrapper>

@@ -29,7 +29,6 @@ const ShotChartsPlayerDropDown: React.FC<ShotChartsPlayerDropDownProps> = ({ sel
             }
 
             const response = await axios.get(`/api/BoxScoreTraditional/roster/${selectedSeason}/${selectedTeam.team_id}`)
-            console.log(response.data);
             setRoster(response.data);
         }
         if (selectedTeam && selectedSeason) {
@@ -41,8 +40,6 @@ const ShotChartsPlayerDropDown: React.FC<ShotChartsPlayerDropDownProps> = ({ sel
             return;
         }
         const selectedValue = JSON.parse(event.target.value);
-        console.log(event.target.value);
-        console.log('set selected team')
         setSelectedPlayer(selectedValue);
         setSelectedGame("");
     }

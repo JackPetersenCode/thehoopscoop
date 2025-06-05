@@ -50,8 +50,6 @@ const MLBPropBetResults: React.FC<MLBPropBetResultsProps> = ({ careerPlayerBoxSc
 
                     try {
                         const results = await axios.get(`/api/MLBPlayerResults?hittingPitching=${hittingPitching}&selectedSeason=1&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.playerId}&propBetStats=${encodedJsonPropBetStats}`);
-                        console.log(results.data);
-
                         const OUFilteredBoxScores = await overUnderFilteredBoxScores(results.data, propBetStats, overUnderLine);
                         const homeVisitorOverUnderFilteredBoxScores = await MLBhomeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
                         const homeVisitorFilteredBoxScores = await MLBhomeAwayFilteredBoxScores(results.data, homeOrVisitor);

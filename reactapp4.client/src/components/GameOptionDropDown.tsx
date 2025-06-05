@@ -26,7 +26,6 @@ const GameOptionDropDown: React.FC<GameOptionDropDownProps> = ({ gameOption, set
             return;
         }
         setGameOption(event.target.value);
-        console.log(gameOption);
     }
 
     return (

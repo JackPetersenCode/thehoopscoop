@@ -10,13 +10,11 @@ interface MLBSplitsDropDownProps {
 }
 
 const MLBSplitsDropDown: React.FC<MLBSplitsDropDownProps> = React.memo(({ hittingPitching, selectedSplit, setSelectedSplit, disabled }) => {
-    console.log("drop down")
     const handleSplitChange = (event: { preventDefault: () => void; target: { value: string; }; }) => {
         event.preventDefault();
         if (event.target.value === "0") {
             return;
         }
-        console.log(event.target.value);
         setSelectedSplit(event.target.value);
     }
     

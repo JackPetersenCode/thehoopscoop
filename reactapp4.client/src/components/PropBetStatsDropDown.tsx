@@ -27,12 +27,10 @@ const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ setSelected
 
         const selectedValue = JSON.parse(event.target.value);
         setSelectedStat(selectedValue);
-        console.log(selectedValue);
         if (propBetStats.some(stat => stat.label === selectedValue.label)) {
             return;
         } else {
             setPropBetStats(propBetStats => [...propBetStats, selectedValue]);
-            console.log(selectedValue);
         }
     }
 

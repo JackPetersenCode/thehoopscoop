@@ -73,7 +73,6 @@ const MLBHitting: React.FC<Props> = React.memo(({
     //columns,
     //splitOptions
 }) => {
-    console.log('MLBHitting')
     return (
       <div className="display-flex">
         <div className="drop-down">

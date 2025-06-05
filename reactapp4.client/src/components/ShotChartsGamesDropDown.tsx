@@ -24,11 +24,9 @@ const ShotChartsGamesDropDown: React.FC<ShotChartsGamesDropDownProps> = ({ selec
                 return;
             }
             const games = await axios.get(`/api/LeagueGames/shotChartsGames/${selectedPlayer.player_id}/${selectedSeason}`)
-            console.log(games.data)
             setGameData(games.data);
         }
         if (selectedPlayer) {
-            console.log(selectedPlayer);
             getGames();
         } else {
             setGameData([])
@@ -40,8 +38,6 @@ const ShotChartsGamesDropDown: React.FC<ShotChartsGamesDropDownProps> = ({ selec
             return;
         }
         const selectedValue = JSON.parse(event.target.value);
-        console.log(event.target.value);
-        console.log('set selected game')
         setSelectedGame(selectedValue);
     }
 

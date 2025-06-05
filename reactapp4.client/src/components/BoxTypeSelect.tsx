@@ -33,7 +33,6 @@ const BoxTypeSelect: React.FC<BoxTypeSelectProps> = ({ options, selectedBoxType,
 
     const toggleSelect = () => {
         setIsOpen(!isOpen);
-        console.log(isOpen);
     };
     function handleOptionChange(option: string) {
         

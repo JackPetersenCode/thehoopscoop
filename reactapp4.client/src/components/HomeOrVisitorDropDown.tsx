@@ -12,10 +12,8 @@ interface HomeOrVisitorDropDownProps {
 const HomeOrVisitorDropDown: React.FC<HomeOrVisitorDropDownProps> = ({ homeOrVisitor, setHomeOrVisitor, setShowHomeOrVisitor, disabled }) => {
 
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
-        console.log('booger');
         setHomeOrVisitor(event.target.value);
         setShowHomeOrVisitor(true);
-
     }
 
     return (

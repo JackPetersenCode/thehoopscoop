@@ -20,7 +20,6 @@ export default function AdminLogin() {
       if (!res.ok) throw new Error('Login failed');
 
       const data = await res.json();
-      console.log(data)
       localStorage.setItem('token', data.token); // Save JWT
       login(username, password); // Optional
       navigate('/admin');

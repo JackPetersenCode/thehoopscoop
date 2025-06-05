@@ -259,7 +259,7 @@ async def readLeagueGamesScoring():
     print(start)
     print(end)
     print(len(games["resultSets"][0]["rowSet"]))
-    for i in range (start - 1, end):
+    for i in range (0, end):
         ##print(len(games["resultSets"][0]["rowSet"]))
         ##print(games["resultSets"][0]["rowSet"][i])
         print(i)
@@ -1243,11 +1243,11 @@ async def run_tasks():
     #await safe_run(leaguedashplayerclutchfunction)
     #await safe_run(leaguedashplayerptshotfunction)
     #await safe_run(leaguedashplayershotlocationsfunction)
-    await safe_run(readLeagueGamesTraditional)
+    #await safe_run(readLeagueGamesTraditional)
     #await safe_run(leagueDashPlayerStatsFunction)
     #await safe_run(getPlayerIds)  # Runs before player stats function
     #await safe_run(readBoxScoreSummary)
-    #await safe_run(readLeagueGamesScoring)
+    await safe_run(readLeagueGamesScoring)
     #await safe_run(writeNBAplayers)
     #await safe_run(getOdds)
     #await safe_run(readLeagueMisc)

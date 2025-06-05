@@ -45,17 +45,14 @@ const SeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, setSe
         if (event.target.value === "0") {
             return;
         }
-        console.log(event.target.value);
         setSelectedSeason(event.target.value);
         if (isShotCharts) {
 
             setSelectedPlayerShotCharts("");
             setSelectedGame("");
         }
-        console.log(selectedSeason)
     }
 
-    console.log(disabled)
     return (
         <div className="drop-flex">
             <div className="drop-title">

@@ -48,8 +48,6 @@ const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selecte
             const encodedJsonSelectedOpponent = encodeURIComponent(jsonSelectedOpponent);
 
             // Construct the URL with the encoded JSON as a query parameter
-            console.log(roster);
-
             if (roster.length == 0) {
                 setPlayerBoxScores([]);
                 setGamesPlayed([]);
@@ -59,15 +57,10 @@ const MLBPropBetResultsTable: React.FC<MLBPropBetResultsTableProps> = ({ selecte
 
                     try {
                         const resultsWithOpponent = await axios.get(`/api/MLBPlayerResults?hittingPitching=${hittingPitching}&selectedSeason=${selectedSeason}&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.playerId}&propBetStats=${encodedJsonPropBetStats}`);
-                        console.log(resultsWithOpponent.data);
-
                         const OUFilteredBoxScores = await overUnderFilteredBoxScores(resultsWithOpponent.data, propBetStats, overUnderLine);
                         const homeVisitorOverUnderFilteredBoxScores = await MLBhomeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
                         const homeVisitorFilteredBoxScores = await MLBhomeAwayFilteredBoxScores(resultsWithOpponent.data, homeOrVisitor);
-
                         const lastTenFilteredBoxScores = await overUnderFilteredBoxScores(homeVisitorFilteredBoxScores.slice(0, 10), propBetStats, overUnderLine);
-              
-                        console.log(lastTenFilteredBoxScores);
                         setLastTenFilteredBoxScores(lastTenFilteredBoxScores);
                         setGamesPlayed(homeVisitorFilteredBoxScores)
                         setPlayerBoxScores(homeVisitorOverUnderFilteredBoxScores);

@@ -16,7 +16,6 @@ const isColumnArray = (input: Column[] | string[]): input is Column[] => {
 
 const StatsTableHeaders: React.FC<StatsTableHeadersProps> = ({ columns, onSort }) => {
 
-    console.log("headers")
     if (!isColumnArray(columns)) {
         return (
             <thead>

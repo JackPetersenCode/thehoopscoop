@@ -39,8 +39,6 @@ namespace ReactApp4.Server.Services
         public async Task<IActionResult> CreateBoxScoreScoring([FromBody] BoxScoreScoring boxScoreScoring, string season)
         {
             // Implement logic to create a new league game in the database
-
-
             try
             {
                 if (boxScoreScoring == null)

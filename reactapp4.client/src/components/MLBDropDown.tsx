@@ -16,32 +16,21 @@ const MLBDropDown: React.FC<MLBDropDownProps> = React.memo(({ options, setLeague
 
     function handleChange(event: { preventDefault: () => void; target: { value: string | MLBTeam; }; }) {
         event.preventDefault();
-        console.log("HANDLE CHANGE*********************************************")
-        console.log(dropDownType);
 
         if (typeof event.target.value === 'string') {
-            console.log(typeof event.target.value);
-            console.log(event.target.value);
 
             if (event.target.value === "0") {
                 return;
             }
             if (dropDownType === "League Options") {
-                console.log(event.target.value);
                 setLeagueOption(event.target.value);
-                console.log(dropDownType);
             }
             if (dropDownType === "Team") {
-                console.log(event.target.value);
                 setSelectedTeam(JSON.parse(event.target.value));
-                console.log(dropDownType);
             }
         }
 
-
         setSelectedOption(event.target.value);
-        console.log(event.target.value)
-        console.log(selectedOption);
     }
 
     //useMemo(() => {

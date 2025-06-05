@@ -17,7 +17,6 @@ const LineupsPlayersSelect: React.FC<LineupsPlayersSelectProps> = ({ options, se
 
     const toggleSelect = () => {
         setIsOpen(!isOpen);
-        console.log(isOpen);
     };
     function handleOptionChange(option: string) {
 

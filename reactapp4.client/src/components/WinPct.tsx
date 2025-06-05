@@ -22,11 +22,8 @@ const WinPct: React.FC<WinPctProps> = ({ selectedSeason, selectedTeam }) => {
             let results;
             if(typeof selectedTeam === 'string' || selectedTeam.team_name === 'All Teams') {
                 results = await getJsonResponseStartup(`/api/Gambling/winPct/${selectedSeason}`);
-                console.log(results);
             } else {
-                console.log(selectedTeam)
                 results = await getJsonResponseStartup(`/api/Gambling/winPctByTeam/${selectedSeason}/${selectedTeam.team_name}`);
-                console.log(results);
             }
             let pct = 0;
             if (results.length > 0) {

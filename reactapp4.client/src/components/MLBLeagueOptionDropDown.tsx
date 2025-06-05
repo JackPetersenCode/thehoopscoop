@@ -21,7 +21,6 @@ const MLBLeagueOptionDropDown: React.FC<LeagueDropDownProps> = ({ options, leagu
         } else if (leagueOption === "MLB") {
             setSelectedTeam({ team_id: "1", team_name: "All MLB Teams" });
         } else {
-            console.log('bad league selection')
             return;
         }
   };

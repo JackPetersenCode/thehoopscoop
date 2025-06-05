@@ -6,8 +6,6 @@ interface SignInProps {
     setSelectedSport: React.Dispatch<React.SetStateAction<string>>;
 }
 
-console.log("Sign in")
-
 const SignIn: React.FC<SignInProps> = ({ selectedSport, setSelectedSport }) => {
     const navigate = useNavigate();
 

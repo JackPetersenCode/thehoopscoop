@@ -60,9 +60,7 @@ const MLBDragNDropRoster: React.FC<DragNDropRosterProps> = ({ roster, setRoster,
             return;
         }
         const reorderedItems = reorder(roster, result.source.index, result.destination.index)
-        console.log(reorderedItems)
         setRoster(reorderedItems as MLBActivePlayer[])
-
     }
 
 

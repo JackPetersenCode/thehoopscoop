@@ -44,8 +44,6 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
             const encodedJsonSelectedOpponent = encodeURIComponent(jsonSelectedOpponent);
 
             // Construct the URL with the encoded JSON as a query parameter
-            console.log(roster);
-
             if (roster.length == 0) {
                 setPlayerBoxScores([]);
                 setGamesPlayed([]);
@@ -55,17 +53,13 @@ const PropBetResultsTable: React.FC<PropBetResultsTableProps> = ({ selectedSeaso
 
                     try {
                         const resultsWithOpponent = await axios.get(`/api/PlayerResults?selectedSeason=${selectedSeason}&selectedOpponent=${encodedJsonSelectedOpponent}&player_id=${player.player_id}&propBetStats=${encodedJsonPropBetStats}`);
-                        console.log(resultsWithOpponent.data);
-
                         const OUFilteredBoxScores = await overUnderFilteredBoxScores(resultsWithOpponent.data, propBetStats, overUnderLine);
                         const homeVisitorOverUnderFilteredBoxScores = await homeAwayFilteredBoxScores(OUFilteredBoxScores, homeOrVisitor);
                         const homeVisitorFilteredBoxScores = await homeAwayFilteredBoxScores(resultsWithOpponent.data, homeOrVisitor);
 
                         const lastTenFilteredBoxScores = await overUnderFilteredBoxScores(homeVisitorFilteredBoxScores.slice(0, 10), propBetStats, overUnderLine);
-              
-                        console.log(lastTenFilteredBoxScores);
                         setLastTenFilteredBoxScores(lastTenFilteredBoxScores);                    
-                        setGamesPlayed(homeVisitorFilteredBoxScores)
+                        setGamesPlayed(homeVisitorFilteredBoxScores);
                         setPlayerBoxScores(homeVisitorOverUnderFilteredBoxScores);
                     } catch (error) {
                         console.log(error);

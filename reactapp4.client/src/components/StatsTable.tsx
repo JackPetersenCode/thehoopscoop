@@ -30,9 +30,6 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ inputText, statsData
       return getSortedData(statsData, sortColumn, sortOrder, originalData);
     }, [statsData, sortColumn, sortOrder, originalData]);
 
-
-    console.log(sortedData)
-
     const handleSort = (column: string) => {
       if (column !== sortColumn) {
         setSortColumn(column);
@@ -51,7 +48,6 @@ const StatsTable: React.FC<StatsTableProps> = React.memo(({ inputText, statsData
             return element.player_name.toString().toLowerCase().includes(inputText.toLowerCase());
         }
     })
-    console.log(filteredData);
 
     const isInitialLoad = isFetching && statsData.length === 0;
     const showNoStats = !isFetching && statsData.length > 0 && filteredData.length === 0;

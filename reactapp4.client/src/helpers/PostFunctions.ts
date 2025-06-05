@@ -152,7 +152,6 @@ const postBoxScoresMiscBySeason = async (obj: BoxScoreMisc, season: string) => {
 }
 
 const postBoxScoresScoringBySeason = async (obj: BoxScoreScoring, season: string) => {
-    console.log(season);
     const url = `/api/BoxScoreScoring/${season}`;
     try {
         const response = await fetch(url, {

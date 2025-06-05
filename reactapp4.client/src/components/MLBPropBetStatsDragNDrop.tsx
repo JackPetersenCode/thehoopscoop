@@ -59,10 +59,8 @@ const MLBPropBetStatsDragNDrop: React.FC<MLBPropBetStatsDragNDropProps> = ({ pro
         if (!result.destination) {
             return;
         }
-        const reorderedItems = reorder(propBetStats, result.source.index, result.destination.index)
-        console.log(reorderedItems)
-        setPropBetStats(reorderedItems as PropBetStats[])
-
+        const reorderedItems = reorder(propBetStats, result.source.index, result.destination.index);
+        setPropBetStats(reorderedItems as PropBetStats[]);
     }
 
 

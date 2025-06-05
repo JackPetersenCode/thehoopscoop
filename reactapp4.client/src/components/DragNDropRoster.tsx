@@ -60,7 +60,6 @@ const DragNDropRoster: React.FC<DragNDropRosterProps> = ({ roster, setRoster, de
             return;
         }
         const reorderedItems = reorder(roster, result.source.index, result.destination.index)
-        console.log(reorderedItems)
         setRoster(reorderedItems as Player[])
 
     }

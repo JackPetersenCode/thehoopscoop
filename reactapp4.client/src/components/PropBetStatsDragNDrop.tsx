@@ -60,9 +60,7 @@ const PropBetStatsDragNDrop: React.FC<PropBetStatsDragNDropProps> = ({ propBetSt
             return;
         }
         const reorderedItems = reorder(propBetStats, result.source.index, result.destination.index)
-        console.log(reorderedItems)
         setPropBetStats(reorderedItems as PropBetStats[])
-
     }
 
 

@@ -97,10 +97,8 @@ const Upcoming = () => {
                 let averageScore;
                 if (previousGameId !== '1' && previousGameId.slice(-2) !== '01') {
                     averageScore = await getJsonResponseJackorithm(`/api/Gambling/averageScore/${season}/${game_date}`);
-                    console.log(averageScore)
                 } else {
                     averageScore = await getJsonResponseJackorithm(`/api/Gambling/averageScore/${previousSeason}`);
-                    console.log(averageScore)
                 }
                 return averageScore;
             }
@@ -179,9 +177,6 @@ const Upcoming = () => {
 
                 //let green_red = await getGreenRed(parseFloat(expected[1]), parseFloat(expected[3]), parseFloat(game.pts), (parseFloat(game.pts) - parseFloat(game['plus_minus'])))
                 
-                console.log(expected[1]);
-                console.log(expected[3]);
-                
                 const HomeLogo = components[home_abbr];
                 const VisitorLogo = components[visitor_abbr];
 
@@ -213,7 +208,6 @@ const Upcoming = () => {
                 //let homeTeamId = game.home_team_id;
 
                 let homePrevious = await getJsonResponseJackorithm(`/api/Gambling/previousGameId/${season}/${homeTeamId}/${game.commence_time}`)
-                console.log(homePrevious);
                 if (homePrevious.length < 1) {
                     homePrevious = '1';
                 } else {
@@ -238,7 +232,6 @@ const Upcoming = () => {
             const getExpectedFromRoster = async (season: string, H_or_V: string, roster: RosterPlayer[], previousGameId: string, stat: string, previousSeason: string, game_date: string) => {
                 let totalMins = 0.0;
                 let totalStat = 0.0;
-                console.log(season);
                 let averageScore = await getAverageScore(season, previousGameId, previousSeason, game_date)
                 for (let i = 0; i < roster.length; i++) {
 
@@ -256,11 +249,6 @@ const Upcoming = () => {
                                 totalMins += parseFloat(averages[0].min);
                                 totalStat += parseFloat(averages[0][stat]);
                             } else {
-                                console.log('is it working?');
-                                console.log(roster[i].player_id);
-                                console.log(game_date)
-                                console.log(season);
-                                console.log(previousSeason);
                                 averages = [{
                                     "+/-": 0,
                                     ast: 0,
@@ -297,11 +285,6 @@ const Upcoming = () => {
                             totalStat += parseFloat(averages[0][stat]);
 
                         } else {
-                            console.log('previous game equals 1, player zeroed out.');
-                            console.log(roster[i].player_id);
-                            console.log(game_date)
-                            console.log(season);
-                            console.log(previousSeason);
                             averages = [{
                                 "+/-": 0,
                                 ast: 0,
@@ -336,11 +319,8 @@ const Upcoming = () => {
             }
 
             const previousSeason = await getPreviousYear(selectedSeason);
-            console.log(selectedSeason)
             let results = await axios.get(`/api/Gambling/upcomingGames/${selectedSeason}`);
-            console.log(results);
             let games = results.data;
-            console.log(games)
             const filteredGames = games.filter((game: UpcomingGame) => {
                 const dateString: string = game.commence_time;
                 const dateParts: string[] = dateString.split("-");
@@ -362,10 +342,8 @@ const Upcoming = () => {
                     obj.away_odds = "unavailable";
                     obj.game_id = "upcoming";
                 });
-                console.log(games)
             } else {
                 games = filteredGames;
-                console.log(games)
             }
 
             for (let i = 0; i < games.length; i++) {
@@ -373,7 +351,6 @@ const Upcoming = () => {
                 const visitorTeam = games[i].away_team;
                 const homeTeamId = teamIds[homeTeam];
                 const visitorTeamId = teamIds[visitorTeam];
-                console.log(games[i]);
                 await getPostObject(games[i], selectedSeason, previousSeason, homeTeamId, visitorTeamId, teams[homeTeam], teams[visitorTeam], homeTeam, visitorTeam);
             }
         }

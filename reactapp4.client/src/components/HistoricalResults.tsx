@@ -20,11 +20,9 @@ const HistoricalResults: React.FC<HistoricalResultsProps> = ({selectedSeason, se
             let results;
             if (selectedTeam === '0' || selectedTeam === '') {
                 results = await getJsonResponseStartup(`/api/Gambling/historicalResults/${selectedSeason}`);
-                console.log(results);
                 setHistoricalResults(results);
             } else {
                 results = await getJsonResponseStartup(`/api/Gambling/historicalResults/${selectedSeason}/${typeof selectedTeam === 'string' ? selectedTeam : selectedTeam.team_name}`);
-                console.log(results);
                 setHistoricalResults(results);
             }
         }

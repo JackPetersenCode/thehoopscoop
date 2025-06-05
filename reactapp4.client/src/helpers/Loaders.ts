@@ -501,7 +501,7 @@ const loadBoxScoresScoring = async () => {
         const tablelength = await getJsonResponseStartup(`/api/tablelength/box_score_scoring_${season[j]}`)
         //tablelength = tablelength[0].count
         const data = await getJsonResponseStartup(`/api/BoxScoreScoring/read/${season[j]}`);
-        for (let i = tablelength.count - 1; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
             if (data[i].MIN === 'MIN') {
                 continue;
             }
@@ -543,7 +543,6 @@ const loadBoxScoresScoring = async () => {
                     }
                 }
             }
-            console.log(boxScore)
 
             await postBoxScoresScoringBySeason(boxScore, season[j]);
         }

@@ -35,7 +35,6 @@ export function MLBStatsData({
 
     useEffect(() => {
         const getStats = async () => {
-            console.log('api call')
             setIsFetching(true);
             try {
                 let url = '';

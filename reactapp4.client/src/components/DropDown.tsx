@@ -19,32 +19,22 @@ const DropDown: React.FC<DropDownProps> = React.memo(({ options, setPerMode, set
     function handleChange(event: { preventDefault: () => void; target: { value: string | NBATeam; }; }) {
         event.preventDefault();
 
-        console.log(dropDownType);
-
         if (typeof event.target.value === 'string') {
-            console.log(typeof event.target.value);
-            console.log(event.target.value);
 
             if (event.target.value === "0") {
                 return;
             }
             if (dropDownType === "Per Mode") {
-                console.log(event.target.value);
                 setPerMode(event.target.value);
-                console.log(dropDownType);
             }
             if (dropDownType === "# of Players") {
-                console.log(event.target.value);
                 setNumPlayers(event.target.value);
             }
 
             if (dropDownType === "Team") {
-                console.log(event.target.value);
                 setSelectedTeam(JSON.parse(event.target.value));
             }
             if (dropDownType === "Opponent") {
-                console.log(event.target.value);
-                console.log('set selected Opponent')
                 setSelectedOpponent(JSON.parse(event.target.value));
             }
             //if (dropDownType === "Home or Visitor") {
@@ -55,8 +45,6 @@ const DropDown: React.FC<DropDownProps> = React.memo(({ options, setPerMode, set
 
 
         setSelectedOption(event.target.value);
-        console.log(typeof selectedOption)
-        console.log(selectedOption);
     }
 
     //useMemo(() => {

@@ -1,8 +1,3 @@
-import { FaGithub } from 'react-icons/fa';
-import { TiSocialLinkedinCircular } from 'react-icons/ti';
-import { Link } from "react-router-dom";
-
-
 const Footer = () => {
     return (
         <div className='footer'>

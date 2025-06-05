@@ -14,11 +14,8 @@ const PropBetOpponentDropDown: React.FC<PropBetOpponentDropDownProps> = ({ selec
 
     function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
         const selectedValue = JSON.parse(event.target.value);
-        console.log(event.target.value);
-        console.log('set selected Opponent')
         setSelectedOpponent(selectedValue);
         setShowOpponent(true);
-
     }
 
     return (
