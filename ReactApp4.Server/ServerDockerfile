@@ -10,6 +10,7 @@ WORKDIR /app
 
 # Copy everything (including client folder)
 COPY . .
+RUN chmod +x /app/reactapp4.client/build.sh
 
 # Run publish (this will trigger npm install + build from .csproj)
 RUN dotnet publish -c Release -o out
