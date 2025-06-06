@@ -23,8 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 *.env
-*.key
-*.pem
+
+
 *.txt
 # juicy stats
 /juicystats/
