@@ -57,7 +57,7 @@ export default defineConfig({
         proxy: {
             
             '/api': {
-                target: 'http://localhost:5190/',
+                target: 'https://knucklehead-backend.onrender.com',
                 secure: false
             }
         },

@@ -314,7 +314,6 @@ const ShotChartSVG: React.FC<ShotChartsSVGProps> = ({ shotsData, isGameChart }) 
                 .style("fill", "rgb(191, 255, 0)");
         }
         if (shotsData) {
-            console.log(shotsData)
             //console.log(boxData)
             getSVG();
         }
