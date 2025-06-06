@@ -41,7 +41,7 @@
   <!-- 👇 New section to build and publish the React frontend -->
   <Target Name="PublishReactApp" AfterTargets="ComputeFilesToPublish">
     <Exec Command="npm install --legacy-peer-deps" WorkingDirectory="$(SpaRoot)" />
-    <Exec Command="npm run build || exit 0" WorkingDirectory="$(SpaRoot)" />
+    <Exec Command="sh -c &quot;npm run build || true&quot;" WorkingDirectory="$(SpaRoot)" />
     <ItemGroup>
       <SpaDistFiles Include="$(SpaBuildOutputPath)\**\*" />
     </ItemGroup>
