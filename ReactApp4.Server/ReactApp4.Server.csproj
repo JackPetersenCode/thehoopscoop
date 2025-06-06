@@ -38,4 +38,14 @@
     <Folder Include="Python\" />
   </ItemGroup>
 
+  <!-- 👇 New section to build and publish the React frontend -->
+  <Target Name="PublishReactApp" AfterTargets="ComputeFilesToPublish">
+    <Exec Command="npm install" WorkingDirectory="$(SpaRoot)" />
+    <Exec Command="npm run build" WorkingDirectory="$(SpaRoot)" />
+    <ItemGroup>
+      <SpaDistFiles Include="$(SpaBuildOutputPath)\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(SpaDistFiles)" DestinationFolder="$(PublishDir)wwwroot\%(RecursiveDir)" />
+  </Target>
+
 </Project>
