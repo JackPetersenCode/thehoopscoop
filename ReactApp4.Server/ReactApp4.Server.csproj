@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <SpaRoot>reactapp4.client</SpaRoot>
+    <SpaRoot>..\reactapp4.client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
   </PropertyGroup>
@@ -38,13 +38,4 @@
     <Folder Include="Python\" />
   </ItemGroup>
 
-  <Target Name="PublishReactApp" AfterTargets="ComputeFilesToPublish">
-    <Exec Command="npm install --legacy-peer-deps" WorkingDirectory="$(SpaRoot)" />
-    <Exec Command="./build.sh" WorkingDirectory="$(SpaRoot)" ContinueOnError="true" />
-    <ItemGroup>
-      <!-- ✅ Use forward slashes to avoid drive root wildcard issues -->
-      <SpaDistFiles Include="$(SpaRoot)/dist/**/*" />
-    </ItemGroup>
-    <Copy SourceFiles="@(SpaDistFiles)" DestinationFolder="$(PublishDir)wwwroot/%(RecursiveDir)" />
-  </Target>
-
+</Project>

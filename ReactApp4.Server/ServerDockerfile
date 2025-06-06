@@ -1,24 +1,20 @@
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
-# ✅ Install Node.js and npm
-RUN apt-get update && \
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
-
 WORKDIR /app
 
-# Copy everything (including client folder)
-COPY . .
-RUN chmod +x /app/reactapp4.client/build.sh
+# Copy csproj and restore as distinct layers
+COPY *.csproj ./
+RUN dotnet restore
 
-# Run publish (this will trigger npm install + build from .csproj)
+# Copy everything else and build
+COPY . ./
 RUN dotnet publish -c Release -o out
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 ENV ASPNETCORE_URLS=http://0.0.0.0:80
-COPY --from=build /app/out .
+COPY --from=build /app/out ./
 
+# Entry point
 ENTRYPOINT ["dotnet", "ReactApp4.Server.dll"]
