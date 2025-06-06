@@ -47,5 +47,4 @@
     </ItemGroup>
     <Copy SourceFiles="@(SpaDistFiles)" DestinationFolder="$(PublishDir)wwwroot\%(RecursiveDir)" />
   </Target>
-
 </Project>
