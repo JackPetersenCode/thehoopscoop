@@ -72,6 +72,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 
+const isDev = process.env.NODE_ENV === 'development';
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -83,10 +85,11 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'https://knucklehead-backend.onrender.com',
+        target: isDev ? 'http://localhost:5190' : 'https://knucklehead-backend.onrender.com',
         changeOrigin: true,
-        secure: true,
+        secure: !isDev, // Disable SSL verification in dev
       },
     },
   },
 });
+
