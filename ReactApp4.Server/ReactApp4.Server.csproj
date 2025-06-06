@@ -38,13 +38,13 @@
     <Folder Include="Python\" />
   </ItemGroup>
 
-  <!-- 👇 New section to build and publish the React frontend -->
   <Target Name="PublishReactApp" AfterTargets="ComputeFilesToPublish">
     <Exec Command="npm install --legacy-peer-deps" WorkingDirectory="$(SpaRoot)" />
     <Exec Command="./build.sh" WorkingDirectory="$(SpaRoot)" ContinueOnError="true" />
     <ItemGroup>
-      <SpaDistFiles Include="$(SpaBuildOutputPath)\**\*" />
+      <!-- ✅ Use forward slashes to avoid drive root wildcard issues -->
+      <SpaDistFiles Include="$(SpaRoot)/dist/**/*" />
     </ItemGroup>
-    <Copy SourceFiles="@(SpaDistFiles)" DestinationFolder="$(PublishDir)wwwroot\%(RecursiveDir)" />
+    <Copy SourceFiles="@(SpaDistFiles)" DestinationFolder="$(PublishDir)wwwroot/%(RecursiveDir)" />
   </Target>
-</Project>
+
