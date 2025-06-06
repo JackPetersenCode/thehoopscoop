@@ -14,8 +14,8 @@ RUN npm install --legacy-peer-deps
 COPY . ./
 
 # Copy certificate files into the container
-COPY ./reactapp4.client.pem /app/reactapp4.client.pem
-COPY ./reactapp4.client.key /app/reactapp4.client.key
+#COPY ./reactapp4.client.pem /app/reactapp4.client.pem
+#COPY ./reactapp4.client.key /app/reactapp4.client.key
 
 # Build the React app
 RUN npm run build
