@@ -1,6 +1,20 @@
 table tr:hover {
     background-color: #aec2ff80;
 }
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 8px;
+  font-size: 1rem;
+  border-radius: 4px;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="gray" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem;
+}
 
 .no-stats-available {
     text-align: center;

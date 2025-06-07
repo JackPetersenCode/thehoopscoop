@@ -14,7 +14,7 @@ interface PropBetResultsTableProps {
     selectedSeason: string;
     roster: Player[];
     propBetStats: PropBetStats[];
-    overUnderLine: number | string;
+    overUnderLine: number | string | null;
     selectedOpponent: NBATeam;
     setPlayerBoxScores: React.Dispatch<SetStateAction<Stats[]>>
     playerBoxScores: Stats[];

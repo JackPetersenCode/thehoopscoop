@@ -1,7 +1,7 @@
 import { PropBetStats } from "../interfaces/PropBetStats";
 import { Stats } from "../interfaces/StatsTable";
 
-const overUnderFilteredBoxScores = async (boxScores: Stats[], propBetStats: PropBetStats[], overUnderLine: number | string) => {
+const overUnderFilteredBoxScores = async (boxScores: Stats[], propBetStats: PropBetStats[], overUnderLine: number | string | null) => {
 
     const filteredBoxScores = boxScores.filter((element: Stats) => {
         let total = 0;

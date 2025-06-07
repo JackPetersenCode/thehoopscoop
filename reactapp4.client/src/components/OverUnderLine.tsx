@@ -3,8 +3,8 @@ import React, { SetStateAction } from 'react';
 
 
 interface OverUnderLineProps {
-    overUnderLine: number | string;
-    setOverUnderLine: React.Dispatch<SetStateAction<number | string>>;
+    overUnderLine: number | string | null;
+    setOverUnderLine: React.Dispatch<SetStateAction<number | string | null>>;
 }
 
 
