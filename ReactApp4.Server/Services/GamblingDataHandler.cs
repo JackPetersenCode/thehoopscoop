@@ -56,7 +56,7 @@ namespace ReactApp4.Server.Services
         {
             return await _gamblingDatabaseHandler.GetWinPctOverall();
         }
-        
+
         public async Task<IActionResult> GetHistoricalResults(string season, string teamName)
         {
             return await _gamblingDatabaseHandler.GetHistoricalResults(season, teamName);
@@ -88,6 +88,11 @@ namespace ReactApp4.Server.Services
         public async Task<IActionResult> PostExpectedMatchup([FromBody] ExpectedMatchup expectedMatchup, string season)
         {
             return await _gamblingDatabaseHandler.PostExpectedMatchup(expectedMatchup, season);
+        }
+        
+        public async Task<IActionResult> GetUniqueMLBGamePks(string table)
+        {
+            return await _gamblingDatabaseHandler.GetUniqueMLBGamePks(table);
         }
     }
 }

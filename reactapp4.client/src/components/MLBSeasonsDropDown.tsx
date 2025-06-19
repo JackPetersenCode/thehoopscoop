@@ -51,7 +51,7 @@ const MLBSeasonsDropDown: React.FC<SeasonsDropDownProps> = ({ selectedSeason, se
             <div className="drop-title">
                 Season
             </div>
-            <div>
+            <div className="select-wrapper">
                 <select className="drop-flex-select" value={selectedSeason} onChange={handleSeasonChange} disabled={disabled}>
                     <option className="drop-flex-option" value="0">Select Season</option>
 

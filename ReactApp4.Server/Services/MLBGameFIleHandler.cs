@@ -51,6 +51,5 @@ namespace ReactApp4.Server.Services
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
-
     }
 }

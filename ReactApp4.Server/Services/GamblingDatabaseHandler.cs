@@ -12,7 +12,7 @@ namespace ReactApp4.Server.Services
 {
     public class GamblingDatabaseHandler : ControllerBase
     {
-      
+
         private readonly IConfiguration _configuration;
 
         public GamblingDatabaseHandler(IConfiguration configuration)
@@ -180,19 +180,19 @@ namespace ReactApp4.Server.Services
                     SELECT ml 
                     FROM odds_{season}
                     WHERE team = @teamName AND date = @gameDate";
-        
+
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
-        
+
                 using (var connection = new NpgsqlConnection(connectionString))
                 {
                     await connection.OpenAsync();
-        
+
                     using (var cmd = new NpgsqlCommand(sql, connection))
                     {
                         // Safely parameterize input values
                         cmd.Parameters.AddWithValue("@teamName", teamName);
                         cmd.Parameters.AddWithValue("@gameDate", gameDate); // optionally parse to DateTime
-        
+
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {
                             var dataList = new List<Dictionary<string, object>>();
@@ -205,7 +205,7 @@ namespace ReactApp4.Server.Services
                                 }
                                 dataList.Add(dataDict);
                             }
-        
+
                             return Ok(dataList);
                         }
                     }
@@ -270,7 +270,7 @@ namespace ReactApp4.Server.Services
 
         public async Task<IActionResult> GetPreviousGameId(string season, string teamId, string gameDate)
         {
-            var realDate = DateTime.Parse(gameDate.Substring(0,10));
+            var realDate = DateTime.Parse(gameDate.Substring(0, 10));
             try
             {
 
@@ -621,10 +621,10 @@ namespace ReactApp4.Server.Services
                 ";
                 if (!string.IsNullOrEmpty(gameDate))
                 {
-                    sql += $@"AND (CAST(SUBSTRING(game_date_est, 0, 11) AS DATE) < @gameDate) ";               
+                    sql += $@"AND (CAST(SUBSTRING(game_date_est, 0, 11) AS DATE) < @gameDate) ";
 
                 }
-                
+
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
@@ -681,7 +681,7 @@ namespace ReactApp4.Server.Services
                 }
 
                 sql += $@"ORDER BY game_date DESC";
-                
+
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
                 using (var connection = new NpgsqlConnection(connectionString))
@@ -735,7 +735,7 @@ namespace ReactApp4.Server.Services
                     ON box_score_summary_{season}.game_id = league_games_{season}.game_id
                     WHERE matchup LIKE '%vs.%'
                 ";
-                
+
                 // Ensure your connection string is correct
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 
@@ -802,7 +802,7 @@ namespace ReactApp4.Server.Services
                         cmd.Parameters.AddWithValue("@away_team", newOdds.Away_team ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@home_odds", newOdds.Home_odds ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@away_odds", newOdds.Away_odds ?? (object)DBNull.Value);
-                        
+
 
 
                         await cmd.ExecuteNonQueryAsync();
@@ -848,12 +848,12 @@ namespace ReactApp4.Server.Services
                         cmd.Parameters.AddWithValue("@home_expected", expectedMatchup.Home_expected ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@visitor_team", expectedMatchup.Visitor_team ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@visitor_team_id", expectedMatchup.Visitor_team_id ?? (object)DBNull.Value);
-                        cmd.Parameters.AddWithValue("@visitor_expected", expectedMatchup.Visitor_expected ?? (object)DBNull.Value); 
+                        cmd.Parameters.AddWithValue("@visitor_expected", expectedMatchup.Visitor_expected ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@home_actual", expectedMatchup.Home_actual ?? (object)DBNull.Value);
-                        cmd.Parameters.AddWithValue("@visitor_actual", expectedMatchup.Visitor_actual ?? (object)DBNull.Value); 
-                        cmd.Parameters.AddWithValue("@home_odds", expectedMatchup.Home_odds ?? (object)DBNull.Value); 
+                        cmd.Parameters.AddWithValue("@visitor_actual", expectedMatchup.Visitor_actual ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@home_odds", expectedMatchup.Home_odds ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@visitor_odds", expectedMatchup.Visitor_odds ?? (object)DBNull.Value);
-                        cmd.Parameters.AddWithValue("@green_red", expectedMatchup.Green_red ?? (object)DBNull.Value);                        
+                        cmd.Parameters.AddWithValue("@green_red", expectedMatchup.Green_red ?? (object)DBNull.Value);
 
 
                         await cmd.ExecuteNonQueryAsync();
@@ -861,6 +861,48 @@ namespace ReactApp4.Server.Services
                 }
 
                 return StatusCode(201, expectedMatchup);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex}");
+            }
+        }
+        
+        public async Task<IActionResult> GetUniqueMLBGamePks(string table)
+        {
+            try
+            {
+                //var table = $"mlb_games_{season}";
+                var sql = $"SELECT DISTINCT(game_pk) FROM \"{table}\"";
+
+                var connectionString = _configuration.GetConnectionString("WebApiDatabase");
+
+                using (var connection = new NpgsqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (var cmd = new NpgsqlCommand(sql, connection))
+                    {
+                        using (var reader = await cmd.ExecuteReaderAsync())
+                        {
+                            var dataList = new List<Dictionary<string, object>>();
+                            while (await reader.ReadAsync())
+                            {
+                                var dataDict = new Dictionary<string, object>();
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    dataDict[reader.GetName(i)] = reader.GetValue(i);
+                                }
+                                dataList.Add(dataDict);
+                            }
+
+                            // Convert the list of dictionaries to JSON
+
+                            // Return the JSON data
+                            return Ok(dataList);
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {

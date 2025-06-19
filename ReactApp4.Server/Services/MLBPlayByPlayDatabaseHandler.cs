@@ -66,7 +66,8 @@ namespace ReactApp4.Server.Services
                             @matchup_post_on_first_id, @matchup_post_on_first_full_name,
                             @matchup_batter_hot_cold_zones, @matchup_pitcher_hot_cold_zones,
                             @pitch_index, @action_index, @runner_index
-                        );";
+                        )
+                        ;";
 
                     using var cmd = new NpgsqlCommand(sql, connection);
 

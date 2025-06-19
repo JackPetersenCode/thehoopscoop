@@ -77,13 +77,41 @@ def get_mlb_schedule(season):
 
     return response.json()
 
-def save_games_to_csv(games_data, season):
-    """Stores MLB games data into a CSV file"""
-    game_list = []
 
-    for game in games_data.get("dates", []):
-        for g in game.get("games", []):
-            print(g)
+
+def get_existing_game_pks(table):
+    response = requests.get(f"http://localhost:5190/api/Gambling/uniqueGamePks/{table}")
+    if response:
+        #print(response.json())
+        return response.json()
+    return "garbage response"
+
+def get_new_game_pks(game_list, current_game_pks):
+    # Convert current_game_pks into a set for fast lookup
+    existing_pks = {str(item['game_pk']) for item in current_game_pks}    
+    # Return only the new games whose game_pk is not in existing_pks
+    return [game for game in game_list if str(game['game_pk']) not in existing_pks]
+
+def save_games_to_csv(game_list, season):
+    print(f"Saving {len(game_list)} new games to CSV...")
+    df = pd.DataFrame(game_list)
+    csv_filename = f"./mlb_stats/mlb_games_{season}.csv"
+    df.to_csv(csv_filename, index=False)
+    print(f"Saved to {csv_filename}")
+
+def get_schedule_save_mlb_games(season):
+    schedule_data = get_mlb_schedule(season)
+    if not schedule_data:
+        return
+
+    # Build full game list from MLB API
+    game_list = []
+    for day in schedule_data.get("dates", []):
+        for g in day.get("games", []):
+            if (g["status"]["abstractGameState"] != 'Final' or g["status"]["detailedState"] == 'Postponed'):
+                print(g)
+                continue
+
             game_list.append({
                 "game_pk": g["gamePk"],
                 "game_guid": g["gameGuid"],
@@ -98,21 +126,21 @@ def save_games_to_csv(games_data, season):
                 "start_time_tbd": g["status"]["startTimeTBD"],
                 "away_team_id": g["teams"]["away"]["team"]["id"],
                 "away_team_name": g["teams"]["away"]["team"]["name"],
-                "away_score": g["teams"]["away"].get("score", None),  # Handle missing score
+                "away_score": g["teams"]["away"].get("score", None),
                 "away_wins": g["teams"]["away"]["leagueRecord"]["wins"],
                 "away_losses": g["teams"]["away"]["leagueRecord"]["losses"],
                 "away_win_pct": g["teams"]["away"]["leagueRecord"]["pct"],
                 "away_is_winner": g["teams"]["away"].get("isWinner", None),
                 "home_team_id": g["teams"]["home"]["team"]["id"],
                 "home_team_name": g["teams"]["home"]["team"]["name"],
-                "home_score": g["teams"]["home"].get("score", None),  # Handle missing score,
+                "home_score": g["teams"]["home"].get("score", None),
                 "home_wins": g["teams"]["home"]["leagueRecord"]["wins"],
                 "home_losses": g["teams"]["home"]["leagueRecord"]["losses"],
                 "home_win_pct": g["teams"]["home"]["leagueRecord"]["pct"],
                 "home_is_winner": g["teams"]["home"].get("isWinner", None),
                 "venue_id": g["venue"]["id"],
                 "venue_name": g["venue"]["name"],
-                "is_tie": g.get("isTie", None),  # Handle missing is_tie
+                "is_tie": g.get("isTie", None),
                 "game_number": g["gameNumber"],
                 "double_header": g["doubleHeader"],
                 "day_night": g["dayNight"],
@@ -125,21 +153,88 @@ def save_games_to_csv(games_data, season):
                 "if_necessary_desc": g["ifNecessaryDescription"]
             })
 
-    df = pd.DataFrame(game_list)
-    csv_filename = f"./mlb_stats/mlb_games_{season}.csv"
-    df.to_csv(csv_filename, index=False)
-    
-    print(df)
-    return df, csv_filename
+    current_game_pks = get_existing_game_pks(f"mlb_games_{season}")
+    new_game_data = get_new_game_pks(game_list, current_game_pks)
+    save_games_to_csv(new_game_data, season)
 
 
-def get_schedule_save_mlb_games(season):
-    schedule_data = get_mlb_schedule(season)
-    #Print sample data
-    if schedule_data:
-        # Save to CSV and display
-        save_games_to_csv(schedule_data, season)
 
+#def save_games_to_csv(games_data, season):
+#    """Stores MLB games data into a CSV file"""
+#    game_list = []
+#
+#    for game in games_data.get("dates", []):
+#        for g in game.get("games", []):
+#            print(g)
+#            if (g["status"]["abstractGameState"] != 'Final'):
+#                print(g)
+#                continue
+#
+#            game_list.append({
+#                "game_pk": g["gamePk"],
+#                "game_guid": g["gameGuid"],
+#                "game_type": g["gameType"],
+#                "season": g["season"],
+#                "game_date": g["gameDate"],
+#                "official_date": g["officialDate"],
+#                "abstract_game_state": g["status"]["abstractGameState"],
+#                "coded_game_state": g["status"]["codedGameState"],
+#                "detailed_state": g["status"]["detailedState"],
+#                "status_code": g["status"]["statusCode"],
+#                "start_time_tbd": g["status"]["startTimeTBD"],
+#                "away_team_id": g["teams"]["away"]["team"]["id"],
+#                "away_team_name": g["teams"]["away"]["team"]["name"],
+#                "away_score": g["teams"]["away"].get("score", None),  # Handle missing score
+#                "away_wins": g["teams"]["away"]["leagueRecord"]["wins"],
+#                "away_losses": g["teams"]["away"]["leagueRecord"]["losses"],
+#                "away_win_pct": g["teams"]["away"]["leagueRecord"]["pct"],
+#                "away_is_winner": g["teams"]["away"].get("isWinner", None),
+#                "home_team_id": g["teams"]["home"]["team"]["id"],
+#                "home_team_name": g["teams"]["home"]["team"]["name"],
+#                "home_score": g["teams"]["home"].get("score", None),  # Handle missing score,
+#                "home_wins": g["teams"]["home"]["leagueRecord"]["wins"],
+#                "home_losses": g["teams"]["home"]["leagueRecord"]["losses"],
+#                "home_win_pct": g["teams"]["home"]["leagueRecord"]["pct"],
+#                "home_is_winner": g["teams"]["home"].get("isWinner", None),
+#                "venue_id": g["venue"]["id"],
+#                "venue_name": g["venue"]["name"],
+#                "is_tie": g.get("isTie", None),  # Handle missing is_tie
+#                "game_number": g["gameNumber"],
+#                "double_header": g["doubleHeader"],
+#                "day_night": g["dayNight"],
+#                "description": g.get("description", ""),
+#                "scheduled_innings": g["scheduledInnings"],
+#                "games_in_series": g["gamesInSeries"],
+#                "series_game_number": g["seriesGameNumber"],
+#                "series_description": g["seriesDescription"],
+#                "if_necessary": g["ifNecessary"],
+#                "if_necessary_desc": g["ifNecessaryDescription"]
+#            })
+#
+#    df = pd.DataFrame(game_list)
+#    csv_filename = f"./mlb_stats/mlb_games_{season}.csv"
+#    df.to_csv(csv_filename, index=False)
+#    
+#    return df, csv_filename
+#
+#def get_unique_game_pks(season):
+#    response = requests.get(f"http://localhost:5190/api/Gambling/mlbgamepks/{season}")
+#    if response:
+#        return response
+#    return "garbage response"
+#
+#def get_schedule_save_mlb_games(season):
+#    schedule_data = get_mlb_schedule(season)
+#
+#    #if gamepk not in unique gamepks, save to csv
+#    current_games = get_unique_game_pks(season)
+#    #Print sample data
+#
+#
+#    if schedule_data:
+#        # Save to CSV and display
+#        save_games_to_csv(schedule_data, season)
+#
 
 def read_csv_file(file_path):
     """
@@ -219,21 +314,28 @@ def flatten_play(play, parent_key='', sep='_'):
 
 
 def get_schedule_save_play_by_play(season):
-    response = requests.get(f"http://localhost:5190/api/MLBGame/read/{season}")
-    #csv_data = read_csv_file(f"./mlb_stats/mlb_games_{season}.csv")
-    # Check if the request was successful
-    if response.status_code == 200:
-        csv_data = response.json()  # Return the parsed JSON response
-    else:
-        print(f"Error: (Status Code: {response.status_code})")
-        return None  # Return None if request fails
     
+    #response = requests.get(f"http://localhost:5190/api/MLBGame/read/{season}")
+
+    plays_table = f"mlb_plays_{season}"
+    #get unique game pks from plays set as current gamepks
+    current_game_pks = get_existing_game_pks(plays_table)
+    
+    games_table = f"mlb_games_{season}"
+    #using unique game pk local route instead to get unique games from database
+    all_game_pks = get_existing_game_pks(games_table)
+    new_game_pks = get_new_game_pks(all_game_pks, current_game_pks)
+    print(len(current_game_pks))
+    print(len(all_game_pks))
+    print(len(new_game_pks))
+    #csv_data = read_csv_file(f"./mlb_stats/mlb_games_{season}.csv")
+
     play_rows = []
     runners_rows = []
     credit_rows = []
     play_event_rows = []
-    print("games length: " + str(len(csv_data)))
-    for game in csv_data:
+    print("games length: " + str(len(new_game_pks)))
+    for game in new_game_pks:
         game_pk = game["game_pk"]
         play_by_play_response = get_mlb_play_by_play_from_game_pk(game_pk, season)
         # Sample list of gamePks for demonstration
@@ -454,7 +556,6 @@ def get_schedule_save_play_by_play(season):
     write_csv("play_events", play_event_rows)
     # Convert to sorted list for consistent column order
     #headers = sorted(all_keys)
-
     # Write the CSV safely
     #with open("./mlb_stats/mlb_play_by_play.csv", "w", newline='', encoding='utf-8') as f:
     #    writer = csv.DictWriter(f, fieldnames=headers)
@@ -467,14 +568,17 @@ def get_schedule_save_play_by_play(season):
 
 def get_schedule_save_box_scores(season):
 
-    response = requests.get(f"http://localhost:5190/api/MLBGame/read/{season}")
-    #csv_data = read_csv_file(f"./mlb_stats/mlb_games_{season}.csv")
-    # Check if the request was successful
-    if response.status_code == 200:
-        csv_data = response.json()  # Return the parsed JSON response
-    else:
-        print(f"Error: (Status Code: {response.status_code})")
-        return None  # Return None if request fails
+    box_score_table = f"player_game_stats_batting_{season}"
+    #get unique game pks from plays set as current gamepks
+    current_game_pks = get_existing_game_pks(box_score_table)
+    
+    games_table = f"mlb_games_{season}"
+    #using unique game pk local route instead to get unique games from database
+    all_game_pks = get_existing_game_pks(games_table)
+    new_game_pks = get_new_game_pks(all_game_pks, current_game_pks)
+    print(len(current_game_pks))
+    print(len(all_game_pks))
+    print(len(new_game_pks))
     #games_data = get_mlb_schedule(season)
     #print(games_data)
     #print(csv_data)
@@ -718,7 +822,7 @@ def get_schedule_save_box_scores(season):
     player_game_stats_pitching = []
     player_game_stats_fielding = []
 
-    for game in csv_data:
+    for game in new_game_pks:
         game_pk = game["game_pk"]
         box_score_response = get_box_score_from_game_pk(game_pk, season)
 
@@ -789,86 +893,86 @@ def get_schedule_save_box_scores(season):
                 row.update(stats)
                 target_list.append(row)
 
-            ## ==== PLAYER DATA ====
-            #players = box_score_response["teams"][team_side]["players"]
-#
-            #for player_id, player in players.items():
-            #    person = player.get("person", {})
-            #    position = player.get("position", {})
-            #    status = player.get("status", {})
-            #    game_status = player.get("gameStatus", {})
-#
-            #    #player_stats_rows.append({
-            #    #    "gamePk": game_pk,
-            #    #    "teamSide": team_side,
-            #    #    "teamName": team_name,
-            #    #    "playerId": player_id,
-            #    #    "personId": person.get("id"),
-            #    #    "fullName": person.get("fullName"),
-            #    #    "boxscoreName": person.get("boxscoreName"),
-            #    #    "jerseyNumber": player.get("jerseyNumber", ""),
-            #    #    "position": position.get("name", ""),
-            #    #    "position_abbr": position.get("abbreviation", ""),
-            #    #    "status_code": status.get("code", ""),
-            #    #    "status_description": status.get("description", ""),
-            #    #    "isCurrentBatter": game_status.get("isCurrentBatter", False),
-            #    #    "isCurrentPitcher": game_status.get("isCurrentPitcher", False),
-            #    #    "isOnBench": game_status.get("isOnBench", False),
-            #    #    "isSubstitute": game_status.get("isSubstitute", False)
-            #    #})
-#
-            #    # ==== PLAYER SEASON STATS ====
-            #    #season_stats = player.get("seasonStats", {})
-            #    #for category, stat_dict in season_stats.items():
-            #    #    row = {
-            #    #        "gamePk": game_pk,
-            #    #        "teamSide": team_side,
-            #    #        "teamName": team_name,
-            #    #        "playerId": player_id,
-            #    #        "personId": person.get("id"),
-            #    #        "category": category
-            #    #    }
-            #    #    row.update(stat_dict)
-            #    #    player_season_stats_rows.append(row)
-            #    #
-            #                # ==== PLAYER GAME STATS (BOX SCORE) ====
-            #    # ==== PLAYER GAME STATS (BOX SCORE) ====
-            #    game_stats = player.get("stats", {})
-            #    for category, stat_dict in game_stats.items():
-            #        row = {
-            #            "gamePk": game_pk,
-            #            "teamSide": team_side,
-            #            "teamName": team_name,
-            #            "teamId": team_id,
-            #            "playerId": player_id,
-            #            "personId": person.get("id"),
-            #        }
-            #        row.update(stat_dict)
-#
-            #        if category == "batting":
-            #            player_game_stats_batting.append(row)
-            #        elif category == "pitching":
-            #            player_game_stats_pitching.append(row)
-            #        elif category == "fielding":
-            #            player_game_stats_fielding.append(row)
+            # ==== PLAYER DATA ====
+            players = box_score_response["teams"][team_side]["players"]
+
+            for player_id, player in players.items():
+                person = player.get("person", {})
+                position = player.get("position", {})
+                status = player.get("status", {})
+                game_status = player.get("gameStatus", {})
+
+                #player_stats_rows.append({
+                #    "gamePk": game_pk,
+                #    "teamSide": team_side,
+                #    "teamName": team_name,
+                #    "playerId": player_id,
+                #    "personId": person.get("id"),
+                #    "fullName": person.get("fullName"),
+                #    "boxscoreName": person.get("boxscoreName"),
+                #    "jerseyNumber": player.get("jerseyNumber", ""),
+                #    "position": position.get("name", ""),
+                #    "position_abbr": position.get("abbreviation", ""),
+                #    "status_code": status.get("code", ""),
+                #    "status_description": status.get("description", ""),
+                #    "isCurrentBatter": game_status.get("isCurrentBatter", False),
+                #    "isCurrentPitcher": game_status.get("isCurrentPitcher", False),
+                #    "isOnBench": game_status.get("isOnBench", False),
+                #    "isSubstitute": game_status.get("isSubstitute", False)
+                #})
+
+                # ==== PLAYER SEASON STATS ====
+                #season_stats = player.get("seasonStats", {})
+                #for category, stat_dict in season_stats.items():
+                #    row = {
+                #        "gamePk": game_pk,
+                #        "teamSide": team_side,
+                #        "teamName": team_name,
+                #        "playerId": player_id,
+                #        "personId": person.get("id"),
+                #        "category": category
+                #    }
+                #    row.update(stat_dict)
+                #    player_season_stats_rows.append(row)
+                #
+                            # ==== PLAYER GAME STATS (BOX SCORE) ====
+                # ==== PLAYER GAME STATS (BOX SCORE) ====
+                game_stats = player.get("stats", {})
+                for category, stat_dict in game_stats.items():
+                    row = {
+                        "gamePk": game_pk,
+                        "teamSide": team_side,
+                        "teamName": team_name,
+                        "teamId": team_id,
+                        "playerId": player_id,
+                        "personId": person.get("id"),
+                    }
+                    row.update(stat_dict)
+
+                    if category == "batting":
+                        player_game_stats_batting.append(row)
+                    elif category == "pitching":
+                        player_game_stats_pitching.append(row)
+                    elif category == "fielding":
+                        player_game_stats_fielding.append(row)
 
 
 
     # ==== WRITE TO CSV FILES ====
     def write_csv(filename, rows):
         df = pd.DataFrame(rows)
-        df.to_csv(f"./mlb_stats/{filename}_{season}.csv", index=False)
+        df.to_csv(f"./mlb_stats/{filename}_{season}_v8.csv", index=False)
         print(f"Saved {filename}_{season}.csv with {len(df)} rows")
 
     write_csv("team", team_rows)
-    write_csv("team_stats_batting", team_stats_batting_rows)
-    write_csv("team_stats_pitching", team_stats_pitching_rows)
-    write_csv("team_stats_fielding", team_stats_fielding_rows)
+    #write_csv("team_stats_batting", team_stats_batting_rows)
+    #write_csv("team_stats_pitching", team_stats_pitching_rows)
+    #write_csv("team_stats_fielding", team_stats_fielding_rows)
     #write_csv("player_stats", player_stats_rows)
     #write_csv("player_season_stats", player_season_stats_rows)
-    #write_csv("player_game_stats_batting", player_game_stats_batting)
-    #write_csv("player_game_stats_pitching", player_game_stats_pitching)
-    #write_csv("player_game_stats_fielding", player_game_stats_fielding)
+    write_csv("player_game_stats_batting", player_game_stats_batting)
+    write_csv("player_game_stats_pitching", player_game_stats_pitching)
+    write_csv("player_game_stats_fielding", player_game_stats_fielding)
 
 
 def get_active_mlb_players_for_season(season: str, output_path: str = None):

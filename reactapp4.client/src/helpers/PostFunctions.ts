@@ -16,6 +16,7 @@ import { MLBTeamInfo } from "../interfaces/MLBTeamInfo";
 import { Play, PlayPlayEvents, PlayRunners, PlayRunnersCredits } from "../interfaces/PlayByPlay";
 
 const token = localStorage.getItem('token');
+console.log(token)
 
 const postLeagueGamesBySeason = async (obj: [], season: string) => {
     console.log(season);
@@ -279,7 +280,7 @@ const postMLBGamesBySeason = async (obj: MLBGame, season: string) => {
         })
         if (response.ok) {
             const jsonResponse = await response.json();
-            //console.log("✅ Batting stats uploaded:", jsonResponse);
+            console.log("✅ game stats uploaded:", jsonResponse);
 
             return jsonResponse;
         } else {

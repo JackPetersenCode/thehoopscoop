@@ -61,7 +61,7 @@ const DropDown: React.FC<DropDownProps> = React.memo(({ options, setPerMode, set
             <div className="drop-title">
                 {dropDownType}
             </div>
-            <div>
+            <div className="select-wrapper">
                 <select title='drop-flex-select' className="drop-flex-select" value={typeof selectedOption === 'object' ? selectedOption.team_name : selectedOption} onChange={handleChange} disabled={disabled} >
                     <option className="drop-flex-option" value="0">Select {dropDownType}</option>
 

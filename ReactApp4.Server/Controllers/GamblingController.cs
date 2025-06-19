@@ -21,7 +21,7 @@ namespace ReactApp4.Server.Controllers
         public async Task<IActionResult> GetUpcomingGames(string season)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             return await _gamblingDataHandler.GetUpcomingGames(season);
         }
 
@@ -35,15 +35,15 @@ namespace ReactApp4.Server.Controllers
         public async Task<IActionResult> GetPreviousGameId(string season, string teamId, string gameDate)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             return await _gamblingDataHandler.GetPreviousGameId(season, teamId, gameDate);
         }
 
-       [HttpGet("moneyline/{season}/{teamName}/{gameDate}")]
+        [HttpGet("moneyline/{season}/{teamName}/{gameDate}")]
         public async Task<IActionResult> GetMoneyline(string season, string teamName, string gameDate)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             return await _gamblingDataHandler.GetMoneyline(season, teamName, gameDate);
         }
 
@@ -51,7 +51,7 @@ namespace ReactApp4.Server.Controllers
         public async Task<IActionResult> GetNewOdds(string season, string teamName, string gameDate, string H_or_V)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             if (!SeasonConstants.IsValidH_or_V(H_or_V))
                 return BadRequest("Invalid H_or_V");
             return await _gamblingDataHandler.GetNewOdds(season, teamName, gameDate, H_or_V);
@@ -61,7 +61,7 @@ namespace ReactApp4.Server.Controllers
         public async Task<IActionResult> GetRosterBySeasonByTeam(string season, string teamId, string gameId = null)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             return await _gamblingDataHandler.GetRosterBySeasonByTeam(season, teamId, gameId);
         }
 
@@ -69,15 +69,15 @@ namespace ReactApp4.Server.Controllers
         public async Task<IActionResult> GetRosterBySeasonByTeamFromAdvanced(string season, string teamId, string gameId = null)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             return await _gamblingDataHandler.GetRosterBySeasonByTeamFromAdvanced(season, teamId, gameId);
         }
-        
+
         [HttpGet("averageScore/{season}/{gameDate?}")]
         public async Task<IActionResult> GetAverageScore(string season, string gameDate = null)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             return await _gamblingDataHandler.GetAverageScore(season, gameDate);
         }
 
@@ -85,7 +85,7 @@ namespace ReactApp4.Server.Controllers
         public async Task<IActionResult> GetHistoricalResults(string season, string teamName = null)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             return await _gamblingDataHandler.GetHistoricalResults(season, teamName);
         }
 
@@ -93,7 +93,7 @@ namespace ReactApp4.Server.Controllers
         public async Task<IActionResult> GetTopTenHistorical(string season)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             return await _gamblingDataHandler.GetTopTenHistorical(season);
         }
 
@@ -101,23 +101,23 @@ namespace ReactApp4.Server.Controllers
         public async Task<IActionResult> GetLeagueGamesWithHomeVisitor(string season)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             return await _gamblingDataHandler.GetLeagueGamesWithHomeVisitor(season);
         }
-        
+
         [HttpGet("winPct/{season}")]
         public async Task<IActionResult> GetWinPctBySeason(string season)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             return await _gamblingDataHandler.GetWinPctBySeason(season);
         }
-                
+
         [HttpGet("winPctByTeam/{season}/{teamName}")]
         public async Task<IActionResult> GetWinPctBySeasonByTeam(string season, string teamName)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             return await _gamblingDataHandler.GetWinPctBySeasonByTeam(season, teamName);
         }
 
@@ -131,7 +131,7 @@ namespace ReactApp4.Server.Controllers
         public async Task<IActionResult> GetNewOddsFromFile(string season)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             return await _gamblingDataHandler.GetNewOddsFromFile(season);
         }
 
@@ -140,23 +140,32 @@ namespace ReactApp4.Server.Controllers
         public async Task<IActionResult> PostNewOdds([FromBody] NewOdds newOdds, string season)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             if (newOdds == null)
                 return BadRequest("Invalid boxScoreAdvanced data");
 
             return await _gamblingDataHandler.PostNewOdds(newOdds, season);
         }
-        
+
         [Authorize]
         [HttpPost("Jackorithm/{season}")]
         public async Task<IActionResult> PostExpectedMatchup([FromBody] ExpectedMatchup expectedMatchup, string season)
         {
             if (!SeasonConstants.IsValidNBASeason(season))
-            	return BadRequest("Invalid NBA season.");
+                return BadRequest("Invalid NBA season.");
             if (expectedMatchup == null)
                 return BadRequest("Invalid boxScoreAdvanced data");
 
             return await _gamblingDataHandler.PostExpectedMatchup(expectedMatchup, season);
+        }
+        
+
+        [HttpGet("uniqueGamePks/{table}")]
+        public async Task<IActionResult> GetUniqueMLBGamePks(string table)
+        {
+            //if (!SeasonConstants.IsValidMLBSeason(table))
+            //	return BadRequest("Invalid MLB season.");
+            return await _gamblingDataHandler.GetUniqueMLBGamePks(table);
         }
 
     }

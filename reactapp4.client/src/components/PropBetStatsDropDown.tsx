@@ -40,18 +40,19 @@ const PropBetStatsDropDown: React.FC<PropBetStatsDropDownProps> = ({ setSelected
             <div className="drop-title">
                 Prop Bet Stats
             </div>
-            <select className="drop-flex-select" value={"0"} onChange={handleStatChange} disabled={disabled} >
-                    <option className="drop-flex-option" value="0">Prop Bet Stats</option>
+            <div className="select-wrapper">
+                <select className="drop-flex-select" value={"0"} onChange={handleStatChange} disabled={disabled} >
+                        <option className="drop-flex-option" value="0">Prop Bet Stats</option>
 
-                {stats.map((option: PropBetStats, index: number) => (
-                        <option key={index} value={JSON.stringify(option)} >
-                            {option.label}
-                        </option>
-                    ))}
+                    {stats.map((option: PropBetStats, index: number) => (
+                            <option key={index} value={JSON.stringify(option)} >
+                                {option.label}
+                            </option>
+                        ))}
 
                 </select>
-
             </div>
+        </div>
     );
 }
 

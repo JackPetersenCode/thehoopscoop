@@ -46,16 +46,18 @@ const ShotChartsGamesDropDown: React.FC<ShotChartsGamesDropDownProps> = ({ selec
             <div className="drop-title">
                 Select Game
             </div>
-            <select className="drop-flex-select" value={JSON.stringify(selectedGame)} onChange={handleChange}>
-                <option className="drop-flex-option" value="0">Select Game</option>
+            <div className="select-wrapper">
+                <select className="drop-flex-select" value={JSON.stringify(selectedGame)} onChange={handleChange}>
+                    <option className="drop-flex-option" value="0">Select Game</option>
 
-                {gameData.map((option, index) => (
-                    <option key={index} className="option-select" value={JSON.stringify(option)}>
-                        {option.game_date + ' ' + option.matchup}
-                    </option>
-                ))}
+                    {gameData.map((option, index) => (
+                        <option key={index} className="option-select" value={JSON.stringify(option)}>
+                            {option.game_date + ' ' + option.matchup}
+                        </option>
+                    ))}
 
-            </select>
+                </select>
+            </div>
         </div>
     );
 }

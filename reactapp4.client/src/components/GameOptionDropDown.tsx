@@ -33,7 +33,7 @@ const GameOptionDropDown: React.FC<GameOptionDropDownProps> = ({ gameOption, set
             <div className="drop-title">
                 Tool Option
             </div>
-            <div>
+            <div className="select-wrapper">
                 <select className="drop-flex-select-blue" value={gameOption} onChange={handleGameOptionChange}>
                     <option className="drop-flex-option" value="0">Select Tool Option</option>
 

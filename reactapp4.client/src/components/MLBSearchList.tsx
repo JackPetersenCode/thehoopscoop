@@ -75,10 +75,10 @@ const MLBSearchList: React.FC<MLBSearchListProps> = ({
     return (
         <div>
             {openSearchList && filteredData.length > 0 ?
-                <div className="search-list" ref={refOne}>
-                    <ul className='search-list-ul'>
+                <div role="listbox" tabIndex={0} className="search-list ul-search-list" ref={refOne}>
+                    <ul role="presentation">
                         {filteredData.map((item: MLBActivePlayer, index: number) => (
-                            <li key={index} onClick={() => handleList(item)} className="search-list-option">
+                            <li role="option" tabIndex={-1} key={index} onClick={() => handleList(item)} className="search-list-option">
                                 {item.fullName}
                             </li>
                         ))}

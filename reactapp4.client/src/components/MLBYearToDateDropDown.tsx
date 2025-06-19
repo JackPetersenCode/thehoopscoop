@@ -15,18 +15,20 @@ const MLBYearToDateDropDown: React.FC<MLBYearToDateDropDownProps> = ({ options, 
     return (
         <div className="drop-flex">
             <div className="drop-title">Year To Date</div>
-            <select
-                className="drop-flex-select"
-                value={yearToDateOption}
-                onChange={handleChange}
-                disabled={disabled}
-            >
-                {options.map((option, index) => (
-                    <option key={index} value={option}>
-                        {option}
-                    </option>
-                ))}
-            </select>
+            <div className="select-wrapper">
+                <select
+                    className="drop-flex-select"
+                    value={yearToDateOption}
+                    onChange={handleChange}
+                    disabled={disabled}
+                >
+                    {options.map((option, index) => (
+                        <option key={index} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </select>
+            </div>
         </div>
     );
 };

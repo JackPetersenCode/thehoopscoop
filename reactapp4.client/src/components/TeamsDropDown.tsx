@@ -32,16 +32,18 @@ const TeamsDropDown: React.FC<TeamsDropDownProps> = ({ selectedTeam, setSelected
             <div className="drop-title">
                 Select Team
             </div>
-            <select className="drop-flex-select" value={JSON.stringify(selectedTeam)} onChange={handleChange}>
-                <option className="drop-flex-option" value="0">Team</option>
+            <div>
+                <select className="drop-flex-select" value={JSON.stringify(selectedTeam)} onChange={handleChange}>
+                    <option className="drop-flex-option" value="0">Team</option>
 
-                {nbaTeams.map((option, index) => (
-                    <option key={index} className="option-select" value={JSON.stringify(option)}>
-                        {option.team_name}
-                    </option>
-                ))}
+                    {nbaTeams.map((option, index) => (
+                        <option key={index} className="option-select" value={JSON.stringify(option)}>
+                            {option.team_name}
+                        </option>
+                    ))}
 
-            </select>
+                </select>
+            </div>
         </div>
     );
 }

@@ -47,7 +47,7 @@ const MLBDropDown: React.FC<MLBDropDownProps> = React.memo(({ options, setLeague
             <div className="drop-title">
                 {dropDownType}
             </div>
-            <div>
+            <div className="select-wrapper">
                 <select title='drop-flex-select' className="drop-flex-select" value={typeof selectedOption === 'string' && selectedOption.includes("team_id") ? 
                     JSON.parse(selectedOption).team_name : selectedOption} onChange={handleChange}>
                     

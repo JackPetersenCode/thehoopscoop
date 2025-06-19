@@ -668,7 +668,7 @@ function Admin() {
             <button onClick={loadNewOddsFunction}>New Odds</button>
             <button onClick={loadExpectedBySeason}>Expected Matchups</button>
             <button onClick={() => loadMLBGames("2025")}>MLB Games</button>
-            <button onClick={() => loadMLBPlayerGamesByCategory("batting", "2025")}>MLB Player Games</button>
+            <button onClick={() => loadMLBPlayerGamesByCategory("pitching", "2025")}>MLB Player Games</button>
             <button onClick={() => loadMLBActivePlayers("2025")}>MLB Active Players</button>
             <button onClick={() => loadMLBPlayerGameInfoBySeason("2025")}>MLB Player Game Info</button>
             <button onClick={() => loadMLBTeamInfoBySeason("2025")}>MLB Team Info</button>

@@ -17,18 +17,20 @@ const MLBOpponentDropDown: React.FC<MLBOpponentDropDownProps> = ({ options, sele
     return (
         <div className="drop-flex">
             <div className="drop-title">Opponent</div>
-            <select
-                className="drop-flex-select"
-                value={JSON.stringify(selectedOpponent)}
-                onChange={handleChange}
-                disabled={disabled}
-            >
-                {options.map((option, index) => (
-                    <option key={index} value={JSON.stringify(option)}>
-                        {option.team_name}
-                    </option>
-                ))}
-            </select>
+            <div className="select-wrapper" >
+                <select
+                    className="drop-flex-select"
+                    value={JSON.stringify(selectedOpponent)}
+                    onChange={handleChange}
+                    disabled={disabled}
+                >
+                    {options.map((option, index) => (
+                        <option key={index} value={JSON.stringify(option)}>
+                            {option.team_name}
+                        </option>
+                    ))}
+                </select>
+            </div>
         </div>
     );
 };

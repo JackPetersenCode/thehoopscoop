@@ -88,7 +88,7 @@ const loadMLBGames = async(season: string) => {
             ifNecessaryDesc: data[i].if_necessary_desc // VARCHAR(50)
         };
         console.log(mlbGame)
-        if (mlbGame.homeScore === null && mlbGame.awayScore === null) {
+        if (mlbGame.abstractGameState != 'Final') {
             console.log('RAINED OUT ################################################################');
             continue;
         }

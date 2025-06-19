@@ -20,21 +20,20 @@ const MLBPropBetOpponentDropDown: React.FC<PropBetOpponentDropDownProps> = ({ se
 
     return (
         <div className="drop-flex">
-            
             <div className="drop-title">
                 Opponent
             </div>
-            
-            <select className="drop-flex-select" value={JSON.stringify(selectedOpponent)} onChange={handleChange} disabled={disabled} >
-                <option className="drop-flex-option" value="0">Opponent</option>
+            <div className="select-wrapper">
+                <select className="drop-flex-select" value={JSON.stringify(selectedOpponent)} onChange={handleChange} disabled={disabled} >
+                    <option className="drop-flex-option" value="0">Opponent</option>
 
-                {mlbTeams.map((option, index) => (
-                    <option key={index} className="option-select" value={JSON.stringify(option)}>
-                        {option.team_name}
-                    </option>
-                ))}
-
-            </select>
+                    {mlbTeams.map((option, index) => (
+                        <option key={index} className="option-select" value={JSON.stringify(option)}>
+                            {option.team_name}
+                        </option>
+                    ))}
+                </select>
+            </div>
         </div>
     );
 }

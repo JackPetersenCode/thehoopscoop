@@ -23,7 +23,7 @@ const MLBSelectedTeamDropDown: React.FC<MLBSelectedTeamDropDownProps> = ({
   return (
     <div className="drop-flex">
       <div className="drop-title">Team</div>
-      <div>
+      <div className="select-wrapper">
         <select
           className="drop-flex-select"
           value={JSON.stringify(selectedTeam)}

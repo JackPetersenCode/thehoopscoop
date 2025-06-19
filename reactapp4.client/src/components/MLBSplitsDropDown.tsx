@@ -25,7 +25,7 @@ const MLBSplitsDropDown: React.FC<MLBSplitsDropDownProps> = React.memo(({ hittin
             <div className="drop-title">
                 Splits
             </div>
-            <div>
+            <div className="select-wrapper">
                 <select className="drop-flex-select" value={selectedSplit} onChange={handleSplitChange} disabled={disabled}>
                     <option className="drop-flex-option" value="0">Select Split</option>
 

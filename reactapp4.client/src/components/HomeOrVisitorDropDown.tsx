@@ -22,17 +22,18 @@ const HomeOrVisitorDropDown: React.FC<HomeOrVisitorDropDownProps> = ({ homeOrVis
             <div className="drop-title">
                 Home or Visitor
             </div>
+            <div className="select-wrapper">
+                <select className="drop-flex-select" value={homeOrVisitor} onChange={handleChange} disabled={disabled} >
+                    <option className="drop-flex-option" value="0">Home or Visitor</option>
 
-            <select className="drop-flex-select" value={homeOrVisitor} onChange={handleChange} disabled={disabled} >
-                <option className="drop-flex-option" value="0">Home or Visitor</option>
+                    {homeOrVisitorOptions.map((option, index) => (
+                        <option key={index} className="option-select" value={option}>
+                            {option}
+                        </option>
+                    ))}
 
-                {homeOrVisitorOptions.map((option, index) => (
-                    <option key={index} className="option-select" value={option}>
-                        {option}
-                    </option>
-                ))}
-
-            </select>
+                </select>
+            </div>
         </div>
     );
 }

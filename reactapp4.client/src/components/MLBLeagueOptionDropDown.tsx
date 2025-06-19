@@ -28,7 +28,7 @@ const MLBLeagueOptionDropDown: React.FC<LeagueDropDownProps> = ({ options, leagu
   return (
     <div className="drop-flex">
       <div className="drop-title">League</div>
-      <div>
+      <div className="select-wrapper">
         <select
           className="drop-flex-select"
           value={leagueOption}
