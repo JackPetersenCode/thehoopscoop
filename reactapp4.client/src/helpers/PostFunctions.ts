@@ -16,7 +16,6 @@ import { MLBTeamInfo } from "../interfaces/MLBTeamInfo";
 import { Play, PlayPlayEvents, PlayRunners, PlayRunnersCredits } from "../interfaces/PlayByPlay";
 
 const token = localStorage.getItem('token');
-console.log(token)
 
 const postLeagueGamesBySeason = async (obj: [], season: string) => {
     console.log(season);

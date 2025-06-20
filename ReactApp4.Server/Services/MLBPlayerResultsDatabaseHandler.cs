@@ -81,6 +81,7 @@ namespace ReactApp4.Server.Services
                                         ON pgsb.game_pk = CAST(mg.game_pk AS INT)
                                     WHERE person_id = @person_id
                                     AND pgsb.games_played > 0
+                                    ORDER BY mg.game_date DESC
                             )";
                                 localCareerQuery += $@"WITH ";
                                 localCareerQuery += opponentCTE;
@@ -89,7 +90,7 @@ namespace ReactApp4.Server.Services
                                 SELECT *
                                 FROM with_opponent
                                 WHERE CAST(opponent_team_id AS TEXT) = @selectedOpponent
-                                ORDER BY with_opponent.id DESC";
+                                ORDER BY with_opponent.game_date DESC";
                             }
                             else
                             {
@@ -106,7 +107,7 @@ namespace ReactApp4.Server.Services
                                 FROM Games_Played 
                                 JOIN {mlbGamesTable}
                                 ON Games_Played.game_pk = CAST({mlbGamesTable}.game_pk AS INT)
-                                ORDER BY Games_Played.id DESC";
+                                ORDER BY {mlbGamesTable}.game_date DESC";
                             }
                         }
 
@@ -159,7 +160,7 @@ namespace ReactApp4.Server.Services
                                 SELECT *
                                 FROM with_opponent
                                 WHERE opponent_team_id = CAST(@selectedOpponent AS INT)
-                                ORDER BY with_opponent.id DESC";
+                                ORDER BY with_opponent.game_date DESC";
                             }
                             else
                             {
@@ -197,7 +198,7 @@ namespace ReactApp4.Server.Services
                                 FROM Games_Played 
                                 JOIN {mlbGamesTable}
                                 ON Games_Played.game_pk = CAST({mlbGamesTable}.game_pk AS INT)
-                                ORDER BY Games_Played.id DESC";
+                                ORDER BY {mlbGamesTable}.game_date DESC";
                             }
 
                         }
@@ -271,7 +272,7 @@ namespace ReactApp4.Server.Services
                             SELECT *
                             FROM with_opponent
                             WHERE CAST(opponent_team_id AS TEXT) = @selectedOpponent
-                            ORDER BY with_opponent.id DESC";
+                            ORDER BY with_opponent.game_date DESC";
                         }
                         else
                         {
@@ -288,7 +289,7 @@ namespace ReactApp4.Server.Services
                             FROM Games_Played 
                             JOIN {mlbGamesTable}
                             ON Games_Played.game_pk = CAST({mlbGamesTable}.game_pk AS INT)
-                            ORDER BY Games_Played.id DESC";
+                            ORDER BY {mlbGamesTable}.game_date DESC";
                         }
                         boxScores = await _context.MLBBattingBoxScoreWithGameDates
                             .FromSqlRaw(query,
@@ -347,7 +348,7 @@ namespace ReactApp4.Server.Services
                             SELECT *
                             FROM with_opponent
                             WHERE opponent_team_id = CAST(@selectedOpponent AS INT)
-                            ORDER BY with_opponent.id DESC";
+                            ORDER BY with_opponent.game_date DESC";
                         }
                         else
                         {
@@ -385,7 +386,7 @@ namespace ReactApp4.Server.Services
                             FROM Games_Played 
                             JOIN {mlbGamesTable}
                             ON Games_Played.game_pk = CAST({mlbGamesTable}.game_pk AS INT)
-                            ORDER BY Games_Played.id DESC";
+                            ORDER BY {mlbGamesTable}.game_date DESC";
                         }
                         boxScores = await _context.MLBPitchingBoxScoreWithGameDates
                             .FromSqlRaw(query,

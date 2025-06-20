@@ -12,10 +12,10 @@ namespace ReactApp4.Server
     {
         static void Main(string[] args)
         {
+ 
             //Thread pythonThread = new Thread(ExecutePythonCode);
             //pythonThread.Start();
             var builder = WebApplication.CreateBuilder(args);
-
             // Add environment and production JSON config support
             builder.Configuration
                 .SetBasePath(Directory.GetCurrentDirectory())
