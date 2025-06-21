@@ -2,6 +2,9 @@ import requests
 import time
 import pandas as pd
 import csv
+import json
+from collections.abc import MutableMapping
+
 
 BASE_URL = "https://statsapi.mlb.com/api/v1"
 
@@ -288,13 +291,6 @@ def get_box_score_from_game_pk(gamePk, season):
         print("error: " + {gamePk})
         print(f"Error: Unable to fetch data for gamePk {gamePk} (Status Code: {response.status_code})")
         return None  # Return None if request fails
-
-
-import requests
-import pandas as pd
-import json
-from collections.abc import MutableMapping
-
 
 #csv_path
 
@@ -961,7 +957,7 @@ def get_schedule_save_box_scores(season):
     # ==== WRITE TO CSV FILES ====
     def write_csv(filename, rows):
         df = pd.DataFrame(rows)
-        df.to_csv(f"./mlb_stats/{filename}_{season}_v8.csv", index=False)
+        df.to_csv(f"./mlb_stats/{filename}_{season}.csv", index=False)
         print(f"Saved {filename}_{season}.csv with {len(df)} rows")
 
     write_csv("team", team_rows)
