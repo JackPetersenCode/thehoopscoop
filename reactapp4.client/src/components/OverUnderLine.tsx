@@ -12,7 +12,7 @@ interface OverUnderLineProps {
 const OverUnderLine: React.FC<OverUnderLineProps> = ({ overUnderLine, setOverUnderLine }) => {
 
     const deleteOverUnderLine = () => {
-        setOverUnderLine(() => "");
+        setOverUnderLine(0); // Set to 0 instead of ""
     }
 
     return (
