@@ -90,6 +90,14 @@ namespace ReactApp4.Server
             services.AddScoped<MLBPlayByPlayDatabaseHandler>();
             services.AddScoped<MLBPlayByPlayFileHandler>();
 
+            services.AddScoped<OddsApiDataHandler>();
+            services.AddScoped<OddsApiDatabaseHandler>();
+            services.AddScoped<OddsApiFileHandler>();
+
+            services.AddScoped<SportRadarMLBEGSDataHandler>();
+            services.AddScoped<SportRadarMLBEGSDatabaseHandler>();
+            services.AddScoped<SportRadarMLBEGSFileHandler>();
+
             services.AddScoped<MLBPlayerResultsDatabaseHandler>();
             
             services.Configure<KestrelServerOptions>(options =>

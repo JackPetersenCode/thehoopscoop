@@ -1,4 +1,4 @@
-import { loadBoxScoresTraditional, loadLeagueGamesBySeason, loadPlayers, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring, loadShotsBySeason, loadNewOddsFunction, loadBoxScoreSummary, loadMLBGames, loadMLBPlayerGamesByCategory, loadMLBActivePlayers, loadMLBPlayerGameInfoBySeason, loadMLBTeamInfoBySeason, loadMLBPlaysBySeason, loadMLBPlayEventsBySeason, loadMLBPlayRunnersBySeason, loadMLBPlayRunnersCreditsBySeason } from '../helpers/Loaders';
+import { loadSportRadarMLBPBPPitchEventsBySeason, loadSportRadarMLBPBPAtBatsBySeason, loadSportRadarMLBLeagueScheduleBySeason, loadSportRadarMLBEGSGameInfoBySeason, loadBoxScoresTraditional, loadLeagueGamesBySeason, loadPlayers, loadLeagueDashLineupsFunction, loadBoxScoresAdvanced, loadBoxScoresFourFactors, loadBoxScoresMisc, loadBoxScoresScoring, loadShotsBySeason, loadNewOddsFunction, loadBoxScoreSummary, loadMLBGames, loadMLBPlayerGamesByCategory, loadMLBActivePlayers, loadMLBPlayerGameInfoBySeason, loadMLBTeamInfoBySeason, loadMLBPlaysBySeason, loadMLBPlayEventsBySeason, loadMLBPlayRunnersBySeason, loadMLBPlayRunnersCreditsBySeason, loadOddsApiH2HBySeason } from '../helpers/Loaders';
 import { ExpectedMatchupPostObject, RosterPlayer, teamIds } from '../interfaces/Gambling';
 import axios from 'axios';
 
@@ -650,6 +650,7 @@ function Admin() {
         await getGames(season);
     }
     //loadExpectedBySeason();
+    const file = (document.getElementById("fileSelect") as HTMLSelectElement | null)?.value ?? "";
 
     return (
         <div>
@@ -676,6 +677,12 @@ function Admin() {
             <button onClick={() => loadMLBPlayEventsBySeason("2025")}>MLB Play Events</button>
             <button onClick={() => loadMLBPlayRunnersBySeason("2025")}>MLB Play Runners</button>
             <button onClick={() => loadMLBPlayRunnersCreditsBySeason("2025")}>MLB Play Runners Credits</button>
+            <button onClick={() => loadOddsApiH2HBySeason("NBA", "2025_26")}>Odds Api H2H</button>
+            <button onClick={() => loadSportRadarMLBEGSGameInfoBySeason("2025")}>SR MLB EGS Game Info</button>
+            <button onClick={() => loadSportRadarMLBLeagueScheduleBySeason("2025")}>SR MLB League Schedule</button>
+            <button onClick={() => loadSportRadarMLBPBPAtBatsBySeason("2025")}>SR MLB PBP At Bats</button>
+            <button onClick={() => loadSportRadarMLBPBPPitchEventsBySeason("2025")}>SR MLB PBP Pitches</button>
+
         </div>
   );
 }

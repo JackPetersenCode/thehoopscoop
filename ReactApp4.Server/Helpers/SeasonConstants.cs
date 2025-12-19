@@ -18,7 +18,8 @@ namespace ReactApp4.Server.Helpers
 			"2021_22",
 			"2022_23",
 			"2023_24",
-			"2024_25"
+			"2024_25",
+			"2025_26"
 			// Add future seasons here
 		};
 
@@ -38,6 +39,13 @@ namespace ReactApp4.Server.Helpers
 			"2024",
 			"2025"
 			// Add future seasons here
+		};
+
+		public static readonly HashSet<string> AllowedSports = new()
+		{
+			"NBA",
+			"MLB"
+			// Add future sports here
 		};
 
 		public static readonly HashSet<string> MLBAllowedSeasonsNoDefaults = new()
@@ -95,6 +103,8 @@ namespace ReactApp4.Server.Helpers
 
 		public static bool IsValidMLBSeason(string season) =>
 			MLBAllowedSeasons.Contains(season);
+		public static bool IsValidSport(string sport) =>
+			AllowedSports.Contains(sport);
 		public static bool IsValidSortfield(string season) =>
 			AllowedSortFields.Contains(season);
 

@@ -110,6 +110,14 @@ namespace ReactApp4.Server
             builder.Services.AddScoped<MLBPlayByPlayDatabaseHandler>();
             builder.Services.AddScoped<MLBPlayByPlayFileHandler>();
 
+            builder.Services.AddScoped<OddsApiDataHandler>();
+            builder.Services.AddScoped<OddsApiDatabaseHandler>();
+            builder.Services.AddScoped<OddsApiFileHandler>();
+
+            builder.Services.AddScoped<SportRadarMLBEGSDataHandler>();
+            builder.Services.AddScoped<SportRadarMLBEGSDatabaseHandler>();
+            builder.Services.AddScoped<SportRadarMLBEGSFileHandler>();
+
             builder.Services.AddScoped<MLBPlayerResultsDatabaseHandler>();
                         
 

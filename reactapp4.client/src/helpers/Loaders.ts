@@ -1,6 +1,6 @@
 import { MLBActivePlayer } from '../interfaces/MLBActivePlayer';
 import { getJsonResponseStartup } from './GetJsonResponse';
-import { postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason, postNewOdds, postBoxScoreSummary, postMLBGamesBySeason, postMLBPlayerGamesBattingBySeason, postMLBPlayerGamesPitchingBySeason, postMLBPlayerGamesFieldingBySeason, postMLBActivePlayer, postMLBPlayerGameInfoBySeason, postMLBTeamInfoBySeason, postMLBPlaysBySeason, postMLBPlayEventsBySeason, postMLBPlayRunnersBySeason, postMLBPlayRunnersCreditsBySeason } from './PostFunctions';
+import { postSportRadarMLBPBPPitchEventsBySeason, postSportRadarMLBPBPAtBatsBySeason, postSportRadarMLBLeagueScheduleBySeason, postSportRadarMLBEGSGameInfoBySeason, postLeagueGamesBySeason, postPlayersNBA, postBoxScoresTraditionalBySeason, postLeagueDashLineups, postBoxScoresAdvancedBySeason, postBoxScoresFourFactorsBySeason, postBoxScoresMiscBySeason, postBoxScoresScoringBySeason, postShotBySeason, postNewOdds, postBoxScoreSummary, postMLBGamesBySeason, postMLBPlayerGamesBattingBySeason, postMLBPlayerGamesPitchingBySeason, postMLBPlayerGamesFieldingBySeason, postMLBActivePlayer, postMLBPlayerGameInfoBySeason, postMLBTeamInfoBySeason, postMLBPlaysBySeason, postMLBPlayEventsBySeason, postMLBPlayRunnersBySeason, postMLBPlayRunnersCreditsBySeason, postOddsApiH2HBySeason } from './PostFunctions';
 
 const teamNameToAbbreviation = new Map<string, string>([
   ["Hawks", "ATL"],
@@ -210,6 +210,63 @@ const loadMLBPlayRunnersCreditsBySeason = async(season: string) => {
     //await postMLBPlayRunnersCreditsBySeason(data, season);
 };
 
+const loadOddsApiH2HBySeason = async(sport: string, season: string) => {
+    //const tablelength = await getJsonResponseStartup(`/api/tablelength/mlb_games_${season}`);
+    //console.log(tablelength.count);
+    let fileName = `mlb_h2h_odds_${season}`;
+
+    if (sport === "NBA") {
+        fileName = `nba_h2h_odds_${season}`;
+    }
+    const data = await getJsonResponseStartup(`/api/OddsApi/read/${sport}/${season}/${fileName}`);
+    console.log(data);
+    await postOddsApiH2HBySeason(data, sport, season);
+};
+
+const loadMLBOddsApiPlayerPropsBySeason = async(sport: string, season: string) => {
+    //const tablelength = await getJsonResponseStartup(`/api/tablelength/mlb_games_${season}`);
+    //console.log(tablelength.count);
+    const fileName = "mlb_player_prop_odds_2025";
+    const data = await getJsonResponseStartup(`/api/OddsApi/read/${sport}/${season}/${fileName}`);
+    console.log(data);
+    await postOddsApiH2HBySeason(data, sport, season);
+};
+
+const loadSportRadarMLBEGSGameInfoBySeason = async(season: string) => {
+    //const tablelength = await getJsonResponseStartup(`/api/tablelength/mlb_games_${season}`);
+    //console.log(tablelength.count);
+    const full_file = "sportradar_egs_game_info_" + season;
+    const data = await getJsonResponseStartup(`/api/SportRadarMLBEGS/read/${full_file}`);
+    console.log(data);
+    await postSportRadarMLBEGSGameInfoBySeason(data, season);
+};
+
+const loadSportRadarMLBLeagueScheduleBySeason = async(season: string) => {
+    //const tablelength = await getJsonResponseStartup(`/api/tablelength/mlb_games_${season}`);
+    //console.log(tablelength.count);
+    const full_file = "sportradar_league_schedule_" + season;
+    const data = await getJsonResponseStartup(`/api/SportRadarMLBEGS/read/${full_file}`);
+    console.log(data);
+    await postSportRadarMLBLeagueScheduleBySeason(data, season);
+};
+
+const loadSportRadarMLBPBPAtBatsBySeason = async(season: string) => {
+    //const tablelength = await getJsonResponseStartup(`/api/tablelength/mlb_games_${season}`);
+    //console.log(tablelength.count);
+    const full_file = "sportradar_pbp_at_bats_" + season;
+    const data = await getJsonResponseStartup(`/api/SportRadarMLBEGS/read/${full_file}`);
+    console.log(data);
+    await postSportRadarMLBPBPAtBatsBySeason(data, season);
+};
+
+const loadSportRadarMLBPBPPitchEventsBySeason = async(season: string) => {
+    //const tablelength = await getJsonResponseStartup(`/api/tablelength/mlb_games_${season}`);
+    //console.log(tablelength.count);
+    const full_file = "sportradar_pbp_pitches_" + season;
+    const data = await getJsonResponseStartup(`/api/SportRadarMLBEGS/read/${full_file}`);
+    console.log(data);
+    await postSportRadarMLBPBPPitchEventsBySeason(data, season);
+};
 
 const loadLeagueGamesBySeason = async () => {
     //const years = ['2015_16', '2016_17', '2017_18', '2018_19', '2019_20', '2020_21', '2021_22', '2022_23', '2023_24'];
@@ -687,4 +744,9 @@ export {
     loadMLBPlayEventsBySeason,
     loadMLBPlayRunnersBySeason,
     loadMLBPlayRunnersCreditsBySeason,
+    loadOddsApiH2HBySeason,
+    loadSportRadarMLBEGSGameInfoBySeason,
+    loadSportRadarMLBLeagueScheduleBySeason,
+    loadSportRadarMLBPBPAtBatsBySeason,
+    loadSportRadarMLBPBPPitchEventsBySeason,
 }

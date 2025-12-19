@@ -58,6 +58,11 @@ namespace ReactApp4.Server.Data
         public DbSet<PlayRunnersCredits> PlayRunnersCredits { get; set; }
         public DbSet<MLBBattingBoxScoreWithGameDate> MLBBattingBoxScoreWithGameDates { get; set; }
         public DbSet<MLBPitchingBoxScoreWithGameDate> MLBPitchingBoxScoreWithGameDates { get; set; }
+        public DbSet<OddsApiH2H> OddsApiH2Hs { get; set; }
+        public DbSet<OddsApiPlayerProp> OddsApiPlayerProps { get; set; }
+        public DbSet<SportRadarMLBEGSGameInfo> SportRadarMLBEGSGameInfos { get; set; }
+        public DbSet<SportRadarMLBLeagueSchedule> SportRadarMLBLeagueSchedules { get; set; }
+        public DbSet<SportRadarMLBPBPAtBat> SportRadarMLBPBPAtBats { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -130,9 +135,11 @@ namespace ReactApp4.Server.Data
             modelBuilder.Entity<PlayRunnersCredits>().HasNoKey();
             modelBuilder.Entity<MLBBattingBoxScoreWithGameDate>().HasNoKey();
             modelBuilder.Entity<MLBPitchingBoxScoreWithGameDate>().HasNoKey();
-
-
-
+            modelBuilder.Entity<OddsApiH2H>().HasNoKey();
+            modelBuilder.Entity<OddsApiPlayerProp>().HasNoKey();
+            modelBuilder.Entity<SportRadarMLBEGSGameInfo>().HasNoKey();
+            modelBuilder.Entity<SportRadarMLBLeagueSchedule>().HasNoKey();
+            modelBuilder.Entity<SportRadarMLBPBPAtBat>().HasNoKey();
         }
         public DbSet<TableLength> TableLengths { get; set; }
         public DbSet<Player> Players { get; set; }

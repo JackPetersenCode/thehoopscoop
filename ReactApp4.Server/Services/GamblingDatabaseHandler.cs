@@ -872,8 +872,14 @@ namespace ReactApp4.Server.Services
         {
             try
             {
+                var game_identifier = "game_pk";
+
+                if (table.Contains("odds_api_h2h"))
+                {
+                    game_identifier = "game_id";
+                }
                 //var table = $"mlb_games_{season}";
-                var sql = $"SELECT DISTINCT(game_pk) FROM \"{table}\"";
+                var sql = $"SELECT DISTINCT({game_identifier}) FROM \"{table}\"";
 
                 var connectionString = _configuration.GetConnectionString("WebApiDatabase");
 

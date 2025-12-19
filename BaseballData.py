@@ -572,9 +572,7 @@ def get_schedule_save_box_scores(season):
     #using unique game pk local route instead to get unique games from database
     all_game_pks = get_existing_game_pks(games_table)
     new_game_pks = get_new_game_pks(all_game_pks, current_game_pks)
-    print(len(current_game_pks))
-    print(len(all_game_pks))
-    print(len(new_game_pks))
+
     #games_data = get_mlb_schedule(season)
     #print(games_data)
     #print(csv_data)
@@ -1035,6 +1033,6 @@ def get_active_mlb_players_for_season(season: str, output_path: str = None):
 # Example call (uncomment to run)
 #get_active_mlb_players_for_season("2025")
 #print(players_2023[:2])  # Print first 2 players as a preview
-get_schedule_save_box_scores("2025")
+#get_schedule_save_box_scores("2025")
 #get_schedule_save_play_by_play("2025")
 #get_schedule_save_mlb_games("2025")

@@ -73,7 +73,7 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 
 const isDev = process.env.NODE_ENV === 'development';
-
+console.log(isDev);
 export default defineConfig({
   plugins: [react()],
   resolve: {

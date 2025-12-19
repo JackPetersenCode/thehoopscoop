@@ -14,6 +14,11 @@ import { MLBActivePlayer } from "../interfaces/MLBActivePlayer";
 import { MLBPlayerGameInfo } from "../interfaces/MLBPlayerGameInfo";
 import { MLBTeamInfo } from "../interfaces/MLBTeamInfo";
 import { Play, PlayPlayEvents, PlayRunners, PlayRunnersCredits } from "../interfaces/PlayByPlay";
+import { OddsApiH2H } from "../interfaces/OddsApi";
+import { SportRadarMLBEGSGameInfo } from "../interfaces/SportRadarMLBEGSGameInfo";
+import { SportRadarMLBLeagueSchedule } from "../interfaces/SportRadarMLBLeagueSchedule";
+import { SportRadarMLBPBPAtBat } from "../interfaces/SportRadarMLBPBPAtBat";
+import { SportRadarMLBPBPPitchEvent } from "../interfaces/SportRadarMLBPBPPitchEvent";
 
 const token = localStorage.getItem('token');
 
@@ -319,9 +324,120 @@ const postMLBPlayerGamesBattingBySeason = async (obj: MLBPlayerGameBatting[], se
     }
 }
 
+
+const postSportRadarMLBEGSGameInfoBySeason = async (obj: SportRadarMLBEGSGameInfo[], season: string) => {
+    const url = `/api/SportRadarMLBEGS/gameInfo/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            
+            console.log(errorText);
+            console.log(obj);
+            //throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+        } else {
+            const result = await response.json();
+            console.log("✅ Sport Radar stats uploaded:", result);
+        }
+    } catch (error) {
+        console.error("❌ Error uploading sport radar stats:", error);
+    }
+}
+
+const postSportRadarMLBLeagueScheduleBySeason = async (obj: SportRadarMLBLeagueSchedule[], season: string) => {
+    const url = `/api/SportRadarMLBEGS/leagueSchedule/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            
+            console.log(errorText);
+            console.log(obj);
+            //throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+        } else {
+            const result = await response.json();
+            console.log("✅ Sport Radar stats uploaded:", result);
+        }
+    } catch (error) {
+        console.error("❌ Error uploading sport radar stats:", error);
+    }
+}
+
+const postSportRadarMLBPBPAtBatsBySeason = async (obj: SportRadarMLBPBPAtBat[], season: string) => {
+    const url = `/api/SportRadarMLBEGS/pbpAtBats/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            
+            console.log(errorText);
+            console.log(obj);
+            //throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+        } else {
+            const result = await response.json();
+            console.log("✅ Sport Radar stats uploaded:", result);
+        }
+    } catch (error) {
+        console.error("❌ Error uploading sport radar stats:", error);
+    }
+}
+
+const postSportRadarMLBPBPPitchEventsBySeason = async (obj: SportRadarMLBPBPPitchEvent[], season: string) => {
+    const url = `/api/SportRadarMLBEGS/pbpPitchEvents/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            
+            console.log(errorText);
+            console.log(obj);
+            //throw new Error(`Upload failed: ${response.status} - ${errorText}`);
+        } else {
+            const result = await response.json();
+            console.log("✅ Sport Radar stats uploaded:", result);
+        }
+    } catch (error) {
+        console.error("❌ Error uploading sport radar stats:", error);
+    }
+}
+
 const postMLBPlayerGamesPitchingBySeason = async (obj: MLBPlayerGamePitching[], season: string) => {
-    console.log(obj);
-    console.log(token);
     const url = `/api/MLBPlayerGame/pitching/${season}`;
     try {
         const response = await fetch(url, {
@@ -555,6 +671,32 @@ const postMLBPlayRunnersCreditsBySeason = async (obj: PlayRunnersCredits[], seas
     }
 }
 
+const postOddsApiH2HBySeason = async (obj: OddsApiH2H[], sport: string, season: string) => {
+    console.log(obj)
+    const url = `/api/OddsApi/H2H/${sport}/${season}`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            mode: 'cors',
+            body: JSON.stringify(obj),
+        })
+        console.log(response)
+
+        if (response.ok) {
+            const jsonResponse = await response.json();
+            console.log("✅ Odds H2H updated:", jsonResponse);
+
+            return jsonResponse;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export {
     postLeagueGamesBySeason,
     postPlayersNBA,
@@ -578,4 +720,9 @@ export {
     postMLBPlayEventsBySeason,
     postMLBPlayRunnersBySeason,
     postMLBPlayRunnersCreditsBySeason,
+    postOddsApiH2HBySeason,
+    postSportRadarMLBEGSGameInfoBySeason,
+    postSportRadarMLBLeagueScheduleBySeason,
+    postSportRadarMLBPBPAtBatsBySeason,
+    postSportRadarMLBPBPPitchEventsBySeason,
 }

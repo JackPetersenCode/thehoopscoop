@@ -1,0 +1,36 @@
+export interface SportRadarMLBEGSGameInfo {
+  game_id: string;
+  status: string | null;
+  coverage: string | null;
+  game_number: number | null;
+  day_night: string | null;
+  scheduled: string | null;
+  home_team_id: string | null;
+  away_team_id: string | null;
+  attendance: number | null;
+  duration: string | null;
+  season_id: string | null;
+  season_type: string | null;
+  season_year: number | null;
+  double_header: boolean | null;
+  entry_mode: string | null;
+  reference: string | null;
+  time_zones_venue: string | null;
+  time_zones_home: string | null;
+  time_zones_away: string | null;
+  venue_name: string | null;
+  venue_market: string | null;
+  venue_capacity: number | null;
+  venue_surface: string | null;
+  venue_address: string | null;
+  venue_city: string | null;
+  venue_state: string | null;
+  venue_zip: string | null;
+  venue_country: string | null;
+  venue_id: string | null;
+  venue_field_orientation: string | null;
+  venue_stadium_type: string | null;
+  venue_time_zone: string | null;
+  venue_location_lat: number | null;
+  venue_location_lng: number | null;
+}

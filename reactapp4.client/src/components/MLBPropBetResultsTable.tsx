@@ -14,7 +14,7 @@ interface MLBPropBetResultsTableProps {
     selectedSeason: string;
     roster: MLBActivePlayer[];
     propBetStats: PropBetStats[];
-    overUnderLine: number | string;
+    overUnderLine: number | string |null;
     selectedOpponent: MLBTeam;
     setPlayerBoxScores: React.Dispatch<SetStateAction<Stats[]>>
     playerBoxScores: Stats[];
