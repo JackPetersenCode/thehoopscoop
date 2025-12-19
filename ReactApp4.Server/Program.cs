@@ -16,6 +16,7 @@ namespace ReactApp4.Server
             //Thread pythonThread = new Thread(ExecutePythonCode);
             //pythonThread.Start();
             var builder = WebApplication.CreateBuilder(args);
+
             // Add environment and production JSON config support
             builder.Configuration
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -145,7 +146,18 @@ namespace ReactApp4.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             var app = builder.Build();
-
+            app.Use(async (ctx, next) =>
+            {
+                try
+                {
+                    await next();
+                }
+                catch (Exception ex)
+                {
+                    app.Logger.LogError(ex, "Unhandled exception for {Method} {Path}", ctx.Request.Method, ctx.Request.Path);
+                    throw;
+                }
+            });
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
