@@ -180,18 +180,6 @@ namespace ReactApp4.Server
             app.MapFallbackToFile("/index.html");
 
             app.Run();
-            app.MapGet("/health/db", async (AppDbContext db) =>
-            {
-                try
-                {
-                    var canConnect = await db.Database.CanConnectAsync();
-                    return Results.Ok(new { canConnect });
-                }
-                catch (Exception ex)
-                {
-                    return Results.Problem(ex.ToString());
-                }
-            });
 
         }
 
