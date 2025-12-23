@@ -42,6 +42,7 @@ namespace ReactApp4.Server.Services
             // Execute safe raw SQL query
             var boxScoreAdvancedBySeason = await _context.BoxScoreAdvanceds
                 .FromSqlRaw(query)
+                .AsNoTracking()
                 .ToListAsync();
 
             return boxScoreAdvancedBySeason;
